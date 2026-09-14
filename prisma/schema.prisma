@@ -1,0 +1,150 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Case {
+  id              String          @id @default(uuid())
+  caseNumber      String          @unique
+  incidentType    String          // "Task_Scam" | "Digital_Arrest" | "Investment_Fraud" | ...
+  complainantName String
+  jurisdiction    String?
+  status          String          @default("OPEN") // "OPEN" | "UNDER_INQUIRY" | "CHARGESHEETED" | "CLOSED"
+  amountDefrauded Int?            // in INR
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  evidence           Evidence[]
+  timeline           TimelineEvent[]
+  entities           CaseEntity[]
+  clusterMemberships ClusterMembership[]
+}
+
+model Evidence {
+  id               String          @id @default(uuid())
+  caseId           String
+  case             Case            @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  fileName         String
+  fileType         String          // "PNG" | "TXT" | "PDF" | "MP3" ...
+  mimeType         String
+  fileSize         Int             // bytes
+  sha256Hash       String          // server-computed, canonical truth
+  clientHash       String          // client-supplied, verified against sha256Hash
+  storagePath      String          // /uploads/raw/<sha256>.bin — immutable
+  evidenceCategory String          @default("OTHER") // "CHAT" | "UPI_FINANCIAL" | "CALL_LOG" | "EMAIL" | "PHISHING_EMAIL" | "IDENTITY_DATA" | "DOCUMENT" | "CRIME_SCENE_PHOTO" | "AUDIO" | "VIDEO" | "URL_WEB" | "OTHER"
+  metadata         String?         // JSON blob for category-specific metadata
+  uploadedAt       DateTime        @default(now())
+
+  facts            ExtractedFact[]
+  timelineRefs     TimelineEvent[]
+  transcriptions   Transcription[]
+  chatTranslations ChatTranslation[]
+}
+
+model ExtractedFact {
+  id                 String   @id @default(uuid())
+  evidenceId         String
+  evidence           Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  caseId             String
+
+  factAssertion      String   // Human-readable summary of what was found
+  entityType         String   // "UPI" | "PHONE" | "ACCOUNT" | "IFSC" | "DOMAIN" | "UTR" | "TELEGRAM" | "EMAIL" | "NAME" | "ADDRESS" | "IP" | "GPS_COORD"
+  rawValue           String   // Original extracted string
+  normalizedValue    String   // Canonical form (E.164 phone, lowercase UPI, etc.)
+  confidence         Float    // 0.0–1.0
+  sourceHash         String   // SHA-256 of source evidence (for chain of custody)
+  verificationStatus String   @default("UNVERIFIED") // "UNVERIFIED" | "VERIFIED" | "DISPUTED"
+  verifiedBy         String?
+
+  // Bounding box coordinates as JSON: {"x":N,"y":N,"width":N,"height":N}
+  boundingBox        String?  @default("{}")
+  extractedAt        DateTime @default(now())
+}
+
+model TimelineEvent {
+  id          String   @id @default(uuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  evidenceId  String
+  evidence    Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+
+  timestamp   DateTime // UTC — canonical forensic timestamp
+  description String
+  sourceType  String   // "WHATSAPP" | "BANK_SMS" | "RECEIPT" | "CALL_LOG" | "SCREENSHOT"
+  phase       String   @default("UNKNOWN") // "CONTACT" | "TRUST" | "PAYMENT" | "SEVERED" | "UNKNOWN"
+
+  createdAt   DateTime @default(now())
+}
+
+model CaseEntity {
+  id              String   @id @default(uuid())
+  caseId          String
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  entityType      String   // "UPI" | "PHONE" | "ACCOUNT" | "IFSC" | "DOMAIN" | "EMAIL" | "NAME" | "ADDRESS" | "IP" | "GPS_COORD"
+  normalizedValue String   // Canonical form used for cross-case matching
+  rawValue        String
+  firstSeenAt     DateTime @default(now())
+
+  // Ensures no duplicate entity per case
+  @@unique([caseId, entityType, normalizedValue])
+  // Index for fast cross-case queries
+  @@index([normalizedValue])
+  @@index([entityType, normalizedValue])
+}
+
+model Transcription {
+  id                  String   @id @default(uuid())
+  evidenceId          String
+  evidence            Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  originalLanguage    String   @default("hi")
+  originalText        String
+  translatedText      String?
+  targetLanguage      String?  @default("en")
+  speakerCount        Int      @default(2)
+  segments            String   // JSON string of TranscriptionSegment[]
+  transcriptionMethod String   @default("WHISPER_AI")
+  confidence          Float    @default(0.92)
+  createdAt           DateTime @default(now())
+}
+
+model ChatTranslation {
+  id                String   @id @default(uuid())
+  evidenceId        String
+  evidence          Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  originalLanguage  String   @default("hinglish")
+  messages          String   // JSON string of ChatMessage[]
+  translationMethod String   @default("INDIC_TRANS_AI")
+  createdAt         DateTime @default(now())
+}
+
+model CaseCluster {
+  id          String              @id @default(uuid())
+  name        String
+  theme       String?
+  status      String              @default("ACTIVE") // "ACTIVE" | "ARCHIVED" | "MERGED"
+  confidence  String              @default("POTENTIAL") // "POTENTIAL" | "PROBABLE" | "CONFIRMED"
+  notes       String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  memberships ClusterMembership[]
+}
+
+model ClusterMembership {
+  id        String      @id @default(uuid())
+  clusterId String
+  cluster   CaseCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  caseId    String
+  case      Case        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  addedAt   DateTime    @default(now())
+  reason    String?
+
+  @@unique([clusterId, caseId])
+}

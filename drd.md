@@ -1,4 +1,4 @@
-# Data Requirement Document (DRD) — NyayaSetu
+# Data Requirement Document (DRD) — Rakshak
 
 ## 1. Database Schema & Data Models
 

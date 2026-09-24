@@ -1,6 +1,6 @@
-# Technical Architecture & Core Forensic Pillars — NyayaSetu
+# Technical Architecture & Core Forensic Pillars — Rakshak
 
-This document outlines the 5 core technical innovations and forensic architecture systems implemented in NyayaSetu:
+This document outlines the 5 core technical innovations and forensic architecture systems implemented in Rakshak:
 
 ---
 

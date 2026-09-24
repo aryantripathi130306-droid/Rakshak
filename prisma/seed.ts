@@ -8,7 +8,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding NyayaSetu forensic database...");
+  console.log("🌱 Seeding Rakshak forensic database...");
 
   // ─── Case 0: Chandigarh — Active Primary Case (CASE-2026-0891) ───────────
   const case0 = await prisma.case.upsert({
@@ -493,7 +493,7 @@ async function main() {
   console.log("✅ ChatTranslation record seeded for EV-102");
 
   console.log("✅ Timeline events seeded for all cases");
-  console.log("🎉 Complete! The NyayaSetu database is live and fully linked with v3 features.");
+  console.log("🎉 Complete! The Rakshak database is live and fully linked with v3 features.");
 }
 
 async function upsertEntity(

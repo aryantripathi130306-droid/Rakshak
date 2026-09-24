@@ -1,8 +1,8 @@
-# NyayaSetu (न्यायसेतु) - Project Health & Audit Report
+# Rakshak (रक्षक) - Project Health & Audit Report
 
 ## 1. Project Overview: What is being built?
 
-**NyayaSetu** is a "Forensic Digital Evidence Intake & Cross-Case Syndicate Intelligence Platform" tailored for cybercrime cells, forensic investigators, and law enforcement agencies. 
+**Rakshak** is a "Forensic Digital Evidence Intake & Cross-Case Syndicate Intelligence Platform" tailored for cybercrime cells, forensic investigators, and law enforcement agencies. 
 
 At its core, the platform is designed to:
 - **Ingest Digital Evidence:** Take unstructured evidence from victims (like WhatsApp chats, UPI receipts, call logs).
@@ -14,7 +14,6 @@ At its core, the platform is designed to:
 The tech stack uses Next.js (App Router), Prisma (SQLite/PostgreSQL), Tailwind CSS, and React Flow for graph visualization.
 
 ---
-
 ## 2. Issues
 
 1. **Extraction Worker Limitations:** The extraction process relies heavily on a `bufferToText` and deterministic Regex matching. As noted in the architecture, an OCR / Vision Engine (like Tesseract.js or Multimodal LLMs) is planned but currently appears to lack robust full-scale implementation in the API routes. 

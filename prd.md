@@ -1,7 +1,7 @@
-# Product Requirement Document (PRD) — NyayaSetu
+# Product Requirement Document (PRD) — Rakshak
 
 ## 1. Executive Overview
-NyayaSetu is an AI-assisted digital evidence intake and cross-case intelligence platform. It ingests unstructured consumer cybercrime complaints (WhatsApp chats, UPI receipts, call logs), establishes cryptographic chain of custody, extracts forensic entities with source-traceability, and discovers cross-jurisdiction fraud syndicates using an automated entity graph.
+Rakshak is an AI-assisted digital evidence intake and cross-case intelligence platform. It ingests unstructured consumer cybercrime complaints (WhatsApp chats, UPI receipts, call logs), establishes cryptographic chain of custody, extracts forensic entities with source-traceability, and discovers cross-jurisdiction fraud syndicates using an automated entity graph.
 
 ## 2. Target Personas
 1. **The Victim (Citizen):** Non-technical person under acute distress; requires natural language reporting without technical/legal jargon.

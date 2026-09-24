@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NyayaSetu — Forensic Intelligence Platform",
+  title: "Rakshak — Forensic Intelligence Platform",
   description:
     "AI-assisted digital evidence intake and cross-case intelligence platform for cybercrime investigation.",
-  keywords: ["cybercrime", "forensics", "evidence", "investigation", "NyayaSetu"],
+  keywords: ["cybercrime", "forensics", "evidence", "investigation", "Rakshak"],
 };
 
 export default function RootLayout({

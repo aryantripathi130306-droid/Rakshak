@@ -1,4 +1,4 @@
-# Architecture Documentation — NyayaSetu
+# Architecture Documentation — Rakshak
 
 ## 1. High-Level Architecture Flow
 

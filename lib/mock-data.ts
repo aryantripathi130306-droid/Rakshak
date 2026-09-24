@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// NyayaSetu — Mock Data Layer (v3 Upgraded)
+// Rakshak — Mock Data Layer (v3 Upgraded)
 // Realistic cybercrime investigation data for forensic demo / hackathon use
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -109,6 +109,23 @@ export interface GraphNode {
     amountLinked?: number;
     jurisdictions?: string[];
     incidentType?: string;
+    victimName?: string;
+    amountDefrauded?: number;
+    jurisdiction?: string;
+    status?: string;
+    registeredDate?: string;
+    officerInCharge?: string;
+    modusOperandi?: string;
+    moSteps?: { step: number; title: string; detail: string; phase: "CONTACT" | "LURE" | "PAYMENT" | "SEVERED" }[];
+    connectedCases?: {
+      caseNumber: string;
+      jurisdiction: string;
+      sharedEntities: string[];
+      similarityScore: number;
+      incidentType: string;
+      lossAmount: number;
+      reason: string;
+    }[];
   };
   position: { x: number; y: number };
 }
@@ -976,49 +993,170 @@ export const SEEDED_CASES: CaseData[] = [
 // GRAPH NODES & EDGES
 // ─────────────────────────────────────────────────────────────────────────────
 export const GRAPH_NODES: GraphNode[] = [
-  // Current case
+  // ── 1. PRIMARY ACTIVE CASE (HONEYCOMB NUCLEUS) ───────────────────────────
   {
     id: "case-2026-0891",
     type: "case",
     data: {
       label: "CASE-2026-0891",
-      incidentType: "Task Scam",
+      incidentType: "Task Scam (Amazon Review)",
+      victimName: "Priya Nair",
+      amountDefrauded: 49499,
+      jurisdiction: "Cyber Crime Branch — Sector 17, Chandigarh",
+      status: "UNDER_INQUIRY",
       riskLevel: "HIGH",
+      registeredDate: "29 Aug 2026",
+      officerInCharge: "SI R.S. Meena (CCB-1147)",
+      modusOperandi: "Victim contacted on WhatsApp by suspect impersonating Amazon HR. Lured to Telegram channel '@task_rewards_official' for product review tasks. Initial ₹250 payout given to establish trust, followed by fake 'prepaid rating tasks' diverting ₹49,499 to mule UPI 'mule88@oksbi' and Paytm account before communication was severed.",
+      moSteps: [
+        { step: 1, title: "Initial Contact", detail: "WhatsApp message from +91-98111-22233 offering ₹500-₹2,000/day for Amazon reviews", phase: "CONTACT" },
+        { step: 2, title: "Trust Induction", detail: "Redirected to Telegram channel @task_rewards_official; ₹250 instant reward credited", phase: "LURE" },
+        { step: 3, title: "Capital Extraction", detail: "Induced to deposit ₹24,999 to mule88@oksbi + ₹24,500 to account 919876543210", phase: "PAYMENT" },
+        { step: 4, title: "Severance & Extortion", detail: "Additional ₹1.2L demanded for tax clearance; victim blocked upon refusal", phase: "SEVERED" },
+      ],
+      connectedCases: [
+        { caseNumber: "CASE-2026-0741", jurisdiction: "Cyber Cell — Rohini, Delhi", sharedEntities: ["UPI: mule88@oksbi", "PH: +919811122233", "TG: @task_rewards_official"], similarityScore: 98, incidentType: "Task Scam (YouTube Like)", lossAmount: 72000, reason: "Identical mule VPA & originating WhatsApp contact number." },
+        { caseNumber: "CASE-2026-0655", jurisdiction: "Cyber Crime Haryana — Gurugram", sharedEntities: ["UPI: mule88@oksbi", "PH: +919811122233"], similarityScore: 94, incidentType: "Task Scam (Hotel Rating)", lossAmount: 58500, reason: "Shared Tier-1 mule account and Telegram coordinator." },
+        { caseNumber: "CASE-2026-0488", jurisdiction: "Cyber Cell — Ludhiana, Punjab", sharedEntities: ["UPI: mule88@oksbi", "Domain: verify-job-portal.in"], similarityScore: 89, incidentType: "Investment Fraud (Fake SEBI)", lossAmount: 165000, reason: "Phishing portal verify-job-portal.in and shared State Bank mule." },
+        { caseNumber: "CASE-2026-0312", jurisdiction: "Cyber Crime — Jaipur, Rajasthan", sharedEntities: ["UPI: mule88@oksbi", "IFSC: SBIN0002149"], similarityScore: 86, incidentType: "Task Scam (Merchant Rating)", lossAmount: 85000, reason: "Same beneficiary bank branch and UPI handle." },
+      ],
     },
-    position: { x: 400, y: 220 },
+    position: { x: 480, y: 310 },
   },
-  // Seeded cases
+
+  // ── 2. HEXAGONAL HONEYCOMB RING: CROSS-CASE CRIME REPORTS ────────────────
   {
     id: "case-2026-0741",
     type: "case",
-    data: { label: "CASE-2026-0741", incidentType: "Task Scam", riskLevel: "HIGH" },
-    position: { x: 120, y: 80 },
+    data: {
+      label: "CASE-2026-0741",
+      incidentType: "Task Scam (YouTube Like)",
+      victimName: "Rahul Verma",
+      amountDefrauded: 72000,
+      jurisdiction: "Cyber Cell — Rohini District, Delhi",
+      status: "UNDER_INQUIRY",
+      riskLevel: "HIGH",
+      registeredDate: "14 Jul 2026",
+      officerInCharge: "SI Anjali Kapoor (CCB-0912)",
+      modusOperandi: "Victim lured via WhatsApp job advert for liking YouTube videos. Diverted ₹72,000 across 3 transactions to mule88@oksbi. Suspect communicated via @task_rewards_official.",
+      moSteps: [
+        { step: 1, title: "Lure on Telegram", detail: "Advertised on Instagram reels; contacted via +91-98111-22233", phase: "CONTACT" },
+        { step: 2, title: "Micro Task", detail: "Liked 5 YouTube videos; received ₹300 via UPI", phase: "LURE" },
+        { step: 3, title: "VIP Escalation", detail: "Transferred ₹72,000 to mule88@oksbi for 'crypto VIP pool'", phase: "PAYMENT" },
+        { step: 4, title: "Exit", detail: "Telegram account deleted; phone switched off", phase: "SEVERED" },
+      ],
+      connectedCases: [
+        { caseNumber: "CASE-2026-0891", jurisdiction: "Cyber Crime Branch — Chandigarh", sharedEntities: ["UPI: mule88@oksbi", "PH: +919811122233"], similarityScore: 98, incidentType: "Task Scam (Amazon Review)", lossAmount: 49499, reason: "Identical primary mule UPI and contact line." },
+      ],
+    },
+    position: { x: 210, y: 160 },
   },
   {
     id: "case-2026-0655",
     type: "case",
-    data: { label: "CASE-2026-0655", incidentType: "Task Scam", riskLevel: "MEDIUM" },
-    position: { x: 680, y: 80 },
+    data: {
+      label: "CASE-2026-0655",
+      incidentType: "Task Scam (Hotel Rating)",
+      victimName: "Sunita Devi",
+      amountDefrauded: 58500,
+      jurisdiction: "Cyber Crime Haryana — Gurugram Unit",
+      status: "CHARGESHEETED",
+      riskLevel: "MEDIUM",
+      registeredDate: "28 Jun 2026",
+      officerInCharge: "DSP Mohan Lal Saini (HRY-0448)",
+      modusOperandi: "Victim assigned Google Maps 5-star hotel review tasks. Funds collected into mule88@oksbi. Chargesheet filed under BNS §318(4) & IT Act §66D.",
+      moSteps: [
+        { step: 1, title: "SMS Contact", detail: "Received bulk SMS with link to verify-job-portal.in", phase: "CONTACT" },
+        { step: 2, title: "Trial Task", detail: "Earned ₹400 for hotel rating submissions", phase: "LURE" },
+        { step: 3, title: "Bulk Deposit", detail: "Transferred ₹58,500 to State Bank mule node", phase: "PAYMENT" },
+        { step: 4, title: "Chargesheet", detail: "Accused mule holder traced in Nuh district", phase: "SEVERED" },
+      ],
+      connectedCases: [
+        { caseNumber: "CASE-2026-0891", jurisdiction: "Cyber Crime Branch — Chandigarh", sharedEntities: ["UPI: mule88@oksbi", "PH: +919811122233"], similarityScore: 94, incidentType: "Task Scam (Amazon Review)", lossAmount: 49499, reason: "Common mule infrastructure and Telegram group admin." },
+      ],
+    },
+    position: { x: 750, y: 160 },
   },
   {
     id: "case-2026-0488",
     type: "case",
-    data: { label: "CASE-2026-0488", incidentType: "Investment Fraud", riskLevel: "HIGH" },
-    position: { x: 100, y: 380 },
+    data: {
+      label: "CASE-2026-0488",
+      incidentType: "Investment Fraud (Fake SEBI)",
+      victimName: "Arjun Mehta",
+      amountDefrauded: 165000,
+      jurisdiction: "Cyber Cell — Ludhiana, Punjab",
+      status: "OPEN",
+      riskLevel: "HIGH",
+      registeredDate: "19 May 2026",
+      officerInCharge: "SI Gurpreet Singh (PB-1221)",
+      modusOperandi: "Victim induced into fake institutional trading portal verify-job-portal.in promising 35% weekly returns. Transferred ₹1.65L to shared syndicate bank accounts.",
+      moSteps: [
+        { step: 1, title: "Cold Call", detail: "Suspect claimed SEBI certified advisory", phase: "CONTACT" },
+        { step: 2, title: "Virtual Dashboard", detail: "Displayed fake profit balance on verify-job-portal.in", phase: "LURE" },
+        { step: 3, title: "Capital Infusion", detail: "Deposited ₹1,65,000 to syndicate accounts", phase: "PAYMENT" },
+        { step: 4, title: "Fund Freeze", detail: "Platform demanded 30% withdrawal fee before freezing account", phase: "SEVERED" },
+      ],
+      connectedCases: [
+        { caseNumber: "CASE-2026-0891", jurisdiction: "Cyber Crime Branch — Chandigarh", sharedEntities: ["Domain: verify-job-portal.in", "UPI: mule88@oksbi"], similarityScore: 89, incidentType: "Task Scam (Amazon Review)", lossAmount: 49499, reason: "Domain registrar and mule routing overlap." },
+      ],
+    },
+    position: { x: 210, y: 460 },
   },
   {
     id: "case-2026-0312",
     type: "case",
-    data: { label: "CASE-2026-0312", incidentType: "Task Scam", riskLevel: "HIGH" },
-    position: { x: 700, y: 380 },
+    data: {
+      label: "CASE-2026-0312",
+      incidentType: "Task Scam (Merchant Rating)",
+      victimName: "Meena Agarwal",
+      amountDefrauded: 85000,
+      jurisdiction: "Cyber Crime Branch — Jaipur, Rajasthan",
+      status: "UNDER_INQUIRY",
+      riskLevel: "HIGH",
+      registeredDate: "07 Apr 2026",
+      officerInCharge: "SI Deepika Sharma (RJ-0774)",
+      modusOperandi: "Victim defrauded through fake merchant order review scheme. ₹85,000 routed through SBI branch SBIN0002149.",
+      moSteps: [
+        { step: 1, title: "WhatsApp Offer", detail: "Part-time merchant review invitation", phase: "CONTACT" },
+        { step: 2, title: "Initial Payout", detail: "Received ₹500 commission", phase: "LURE" },
+        { step: 3, title: "High Tier Scam", detail: "Transferred ₹85,000 to SBIN0002149 account", phase: "PAYMENT" },
+        { step: 4, title: "Ghosted", detail: "Coordinator numbers disconnected", phase: "SEVERED" },
+      ],
+      connectedCases: [
+        { caseNumber: "CASE-2026-0891", jurisdiction: "Cyber Crime Branch — Chandigarh", sharedEntities: ["IFSC: SBIN0002149", "UPI: mule88@oksbi"], similarityScore: 86, incidentType: "Task Scam (Amazon Review)", lossAmount: 49499, reason: "Beneficiary bank account branch and UPI match." },
+      ],
+    },
+    position: { x: 750, y: 460 },
   },
   {
     id: "case-2026-0201",
     type: "case",
-    data: { label: "CASE-2026-0201", incidentType: "Task Scam", riskLevel: "LOW" },
-    position: { x: 400, y: 440 },
+    data: {
+      label: "CASE-2026-0201",
+      incidentType: "Task Scam (App Testing)",
+      victimName: "Pooja Gupta",
+      amountDefrauded: 26999,
+      jurisdiction: "Cyber Cell — Noida, UP",
+      status: "CLOSED",
+      riskLevel: "LOW",
+      registeredDate: "02 Mar 2026",
+      officerInCharge: "SI Vikas Yadav (UP-0339)",
+      modusOperandi: "App review task scam. Initial FIR that first flagged the mule identifier mule88@oksbi. Recovered partial funds.",
+      moSteps: [
+        { step: 1, title: "SMS Alert", detail: "PlayStore review task link", phase: "CONTACT" },
+        { step: 2, title: "Testing Phase", detail: "Earned ₹150 for app feedback", phase: "LURE" },
+        { step: 3, title: "App Deposit", detail: "Paid ₹26,999 to mule88@oksbi", phase: "PAYMENT" },
+        { step: 4, title: "FIR Filed", detail: "Account lien placed under Section 102 CrPC", phase: "SEVERED" },
+      ],
+      connectedCases: [
+        { caseNumber: "CASE-2026-0891", jurisdiction: "Cyber Crime Branch — Chandigarh", sharedEntities: ["UPI: mule88@oksbi", "PH: +919811122233"], similarityScore: 82, incidentType: "Task Scam (Amazon Review)", lossAmount: 49499, reason: "Originating mule account match." },
+      ],
+    },
+    position: { x: 480, y: 550 },
   },
-  // Shared high-risk entity nodes
+
+  // ── 3. SHARED CRIME SYNDICATE INFRASTRUCTURE (HONEYCOMB HUBS) ─────────────
   {
     id: "entity-upi-mule88",
     type: "entity",
@@ -1028,10 +1166,10 @@ export const GRAPH_NODES: GraphNode[] = [
       value: "mule88@oksbi",
       caseCount: 6,
       riskLevel: "HIGH",
-      amountLinked: 342000,
-      jurisdictions: ["Delhi", "Haryana", "Punjab", "Rajasthan", "UP", "Chandigarh"],
+      amountLinked: 456998,
+      jurisdictions: ["Chandigarh", "Delhi", "Gurugram", "Ludhiana", "Jaipur", "Noida"],
     },
-    position: { x: 400, y: 100 },
+    position: { x: 480, y: 70 },
   },
   {
     id: "entity-phone-9811",
@@ -1042,10 +1180,10 @@ export const GRAPH_NODES: GraphNode[] = [
       value: "+919811122233",
       caseCount: 4,
       riskLevel: "HIGH",
-      amountLinked: 242499,
-      jurisdictions: ["Delhi", "Haryana", "Chandigarh", "UP"],
+      amountLinked: 206999,
+      jurisdictions: ["Chandigarh", "Delhi", "Gurugram", "Noida"],
     },
-    position: { x: 240, y: 260 },
+    position: { x: 330, y: 310 },
   },
   {
     id: "entity-tg-task",
@@ -1056,10 +1194,24 @@ export const GRAPH_NODES: GraphNode[] = [
       value: "@task_rewards_official",
       caseCount: 3,
       riskLevel: "HIGH",
-      amountLinked: 156999,
-      jurisdictions: ["Delhi", "Haryana", "Chandigarh"],
+      amountLinked: 179999,
+      jurisdictions: ["Chandigarh", "Delhi", "Gurugram"],
     },
-    position: { x: 570, y: 260 },
+    position: { x: 630, y: 310 },
+  },
+  {
+    id: "entity-domain-verify",
+    type: "entity",
+    data: {
+      label: "DOMAIN: verify-job-portal.in",
+      entityType: "DOMAIN",
+      value: "verify-job-portal.in",
+      caseCount: 3,
+      riskLevel: "HIGH",
+      amountLinked: 272999,
+      jurisdictions: ["Chandigarh", "Ludhiana", "Gurugram"],
+    },
+    position: { x: 340, y: 470 },
   },
   {
     id: "entity-ifsc-sbin",
@@ -1070,33 +1222,48 @@ export const GRAPH_NODES: GraphNode[] = [
       value: "SBIN0002149",
       caseCount: 2,
       riskLevel: "MEDIUM",
-      amountLinked: 107499,
-      jurisdictions: ["Chandigarh", "Punjab"],
+      amountLinked: 134499,
+      jurisdictions: ["Chandigarh", "Jaipur"],
     },
-    position: { x: 580, y: 420 },
+    position: { x: 620, y: 470 },
   },
 ];
 
 export const GRAPH_EDGES: GraphEdge[] = [
-  // UPI mule88 connects all cases
-  { id: "e-c891-upi", source: "case-2026-0891", target: "entity-upi-mule88", animated: true },
-  { id: "e-c741-upi", source: "case-2026-0741", target: "entity-upi-mule88", animated: true },
-  { id: "e-c655-upi", source: "case-2026-0655", target: "entity-upi-mule88", animated: true },
-  { id: "e-c488-upi", source: "case-2026-0488", target: "entity-upi-mule88", animated: true },
-  { id: "e-c312-upi", source: "case-2026-0312", target: "entity-upi-mule88", animated: true },
-  { id: "e-c201-upi", source: "case-2026-0201", target: "entity-upi-mule88", animated: true },
-  // Phone connects 4 cases
-  { id: "e-c891-ph", source: "case-2026-0891", target: "entity-phone-9811" },
-  { id: "e-c741-ph", source: "case-2026-0741", target: "entity-phone-9811" },
-  { id: "e-c655-ph", source: "case-2026-0655", target: "entity-phone-9811" },
-  { id: "e-c201-ph", source: "case-2026-0201", target: "entity-phone-9811" },
-  // Telegram connects 3 cases
-  { id: "e-c891-tg", source: "case-2026-0891", target: "entity-tg-task" },
-  { id: "e-c741-tg", source: "case-2026-0741", target: "entity-tg-task" },
-  { id: "e-c655-tg", source: "case-2026-0655", target: "entity-tg-task" },
-  // IFSC connects 2 cases
-  { id: "e-c891-ifsc", source: "case-2026-0891", target: "entity-ifsc-sbin" },
-  { id: "e-c312-ifsc", source: "case-2026-0312", target: "entity-ifsc-sbin" },
+  // ── ENTITY HUBS TO CRIME REPORTS (HONEYCOMB SPOKES) ───────────────────────
+  { id: "e-c891-upi", source: "case-2026-0891", target: "entity-upi-mule88", animated: true, label: "₹49.5k Payout" },
+  { id: "e-c741-upi", source: "case-2026-0741", target: "entity-upi-mule88", animated: true, label: "₹72k Payout" },
+  { id: "e-c655-upi", source: "case-2026-0655", target: "entity-upi-mule88", animated: true, label: "₹58.5k Payout" },
+  { id: "e-c488-upi", source: "case-2026-0488", target: "entity-upi-mule88", animated: true, label: "₹1.65L Payout" },
+  { id: "e-c312-upi", source: "case-2026-0312", target: "entity-upi-mule88", animated: true, label: "₹85k Payout" },
+  { id: "e-c201-upi", source: "case-2026-0201", target: "entity-upi-mule88", animated: true, label: "₹27k Payout" },
+
+  // Phone Hub
+  { id: "e-c891-ph", source: "case-2026-0891", target: "entity-phone-9811", label: "Origin WhatsApp" },
+  { id: "e-c741-ph", source: "case-2026-0741", target: "entity-phone-9811", label: "Origin WhatsApp" },
+  { id: "e-c655-ph", source: "case-2026-0655", target: "entity-phone-9811", label: "Telegram Contact" },
+  { id: "e-c201-ph", source: "case-2026-0201", target: "entity-phone-9811", label: "SMS Link" },
+
+  // Telegram Hub
+  { id: "e-c891-tg", source: "case-2026-0891", target: "entity-tg-task", label: "Review Channel" },
+  { id: "e-c741-tg", source: "case-2026-0741", target: "entity-tg-task", label: "Task Channel" },
+  { id: "e-c655-tg", source: "case-2026-0655", target: "entity-tg-task", label: "Rating Group" },
+
+  // Phishing Domain Hub
+  { id: "e-c891-dom", source: "case-2026-0891", target: "entity-domain-verify", label: "Phishing Portal" },
+  { id: "e-c488-dom", source: "case-2026-0488", target: "entity-domain-verify", label: "Fake Trading Site" },
+  { id: "e-c655-dom", source: "case-2026-0655", target: "entity-domain-verify", label: "Lure Portal" },
+
+  // Bank IFSC Hub
+  { id: "e-c891-ifsc", source: "case-2026-0891", target: "entity-ifsc-sbin", label: "Beneficiary Branch" },
+  { id: "e-c312-ifsc", source: "case-2026-0312", target: "entity-ifsc-sbin", label: "Mule Account" },
+
+  // ── HONEYCOMB PERIMETER (CROSS-CASE LINKAGES) ─────────────────────────────
+  { id: "e-hex-741-upi", source: "case-2026-0741", target: "case-2026-0655", label: "Shared Telegram + Mule", animated: true },
+  { id: "e-hex-655-312", source: "case-2026-0655", target: "case-2026-0312", label: "SBI Mule Routing" },
+  { id: "e-hex-312-201", source: "case-2026-0312", target: "case-2026-0201", label: "Task App Ring" },
+  { id: "e-hex-201-488", source: "case-2026-0201", target: "case-2026-0488", label: "Phishing Infrastructure" },
+  { id: "e-hex-488-741", source: "case-2026-0488", target: "case-2026-0741", label: "Mule88 Network" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────

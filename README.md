@@ -1,4 +1,4 @@
-# NyayaSetu (न्यायसेतु)
+# Rakshak (रक्षक)
 
 > **Forensic Digital Evidence Intake & Cross-Case Syndicate Intelligence Platform**  
 > Built for cybercrime cells, forensic investigators, and law enforcement agencies to eliminate AI hallucinations, automate cross-jurisdiction fraud syndicate discovery, and establish statutory cryptographic chain of custody.
@@ -37,4 +37,4 @@ npm run db:seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the NyayaSetu Forensic Dashboard.
+Open [http://localhost:3000](http://localhost:3000) to view the Rakshak Forensic Dashboard.

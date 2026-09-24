@@ -55,12 +55,12 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
             flexShrink: 0,
           }}
         >
-          <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>NS</span>
+          <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>RK</span>
         </div>
         {!collapsed && (
           <div>
             <div style={{ color: "var(--text-primary)", fontWeight: 600, fontSize: 13, lineHeight: 1.2 }}>
-              NyayaSetu
+              Rakshak
             </div>
             <div style={{ color: "var(--text-muted)", fontSize: 10, fontFamily: "JetBrains Mono, monospace" }}>
               v3.0-forensic

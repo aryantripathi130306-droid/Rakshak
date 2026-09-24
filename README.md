@@ -255,7 +255,7 @@ npm run db:seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the Rakshak Forensic Dashboard.
+Open [https://rakshak-six-mu.vercel.app/](https://rakshak-six-mu.vercel.app/) to view the Rakshak Forensic Dashboard.
 
 ---
 

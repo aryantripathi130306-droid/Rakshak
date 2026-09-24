@@ -1,0 +1,560 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1060" width="100%" height="100%" style="background:#ffffff; font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <style>
+      .entity-rect { fill: #b8d5ff; stroke: #2b6cb0; stroke-width: 2px; rx: 4px; }
+      .entity-text { font-size: 16px; font-weight: 700; fill: #1a365d; text-anchor: middle; dominant-baseline: central; }
+      .rel-poly { fill: #ffd6d6; stroke: #c53030; stroke-width: 2px; }
+      .rel-text { font-size: 13px; font-weight: 600; fill: #742a2a; text-anchor: middle; dominant-baseline: central; }
+      .attr-oval { fill: #e6fffa; stroke: #319795; stroke-width: 1.5px; rx: 12px; }
+      .pk-oval { fill: #d4edda; stroke: #28a745; stroke-width: 2px; rx: 12px; }
+      .attr-text { font-size: 12px; font-weight: 500; fill: #234e52; text-anchor: middle; dominant-baseline: central; }
+      .pk-text { font-size: 12px; font-weight: 700; fill: #155724; text-anchor: middle; dominant-baseline: central; text-decoration: underline; }
+      .link-line { stroke: #4a5568; stroke-width: 1.8px; fill: none; }
+      .attr-line { stroke: #718096; stroke-width: 1.2px; fill: none; }
+      .card-text { font-size: 14px; font-weight: 700; fill: #2d3748; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- ==================== CONNECTOR LINES ==================== -->
+  <!-- User to Case (via files) -->
+  <path d="M 250 295 L 320 295" class="link-line"/>
+  <path d="M 400 295 L 480 295" class="link-line"/>
+  <text x="270" y="285" class="card-text">1</text>
+  <text x="460" y="285" class="card-text">N</text>
+
+  <!-- User to AuditLog (via performs) -->
+  <path d="M 175 320 L 175 390" class="link-line"/>
+  <path d="M 175 430 L 175 500" class="link-line"/>
+  <text x="190" y="345" class="card-text">1</text>
+  <text x="190" y="485" class="card-text">N</text>
+
+  <!-- Case to Evidence (via has) -->
+  <path d="M 630 295 L 695 295" class="link-line"/>
+  <path d="M 775 295 L 840 295" class="link-line"/>
+  <text x="650" y="285" class="card-text">1</text>
+  <text x="820" y="285" class="card-text">N</text>
+
+  <!-- Case to TimelineEvent (via has) -->
+  <path d="M 555 320 L 555 390" class="link-line"/>
+  <path d="M 555 430 L 555 500" class="link-line"/>
+  <text x="570" y="345" class="card-text">1</text>
+  <text x="570" y="485" class="card-text">N</text>
+
+  <!-- Case to AIProcessingJob (via triggers) -->
+  <path d="M 500 320 L 400 535" class="link-line"/>
+  <path d="M 345 565 L 210 770" class="link-line"/>
+  <text x="475" y="360" class="card-text">1</text>
+  <text x="235" y="750" class="card-text">N</text>
+
+  <!-- Evidence to ExtractedFact (via extracts) -->
+  <path d="M 990 295 L 1050 295" class="link-line"/>
+  <path d="M 1140 295 L 1200 295" class="link-line"/>
+  <text x="1010" y="285" class="card-text">1</text>
+  <text x="1180" y="285" class="card-text">N</text>
+
+  <!-- Evidence to TimelineEvent (via source of) -->
+  <path d="M 890 320 L 825 415" class="link-line"/>
+  <path d="M 750 445 L 630 515" class="link-line"/>
+  <text x="880" y="345" class="card-text">1</text>
+  <text x="655" y="505" class="card-text">N</text>
+
+  <!-- ExtractedFact to CaseEntity (via identifies) -->
+  <path d="M 1275 320 L 1275 390" class="link-line"/>
+  <path d="M 1275 430 L 1275 500" class="link-line"/>
+  <text x="1290" y="345" class="card-text">N</text>
+  <text x="1290" y="485" class="card-text">1</text>
+
+  <!-- Entity to CaseEntity (via linked in) -->
+  <path d="M 1030 522 L 1080 522" class="link-line"/>
+  <path d="M 1160 522 L 1200 522" class="link-line"/>
+  <text x="1050" y="512" class="card-text">1</text>
+  <text x="1180" y="512" class="card-text">N</text>
+
+  <!-- CaseEntity to SyndicateEntity (via grouped into) -->
+  <path d="M 1245 545 L 1185 700" class="link-line"/>
+  <path d="M 1145 725 L 1225 785" class="link-line"/>
+  <text x="1260" y="575" class="card-text">1</text>
+  <text x="1195" y="765" class="card-text">N</text>
+
+  <!-- SyndicateCluster to SyndicateEntity (via contains) -->
+  <path d="M 960 807 L 1020 807" class="link-line"/>
+  <path d="M 1100 807 L 1190 807" class="link-line"/>
+  <text x="980" y="797" class="card-text">1</text>
+  <text x="1165" y="797" class="card-text">N</text>
+
+  <!-- AIProcessingJob to Alert (via generates) -->
+  <path d="M 250 792 L 295 792" class="link-line"/>
+  <path d="M 365 792 L 420 792" class="link-line"/>
+  <text x="270" y="782" class="card-text">1</text>
+  <text x="400" y="782" class="card-text">N</text>
+
+  <!-- ==================== USER ENTITY & ATTRIBUTES ==================== -->
+  <rect x="100" y="270" width="150" height="50" class="entity-rect"/>
+  <text x="175" y="295" class="entity-text">User</text>
+
+  <!-- User Attr Lines -->
+  <path d="M 140 270 L 60 45" class="attr-line"/>
+  <path d="M 130 270 L 60 85" class="attr-line"/>
+  <path d="M 120 270 L 60 125" class="attr-line"/>
+  <path d="M 110 275 L 60 165" class="attr-line"/>
+  <path d="M 105 285 L 60 205" class="attr-line"/>
+  <path d="M 100 295 L 60 245" class="attr-line"/>
+  <path d="M 190 270 L 220 70" class="attr-line"/>
+  <path d="M 200 270 L 220 110" class="attr-line"/>
+  <path d="M 210 270 L 220 150" class="attr-line"/>
+  <path d="M 220 270 L 220 190" class="attr-line"/>
+
+  <!-- User Attr Ovals -->
+  <rect x="25" y="30" width="70" height="26" class="pk-oval"/>
+  <text x="60" y="43" class="pk-text">id</text>
+  <rect x="15" y="70" width="90" height="26" class="attr-oval"/>
+  <text x="60" y="83" class="attr-text">fullName</text>
+  <rect x="25" y="110" width="70" height="26" class="attr-oval"/>
+  <text x="60" y="123" class="attr-text">email</text>
+  <rect x="10" y="150" width="100" height="26" class="attr-oval"/>
+  <text x="60" y="163" class="attr-text">passwordHash</text>
+  <rect x="25" y="190" width="70" height="26" class="attr-oval"/>
+  <text x="60" y="203" class="attr-text">role</text>
+  <rect x="25" y="230" width="70" height="26" class="attr-oval"/>
+  <text x="60" y="243" class="attr-text">phone</text>
+  <rect x="175" y="55" width="90" height="26" class="attr-oval"/>
+  <text x="220" y="68" class="attr-text">department</text>
+  <rect x="185" y="95" width="70" height="26" class="attr-oval"/>
+  <text x="220" y="108" class="attr-text">isActive</text>
+  <rect x="180" y="135" width="80" height="26" class="attr-oval"/>
+  <text x="220" y="148" class="attr-text">createdAt</text>
+  <rect x="180" y="175" width="80" height="26" class="attr-oval"/>
+  <text x="220" y="188" class="attr-text">updatedAt</text>
+
+  <!-- ==================== CASE ENTITY & ATTRIBUTES ==================== -->
+  <rect x="480" y="270" width="150" height="50" class="entity-rect"/>
+  <text x="555" y="295" class="entity-text">Case</text>
+
+  <!-- Case Attr Lines -->
+  <path d="M 520 270 L 445 45" class="attr-line"/>
+  <path d="M 510 270 L 445 85" class="attr-line"/>
+  <path d="M 500 270 L 445 125" class="attr-line"/>
+  <path d="M 490 275 L 445 165" class="attr-line"/>
+  <path d="M 485 285 L 445 205" class="attr-line"/>
+  <path d="M 570 270 L 660 60" class="attr-line"/>
+  <path d="M 580 270 L 660 100" class="attr-line"/>
+  <path d="M 590 270 L 660 140" class="attr-line"/>
+  <path d="M 600 270 L 660 180" class="attr-line"/>
+
+  <!-- Case Attr Ovals -->
+  <rect x="410" y="30" width="70" height="26" class="pk-oval"/>
+  <text x="445" y="43" class="pk-text">id</text>
+  <rect x="395" y="70" width="100" height="26" class="attr-oval"/>
+  <text x="445" y="83" class="attr-text">caseNumber</text>
+  <rect x="395" y="110" width="100" height="26" class="attr-oval"/>
+  <text x="445" y="123" class="attr-text">incidentType</text>
+  <rect x="385" y="150" width="120" height="26" class="attr-oval"/>
+  <text x="445" y="163" class="attr-text">complainantName</text>
+  <rect x="400" y="190" width="90" height="26" class="attr-oval"/>
+  <text x="445" y="203" class="attr-text">jurisdiction</text>
+  <rect x="625" y="45" width="70" height="26" class="attr-oval"/>
+  <text x="660" y="58" class="attr-text">status</text>
+  <rect x="605" y="85" width="110" height="26" class="attr-oval"/>
+  <text x="660" y="98" class="attr-text">amountDefrauded</text>
+  <rect x="620" y="125" width="80" height="26" class="attr-oval"/>
+  <text x="660" y="138" class="attr-text">createdAt</text>
+  <rect x="620" y="165" width="80" height="26" class="attr-oval"/>
+  <text x="660" y="178" class="attr-text">updatedAt</text>
+
+  <!-- ==================== EVIDENCE ENTITY & ATTRIBUTES ==================== -->
+  <rect x="840" y="270" width="150" height="50" class="entity-rect"/>
+  <text x="915" y="295" class="entity-text">Evidence</text>
+
+  <!-- Evidence Attr Lines -->
+  <path d="M 880 270 L 815 35" class="attr-line"/>
+  <path d="M 870 270 L 815 75" class="attr-line"/>
+  <path d="M 860 270 L 815 115" class="attr-line"/>
+  <path d="M 850 275 L 815 155" class="attr-line"/>
+  <path d="M 845 285 L 815 195" class="attr-line"/>
+  <path d="M 840 295 L 815 235" class="attr-line"/>
+  <path d="M 940 270 L 1025 35" class="attr-line"/>
+  <path d="M 950 270 L 1025 75" class="attr-line"/>
+  <path d="M 960 270 L 1025 115" class="attr-line"/>
+  <path d="M 970 270 L 1025 155" class="attr-line"/>
+  <path d="M 980 275 L 1025 195" class="attr-line"/>
+  <path d="M 985 285 L 1025 235" class="attr-line"/>
+
+  <!-- Evidence Attr Ovals -->
+  <rect x="780" y="20" width="70" height="26" class="pk-oval"/>
+  <text x="815" y="33" class="pk-text">id</text>
+  <rect x="780" y="60" width="70" height="26" class="attr-oval"/>
+  <text x="815" y="73" class="attr-text">caseId</text>
+  <rect x="775" y="100" width="80" height="26" class="attr-oval"/>
+  <text x="815" y="113" class="attr-text">fileName</text>
+  <rect x="780" y="140" width="70" height="26" class="attr-oval"/>
+  <text x="815" y="153" class="attr-text">fileType</text>
+  <rect x="775" y="180" width="80" height="26" class="attr-oval"/>
+  <text x="815" y="193" class="attr-text">mimeType</text>
+  <rect x="780" y="220" width="70" height="26" class="attr-oval"/>
+  <text x="815" y="233" class="attr-text">fileSize</text>
+  <rect x="980" y="20" width="90" height="26" class="attr-oval"/>
+  <text x="1025" y="33" class="attr-text">sha256Hash</text>
+  <rect x="985" y="60" width="80" height="26" class="attr-oval"/>
+  <text x="1025" y="73" class="attr-text">clientHash</text>
+  <rect x="980" y="100" width="90" height="26" class="attr-oval"/>
+  <text x="1025" y="113" class="attr-text">storagePath</text>
+  <rect x="965" y="140" width="120" height="26" class="attr-oval"/>
+  <text x="1025" y="153" class="attr-text">evidenceCategory</text>
+  <rect x="985" y="180" width="80" height="26" class="attr-oval"/>
+  <text x="1025" y="193" class="attr-text">metadata</text>
+  <rect x="985" y="220" width="80" height="26" class="attr-oval"/>
+  <text x="1025" y="233" class="attr-text">uploadedAt</text>
+
+  <!-- ==================== EXTRACTED FACT & ATTRIBUTES ==================== -->
+  <rect x="1200" y="270" width="150" height="50" class="entity-rect"/>
+  <text x="1275" y="295" class="entity-text">ExtractedFact</text>
+
+  <!-- ExtractedFact Attr Lines -->
+  <path d="M 1240 270 L 1175 45" class="attr-line"/>
+  <path d="M 1230 270 L 1175 85" class="attr-line"/>
+  <path d="M 1220 270 L 1175 125" class="attr-line"/>
+  <path d="M 1210 275 L 1175 165" class="attr-line"/>
+  <path d="M 1205 285 L 1175 205" class="attr-line"/>
+  <path d="M 1200 295 L 1175 245" class="attr-line"/>
+  <path d="M 1300 270 L 1395 45" class="attr-line"/>
+  <path d="M 1310 270 L 1395 85" class="attr-line"/>
+  <path d="M 1320 270 L 1395 125" class="attr-line"/>
+  <path d="M 1330 275 L 1395 165" class="attr-line"/>
+  <path d="M 1340 280 L 1395 205" class="attr-line"/>
+  <path d="M 1345 285 L 1395 245" class="attr-line"/>
+  <path d="M 1350 295 L 1395 285" class="attr-line"/>
+
+  <!-- ExtractedFact Attr Ovals -->
+  <rect x="1140" y="30" width="70" height="26" class="pk-oval"/>
+  <text x="1175" y="43" class="pk-text">id</text>
+  <rect x="1135" y="70" width="80" height="26" class="attr-oval"/>
+  <text x="1175" y="83" class="attr-text">evidenceId</text>
+  <rect x="1140" y="110" width="70" height="26" class="attr-oval"/>
+  <text x="1175" y="123" class="attr-text">caseId</text>
+  <rect x="1125" y="150" width="100" height="26" class="attr-oval"/>
+  <text x="1175" y="163" class="attr-text">factAssertion</text>
+  <rect x="1135" y="190" width="80" height="26" class="attr-oval"/>
+  <text x="1175" y="203" class="attr-text">entityType</text>
+  <rect x="1135" y="230" width="80" height="26" class="attr-oval"/>
+  <text x="1175" y="243" class="attr-text">rawValue</text>
+  <rect x="1340" y="30" width="110" height="26" class="attr-oval"/>
+  <text x="1395" y="43" class="attr-text">normalizedValue</text>
+  <rect x="1355" y="70" width="80" height="26" class="attr-oval"/>
+  <text x="1395" y="83" class="attr-text">confidence</text>
+  <rect x="1355" y="110" width="80" height="26" class="attr-oval"/>
+  <text x="1395" y="123" class="attr-text">sourceHash</text>
+  <rect x="1335" y="150" width="120" height="26" class="attr-oval"/>
+  <text x="1395" y="163" class="attr-text">verificationStatus</text>
+  <rect x="1355" y="190" width="80" height="26" class="attr-oval"/>
+  <text x="1395" y="203" class="attr-text">verifiedBy</text>
+  <rect x="1350" y="230" width="90" height="26" class="attr-oval"/>
+  <text x="1395" y="243" class="attr-text">boundingBox</text>
+  <rect x="1355" y="270" width="80" height="26" class="attr-oval"/>
+  <text x="1395" y="283" class="attr-text">extractedAt</text>
+
+  <!-- ==================== AUDIT LOG & ATTRIBUTES ==================== -->
+  <rect x="100" y="500" width="150" height="45" class="entity-rect"/>
+  <text x="175" y="522" class="entity-text">AuditLog</text>
+
+  <!-- AuditLog Attr Lines -->
+  <path d="M 105 540 L 55 545" class="attr-line"/>
+  <path d="M 115 545 L 55 580" class="attr-line"/>
+  <path d="M 125 545 L 55 615" class="attr-line"/>
+  <path d="M 135 545 L 55 650" class="attr-line"/>
+  <path d="M 145 545 L 55 685" class="attr-line"/>
+  <path d="M 205 545 L 245 565" class="attr-line"/>
+  <path d="M 215 545 L 245 605" class="attr-line"/>
+  <path d="M 225 545 L 245 645" class="attr-line"/>
+
+  <!-- AuditLog Attr Ovals -->
+  <rect x="20" y="530" width="70" height="26" class="pk-oval"/>
+  <text x="55" y="543" class="pk-text">id</text>
+  <rect x="20" y="565" width="70" height="26" class="attr-oval"/>
+  <text x="55" y="578" class="attr-text">userId</text>
+  <rect x="20" y="600" width="70" height="26" class="attr-oval"/>
+  <text x="55" y="613" class="attr-text">caseId</text>
+  <rect x="20" y="635" width="70" height="26" class="attr-oval"/>
+  <text x="55" y="648" class="attr-text">action</text>
+  <rect x="15" y="670" width="80" height="26" class="attr-oval"/>
+  <text x="55" y="683" class="attr-text">entityType</text>
+  <rect x="210" y="550" width="70" height="26" class="attr-oval"/>
+  <text x="245" y="563" class="attr-text">entityId</text>
+  <rect x="210" y="590" width="70" height="26" class="attr-oval"/>
+  <text x="245" y="603" class="attr-text">details</text>
+  <rect x="205" y="630" width="80" height="26" class="attr-oval"/>
+  <text x="245" y="643" class="attr-text">createdAt</text>
+
+  <!-- ==================== TIMELINE EVENT & ATTRIBUTES ==================== -->
+  <rect x="480" y="500" width="150" height="45" class="entity-rect"/>
+  <text x="555" y="522" class="entity-text">TimelineEvent</text>
+
+  <!-- TimelineEvent Attr Lines -->
+  <path d="M 505 545 L 435 555" class="attr-line"/>
+  <path d="M 515 545 L 435 590" class="attr-line"/>
+  <path d="M 525 545 L 435 625" class="attr-line"/>
+  <path d="M 535 545 L 435 660" class="attr-line"/>
+  <path d="M 545 545 L 435 695" class="attr-line"/>
+  <path d="M 555 545 L 435 730" class="attr-line"/>
+  <path d="M 590 545 L 660 565" class="attr-line"/>
+  <path d="M 600 545 L 660 605" class="attr-line"/>
+  <path d="M 610 545 L 660 645" class="attr-line"/>
+
+  <!-- TimelineEvent Attr Ovals -->
+  <rect x="400" y="540" width="70" height="26" class="pk-oval"/>
+  <text x="435" y="553" class="pk-text">id</text>
+  <rect x="400" y="575" width="70" height="26" class="attr-oval"/>
+  <text x="435" y="588" class="attr-text">caseId</text>
+  <rect x="395" y="610" width="80" height="26" class="attr-oval"/>
+  <text x="435" y="623" class="attr-text">evidenceId</text>
+  <rect x="395" y="645" width="80" height="26" class="attr-oval"/>
+  <text x="435" y="658" class="attr-text">eventType</text>
+  <rect x="380" y="680" width="110" height="26" class="attr-oval"/>
+  <text x="435" y="693" class="attr-text">eventTimestamp</text>
+  <rect x="370" y="715" width="130" height="26" class="attr-oval"/>
+  <text x="435" y="728" class="attr-text">normalizedTimestamp</text>
+  <rect x="625" y="550" width="70" height="26" class="attr-oval"/>
+  <text x="660" y="563" class="attr-text">phase</text>
+  <rect x="620" y="590" width="80" height="26" class="attr-oval"/>
+  <text x="660" y="603" class="attr-text">description</text>
+  <rect x="620" y="630" width="80" height="26" class="attr-oval"/>
+  <text x="660" y="643" class="attr-text">createdAt</text>
+
+  <!-- ==================== AI PROCESSING JOB & ATTRIBUTES ==================== -->
+  <rect x="100" y="770" width="150" height="45" class="entity-rect"/>
+  <text x="175" y="792" class="entity-text">AIProcessingJob</text>
+
+  <!-- AIProcessingJob Attr Lines -->
+  <path d="M 110 815 L 50 820" class="attr-line"/>
+  <path d="M 120 815 L 50 855" class="attr-line"/>
+  <path d="M 130 815 L 50 890" class="attr-line"/>
+  <path d="M 140 815 L 50 925" class="attr-line"/>
+  <path d="M 150 815 L 50 960" class="attr-line"/>
+  <path d="M 195 815 L 245 830" class="attr-line"/>
+  <path d="M 205 815 L 245 865" class="attr-line"/>
+  <path d="M 215 815 L 245 900" class="attr-line"/>
+  <path d="M 225 815 L 245 935" class="attr-line"/>
+  <path d="M 235 815 L 245 970" class="attr-line"/>
+
+  <!-- AIProcessingJob Attr Ovals -->
+  <rect x="15" y="805" width="70" height="26" class="pk-oval"/>
+  <text x="50" y="818" class="pk-text">id</text>
+  <rect x="15" y="840" width="70" height="26" class="attr-oval"/>
+  <text x="50" y="853" class="attr-text">caseId</text>
+  <rect x="10" y="875" width="80" height="26" class="attr-oval"/>
+  <text x="50" y="888" class="attr-text">evidenceId</text>
+  <rect x="15" y="910" width="70" height="26" class="attr-oval"/>
+  <text x="50" y="923" class="attr-text">jobType</text>
+  <rect x="15" y="945" width="70" height="26" class="attr-oval"/>
+  <text x="50" y="958" class="attr-text">status</text>
+  <rect x="200" y="815" width="90" height="26" class="attr-oval"/>
+  <text x="245" y="828" class="attr-text">inputPayload</text>
+  <rect x="195" y="850" width="100" height="26" class="attr-oval"/>
+  <text x="245" y="863" class="attr-text">outputPayload</text>
+  <rect x="195" y="885" width="100" height="26" class="attr-oval"/>
+  <text x="245" y="898" class="attr-text">errorMessage</text>
+  <rect x="205" y="920" width="80" height="26" class="attr-oval"/>
+  <text x="245" y="933" class="attr-text">createdAt</text>
+  <rect x="205" y="955" width="80" height="26" class="attr-oval"/>
+  <text x="245" y="968" class="attr-text">updatedAt</text>
+
+  <!-- ==================== ALERT & ATTRIBUTES ==================== -->
+  <rect x="420" y="770" width="150" height="45" class="entity-rect"/>
+  <text x="495" y="792" class="entity-text">Alert</text>
+
+  <!-- Alert Attr Lines -->
+  <path d="M 435 815 L 390 840" class="attr-line"/>
+  <path d="M 445 815 L 390 875" class="attr-line"/>
+  <path d="M 455 815 L 390 910" class="attr-line"/>
+  <path d="M 465 815 L 390 945" class="attr-line"/>
+  <path d="M 475 815 L 390 980" class="attr-line"/>
+  <path d="M 525 815 L 575 845" class="attr-line"/>
+  <path d="M 535 815 L 575 880" class="attr-line"/>
+  <path d="M 545 815 L 575 915" class="attr-line"/>
+  <path d="M 555 815 L 575 950" class="attr-line"/>
+
+  <!-- Alert Attr Ovals -->
+  <rect x="355" y="825" width="70" height="26" class="pk-oval"/>
+  <text x="390" y="838" class="pk-text">id</text>
+  <rect x="355" y="860" width="70" height="26" class="attr-oval"/>
+  <text x="390" y="873" class="attr-text">caseId</text>
+  <rect x="350" y="895" width="80" height="26" class="attr-oval"/>
+  <text x="390" y="908" class="attr-text">alertType</text>
+  <rect x="355" y="930" width="70" height="26" class="attr-oval"/>
+  <text x="390" y="943" class="attr-text">severity</text>
+  <rect x="350" y="965" width="80" height="26" class="attr-oval"/>
+  <text x="390" y="978" class="attr-text">message</text>
+  <rect x="540" y="830" width="70" height="26" class="attr-oval"/>
+  <text x="575" y="843" class="attr-text">status</text>
+  <rect x="535" y="865" width="80" height="26" class="attr-oval"/>
+  <text x="575" y="878" class="attr-text">createdAt</text>
+  <rect x="535" y="900" width="80" height="26" class="attr-oval"/>
+  <text x="575" y="913" class="attr-text">resolvedAt</text>
+  <rect x="535" y="935" width="80" height="26" class="attr-oval"/>
+  <text x="575" y="948" class="attr-text">resolvedBy</text>
+
+  <!-- ==================== ENTITY ENTITY & ATTRIBUTES ==================== -->
+  <rect x="880" y="500" width="150" height="45" class="entity-rect"/>
+  <text x="955" y="522" class="entity-text">Entity</text>
+
+  <!-- Entity Attr Lines -->
+  <path d="M 890 545 L 830 550" class="attr-line"/>
+  <path d="M 900 545 L 830 585" class="attr-line"/>
+  <path d="M 910 545 L 830 620" class="attr-line"/>
+  <path d="M 920 545 L 830 655" class="attr-line"/>
+  <path d="M 930 545 L 830 690" class="attr-line"/>
+  <path d="M 985 545 L 1045 550" class="attr-line"/>
+  <path d="M 995 545 L 1045 585" class="attr-line"/>
+  <path d="M 1005 545 L 1045 620" class="attr-line"/>
+  <path d="M 1015 545 L 1045 655" class="attr-line"/>
+
+  <!-- Entity Attr Ovals -->
+  <rect x="795" y="535" width="70" height="26" class="pk-oval"/>
+  <text x="830" y="548" class="pk-text">id</text>
+  <rect x="790" y="570" width="80" height="26" class="attr-oval"/>
+  <text x="830" y="583" class="attr-text">entityType</text>
+  <rect x="775" y="605" width="110" height="26" class="attr-oval"/>
+  <text x="830" y="618" class="attr-text">normalizedValue</text>
+  <rect x="775" y="640" width="110" height="26" class="attr-oval"/>
+  <text x="830" y="653" class="attr-text">firstSeenCaseId</text>
+  <rect x="790" y="675" width="80" height="26" class="attr-oval"/>
+  <text x="830" y="688" class="attr-text">firstSeenAt</text>
+  <rect x="1005" y="535" width="80" height="26" class="attr-oval"/>
+  <text x="1045" y="548" class="attr-text">lastSeenAt</text>
+  <rect x="990" y="570" width="110" height="26" class="attr-oval"/>
+  <text x="1045" y="583" class="attr-text">confidenceScore</text>
+  <rect x="1010" y="605" width="70" height="26" class="attr-oval"/>
+  <text x="1045" y="618" class="attr-text">riskScore</text>
+  <rect x="1010" y="640" width="70" height="26" class="attr-oval"/>
+  <text x="1045" y="653" class="attr-text">isVerified</text>
+
+  <!-- ==================== CASE ENTITY & ATTRIBUTES ==================== -->
+  <rect x="1200" y="500" width="150" height="45" class="entity-rect"/>
+  <text x="1275" y="522" class="entity-text">CaseEntity</text>
+
+  <!-- CaseEntity Attr Lines -->
+  <path d="M 1225 545 L 1180 575" class="attr-line"/>
+  <path d="M 1235 545 L 1180 610" class="attr-line"/>
+  <path d="M 1245 545 L 1180 645" class="attr-line"/>
+  <path d="M 1255 545 L 1180 680" class="attr-line"/>
+  <path d="M 1300 545 L 1380 575" class="attr-line"/>
+  <path d="M 1310 545 L 1380 610" class="attr-line"/>
+  <path d="M 1320 545 L 1380 645" class="attr-line"/>
+  <path d="M 1330 545 L 1380 680" class="attr-line"/>
+
+  <!-- CaseEntity Attr Ovals -->
+  <rect x="1145" y="560" width="70" height="26" class="pk-oval"/>
+  <text x="1180" y="573" class="pk-text">id</text>
+  <rect x="1145" y="595" width="70" height="26" class="attr-oval"/>
+  <text x="1180" y="608" class="attr-text">caseId</text>
+  <rect x="1145" y="630" width="70" height="26" class="attr-oval"/>
+  <text x="1180" y="643" class="attr-text">entityId</text>
+  <rect x="1140" y="665" width="80" height="26" class="attr-oval"/>
+  <text x="1180" y="678" class="attr-text">relationType</text>
+  <rect x="1330" y="560" width="100" height="26" class="attr-oval"/>
+  <text x="1380" y="573" class="attr-text">firstSeenInCase</text>
+  <rect x="1330" y="595" width="100" height="26" class="attr-oval"/>
+  <text x="1380" y="608" class="attr-text">lastSeenInCase</text>
+  <rect x="1335" y="630" width="90" height="26" class="attr-oval"/>
+  <text x="1380" y="643" class="attr-text">evidenceCount</text>
+  <rect x="1325" y="665" width="110" height="26" class="attr-oval"/>
+  <text x="1380" y="678" class="attr-text">confidenceScore</text>
+
+  <!-- ==================== SYNDICATE CLUSTER & ATTRIBUTES ==================== -->
+  <rect x="800" y="785" width="160" height="45" class="entity-rect"/>
+  <text x="880" y="807" class="entity-text">SyndicateCluster</text>
+
+  <!-- SyndicateCluster Attr Lines -->
+  <path d="M 815 830 L 760 860" class="attr-line"/>
+  <path d="M 825 830 L 760 895" class="attr-line"/>
+  <path d="M 835 830 L 760 930" class="attr-line"/>
+  <path d="M 845 830 L 760 965" class="attr-line"/>
+  <path d="M 915 830 L 970 870" class="attr-line"/>
+  <path d="M 925 830 L 970 915" class="attr-line"/>
+
+  <!-- SyndicateCluster Attr Ovals -->
+  <rect x="725" y="845" width="70" height="26" class="pk-oval"/>
+  <text x="760" y="858" class="pk-text">id</text>
+  <rect x="725" y="880" width="70" height="26" class="attr-oval"/>
+  <text x="760" y="893" class="attr-text">name</text>
+  <rect x="720" y="915" width="80" height="26" class="attr-oval"/>
+  <text x="760" y="928" class="attr-text">description</text>
+  <rect x="725" y="950" width="70" height="26" class="attr-oval"/>
+  <text x="760" y="963" class="attr-text">riskLevel</text>
+  <rect x="930" y="855" width="80" height="26" class="attr-oval"/>
+  <text x="970" y="868" class="attr-text">createdAt</text>
+  <rect x="930" y="900" width="80" height="26" class="attr-oval"/>
+  <text x="970" y="913" class="attr-text">updatedAt</text>
+
+  <!-- ==================== SYNDICATE ENTITY & ATTRIBUTES ==================== -->
+  <rect x="1190" y="785" width="170" height="45" class="entity-rect"/>
+  <text x="1275" y="807" class="entity-text">SyndicateEntity</text>
+
+  <!-- SyndicateEntity Attr Lines -->
+  <path d="M 1215 830 L 1160 860" class="attr-line"/>
+  <path d="M 1225 830 L 1160 895" class="attr-line"/>
+  <path d="M 1235 830 L 1160 930" class="attr-line"/>
+  <path d="M 1320 830 L 1385 870" class="attr-line"/>
+  <path d="M 1330 830 L 1385 910" class="attr-line"/>
+
+  <!-- SyndicateEntity Attr Ovals -->
+  <rect x="1125" y="845" width="70" height="26" class="pk-oval"/>
+  <text x="1160" y="858" class="pk-text">id</text>
+  <rect x="1125" y="880" width="70" height="26" class="attr-oval"/>
+  <text x="1160" y="893" class="attr-text">clusterId</text>
+  <rect x="1125" y="915" width="70" height="26" class="attr-oval"/>
+  <text x="1160" y="928" class="attr-text">entityId</text>
+  <rect x="1330" y="855" width="110" height="26" class="attr-oval"/>
+  <text x="1385" y="868" class="attr-text">confidenceScore</text>
+  <rect x="1345" y="895" width="80" height="26" class="attr-oval"/>
+  <text x="1385" y="908" class="attr-text">addedAt</text>
+
+  <!-- ==================== RELATIONSHIP DIAMONDS ==================== -->
+  <!-- files -->
+  <polygon points="360,275 400,295 360,315 320,295" class="rel-poly"/>
+  <text x="360" y="295" class="rel-text">files</text>
+
+  <!-- performs -->
+  <polygon points="175,390 215,410 175,430 135,410" class="rel-poly"/>
+  <text x="175" y="410" class="rel-text">performs</text>
+
+  <!-- Case has Evidence -->
+  <polygon points="735,275 775,295 735,315 695,295" class="rel-poly"/>
+  <text x="735" y="295" class="rel-text">has</text>
+
+  <!-- Case has TimelineEvent -->
+  <polygon points="555,390 595,410 555,430 515,410" class="rel-poly"/>
+  <text x="555" y="410" class="rel-text">has</text>
+
+  <!-- triggers -->
+  <polygon points="370,530 415,550 370,570 325,550" class="rel-poly"/>
+  <text x="370" y="550" class="rel-text">triggers</text>
+
+  <!-- extracts -->
+  <polygon points="1095,275 1140,295 1095,315 1050,295" class="rel-poly"/>
+  <text x="1095" y="295" class="rel-text">extracts</text>
+
+  <!-- source of -->
+  <polygon points="790,410 835,430 790,450 745,430" class="rel-poly"/>
+  <text x="790" y="430" class="rel-text">source of</text>
+
+  <!-- identifies -->
+  <polygon points="1275,390 1320,410 1275,430 1230,410" class="rel-poly"/>
+  <text x="1275" y="410" class="rel-text">identifies</text>
+
+  <!-- linked in -->
+  <polygon points="1120,502 1160,522 1120,542 1080,522" class="rel-poly"/>
+  <text x="1120" y="522" class="rel-text">linked in</text>
+
+  <!-- grouped into -->
+  <polygon points="1165,680 1215,700 1165,720 1115,700" class="rel-poly"/>
+  <text x="1165" y="700" class="rel-text">grouped into</text>
+
+  <!-- contains -->
+  <polygon points="1060,787 1100,807 1060,827 1020,807" class="rel-poly"/>
+  <text x="1060" y="807" class="rel-text">contains</text>
+
+  <!-- generates -->
+  <polygon points="330,772 365,792 330,812 295,792" class="rel-poly"/>
+  <text x="330" y="792" class="rel-text">generates</text>
+
+</svg>

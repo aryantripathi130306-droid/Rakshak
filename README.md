@@ -8,10 +8,9 @@
 ## 📑 Table of Contents
 - [🏛️ System Architecture](#️-system-architecture)
 - [🗄️ Entity-Relationship (ER) Diagram & Data Models](#️-entity-relationship-er-diagram--data-models)
-  - [1. Conceptual Chen-Notation ER Diagram](#1-conceptual-chen-notation-er-diagram)
-  - [2. System Relational ER Diagram (Mermaid)](#2-system-relational-er-diagram-mermaid)
-  - [3. Entity & Relationship Dictionary](#3-entity--relationship-dictionary)
-  - [4. Forensic Validation & Regex Standards](#4-forensic-validation--regex-standards)
+  - [1. Chen-Notation ER Diagram](#1-chen-notation-er-diagram)
+  - [2. Entity & Relationship Dictionary](#2-entity--relationship-dictionary)
+  - [3. Forensic Validation & Regex Standards](#3-forensic-validation--regex-standards)
 - [⚖️ System Rules & Forensic Constraints](#️-system-rules--forensic-constraints)
   - [1. Forensic Integrity Rules](#1-forensic-integrity-rules)
   - [2. Legal Boundaries & Guardrails](#2-legal-boundaries--guardrails)
@@ -67,188 +66,17 @@ Rakshak implements an immutable, verifiable ingestion pipeline designed to preve
 
 ## 🗄️ Entity-Relationship (ER) Diagram & Data Models
 
-### 1. Conceptual Chen-Notation ER Diagram
+### 1. Chen-Notation ER Diagram
 
 <div align="center">
 
-![Rakshak Conceptual ER Diagram](./rakshak_er_diagram.svg)
+![Rakshak ER Diagram](./rakshak_er_diagram.svg)
 
 </div>
 
 ---
 
-### 2. System Relational ER Diagram (Mermaid)
-
-```mermaid
-erDiagram
-    USER ||--o{ CASE : "files (1:N)"
-    USER ||--o{ AUDIT_LOG : "performs (1:N)"
-    
-    CASE ||--o{ EVIDENCE : "has (1:N)"
-    CASE ||--o{ TIMELINE_EVENT : "has (1:N)"
-    CASE ||--o{ AI_PROCESSING_JOB : "triggers (1:N)"
-    CASE ||--o{ CASE_ENTITY : "contains (1:N)"
-    CASE ||--o{ ALERT : "triggers (1:N)"
-    
-    EVIDENCE ||--o{ EXTRACTED_FACT : "extracts (1:N)"
-    EVIDENCE ||--o{ TIMELINE_EVENT : "source of (1:N)"
-    
-    EXTRACTED_FACT }o--|| CASE_ENTITY : "identifies (N:1)"
-    ENTITY ||--o{ CASE_ENTITY : "linked in (1:N)"
-    
-    CASE_ENTITY ||--o{ SYNDICATE_ENTITY : "grouped into (1:N)"
-    SYNDICATE_CLUSTER ||--o{ SYNDICATE_ENTITY : "contains (1:N)"
-    
-    AI_PROCESSING_JOB ||--o{ ALERT : "generates (1:N)"
-
-    USER {
-        string id PK
-        string fullName
-        string email UK
-        string passwordHash
-        string role
-        string phone
-        string department
-        boolean isActive
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    CASE {
-        string id PK
-        string caseNumber UK
-        string incidentType
-        string complainantName
-        string jurisdiction
-        string status
-        int amountDefrauded
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    EVIDENCE {
-        string id PK
-        string caseId FK
-        string fileName
-        string fileType
-        string mimeType
-        int fileSize
-        string sha256Hash
-        string clientHash
-        string storagePath
-        string evidenceCategory
-        string metadata
-        datetime uploadedAt
-    }
-
-    EXTRACTED_FACT {
-        string id PK
-        string evidenceId FK
-        string caseId
-        string factAssertion
-        string entityType
-        string rawValue
-        string normalizedValue
-        float confidence
-        string sourceHash
-        string verificationStatus
-        string verifiedBy
-        string boundingBox
-        datetime extractedAt
-    }
-
-    TIMELINE_EVENT {
-        string id PK
-        string caseId FK
-        string evidenceId FK
-        string eventType
-        datetime eventTimestamp
-        datetime normalizedTimestamp
-        string phase
-        string description
-        datetime createdAt
-    }
-
-    AUDIT_LOG {
-        string id PK
-        string userId FK
-        string caseId FK
-        string action
-        string entityType
-        string entityId
-        string details
-        datetime createdAt
-    }
-
-    AI_PROCESSING_JOB {
-        string id PK
-        string caseId FK
-        string evidenceId FK
-        string jobType
-        string status
-        string inputPayload
-        string outputPayload
-        string errorMessage
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    ALERT {
-        string id PK
-        string caseId FK
-        string alertType
-        string severity
-        string message
-        string status
-        datetime createdAt
-        datetime resolvedAt
-        string resolvedBy
-    }
-
-    ENTITY {
-        string id PK
-        string entityType
-        string normalizedValue UK
-        string firstSeenCaseId
-        datetime firstSeenAt
-        datetime lastSeenAt
-        float confidenceScore
-        float riskScore
-        boolean isVerified
-    }
-
-    CASE_ENTITY {
-        string id PK
-        string caseId FK
-        string entityId FK
-        string relationType
-        datetime firstSeenInCase
-        datetime lastSeenInCase
-        int evidenceCount
-        float confidenceScore
-    }
-
-    SYNDICATE_ENTITY {
-        string id PK
-        string clusterId FK
-        string entityId FK
-        float confidenceScore
-        datetime addedAt
-    }
-
-    SYNDICATE_CLUSTER {
-        string id PK
-        string name
-        string description
-        string riskLevel
-        datetime createdAt
-        datetime updatedAt
-    }
-```
-
----
-
-### 3. Entity & Relationship Dictionary
+### 2. Entity & Relationship Dictionary
 
 | Entity | Description | Primary Key | Key Foreign Keys & Cardinality |
 | :--- | :--- | :--- | :--- |
@@ -267,7 +95,7 @@ erDiagram
 
 ---
 
-### 4. Forensic Validation & Regex Standards
+### 3. Forensic Validation & Regex Standards
 * **UPI VPA:** `^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$`
 * **Indian Mobile (E.164):** `^(?:\+91|0)?[6-9]\d{9}$`
 * **IFSC Code:** `^[A-Z]{4}0[A-Z0-9]{6}$`

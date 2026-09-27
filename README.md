@@ -74,6 +74,13 @@ Rakshak implements an immutable, verifiable ingestion pipeline designed to preve
 
 </div>
 
+> **📝 Edit the ER Diagram:** Open [`Rakshak.drawio`](./Rakshak.drawio) in [draw.io](https://app.diagrams.net/) or click the file in GitHub to view/edit it interactively.
+> 
+> **Viewing options:**
+> - **GitHub:** Click on [`Rakshak.drawio`](./Rakshak.drawio) in the repo — GitHub renders it natively!
+> - **Local:** Open `Rakshak.drawio` in [draw.io Desktop](https://github.com/jgraph/drawio-desktop/releases) or at [app.diagrams.net](https://app.diagrams.net/)
+> - **VS Code:** Install the [Draw.io Integration](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio) extension to edit directly in your editor
+
 ---
 
 ### 2. Entity & Relationship Dictionary

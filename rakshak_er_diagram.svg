@@ -1,560 +1,706 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1060" width="100%" height="100%" style="background:#ffffff; font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" width="100%" height="100%" style="background:#ffffff; font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   <defs>
     <style>
-      .entity-rect { fill: #b8d5ff; stroke: #2b6cb0; stroke-width: 2px; rx: 4px; }
-      .entity-text { font-size: 16px; font-weight: 700; fill: #1a365d; text-anchor: middle; dominant-baseline: central; }
-      .rel-poly { fill: #ffd6d6; stroke: #c53030; stroke-width: 2px; }
-      .rel-text { font-size: 13px; font-weight: 600; fill: #742a2a; text-anchor: middle; dominant-baseline: central; }
-      .attr-oval { fill: #e6fffa; stroke: #319795; stroke-width: 1.5px; rx: 12px; }
-      .pk-oval { fill: #d4edda; stroke: #28a745; stroke-width: 2px; rx: 12px; }
-      .attr-text { font-size: 12px; font-weight: 500; fill: #234e52; text-anchor: middle; dominant-baseline: central; }
-      .pk-text { font-size: 12px; font-weight: 700; fill: #155724; text-anchor: middle; dominant-baseline: central; text-decoration: underline; }
-      .link-line { stroke: #4a5568; stroke-width: 1.8px; fill: none; }
+      .entity-rect { fill: #b8d5ff; stroke: #2b6cb0; stroke-width: 2.2px; rx: 4px; }
+      .entity-text { font-size: 15px; font-weight: 700; fill: #1a365d; text-anchor: middle; dominant-baseline: central; }
+      .rel-poly { fill: #ffd6d6; stroke: #c53030; stroke-width: 1.8px; }
+      .rel-text { font-size: 12px; font-weight: 600; fill: #742a2a; text-anchor: middle; dominant-baseline: central; }
+      .attr-ellipse { fill: #e6fffa; stroke: #319795; stroke-width: 1.4px; }
+      .pk-ellipse { fill: #d4edda; stroke: #28a745; stroke-width: 1.8px; }
+      .attr-text { font-size: 11px; font-weight: 500; fill: #234e52; text-anchor: middle; dominant-baseline: central; }
+      .pk-text { font-size: 11px; font-weight: 700; fill: #155724; text-anchor: middle; dominant-baseline: central; text-decoration: underline; }
+      .link-line { stroke: #2d3748; stroke-width: 1.8px; fill: none; }
       .attr-line { stroke: #718096; stroke-width: 1.2px; fill: none; }
-      .card-text { font-size: 14px; font-weight: 700; fill: #2d3748; text-anchor: middle; }
+      .card-text { font-size: 13px; font-weight: 700; fill: #2d3748; text-anchor: middle; dominant-baseline: central; }
     </style>
   </defs>
 
-  <!-- ==================== CONNECTOR LINES ==================== -->
-  <!-- User to Case (via files) -->
-  <path d="M 250 295 L 320 295" class="link-line"/>
-  <path d="M 400 295 L 480 295" class="link-line"/>
-  <text x="270" y="285" class="card-text">1</text>
-  <text x="460" y="285" class="card-text">N</text>
+  <!-- ========================================== -->
+  <!--               ROW 1 ENTITIES               -->
+  <!-- ========================================== -->
 
-  <!-- User to AuditLog (via performs) -->
-  <path d="M 175 320 L 175 390" class="link-line"/>
-  <path d="M 175 430 L 175 500" class="link-line"/>
-  <text x="190" y="345" class="card-text">1</text>
-  <text x="190" y="485" class="card-text">N</text>
+  <!-- USER  center=(140,319)  box: x=65 y=295 w=150 h=48 -->
+  <g id="entity-user">
+    <!-- Attributes Left -->
+    <path d="M 140 319 L 45 60" class="attr-line"/>
+    <ellipse cx="45" cy="60" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="45" y="60" class="pk-text">id</text>
 
-  <!-- Case to Evidence (via has) -->
-  <path d="M 630 295 L 695 295" class="link-line"/>
-  <path d="M 775 295 L 840 295" class="link-line"/>
-  <text x="650" y="285" class="card-text">1</text>
-  <text x="820" y="285" class="card-text">N</text>
+    <path d="M 140 319 L 45 100" class="attr-line"/>
+    <ellipse cx="45" cy="100" rx="40" ry="13" class="attr-ellipse"/>
+    <text x="45" y="100" class="attr-text">fullName</text>
 
-  <!-- Case to TimelineEvent (via has) -->
-  <path d="M 555 320 L 555 390" class="link-line"/>
-  <path d="M 555 430 L 555 500" class="link-line"/>
-  <text x="570" y="345" class="card-text">1</text>
-  <text x="570" y="485" class="card-text">N</text>
+    <path d="M 140 319 L 45 140" class="attr-line"/>
+    <ellipse cx="45" cy="140" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="45" y="140" class="attr-text">email</text>
 
-  <!-- Case to AIProcessingJob (via triggers) -->
-  <path d="M 500 320 L 400 535" class="link-line"/>
-  <path d="M 345 565 L 210 770" class="link-line"/>
-  <text x="475" y="360" class="card-text">1</text>
-  <text x="235" y="750" class="card-text">N</text>
+    <path d="M 140 319 L 45 180" class="attr-line"/>
+    <ellipse cx="45" cy="180" rx="48" ry="13" class="attr-ellipse"/>
+    <text x="45" y="180" class="attr-text">passwordHash</text>
 
-  <!-- Evidence to ExtractedFact (via extracts) -->
-  <path d="M 990 295 L 1050 295" class="link-line"/>
-  <path d="M 1140 295 L 1200 295" class="link-line"/>
-  <text x="1010" y="285" class="card-text">1</text>
-  <text x="1180" y="285" class="card-text">N</text>
+    <path d="M 140 319 L 45 220" class="attr-line"/>
+    <ellipse cx="45" cy="220" rx="30" ry="13" class="attr-ellipse"/>
+    <text x="45" y="220" class="attr-text">role</text>
 
-  <!-- Evidence to TimelineEvent (via source of) -->
-  <path d="M 890 320 L 825 415" class="link-line"/>
-  <path d="M 750 445 L 630 515" class="link-line"/>
-  <text x="880" y="345" class="card-text">1</text>
-  <text x="655" y="505" class="card-text">N</text>
+    <path d="M 140 319 L 45 260" class="attr-line"/>
+    <ellipse cx="45" cy="260" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="45" y="260" class="attr-text">phone</text>
 
-  <!-- ExtractedFact to CaseEntity (via identifies) -->
-  <path d="M 1275 320 L 1275 390" class="link-line"/>
-  <path d="M 1275 430 L 1275 500" class="link-line"/>
-  <text x="1290" y="345" class="card-text">N</text>
-  <text x="1290" y="485" class="card-text">1</text>
+    <!-- Attributes Right -->
+    <path d="M 140 319 L 225 110" class="attr-line"/>
+    <ellipse cx="225" cy="110" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="225" y="110" class="attr-text">department</text>
 
-  <!-- Entity to CaseEntity (via linked in) -->
-  <path d="M 1030 522 L 1080 522" class="link-line"/>
-  <path d="M 1160 522 L 1200 522" class="link-line"/>
-  <text x="1050" y="512" class="card-text">1</text>
-  <text x="1180" y="512" class="card-text">N</text>
+    <path d="M 140 319 L 225 155" class="attr-line"/>
+    <ellipse cx="225" cy="155" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="225" y="155" class="attr-text">isActive</text>
 
-  <!-- CaseEntity to SyndicateEntity (via grouped into) -->
-  <path d="M 1245 545 L 1185 700" class="link-line"/>
-  <path d="M 1145 725 L 1225 785" class="link-line"/>
-  <text x="1260" y="575" class="card-text">1</text>
-  <text x="1195" y="765" class="card-text">N</text>
+    <path d="M 140 319 L 225 200" class="attr-line"/>
+    <ellipse cx="225" cy="200" rx="40" ry="13" class="attr-ellipse"/>
+    <text x="225" y="200" class="attr-text">createdAt</text>
 
-  <!-- SyndicateCluster to SyndicateEntity (via contains) -->
-  <path d="M 960 807 L 1020 807" class="link-line"/>
-  <path d="M 1100 807 L 1190 807" class="link-line"/>
-  <text x="980" y="797" class="card-text">1</text>
-  <text x="1165" y="797" class="card-text">N</text>
+    <path d="M 140 319 L 225 245" class="attr-line"/>
+    <ellipse cx="225" cy="245" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="225" y="245" class="attr-text">updatedAt</text>
 
-  <!-- AIProcessingJob to Alert (via generates) -->
-  <path d="M 250 792 L 295 792" class="link-line"/>
-  <path d="M 365 792 L 420 792" class="link-line"/>
-  <text x="270" y="782" class="card-text">1</text>
-  <text x="400" y="782" class="card-text">N</text>
+    <!-- Entity Box -->
+    <rect x="65" y="295" width="150" height="48" class="entity-rect"/>
+    <text x="140" y="319" class="entity-text">User</text>
+  </g>
 
-  <!-- ==================== USER ENTITY & ATTRIBUTES ==================== -->
-  <rect x="100" y="270" width="150" height="50" class="entity-rect"/>
-  <text x="175" y="295" class="entity-text">User</text>
 
-  <!-- User Attr Lines -->
-  <path d="M 140 270 L 60 45" class="attr-line"/>
-  <path d="M 130 270 L 60 85" class="attr-line"/>
-  <path d="M 120 270 L 60 125" class="attr-line"/>
-  <path d="M 110 275 L 60 165" class="attr-line"/>
-  <path d="M 105 285 L 60 205" class="attr-line"/>
-  <path d="M 100 295 L 60 245" class="attr-line"/>
-  <path d="M 190 270 L 220 70" class="attr-line"/>
-  <path d="M 200 270 L 220 110" class="attr-line"/>
-  <path d="M 210 270 L 220 150" class="attr-line"/>
-  <path d="M 220 270 L 220 190" class="attr-line"/>
+  <!-- CASE  center=(600,319)  box: x=525 y=295 w=150 h=48 -->
+  <g id="entity-case">
+    <!-- Attributes Left -->
+    <path d="M 600 319 L 485 65" class="attr-line"/>
+    <ellipse cx="485" cy="65" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="485" y="65" class="pk-text">id</text>
 
-  <!-- User Attr Ovals -->
-  <rect x="25" y="30" width="70" height="26" class="pk-oval"/>
-  <text x="60" y="43" class="pk-text">id</text>
-  <rect x="15" y="70" width="90" height="26" class="attr-oval"/>
-  <text x="60" y="83" class="attr-text">fullName</text>
-  <rect x="25" y="110" width="70" height="26" class="attr-oval"/>
-  <text x="60" y="123" class="attr-text">email</text>
-  <rect x="10" y="150" width="100" height="26" class="attr-oval"/>
-  <text x="60" y="163" class="attr-text">passwordHash</text>
-  <rect x="25" y="190" width="70" height="26" class="attr-oval"/>
-  <text x="60" y="203" class="attr-text">role</text>
-  <rect x="25" y="230" width="70" height="26" class="attr-oval"/>
-  <text x="60" y="243" class="attr-text">phone</text>
-  <rect x="175" y="55" width="90" height="26" class="attr-oval"/>
-  <text x="220" y="68" class="attr-text">department</text>
-  <rect x="185" y="95" width="70" height="26" class="attr-oval"/>
-  <text x="220" y="108" class="attr-text">isActive</text>
-  <rect x="180" y="135" width="80" height="26" class="attr-oval"/>
-  <text x="220" y="148" class="attr-text">createdAt</text>
-  <rect x="180" y="175" width="80" height="26" class="attr-oval"/>
-  <text x="220" y="188" class="attr-text">updatedAt</text>
+    <path d="M 600 319 L 485 110" class="attr-line"/>
+    <ellipse cx="485" cy="110" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="485" y="110" class="attr-text">caseNumber</text>
 
-  <!-- ==================== CASE ENTITY & ATTRIBUTES ==================== -->
-  <rect x="480" y="270" width="150" height="50" class="entity-rect"/>
-  <text x="555" y="295" class="entity-text">Case</text>
+    <path d="M 600 319 L 485 155" class="attr-line"/>
+    <ellipse cx="485" cy="155" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="485" y="155" class="attr-text">incidentType</text>
 
-  <!-- Case Attr Lines -->
-  <path d="M 520 270 L 445 45" class="attr-line"/>
-  <path d="M 510 270 L 445 85" class="attr-line"/>
-  <path d="M 500 270 L 445 125" class="attr-line"/>
-  <path d="M 490 275 L 445 165" class="attr-line"/>
-  <path d="M 485 285 L 445 205" class="attr-line"/>
-  <path d="M 570 270 L 660 60" class="attr-line"/>
-  <path d="M 580 270 L 660 100" class="attr-line"/>
-  <path d="M 590 270 L 660 140" class="attr-line"/>
-  <path d="M 600 270 L 660 180" class="attr-line"/>
+    <path d="M 600 319 L 485 200" class="attr-line"/>
+    <ellipse cx="485" cy="200" rx="58" ry="13" class="attr-ellipse"/>
+    <text x="485" y="200" class="attr-text">complainantName</text>
 
-  <!-- Case Attr Ovals -->
-  <rect x="410" y="30" width="70" height="26" class="pk-oval"/>
-  <text x="445" y="43" class="pk-text">id</text>
-  <rect x="395" y="70" width="100" height="26" class="attr-oval"/>
-  <text x="445" y="83" class="attr-text">caseNumber</text>
-  <rect x="395" y="110" width="100" height="26" class="attr-oval"/>
-  <text x="445" y="123" class="attr-text">incidentType</text>
-  <rect x="385" y="150" width="120" height="26" class="attr-oval"/>
-  <text x="445" y="163" class="attr-text">complainantName</text>
-  <rect x="400" y="190" width="90" height="26" class="attr-oval"/>
-  <text x="445" y="203" class="attr-text">jurisdiction</text>
-  <rect x="625" y="45" width="70" height="26" class="attr-oval"/>
-  <text x="660" y="58" class="attr-text">status</text>
-  <rect x="605" y="85" width="110" height="26" class="attr-oval"/>
-  <text x="660" y="98" class="attr-text">amountDefrauded</text>
-  <rect x="620" y="125" width="80" height="26" class="attr-oval"/>
-  <text x="660" y="138" class="attr-text">createdAt</text>
-  <rect x="620" y="165" width="80" height="26" class="attr-oval"/>
-  <text x="660" y="178" class="attr-text">updatedAt</text>
+    <path d="M 600 319 L 485 245" class="attr-line"/>
+    <ellipse cx="485" cy="245" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="485" y="245" class="attr-text">jurisdiction</text>
 
-  <!-- ==================== EVIDENCE ENTITY & ATTRIBUTES ==================== -->
-  <rect x="840" y="270" width="150" height="50" class="entity-rect"/>
-  <text x="915" y="295" class="entity-text">Evidence</text>
+    <!-- Attributes Right -->
+    <path d="M 600 319 L 705 110" class="attr-line"/>
+    <ellipse cx="705" cy="110" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="705" y="110" class="attr-text">status</text>
 
-  <!-- Evidence Attr Lines -->
-  <path d="M 880 270 L 815 35" class="attr-line"/>
-  <path d="M 870 270 L 815 75" class="attr-line"/>
-  <path d="M 860 270 L 815 115" class="attr-line"/>
-  <path d="M 850 275 L 815 155" class="attr-line"/>
-  <path d="M 845 285 L 815 195" class="attr-line"/>
-  <path d="M 840 295 L 815 235" class="attr-line"/>
-  <path d="M 940 270 L 1025 35" class="attr-line"/>
-  <path d="M 950 270 L 1025 75" class="attr-line"/>
-  <path d="M 960 270 L 1025 115" class="attr-line"/>
-  <path d="M 970 270 L 1025 155" class="attr-line"/>
-  <path d="M 980 275 L 1025 195" class="attr-line"/>
-  <path d="M 985 285 L 1025 235" class="attr-line"/>
+    <path d="M 600 319 L 705 155" class="attr-line"/>
+    <ellipse cx="705" cy="155" rx="58" ry="13" class="attr-ellipse"/>
+    <text x="705" y="155" class="attr-text">amountDefrauded</text>
 
-  <!-- Evidence Attr Ovals -->
-  <rect x="780" y="20" width="70" height="26" class="pk-oval"/>
-  <text x="815" y="33" class="pk-text">id</text>
-  <rect x="780" y="60" width="70" height="26" class="attr-oval"/>
-  <text x="815" y="73" class="attr-text">caseId</text>
-  <rect x="775" y="100" width="80" height="26" class="attr-oval"/>
-  <text x="815" y="113" class="attr-text">fileName</text>
-  <rect x="780" y="140" width="70" height="26" class="attr-oval"/>
-  <text x="815" y="153" class="attr-text">fileType</text>
-  <rect x="775" y="180" width="80" height="26" class="attr-oval"/>
-  <text x="815" y="193" class="attr-text">mimeType</text>
-  <rect x="780" y="220" width="70" height="26" class="attr-oval"/>
-  <text x="815" y="233" class="attr-text">fileSize</text>
-  <rect x="980" y="20" width="90" height="26" class="attr-oval"/>
-  <text x="1025" y="33" class="attr-text">sha256Hash</text>
-  <rect x="985" y="60" width="80" height="26" class="attr-oval"/>
-  <text x="1025" y="73" class="attr-text">clientHash</text>
-  <rect x="980" y="100" width="90" height="26" class="attr-oval"/>
-  <text x="1025" y="113" class="attr-text">storagePath</text>
-  <rect x="965" y="140" width="120" height="26" class="attr-oval"/>
-  <text x="1025" y="153" class="attr-text">evidenceCategory</text>
-  <rect x="985" y="180" width="80" height="26" class="attr-oval"/>
-  <text x="1025" y="193" class="attr-text">metadata</text>
-  <rect x="985" y="220" width="80" height="26" class="attr-oval"/>
-  <text x="1025" y="233" class="attr-text">uploadedAt</text>
+    <path d="M 600 319 L 705 200" class="attr-line"/>
+    <ellipse cx="705" cy="200" rx="40" ry="13" class="attr-ellipse"/>
+    <text x="705" y="200" class="attr-text">createdAt</text>
 
-  <!-- ==================== EXTRACTED FACT & ATTRIBUTES ==================== -->
-  <rect x="1200" y="270" width="150" height="50" class="entity-rect"/>
-  <text x="1275" y="295" class="entity-text">ExtractedFact</text>
+    <path d="M 600 319 L 705 245" class="attr-line"/>
+    <ellipse cx="705" cy="245" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="705" y="245" class="attr-text">updatedAt</text>
 
-  <!-- ExtractedFact Attr Lines -->
-  <path d="M 1240 270 L 1175 45" class="attr-line"/>
-  <path d="M 1230 270 L 1175 85" class="attr-line"/>
-  <path d="M 1220 270 L 1175 125" class="attr-line"/>
-  <path d="M 1210 275 L 1175 165" class="attr-line"/>
-  <path d="M 1205 285 L 1175 205" class="attr-line"/>
-  <path d="M 1200 295 L 1175 245" class="attr-line"/>
-  <path d="M 1300 270 L 1395 45" class="attr-line"/>
-  <path d="M 1310 270 L 1395 85" class="attr-line"/>
-  <path d="M 1320 270 L 1395 125" class="attr-line"/>
-  <path d="M 1330 275 L 1395 165" class="attr-line"/>
-  <path d="M 1340 280 L 1395 205" class="attr-line"/>
-  <path d="M 1345 285 L 1395 245" class="attr-line"/>
-  <path d="M 1350 295 L 1395 285" class="attr-line"/>
+    <!-- Entity Box -->
+    <rect x="525" y="295" width="150" height="48" class="entity-rect"/>
+    <text x="600" y="319" class="entity-text">Case</text>
+  </g>
 
-  <!-- ExtractedFact Attr Ovals -->
-  <rect x="1140" y="30" width="70" height="26" class="pk-oval"/>
-  <text x="1175" y="43" class="pk-text">id</text>
-  <rect x="1135" y="70" width="80" height="26" class="attr-oval"/>
-  <text x="1175" y="83" class="attr-text">evidenceId</text>
-  <rect x="1140" y="110" width="70" height="26" class="attr-oval"/>
-  <text x="1175" y="123" class="attr-text">caseId</text>
-  <rect x="1125" y="150" width="100" height="26" class="attr-oval"/>
-  <text x="1175" y="163" class="attr-text">factAssertion</text>
-  <rect x="1135" y="190" width="80" height="26" class="attr-oval"/>
-  <text x="1175" y="203" class="attr-text">entityType</text>
-  <rect x="1135" y="230" width="80" height="26" class="attr-oval"/>
-  <text x="1175" y="243" class="attr-text">rawValue</text>
-  <rect x="1340" y="30" width="110" height="26" class="attr-oval"/>
-  <text x="1395" y="43" class="attr-text">normalizedValue</text>
-  <rect x="1355" y="70" width="80" height="26" class="attr-oval"/>
-  <text x="1395" y="83" class="attr-text">confidence</text>
-  <rect x="1355" y="110" width="80" height="26" class="attr-oval"/>
-  <text x="1395" y="123" class="attr-text">sourceHash</text>
-  <rect x="1335" y="150" width="120" height="26" class="attr-oval"/>
-  <text x="1395" y="163" class="attr-text">verificationStatus</text>
-  <rect x="1355" y="190" width="80" height="26" class="attr-oval"/>
-  <text x="1395" y="203" class="attr-text">verifiedBy</text>
-  <rect x="1350" y="230" width="90" height="26" class="attr-oval"/>
-  <text x="1395" y="243" class="attr-text">boundingBox</text>
-  <rect x="1355" y="270" width="80" height="26" class="attr-oval"/>
-  <text x="1395" y="283" class="attr-text">extractedAt</text>
 
-  <!-- ==================== AUDIT LOG & ATTRIBUTES ==================== -->
-  <rect x="100" y="500" width="150" height="45" class="entity-rect"/>
-  <text x="175" y="522" class="entity-text">AuditLog</text>
+  <!-- EVIDENCE  center=(1055,319)  box: x=980 y=295 w=150 h=48 -->
+  <g id="entity-evidence">
+    <!-- Attributes Left -->
+    <path d="M 1055 319 L 945 50" class="attr-line"/>
+    <ellipse cx="945" cy="50" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="945" y="50" class="pk-text">id</text>
 
-  <!-- AuditLog Attr Lines -->
-  <path d="M 105 540 L 55 545" class="attr-line"/>
-  <path d="M 115 545 L 55 580" class="attr-line"/>
-  <path d="M 125 545 L 55 615" class="attr-line"/>
-  <path d="M 135 545 L 55 650" class="attr-line"/>
-  <path d="M 145 545 L 55 685" class="attr-line"/>
-  <path d="M 205 545 L 245 565" class="attr-line"/>
-  <path d="M 215 545 L 245 605" class="attr-line"/>
-  <path d="M 225 545 L 245 645" class="attr-line"/>
+    <path d="M 1055 319 L 945 90" class="attr-line"/>
+    <ellipse cx="945" cy="90" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="945" y="90" class="attr-text">caseId</text>
 
-  <!-- AuditLog Attr Ovals -->
-  <rect x="20" y="530" width="70" height="26" class="pk-oval"/>
-  <text x="55" y="543" class="pk-text">id</text>
-  <rect x="20" y="565" width="70" height="26" class="attr-oval"/>
-  <text x="55" y="578" class="attr-text">userId</text>
-  <rect x="20" y="600" width="70" height="26" class="attr-oval"/>
-  <text x="55" y="613" class="attr-text">caseId</text>
-  <rect x="20" y="635" width="70" height="26" class="attr-oval"/>
-  <text x="55" y="648" class="attr-text">action</text>
-  <rect x="15" y="670" width="80" height="26" class="attr-oval"/>
-  <text x="55" y="683" class="attr-text">entityType</text>
-  <rect x="210" y="550" width="70" height="26" class="attr-oval"/>
-  <text x="245" y="563" class="attr-text">entityId</text>
-  <rect x="210" y="590" width="70" height="26" class="attr-oval"/>
-  <text x="245" y="603" class="attr-text">details</text>
-  <rect x="205" y="630" width="80" height="26" class="attr-oval"/>
-  <text x="245" y="643" class="attr-text">createdAt</text>
+    <path d="M 1055 319 L 945 130" class="attr-line"/>
+    <ellipse cx="945" cy="130" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="945" y="130" class="attr-text">fileName</text>
 
-  <!-- ==================== TIMELINE EVENT & ATTRIBUTES ==================== -->
-  <rect x="480" y="500" width="150" height="45" class="entity-rect"/>
-  <text x="555" y="522" class="entity-text">TimelineEvent</text>
+    <path d="M 1055 319 L 945 170" class="attr-line"/>
+    <ellipse cx="945" cy="170" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="945" y="170" class="attr-text">fileType</text>
 
-  <!-- TimelineEvent Attr Lines -->
-  <path d="M 505 545 L 435 555" class="attr-line"/>
-  <path d="M 515 545 L 435 590" class="attr-line"/>
-  <path d="M 525 545 L 435 625" class="attr-line"/>
-  <path d="M 535 545 L 435 660" class="attr-line"/>
-  <path d="M 545 545 L 435 695" class="attr-line"/>
-  <path d="M 555 545 L 435 730" class="attr-line"/>
-  <path d="M 590 545 L 660 565" class="attr-line"/>
-  <path d="M 600 545 L 660 605" class="attr-line"/>
-  <path d="M 610 545 L 660 645" class="attr-line"/>
+    <path d="M 1055 319 L 945 210" class="attr-line"/>
+    <ellipse cx="945" cy="210" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="945" y="210" class="attr-text">mimeType</text>
 
-  <!-- TimelineEvent Attr Ovals -->
-  <rect x="400" y="540" width="70" height="26" class="pk-oval"/>
-  <text x="435" y="553" class="pk-text">id</text>
-  <rect x="400" y="575" width="70" height="26" class="attr-oval"/>
-  <text x="435" y="588" class="attr-text">caseId</text>
-  <rect x="395" y="610" width="80" height="26" class="attr-oval"/>
-  <text x="435" y="623" class="attr-text">evidenceId</text>
-  <rect x="395" y="645" width="80" height="26" class="attr-oval"/>
-  <text x="435" y="658" class="attr-text">eventType</text>
-  <rect x="380" y="680" width="110" height="26" class="attr-oval"/>
-  <text x="435" y="693" class="attr-text">eventTimestamp</text>
-  <rect x="370" y="715" width="130" height="26" class="attr-oval"/>
-  <text x="435" y="728" class="attr-text">normalizedTimestamp</text>
-  <rect x="625" y="550" width="70" height="26" class="attr-oval"/>
-  <text x="660" y="563" class="attr-text">phase</text>
-  <rect x="620" y="590" width="80" height="26" class="attr-oval"/>
-  <text x="660" y="603" class="attr-text">description</text>
-  <rect x="620" y="630" width="80" height="26" class="attr-oval"/>
-  <text x="660" y="643" class="attr-text">createdAt</text>
+    <path d="M 1055 319 L 945 250" class="attr-line"/>
+    <ellipse cx="945" cy="250" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="945" y="250" class="attr-text">fileSize</text>
 
-  <!-- ==================== AI PROCESSING JOB & ATTRIBUTES ==================== -->
-  <rect x="100" y="770" width="150" height="45" class="entity-rect"/>
-  <text x="175" y="792" class="entity-text">AIProcessingJob</text>
+    <!-- Attributes Right -->
+    <path d="M 1055 319 L 1170 50" class="attr-line"/>
+    <ellipse cx="1170" cy="50" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="50" class="attr-text">sha256Hash</text>
 
-  <!-- AIProcessingJob Attr Lines -->
-  <path d="M 110 815 L 50 820" class="attr-line"/>
-  <path d="M 120 815 L 50 855" class="attr-line"/>
-  <path d="M 130 815 L 50 890" class="attr-line"/>
-  <path d="M 140 815 L 50 925" class="attr-line"/>
-  <path d="M 150 815 L 50 960" class="attr-line"/>
-  <path d="M 195 815 L 245 830" class="attr-line"/>
-  <path d="M 205 815 L 245 865" class="attr-line"/>
-  <path d="M 215 815 L 245 900" class="attr-line"/>
-  <path d="M 225 815 L 245 935" class="attr-line"/>
-  <path d="M 235 815 L 245 970" class="attr-line"/>
+    <path d="M 1055 319 L 1170 90" class="attr-line"/>
+    <ellipse cx="1170" cy="90" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="90" class="attr-text">clientHash</text>
 
-  <!-- AIProcessingJob Attr Ovals -->
-  <rect x="15" y="805" width="70" height="26" class="pk-oval"/>
-  <text x="50" y="818" class="pk-text">id</text>
-  <rect x="15" y="840" width="70" height="26" class="attr-oval"/>
-  <text x="50" y="853" class="attr-text">caseId</text>
-  <rect x="10" y="875" width="80" height="26" class="attr-oval"/>
-  <text x="50" y="888" class="attr-text">evidenceId</text>
-  <rect x="15" y="910" width="70" height="26" class="attr-oval"/>
-  <text x="50" y="923" class="attr-text">jobType</text>
-  <rect x="15" y="945" width="70" height="26" class="attr-oval"/>
-  <text x="50" y="958" class="attr-text">status</text>
-  <rect x="200" y="815" width="90" height="26" class="attr-oval"/>
-  <text x="245" y="828" class="attr-text">inputPayload</text>
-  <rect x="195" y="850" width="100" height="26" class="attr-oval"/>
-  <text x="245" y="863" class="attr-text">outputPayload</text>
-  <rect x="195" y="885" width="100" height="26" class="attr-oval"/>
-  <text x="245" y="898" class="attr-text">errorMessage</text>
-  <rect x="205" y="920" width="80" height="26" class="attr-oval"/>
-  <text x="245" y="933" class="attr-text">createdAt</text>
-  <rect x="205" y="955" width="80" height="26" class="attr-oval"/>
-  <text x="245" y="968" class="attr-text">updatedAt</text>
+    <path d="M 1055 319 L 1170 130" class="attr-line"/>
+    <ellipse cx="1170" cy="130" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="130" class="attr-text">storagePath</text>
 
-  <!-- ==================== ALERT & ATTRIBUTES ==================== -->
-  <rect x="420" y="770" width="150" height="45" class="entity-rect"/>
-  <text x="495" y="792" class="entity-text">Alert</text>
+    <path d="M 1055 319 L 1170 170" class="attr-line"/>
+    <ellipse cx="1170" cy="170" rx="62" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="170" class="attr-text">evidenceCategory</text>
 
-  <!-- Alert Attr Lines -->
-  <path d="M 435 815 L 390 840" class="attr-line"/>
-  <path d="M 445 815 L 390 875" class="attr-line"/>
-  <path d="M 455 815 L 390 910" class="attr-line"/>
-  <path d="M 465 815 L 390 945" class="attr-line"/>
-  <path d="M 475 815 L 390 980" class="attr-line"/>
-  <path d="M 525 815 L 575 845" class="attr-line"/>
-  <path d="M 535 815 L 575 880" class="attr-line"/>
-  <path d="M 545 815 L 575 915" class="attr-line"/>
-  <path d="M 555 815 L 575 950" class="attr-line"/>
+    <path d="M 1055 319 L 1170 210" class="attr-line"/>
+    <ellipse cx="1170" cy="210" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="210" class="attr-text">metadata</text>
 
-  <!-- Alert Attr Ovals -->
-  <rect x="355" y="825" width="70" height="26" class="pk-oval"/>
-  <text x="390" y="838" class="pk-text">id</text>
-  <rect x="355" y="860" width="70" height="26" class="attr-oval"/>
-  <text x="390" y="873" class="attr-text">caseId</text>
-  <rect x="350" y="895" width="80" height="26" class="attr-oval"/>
-  <text x="390" y="908" class="attr-text">alertType</text>
-  <rect x="355" y="930" width="70" height="26" class="attr-oval"/>
-  <text x="390" y="943" class="attr-text">severity</text>
-  <rect x="350" y="965" width="80" height="26" class="attr-oval"/>
-  <text x="390" y="978" class="attr-text">message</text>
-  <rect x="540" y="830" width="70" height="26" class="attr-oval"/>
-  <text x="575" y="843" class="attr-text">status</text>
-  <rect x="535" y="865" width="80" height="26" class="attr-oval"/>
-  <text x="575" y="878" class="attr-text">createdAt</text>
-  <rect x="535" y="900" width="80" height="26" class="attr-oval"/>
-  <text x="575" y="913" class="attr-text">resolvedAt</text>
-  <rect x="535" y="935" width="80" height="26" class="attr-oval"/>
-  <text x="575" y="948" class="attr-text">resolvedBy</text>
+    <path d="M 1055 319 L 1170 250" class="attr-line"/>
+    <ellipse cx="1170" cy="250" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="250" class="attr-text">uploadedAt</text>
 
-  <!-- ==================== ENTITY ENTITY & ATTRIBUTES ==================== -->
-  <rect x="880" y="500" width="150" height="45" class="entity-rect"/>
-  <text x="955" y="522" class="entity-text">Entity</text>
+    <!-- Entity Box -->
+    <rect x="980" y="295" width="150" height="48" class="entity-rect"/>
+    <text x="1055" y="319" class="entity-text">Evidence</text>
+  </g>
 
-  <!-- Entity Attr Lines -->
-  <path d="M 890 545 L 830 550" class="attr-line"/>
-  <path d="M 900 545 L 830 585" class="attr-line"/>
-  <path d="M 910 545 L 830 620" class="attr-line"/>
-  <path d="M 920 545 L 830 655" class="attr-line"/>
-  <path d="M 930 545 L 830 690" class="attr-line"/>
-  <path d="M 985 545 L 1045 550" class="attr-line"/>
-  <path d="M 995 545 L 1045 585" class="attr-line"/>
-  <path d="M 1005 545 L 1045 620" class="attr-line"/>
-  <path d="M 1015 545 L 1045 655" class="attr-line"/>
 
-  <!-- Entity Attr Ovals -->
-  <rect x="795" y="535" width="70" height="26" class="pk-oval"/>
-  <text x="830" y="548" class="pk-text">id</text>
-  <rect x="790" y="570" width="80" height="26" class="attr-oval"/>
-  <text x="830" y="583" class="attr-text">entityType</text>
-  <rect x="775" y="605" width="110" height="26" class="attr-oval"/>
-  <text x="830" y="618" class="attr-text">normalizedValue</text>
-  <rect x="775" y="640" width="110" height="26" class="attr-oval"/>
-  <text x="830" y="653" class="attr-text">firstSeenCaseId</text>
-  <rect x="790" y="675" width="80" height="26" class="attr-oval"/>
-  <text x="830" y="688" class="attr-text">firstSeenAt</text>
-  <rect x="1005" y="535" width="80" height="26" class="attr-oval"/>
-  <text x="1045" y="548" class="attr-text">lastSeenAt</text>
-  <rect x="990" y="570" width="110" height="26" class="attr-oval"/>
-  <text x="1045" y="583" class="attr-text">confidenceScore</text>
-  <rect x="1010" y="605" width="70" height="26" class="attr-oval"/>
-  <text x="1045" y="618" class="attr-text">riskScore</text>
-  <rect x="1010" y="640" width="70" height="26" class="attr-oval"/>
-  <text x="1045" y="653" class="attr-text">isVerified</text>
+  <!-- EXTRACTED FACT  center=(1570,319)  box: x=1495 y=295 w=150 h=48 -->
+  <g id="entity-extractedfact">
+    <!-- Attributes Left -->
+    <path d="M 1570 319 L 1455 50" class="attr-line"/>
+    <ellipse cx="1455" cy="50" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="1455" y="50" class="pk-text">id</text>
 
-  <!-- ==================== CASE ENTITY & ATTRIBUTES ==================== -->
-  <rect x="1200" y="500" width="150" height="45" class="entity-rect"/>
-  <text x="1275" y="522" class="entity-text">CaseEntity</text>
+    <path d="M 1570 319 L 1455 90" class="attr-line"/>
+    <ellipse cx="1455" cy="90" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="1455" y="90" class="attr-text">evidenceId</text>
 
-  <!-- CaseEntity Attr Lines -->
-  <path d="M 1225 545 L 1180 575" class="attr-line"/>
-  <path d="M 1235 545 L 1180 610" class="attr-line"/>
-  <path d="M 1245 545 L 1180 645" class="attr-line"/>
-  <path d="M 1255 545 L 1180 680" class="attr-line"/>
-  <path d="M 1300 545 L 1380 575" class="attr-line"/>
-  <path d="M 1310 545 L 1380 610" class="attr-line"/>
-  <path d="M 1320 545 L 1380 645" class="attr-line"/>
-  <path d="M 1330 545 L 1380 680" class="attr-line"/>
+    <path d="M 1570 319 L 1455 130" class="attr-line"/>
+    <ellipse cx="1455" cy="130" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="1455" y="130" class="attr-text">caseId</text>
 
-  <!-- CaseEntity Attr Ovals -->
-  <rect x="1145" y="560" width="70" height="26" class="pk-oval"/>
-  <text x="1180" y="573" class="pk-text">id</text>
-  <rect x="1145" y="595" width="70" height="26" class="attr-oval"/>
-  <text x="1180" y="608" class="attr-text">caseId</text>
-  <rect x="1145" y="630" width="70" height="26" class="attr-oval"/>
-  <text x="1180" y="643" class="attr-text">entityId</text>
-  <rect x="1140" y="665" width="80" height="26" class="attr-oval"/>
-  <text x="1180" y="678" class="attr-text">relationType</text>
-  <rect x="1330" y="560" width="100" height="26" class="attr-oval"/>
-  <text x="1380" y="573" class="attr-text">firstSeenInCase</text>
-  <rect x="1330" y="595" width="100" height="26" class="attr-oval"/>
-  <text x="1380" y="608" class="attr-text">lastSeenInCase</text>
-  <rect x="1335" y="630" width="90" height="26" class="attr-oval"/>
-  <text x="1380" y="643" class="attr-text">evidenceCount</text>
-  <rect x="1325" y="665" width="110" height="26" class="attr-oval"/>
-  <text x="1380" y="678" class="attr-text">confidenceScore</text>
+    <path d="M 1570 319 L 1455 170" class="attr-line"/>
+    <ellipse cx="1455" cy="170" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="1455" y="170" class="attr-text">factAssertion</text>
 
-  <!-- ==================== SYNDICATE CLUSTER & ATTRIBUTES ==================== -->
-  <rect x="800" y="785" width="160" height="45" class="entity-rect"/>
-  <text x="880" y="807" class="entity-text">SyndicateCluster</text>
+    <path d="M 1570 319 L 1455 210" class="attr-line"/>
+    <ellipse cx="1455" cy="210" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="1455" y="210" class="attr-text">entityType</text>
 
-  <!-- SyndicateCluster Attr Lines -->
-  <path d="M 815 830 L 760 860" class="attr-line"/>
-  <path d="M 825 830 L 760 895" class="attr-line"/>
-  <path d="M 835 830 L 760 930" class="attr-line"/>
-  <path d="M 845 830 L 760 965" class="attr-line"/>
-  <path d="M 915 830 L 970 870" class="attr-line"/>
-  <path d="M 925 830 L 970 915" class="attr-line"/>
+    <path d="M 1570 319 L 1455 250" class="attr-line"/>
+    <ellipse cx="1455" cy="250" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="1455" y="250" class="attr-text">rawValue</text>
 
-  <!-- SyndicateCluster Attr Ovals -->
-  <rect x="725" y="845" width="70" height="26" class="pk-oval"/>
-  <text x="760" y="858" class="pk-text">id</text>
-  <rect x="725" y="880" width="70" height="26" class="attr-oval"/>
-  <text x="760" y="893" class="attr-text">name</text>
-  <rect x="720" y="915" width="80" height="26" class="attr-oval"/>
-  <text x="760" y="928" class="attr-text">description</text>
-  <rect x="725" y="950" width="70" height="26" class="attr-oval"/>
-  <text x="760" y="963" class="attr-text">riskLevel</text>
-  <rect x="930" y="855" width="80" height="26" class="attr-oval"/>
-  <text x="970" y="868" class="attr-text">createdAt</text>
-  <rect x="930" y="900" width="80" height="26" class="attr-oval"/>
-  <text x="970" y="913" class="attr-text">updatedAt</text>
+    <!-- Attributes Right -->
+    <path d="M 1570 319 L 1685 45" class="attr-line"/>
+    <ellipse cx="1685" cy="45" rx="58" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="45" class="attr-text">normalizedValue</text>
 
-  <!-- ==================== SYNDICATE ENTITY & ATTRIBUTES ==================== -->
-  <rect x="1190" y="785" width="170" height="45" class="entity-rect"/>
-  <text x="1275" y="807" class="entity-text">SyndicateEntity</text>
+    <path d="M 1570 319 L 1685 80" class="attr-line"/>
+    <ellipse cx="1685" cy="80" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="80" class="attr-text">confidence</text>
 
-  <!-- SyndicateEntity Attr Lines -->
-  <path d="M 1215 830 L 1160 860" class="attr-line"/>
-  <path d="M 1225 830 L 1160 895" class="attr-line"/>
-  <path d="M 1235 830 L 1160 930" class="attr-line"/>
-  <path d="M 1320 830 L 1385 870" class="attr-line"/>
-  <path d="M 1330 830 L 1385 910" class="attr-line"/>
+    <path d="M 1570 319 L 1685 115" class="attr-line"/>
+    <ellipse cx="1685" cy="115" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="115" class="attr-text">sourceHash</text>
 
-  <!-- SyndicateEntity Attr Ovals -->
-  <rect x="1125" y="845" width="70" height="26" class="pk-oval"/>
-  <text x="1160" y="858" class="pk-text">id</text>
-  <rect x="1125" y="880" width="70" height="26" class="attr-oval"/>
-  <text x="1160" y="893" class="attr-text">clusterId</text>
-  <rect x="1125" y="915" width="70" height="26" class="attr-oval"/>
-  <text x="1160" y="928" class="attr-text">entityId</text>
-  <rect x="1330" y="855" width="110" height="26" class="attr-oval"/>
-  <text x="1385" y="868" class="attr-text">confidenceScore</text>
-  <rect x="1345" y="895" width="80" height="26" class="attr-oval"/>
-  <text x="1385" y="908" class="attr-text">addedAt</text>
+    <path d="M 1570 319 L 1685 150" class="attr-line"/>
+    <ellipse cx="1685" cy="150" rx="62" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="150" class="attr-text">verificationStatus</text>
 
-  <!-- ==================== RELATIONSHIP DIAMONDS ==================== -->
-  <!-- files -->
-  <polygon points="360,275 400,295 360,315 320,295" class="rel-poly"/>
-  <text x="360" y="295" class="rel-text">files</text>
+    <path d="M 1570 319 L 1685 185" class="attr-line"/>
+    <ellipse cx="1685" cy="185" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="185" class="attr-text">verifiedBy</text>
 
-  <!-- performs -->
-  <polygon points="175,390 215,410 175,430 135,410" class="rel-poly"/>
-  <text x="175" y="410" class="rel-text">performs</text>
+    <path d="M 1570 319 L 1685 220" class="attr-line"/>
+    <ellipse cx="1685" cy="220" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="220" class="attr-text">boundingBox</text>
 
-  <!-- Case has Evidence -->
-  <polygon points="735,275 775,295 735,315 695,295" class="rel-poly"/>
-  <text x="735" y="295" class="rel-text">has</text>
+    <path d="M 1570 319 L 1685 255" class="attr-line"/>
+    <ellipse cx="1685" cy="255" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="255" class="attr-text">extractedAt</text>
 
-  <!-- Case has TimelineEvent -->
-  <polygon points="555,390 595,410 555,430 515,410" class="rel-poly"/>
-  <text x="555" y="410" class="rel-text">has</text>
+    <!-- Entity Box -->
+    <rect x="1495" y="295" width="150" height="48" class="entity-rect"/>
+    <text x="1570" y="319" class="entity-text">ExtractedFact</text>
+  </g>
 
-  <!-- triggers -->
-  <polygon points="370,530 415,550 370,570 325,550" class="rel-poly"/>
-  <text x="370" y="550" class="rel-text">triggers</text>
 
-  <!-- extracts -->
-  <polygon points="1095,275 1140,295 1095,315 1050,295" class="rel-poly"/>
-  <text x="1095" y="295" class="rel-text">extracts</text>
+  <!-- ========================================== -->
+  <!--               ROW 2 ENTITIES               -->
+  <!-- ========================================== -->
 
-  <!-- source of -->
-  <polygon points="790,410 835,430 790,450 745,430" class="rel-poly"/>
-  <text x="790" y="430" class="rel-text">source of</text>
+  <!-- AUDIT LOG  center=(140,516)  box: x=65 y=492 w=150 h=48 -->
+  <g id="entity-auditlog">
+    <!-- Attributes Left -->
+    <path d="M 140 516 L 45 580" class="attr-line"/>
+    <ellipse cx="45" cy="580" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="45" y="580" class="pk-text">id</text>
 
-  <!-- identifies -->
-  <polygon points="1275,390 1320,410 1275,430 1230,410" class="rel-poly"/>
-  <text x="1275" y="410" class="rel-text">identifies</text>
+    <path d="M 140 516 L 45 618" class="attr-line"/>
+    <ellipse cx="45" cy="618" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="45" y="618" class="attr-text">userId</text>
 
-  <!-- linked in -->
-  <polygon points="1120,502 1160,522 1120,542 1080,522" class="rel-poly"/>
-  <text x="1120" y="522" class="rel-text">linked in</text>
+    <path d="M 140 516 L 45 656" class="attr-line"/>
+    <ellipse cx="45" cy="656" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="45" y="656" class="attr-text">caseId</text>
 
-  <!-- grouped into -->
-  <polygon points="1165,680 1215,700 1165,720 1115,700" class="rel-poly"/>
-  <text x="1165" y="700" class="rel-text">grouped into</text>
+    <path d="M 140 516 L 45 694" class="attr-line"/>
+    <ellipse cx="45" cy="694" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="45" y="694" class="attr-text">action</text>
 
-  <!-- contains -->
-  <polygon points="1060,787 1100,807 1060,827 1020,807" class="rel-poly"/>
-  <text x="1060" y="807" class="rel-text">contains</text>
+    <path d="M 140 516 L 45 732" class="attr-line"/>
+    <ellipse cx="45" cy="732" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="45" y="732" class="attr-text">entityType</text>
 
-  <!-- generates -->
-  <polygon points="330,772 365,792 330,812 295,792" class="rel-poly"/>
-  <text x="330" y="792" class="rel-text">generates</text>
+    <!-- Attributes Right -->
+    <path d="M 140 516 L 195 580" class="attr-line"/>
+    <ellipse cx="195" cy="580" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="195" y="580" class="attr-text">entityId</text>
+
+    <path d="M 140 516 L 195 620" class="attr-line"/>
+    <ellipse cx="195" cy="620" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="195" y="620" class="attr-text">details</text>
+
+    <path d="M 140 516 L 195 660" class="attr-line"/>
+    <ellipse cx="195" cy="660" rx="40" ry="13" class="attr-ellipse"/>
+    <text x="195" y="660" class="attr-text">createdAt</text>
+
+    <!-- Entity Box -->
+    <rect x="65" y="492" width="150" height="48" class="entity-rect"/>
+    <text x="140" y="516" class="entity-text">AuditLog</text>
+  </g>
+
+
+  <!-- TIMELINE EVENT  center=(600,516)  box: x=515 y=492 w=170 h=48 -->
+  <g id="entity-timelineevent">
+    <!-- Attributes Left -->
+    <path d="M 600 516 L 485 575" class="attr-line"/>
+    <ellipse cx="485" cy="575" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="485" y="575" class="pk-text">id</text>
+
+    <path d="M 600 516 L 485 610" class="attr-line"/>
+    <ellipse cx="485" cy="610" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="485" y="610" class="attr-text">caseId</text>
+
+    <path d="M 600 516 L 485 645" class="attr-line"/>
+    <ellipse cx="485" cy="645" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="485" y="645" class="attr-text">evidenceId</text>
+
+    <path d="M 600 516 L 485 680" class="attr-line"/>
+    <ellipse cx="485" cy="680" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="485" y="680" class="attr-text">eventType</text>
+
+    <path d="M 600 516 L 485 715" class="attr-line"/>
+    <ellipse cx="485" cy="715" rx="55" ry="13" class="attr-ellipse"/>
+    <text x="485" y="715" class="attr-text">eventTimestamp</text>
+
+    <path d="M 600 516 L 485 750" class="attr-line"/>
+    <ellipse cx="485" cy="750" rx="72" ry="13" class="attr-ellipse"/>
+    <text x="485" y="750" class="attr-text">normalizedTimestamp</text>
+
+    <!-- Attributes Right -->
+    <path d="M 600 516 L 685 580" class="attr-line"/>
+    <ellipse cx="685" cy="580" rx="30" ry="13" class="attr-ellipse"/>
+    <text x="685" y="580" class="attr-text">phase</text>
+
+    <path d="M 600 516 L 685 620" class="attr-line"/>
+    <ellipse cx="685" cy="620" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="685" y="620" class="attr-text">description</text>
+
+    <path d="M 600 516 L 685 660" class="attr-line"/>
+    <ellipse cx="685" cy="660" rx="40" ry="13" class="attr-ellipse"/>
+    <text x="685" y="660" class="attr-text">createdAt</text>
+
+    <!-- Entity Box -->
+    <rect x="515" y="492" width="170" height="48" class="entity-rect"/>
+    <text x="600" y="516" class="entity-text">TimelineEvent</text>
+  </g>
+
+
+  <!-- ENTITY  center=(1070,536)  box: x=995 y=512 w=150 h=48 -->
+  <g id="entity-entity">
+    <!-- Attributes Left -->
+    <path d="M 1070 536 L 970 585" class="attr-line"/>
+    <ellipse cx="970" cy="585" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="970" y="585" class="pk-text">id</text>
+
+    <path d="M 1070 536 L 970 625" class="attr-line"/>
+    <ellipse cx="970" cy="625" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="970" y="625" class="attr-text">entityType</text>
+
+    <path d="M 1070 536 L 970 665" class="attr-line"/>
+    <ellipse cx="970" cy="665" rx="58" ry="13" class="attr-ellipse"/>
+    <text x="970" y="665" class="attr-text">normalizedValue</text>
+
+    <path d="M 1070 536 L 970 705" class="attr-line"/>
+    <ellipse cx="970" cy="705" rx="52" ry="13" class="attr-ellipse"/>
+    <text x="970" y="705" class="attr-text">firstSeenCaseId</text>
+
+    <path d="M 1070 536 L 970 745" class="attr-line"/>
+    <ellipse cx="970" cy="745" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="970" y="745" class="attr-text">firstSeenAt</text>
+
+    <!-- Attributes Right -->
+    <path d="M 1070 536 L 1170 590" class="attr-line"/>
+    <ellipse cx="1170" cy="590" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="590" class="attr-text">lastSeenAt</text>
+
+    <path d="M 1070 536 L 1170 630" class="attr-line"/>
+    <ellipse cx="1170" cy="630" rx="62" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="630" class="attr-text">confidenceScore</text>
+
+    <path d="M 1070 536 L 1170 670" class="attr-line"/>
+    <ellipse cx="1170" cy="670" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="670" class="attr-text">riskScore</text>
+
+    <path d="M 1070 536 L 1170 710" class="attr-line"/>
+    <ellipse cx="1170" cy="710" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="1170" y="710" class="attr-text">isVerified</text>
+
+    <!-- Entity Box -->
+    <rect x="995" y="512" width="150" height="48" class="entity-rect"/>
+    <text x="1070" y="536" class="entity-text">Entity</text>
+  </g>
+
+
+  <!-- CASE ENTITY  center=(1570,536)  box: x=1495 y=512 w=150 h=48 -->
+  <g id="entity-caseentity">
+    <!-- Attributes Left -->
+    <path d="M 1570 536 L 1455 595" class="attr-line"/>
+    <ellipse cx="1455" cy="595" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="1455" y="595" class="pk-text">id</text>
+
+    <path d="M 1570 536 L 1455 635" class="attr-line"/>
+    <ellipse cx="1455" cy="635" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="1455" y="635" class="attr-text">caseId</text>
+
+    <path d="M 1570 536 L 1455 675" class="attr-line"/>
+    <ellipse cx="1455" cy="675" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="1455" y="675" class="attr-text">entityId</text>
+
+    <path d="M 1570 536 L 1455 715" class="attr-line"/>
+    <ellipse cx="1455" cy="715" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="1455" y="715" class="attr-text">relationType</text>
+
+    <!-- Attributes Right -->
+    <path d="M 1570 536 L 1685 585" class="attr-line"/>
+    <ellipse cx="1685" cy="585" rx="52" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="585" class="attr-text">firstSeenInCase</text>
+
+    <path d="M 1570 536 L 1685 625" class="attr-line"/>
+    <ellipse cx="1685" cy="625" rx="52" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="625" class="attr-text">lastSeenInCase</text>
+
+    <path d="M 1570 536 L 1685 665" class="attr-line"/>
+    <ellipse cx="1685" cy="665" rx="52" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="665" class="attr-text">evidenceCount</text>
+
+    <path d="M 1570 536 L 1685 705" class="attr-line"/>
+    <ellipse cx="1685" cy="705" rx="58" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="705" class="attr-text">confidenceScore</text>
+
+    <!-- Entity Box -->
+    <rect x="1495" y="512" width="150" height="48" class="entity-rect"/>
+    <text x="1570" y="536" class="entity-text">CaseEntity</text>
+  </g>
+
+
+  <!-- ========================================== -->
+  <!--               ROW 3 ENTITIES               -->
+  <!-- ========================================== -->
+
+  <!-- AI PROCESSING JOB  center=(165,854)  box: x=85 y=830 w=160 h=48 -->
+  <g id="entity-aiprocessingjob">
+    <!-- Attributes Left -->
+    <path d="M 165 854 L 50 915" class="attr-line"/>
+    <ellipse cx="50" cy="915" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="50" y="915" class="pk-text">id</text>
+
+    <path d="M 165 854 L 50 953" class="attr-line"/>
+    <ellipse cx="50" cy="953" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="50" y="953" class="attr-text">caseId</text>
+
+    <path d="M 165 854 L 50 991" class="attr-line"/>
+    <ellipse cx="50" cy="991" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="50" y="991" class="attr-text">evidenceId</text>
+
+    <path d="M 165 854 L 50 1029" class="attr-line"/>
+    <ellipse cx="50" cy="1029" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="50" y="1029" class="attr-text">jobType</text>
+
+    <path d="M 165 854 L 50 1067" class="attr-line"/>
+    <ellipse cx="50" cy="1067" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="50" y="1067" class="attr-text">status</text>
+
+    <!-- Attributes Right -->
+    <path d="M 165 854 L 275 915" class="attr-line"/>
+    <ellipse cx="275" cy="915" rx="47" ry="13" class="attr-ellipse"/>
+    <text x="275" y="915" class="attr-text">inputPayload</text>
+
+    <path d="M 165 854 L 275 953" class="attr-line"/>
+    <ellipse cx="275" cy="953" rx="52" ry="13" class="attr-ellipse"/>
+    <text x="275" y="953" class="attr-text">outputPayload</text>
+
+    <path d="M 165 854 L 275 991" class="attr-line"/>
+    <ellipse cx="275" cy="991" rx="52" ry="13" class="attr-ellipse"/>
+    <text x="275" y="991" class="attr-text">errorMessage</text>
+
+    <path d="M 165 854 L 275 1029" class="attr-line"/>
+    <ellipse cx="275" cy="1029" rx="40" ry="13" class="attr-ellipse"/>
+    <text x="275" y="1029" class="attr-text">createdAt</text>
+
+    <path d="M 165 854 L 275 1067" class="attr-line"/>
+    <ellipse cx="275" cy="1067" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="275" y="1067" class="attr-text">updatedAt</text>
+
+    <!-- Entity Box -->
+    <rect x="85" y="830" width="160" height="48" class="entity-rect"/>
+    <text x="165" y="854" class="entity-text">AIProcessingJob</text>
+  </g>
+
+
+  <!-- ALERT  center=(580,854)  box: x=505 y=830 w=150 h=48 -->
+  <g id="entity-alert">
+    <!-- Attributes Left -->
+    <path d="M 580 854 L 465 915" class="attr-line"/>
+    <ellipse cx="465" cy="915" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="465" y="915" class="pk-text">id</text>
+
+    <path d="M 580 854 L 465 953" class="attr-line"/>
+    <ellipse cx="465" cy="953" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="465" y="953" class="attr-text">caseId</text>
+
+    <path d="M 580 854 L 465 991" class="attr-line"/>
+    <ellipse cx="465" cy="991" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="465" y="991" class="attr-text">alertType</text>
+
+    <path d="M 580 854 L 465 1029" class="attr-line"/>
+    <ellipse cx="465" cy="1029" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="465" y="1029" class="attr-text">severity</text>
+
+    <path d="M 580 854 L 465 1067" class="attr-line"/>
+    <ellipse cx="465" cy="1067" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="465" y="1067" class="attr-text">message</text>
+
+    <!-- Attributes Right -->
+    <path d="M 580 854 L 685 920" class="attr-line"/>
+    <ellipse cx="685" cy="920" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="685" y="920" class="attr-text">status</text>
+
+    <path d="M 580 854 L 685 960" class="attr-line"/>
+    <ellipse cx="685" cy="960" rx="40" ry="13" class="attr-ellipse"/>
+    <text x="685" y="960" class="attr-text">createdAt</text>
+
+    <path d="M 580 854 L 685 1000" class="attr-line"/>
+    <ellipse cx="685" cy="1000" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="685" y="1000" class="attr-text">resolvedAt</text>
+
+    <path d="M 580 854 L 685 1040" class="attr-line"/>
+    <ellipse cx="685" cy="1040" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="685" y="1040" class="attr-text">resolvedBy</text>
+
+    <!-- Entity Box -->
+    <rect x="505" y="830" width="150" height="48" class="entity-rect"/>
+    <text x="580" y="854" class="entity-text">Alert</text>
+  </g>
+
+
+  <!-- SYNDICATE CLUSTER  center=(1070,879)  box: x=990 y=855 w=160 h=48 -->
+  <g id="entity-syndicatecluster">
+    <!-- Attributes Left -->
+    <path d="M 1070 879 L 970 945" class="attr-line"/>
+    <ellipse cx="970" cy="945" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="970" y="945" class="pk-text">id</text>
+
+    <path d="M 1070 879 L 970 985" class="attr-line"/>
+    <ellipse cx="970" cy="985" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="970" y="985" class="attr-text">name</text>
+
+    <path d="M 1070 879 L 970 1025" class="attr-line"/>
+    <ellipse cx="970" cy="1025" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="970" y="1025" class="attr-text">description</text>
+
+    <path d="M 1070 879 L 970 1065" class="attr-line"/>
+    <ellipse cx="970" cy="1065" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="970" y="1065" class="attr-text">riskLevel</text>
+
+    <!-- Attributes Right -->
+    <path d="M 1070 879 L 1165 960" class="attr-line"/>
+    <ellipse cx="1165" cy="960" rx="40" ry="13" class="attr-ellipse"/>
+    <text x="1165" y="960" class="attr-text">createdAt</text>
+
+    <path d="M 1070 879 L 1165 1010" class="attr-line"/>
+    <ellipse cx="1165" cy="1010" rx="42" ry="13" class="attr-ellipse"/>
+    <text x="1165" y="1010" class="attr-text">updatedAt</text>
+
+    <!-- Entity Box -->
+    <rect x="990" y="855" width="160" height="48" class="entity-rect"/>
+    <text x="1070" y="879" class="entity-text">SyndicateCluster</text>
+  </g>
+
+
+  <!-- SYNDICATE ENTITY  center=(1575,879)  box: x=1495 y=855 w=160 h=48 -->
+  <g id="entity-syndicateentity">
+    <!-- Attributes Left -->
+    <path d="M 1575 879 L 1460 945" class="attr-line"/>
+    <ellipse cx="1460" cy="945" rx="30" ry="13" class="pk-ellipse"/>
+    <text x="1460" y="945" class="pk-text">id</text>
+
+    <path d="M 1575 879 L 1460 985" class="attr-line"/>
+    <ellipse cx="1460" cy="985" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="1460" y="985" class="attr-text">clusterId</text>
+
+    <path d="M 1575 879 L 1460 1025" class="attr-line"/>
+    <ellipse cx="1460" cy="1025" rx="33" ry="13" class="attr-ellipse"/>
+    <text x="1460" y="1025" class="attr-text">entityId</text>
+
+    <!-- Attributes Right -->
+    <path d="M 1575 879 L 1685 960" class="attr-line"/>
+    <ellipse cx="1685" cy="960" rx="58" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="960" class="attr-text">confidenceScore</text>
+
+    <path d="M 1575 879 L 1685 1010" class="attr-line"/>
+    <ellipse cx="1685" cy="1010" rx="37" ry="13" class="attr-ellipse"/>
+    <text x="1685" y="1010" class="attr-text">addedAt</text>
+
+    <!-- Entity Box -->
+    <rect x="1495" y="855" width="160" height="48" class="entity-rect"/>
+    <text x="1575" y="879" class="entity-text">SyndicateEntity</text>
+  </g>
+
+
+  <!-- ========================================== -->
+  <!--           RELATIONSHIPS & CONNECTORS       -->
+  <!-- ========================================== -->
+
+  <!-- 1. User [files] Case -->
+  <g id="rel-user-case">
+    <path d="M 215 319 L 320 319" class="link-line"/>
+    <text x="240" y="307" class="card-text">1</text>
+    <polygon points="370,299 420,319 370,339 320,319" class="rel-poly"/>
+    <text x="370" y="319" class="rel-text">files</text>
+    <path d="M 420 319 L 525 319" class="link-line"/>
+    <text x="500" y="307" class="card-text">N</text>
+  </g>
+
+  <!-- 2. Case [has] Evidence -->
+  <g id="rel-case-evidence">
+    <path d="M 675 319 L 775 319" class="link-line"/>
+    <text x="700" y="307" class="card-text">1</text>
+    <polygon points="825,299 875,319 825,339 775,319" class="rel-poly"/>
+    <text x="825" y="319" class="rel-text">has</text>
+    <path d="M 875 319 L 980 319" class="link-line"/>
+    <text x="955" y="307" class="card-text">N</text>
+  </g>
+
+  <!-- 3. Evidence [extracts] ExtractedFact -->
+  <g id="rel-evidence-extractedfact">
+    <path d="M 1130 319 L 1255 319" class="link-line"/>
+    <text x="1165" y="307" class="card-text">1</text>
+    <polygon points="1310,299 1365,319 1310,339 1255,319" class="rel-poly"/>
+    <text x="1310" y="319" class="rel-text">extracts</text>
+    <path d="M 1365 319 L 1495 319" class="link-line"/>
+    <text x="1465" y="307" class="card-text">N</text>
+  </g>
+
+  <!-- 4. User [performs] AuditLog -->
+  <g id="rel-user-auditlog">
+    <path d="M 140 343 L 140 395" class="link-line"/>
+    <text x="155" y="368" class="card-text">1</text>
+    <polygon points="140,395 185,418 140,441 95,418" class="rel-poly"/>
+    <text x="140" y="418" class="rel-text">performs</text>
+    <path d="M 140 441 L 140 492" class="link-line"/>
+    <text x="155" y="468" class="card-text">N</text>
+  </g>
+
+  <!-- 5. Case [has] TimelineEvent -->
+  <g id="rel-case-timelineevent">
+    <path d="M 600 343 L 600 395" class="link-line"/>
+    <text x="615" y="368" class="card-text">1</text>
+    <polygon points="600,395 645,418 600,441 555,418" class="rel-poly"/>
+    <text x="600" y="418" class="rel-text">has</text>
+    <path d="M 600 441 L 600 492" class="link-line"/>
+    <text x="615" y="468" class="card-text">N</text>
+  </g>
+
+  <!-- 6. Evidence [source of] TimelineEvent -->
+  <g id="rel-evidence-timelineevent">
+    <path d="M 1005 343 C 970 370, 920 390, 890 412" class="link-line"/>
+    <text x="965" y="365" class="card-text">1</text>
+    <polygon points="840,405 890,430 840,455 790,430" class="rel-poly"/>
+    <text x="840" y="430" class="rel-text">source of</text>
+    <path d="M 790 430 C 760 450, 720 470, 685 492" class="link-line"/>
+    <text x="735" y="470" class="card-text">N</text>
+  </g>
+
+  <!-- 7. ExtractedFact [identifies] CaseEntity -->
+  <g id="rel-extractedfact-caseentity">
+    <path d="M 1570 343 L 1570 405" class="link-line"/>
+    <text x="1585" y="370" class="card-text">N</text>
+    <polygon points="1570,405 1620,428 1570,451 1520,428" class="rel-poly"/>
+    <text x="1570" y="428" class="rel-text">identifies</text>
+    <path d="M 1570 451 L 1570 512" class="link-line"/>
+    <text x="1585" y="485" class="card-text">1</text>
+  </g>
+
+  <!-- 8. Entity [linked in] CaseEntity -->
+  <g id="rel-entity-caseentity">
+    <path d="M 1145 536 L 1260 536" class="link-line"/>
+    <text x="1180" y="524" class="card-text">1</text>
+    <polygon points="1315,516 1370,536 1315,556 1260,536" class="rel-poly"/>
+    <text x="1315" y="536" class="rel-text">linked in</text>
+    <path d="M 1370 536 L 1495 536" class="link-line"/>
+    <text x="1460" y="524" class="card-text">N</text>
+  </g>
+
+  <!-- 9. Case [triggers] AIProcessingJob -->
+  <g id="rel-case-aiprocessingjob">
+    <path d="M 525 335 C 480 380, 420 460, 395 545" class="link-line"/>
+    <text x="475" y="410" class="card-text">1</text>
+    <polygon points="350,545 395,570 350,595 305,570" class="rel-poly"/>
+    <text x="350" y="570" class="rel-text">triggers</text>
+    <path d="M 305 595 C 280 670, 240 760, 210 830" class="link-line"/>
+    <text x="250" y="730" class="card-text">N</text>
+  </g>
+
+  <!-- 10. AIProcessingJob [generates] Alert -->
+  <g id="rel-aiprocessingjob-alert">
+    <path d="M 245 854 L 330 854" class="link-line"/>
+    <text x="275" y="842" class="card-text">1</text>
+    <polygon points="385,834 440,854 385,874 330,854" class="rel-poly"/>
+    <text x="385" y="854" class="rel-text">generates</text>
+    <path d="M 440 854 L 505 854" class="link-line"/>
+    <text x="475" y="842" class="card-text">N</text>
+  </g>
+
+  <!-- 11. CaseEntity / Entity [grouped into] SyndicateEntity -->
+  <g id="rel-caseentity-syndicateentity">
+    <path d="M 1380 560 C 1420 610, 1440 660, 1430 690" class="link-line"/>
+    <text x="1445" y="625" class="card-text">1</text>
+    <polygon points="1430,690 1490,718 1430,746 1370,718" class="rel-poly"/>
+    <text x="1430" y="718" class="rel-text">grouped into</text>
+    <path d="M 1490 732 C 1520 770, 1540 810, 1555 855" class="link-line"/>
+    <text x="1530" y="800" class="card-text">N</text>
+  </g>
+
+  <!-- 12. SyndicateCluster [contains] SyndicateEntity -->
+  <g id="rel-syndicatecluster-syndicateentity">
+    <path d="M 1150 879 L 1260 879" class="link-line"/>
+    <text x="1195" y="867" class="card-text">1</text>
+    <polygon points="1315,859 1370,879 1315,899 1260,879" class="rel-poly"/>
+    <text x="1315" y="879" class="rel-text">contains</text>
+    <path d="M 1370 879 L 1495 879" class="link-line"/>
+    <text x="1455" y="867" class="card-text">N</text>
+  </g>
 
 </svg>

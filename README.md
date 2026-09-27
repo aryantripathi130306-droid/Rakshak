@@ -70,7 +70,7 @@ Rakshak implements an immutable, verifiable ingestion pipeline designed to preve
 
 <div align="center">
 
-![Rakshak ER Diagram](./rakshak_er_diagram.svg)
+![Rakshak ER Diagram](./Rakshak.drawio.svg)
 
 </div>
 

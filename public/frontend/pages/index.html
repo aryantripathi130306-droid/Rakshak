@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak — Forensic Digital Evidence & Cross-Case Syndicate Intelligence Platform. Evidence Vault." />
+  <title>Evidence Vault — Rakshak v3.0</title>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- Toast Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <!-- Header -->
+    <header class="app-header" role="banner" aria-label="Rakshak application header">
+      <!-- Injected by layout.js -->
+    </header>
+
+    <div class="app-body">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation">
+        <!-- Injected by layout.js -->
+      </aside>
+
+      <!-- Main Content -->
+      <main class="app-main" role="main" aria-label="Evidence Vault">
+
+        <!-- Tab Bar -->
+        <div class="tab-bar" role="tablist" aria-label="Investigation modules">
+          <button class="tab-btn active" role="tab" data-tab="vault" aria-selected="true" aria-controls="tab-vault" id="tab-btn-vault">
+            <span class="tab-icon" aria-hidden="true">🛡</span>
+            <span>Evidence Vault</span>
+            <span class="tab-btn-sub">[Preserve & Hash]</span>
+          </button>
+          <button class="tab-btn" role="tab" data-tab="checklist" aria-selected="false" aria-controls="tab-checklist" id="tab-btn-checklist">
+            <span class="tab-icon" aria-hidden="true">☑</span>
+            <span>Section 63 Checklist</span>
+            <span class="tab-btn-sub">[BSA Chain Audit]</span>
+          </button>
+          <div style="flex:1"></div>
+          <div style="display:flex;align-items:center;padding:0 14px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted)" id="header-time" aria-label="Current time"></div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+
+          <!-- VAULT TAB -->
+          <div class="tab-pane active" id="tab-vault" role="tabpanel" aria-labelledby="tab-btn-vault">
+            <div class="vault-layout">
+
+              <!-- Top Ingestion Controls & Target Case Selection -->
+              <div class="vault-ingestion-bar" role="region" aria-label="Evidence Ingestion Configuration">
+                <div class="vault-select-group">
+                  <label for="upload-case-select" class="vault-select-label">Target Case:</label>
+                  <select id="upload-case-select" class="vault-select" aria-label="Select target case for evidence upload">
+                    <option value="CASE-2026-0891">CASE-2026-0891 · Priya Sharma (Loading...)</option>
+                  </select>
+                </div>
+
+                <div class="vault-select-group">
+                  <label for="upload-category-select" class="vault-select-label">Default Category:</label>
+                  <select id="upload-category-select" class="vault-select" aria-label="Select category override">
+                    <option value="">Auto-Detect from Content</option>
+                    <option value="UPI_FINANCIAL">💳 UPI / Financial Records</option>
+                    <option value="CHAT">💬 Chat Logs (WhatsApp / Telegram)</option>
+                    <option value="CALL_LOG">📞 Call Logs / Audio Recording</option>
+                    <option value="PHISHING_EMAIL">⚠ Phishing Email (.eml)</option>
+                    <option value="EMAIL">📧 Email Record</option>
+                    <option value="IDENTITY_DATA">🪪 Identity Data (Aadhar / PAN)</option>
+                    <option value="DOCUMENT">📄 Document / Bank Slip</option>
+                    <option value="CRIME_SCENE_PHOTO">📷 Scene / ATM / CCTV Photo</option>
+                    <option value="AUDIO">🎙 Audio Intercept</option>
+                    <option value="VIDEO">🎬 Video Footage</option>
+                    <option value="URL_WEB">🌐 Web / URL Reference</option>
+                    <option value="OTHER">📁 Other Digital Asset</option>
+                  </select>
+                </div>
+
+                <div style="flex:1"></div>
+
+                <!-- Tamper Test Simulator Toggle (Demonstrates Section 63 Cryptographic Integrity Rejection) -->
+                <label class="tamper-test-toggle" title="Test Section 63 hash mismatch rejection by simulating a corrupted client hash">
+                  <input type="checkbox" id="tamper-test-checkbox" />
+                  <span>Simulate Hash Mismatch (Test Defense)</span>
+                </label>
+              </div>
+
+              <!-- Top: Dropzone + Upload Queue -->
+              <div class="vault-top">
+                <!-- Dropzone -->
+                <div class="dropzone" id="dropzone" role="button" tabindex="0"
+                  aria-label="Drop evidence files here or click to browse"
+                  title="Drop evidence files or click to select">
+                  <input type="file" id="file-input" multiple style="display:none"
+                    accept=".eml,.txt,.jpg,.jpeg,.png,.pdf,.mp3,.wav,.docx,.mp4"
+                    aria-label="Select evidence files" />
+                  <div class="dropzone-icon-wrap" aria-hidden="true">⬆</div>
+                  <div>
+                    <div class="dropzone-title">Drop digital evidence files or click to browse</div>
+                    <div class="dropzone-sub">
+                      Accepts: .eml Phishing Mails · ID Scans · Scene Photos / CCTV · WhatsApp .txt · MP3 Audio · PDF Slips<br>
+                      <em>Dual-Hash verification: Client WebCrypto SHA-256 computed before transport & verified on backend</em>
+                    </div>
+                  </div>
+                  <div class="dropzone-badge" aria-label="12 evidence categories supported">
+                    12 EVIDENCE CATEGORIES SUPPORTED · BSA §63 IMMUTABLE VAULT
+                  </div>
+                </div>
+
+                <!-- Upload Queue Panel -->
+                <div class="upload-queue" role="status" aria-label="File upload queue" aria-live="polite">
+                  <div class="upload-queue-title">INGESTION & HASH PIPELINE</div>
+                  <div id="upload-queue-items">
+                    <div class="upload-queue-empty">
+                      <div class="upload-queue-empty-icon" aria-hidden="true">✓</div>
+                      <div style="color:var(--text-muted);font-size:11px">Queue empty</div>
+                      <div style="color:var(--text-muted);font-size:9px;margin-top:2px">Ready for forensic ingestion</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Filter & Search Bar -->
+              <div class="category-filter-bar" id="category-filter-bar" role="group" aria-label="Filter by evidence category">
+                <button class="filter-chip active" data-category="ALL">
+                  All Categories <span class="filter-chip-count">0</span>
+                </button>
+              </div>
+
+              <!-- Evidence Table Container -->
+              <div class="evidence-table-wrap">
+                <!-- Table Header Row -->
+                <div class="evidence-table-header">
+                  <div class="evidence-table-title">
+                    <span aria-hidden="true">🛡</span>
+                    <span style="font-size:12px;font-weight:600;color:var(--text-primary)">Forensic Evidence Vault</span>
+                    <span class="evidence-live-badge" id="evidence-live-badge" aria-live="polite">0 ASSETS · INITIALISING</span>
+                  </div>
+
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <!-- Filter by Case -->
+                    <select id="filter-case-select" class="vault-select" style="font-size:10px;padding:3px 6px;" aria-label="Filter by case">
+                      <option value="ALL">All Cases</option>
+                    </select>
+
+                    <!-- Filter by Status -->
+                    <select id="filter-status-select" class="vault-select" style="font-size:10px;padding:3px 6px;" aria-label="Filter by integrity status">
+                      <option value="ALL">All Statuses</option>
+                      <option value="VERIFIED">✓ Verified Integrity</option>
+                      <option value="TAMPERED">✕ Tampered / Disputed</option>
+                    </select>
+
+                    <div class="evidence-search-wrap">
+                      <label for="evidence-search" class="sr-only">Search evidence</label>
+                      <span class="evidence-search-icon" aria-hidden="true">🔍</span>
+                      <input type="search" id="evidence-search" class="evidence-search"
+                        placeholder="Search filename, EV-ID, hash, entity…"
+                        aria-label="Search evidence by filename, category, or ID" />
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" id="reset-filters-btn" title="Reset all filters" style="font-size:10px;padding:4px 8px;">
+                      Reset
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Table -->
+                <div class="evidence-table-body" role="region" aria-label="Evidence list">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th scope="col">EV-ID</th>
+                        <th scope="col">File Name</th>
+                        <th scope="col">Case Ref</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Size</th>
+                        <th scope="col">SHA-256 Digest</th>
+                        <th scope="col">Timestamp (UTC)</th>
+                        <th scope="col">Integrity</th>
+                        <th scope="col" style="text-align:right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="evidence-rows">
+                      <tr>
+                        <td colspan="10">
+                          <div class="loading-row">
+                            <span class="spinner" aria-hidden="true"></span>
+                            <span>Loading evidence vault assets…</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- CHECKLIST TAB -->
+          <div class="tab-pane" id="tab-checklist" role="tabpanel" aria-labelledby="tab-btn-checklist">
+            <div style="padding: 16px; overflow-y:auto; height:100%;">
+              <div style="margin-bottom:16px;">
+                <h2 style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">BSA §63 Forensic Evidence Integrity Verification Checklist</h2>
+                <p style="font-size:12px;color:var(--text-muted);line-height:1.4;">
+                  Every digital evidence asset ingested into Rakshak must satisfy the statutory standards of the Bharatiya Sakshya Adhiniyam, 2023 (Section 63) for electronic records admissibility in court.
+                </p>
+              </div>
+
+              <div class="checklist-grid" id="checklist-cards-container">
+                <div class="checklist-card passed">
+                  <div class="checklist-card-title">
+                    <span style="color:#10b981;">✓</span>
+                    <span>1. Client-Side Pre-Ingestion Hashing</span>
+                  </div>
+                  <div class="checklist-card-desc">
+                    Original byte stream SHA-256 digest is calculated directly in the officer's browser via WebCrypto API before network transmission.
+                  </div>
+                </div>
+
+                <div class="checklist-card passed">
+                  <div class="checklist-card-title">
+                    <span style="color:#10b981;">✓</span>
+                    <span>2. Server-Side Independent Verification</span>
+                  </div>
+                  <div class="checklist-card-desc">
+                    Backend receives raw bytes and independently computes SHA-256 via Node.js crypto module. Mismatches are rejected with HTTP 422.
+                  </div>
+                </div>
+
+                <div class="checklist-card passed">
+                  <div class="checklist-card-title">
+                    <span style="color:#10b981;">✓</span>
+                    <span>3. Write-Once Content-Addressed Cold Storage</span>
+                  </div>
+                  <div class="checklist-card-desc">
+                    Immutable raw binaries stored at <code>/uploads/raw/&lt;sha256&gt;.bin</code>. Files are never overwritten or mutated by preview/export actions.
+                  </div>
+                </div>
+
+                <div class="checklist-card passed">
+                  <div class="checklist-card-title">
+                    <span style="color:#10b981;">✓</span>
+                    <span>4. Deterministic Fact Extraction & Syndicate Linking</span>
+                  </div>
+                  <div class="checklist-card-desc">
+                    UPIs, phone numbers, IFSCs, and UTRs extracted deterministically, linked to source SHA-256 hash, and correlated across syndicate cases.
+                  </div>
+                </div>
+
+                <div class="checklist-card passed">
+                  <div class="checklist-card-title">
+                    <span style="color:#10b981;">✓</span>
+                    <span>5. Append-Only Chain of Custody Logging</span>
+                  </div>
+                  <div class="checklist-card-desc">
+                    All intake, verification, audit, access, and download events are permanently recorded in the database with timestamps and actor identities.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ingested Evidence Compliance Summary Table -->
+              <div class="evidence-table-wrap" style="margin-top:16px;">
+                <div class="evidence-table-header">
+                  <div class="evidence-table-title">
+                    <span>📋</span>
+                    <span style="font-size:12px;font-weight:600;color:var(--text-primary)">Ingested Evidence Compliance Status</span>
+                  </div>
+                </div>
+                <div class="evidence-table-body">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>EV-ID</th>
+                        <th>Filename</th>
+                        <th>Case Reference</th>
+                        <th>Dual-Hash Match</th>
+                        <th>Cold Storage Path</th>
+                        <th>Custody Logged</th>
+                        <th>BSA §63 Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="checklist-evidence-rows">
+                      <tr><td colspan="7" class="loading-row"><span class="spinner"></span> Loading compliance summary…</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Evidence Inspector Panel -->
+          <div class="inspector-panel" id="inspector-panel" role="complementary"
+            aria-label="Evidence Inspector" style="display:none; width:440px;">
+            <div class="inspector-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="inspector-title">Forensic Evidence Inspector</span>
+                <span class="badge badge-blue" id="inspector-badge-type">ASSET</span>
+              </div>
+              <button class="inspector-close-btn" id="inspector-close-btn"
+                aria-label="Close inspector panel">✕</button>
+            </div>
+            <div class="inspector-body" id="inspector-body">
+              <div class="empty-state">
+                <div class="empty-state-title">Select evidence to inspect</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Update clock
+    function updateClock() {
+      const el = document.getElementById('header-time');
+      if (el) el.textContent = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST';
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+  <script type="module" src="../js/vault.js"></script>
+</body>
+</html>

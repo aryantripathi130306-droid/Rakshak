@@ -146,7 +146,39 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // ── 7. Async extraction worker (fire-and-forget, non-blocking) ─────────
+    // ── 7. Record initial custody audit events ─────────────────────────────
+    await (prisma as any).custodyEvent.createMany({
+      data: [
+        {
+          evidenceId: evidence.id,
+          eventType: "INTAKE_UPLOAD",
+          actor: "Evidence Ingestion Gateway",
+          action: `Raw evidence ingested: ${file.name} (${fileBuffer.length} bytes)`,
+          result: "SUCCESS",
+          details: JSON.stringify({
+            fileName: file.name,
+            mimeType,
+            clientHash,
+            caseNumber: caseRecord.caseNumber,
+          }),
+        },
+        {
+          evidenceId: evidence.id,
+          eventType: "HASH_VERIFIED",
+          actor: "Cryptographic Verification Subsystem",
+          action: `Dual SHA-256 integrity match confirmed. Server digest: ${serverHash}`,
+          result: "VERIFIED",
+          details: JSON.stringify({
+            algorithm: "SHA-256",
+            serverHash,
+            clientHash,
+            storagePath: relativeStoragePath,
+          }),
+        },
+      ],
+    }).catch((e: unknown) => console.error("[Upload] Error logging intake custody events:", e));
+
+    // ── 8. Async extraction worker (fire-and-forget, non-blocking) ─────────
     runExtractionWorker(fileBuffer, mimeType, file.name, category, evidence.id, caseRecord.id, serverHash).catch(
       (err) => console.error("[ExtractionWorker] Failed:", err)
     );
@@ -258,4 +290,20 @@ async function runExtractionWorker(
         /* ignore unique constraint on concurrent uploads */
       });
   }
+
+  // Record extraction completion custody audit event
+  await (prisma as any).custodyEvent.create({
+    data: {
+      evidenceId,
+      eventType: "EXTRACTION_COMPLETED",
+      actor: "Forensic Intelligence Extractor",
+      action: `Deterministic entity extraction completed: ${payload.entities.length} entities extracted`,
+      result: "SUCCESS",
+      details: JSON.stringify({
+        entityCount: payload.entities.length,
+        types: Array.from(new Set(payload.entities.map((e: any) => e.type))),
+      }),
+    },
+  }).catch((e: unknown) => console.error("[ExtractionWorker] Error logging extraction custody event:", e));
 }
+

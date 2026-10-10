@@ -12,21 +12,25 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "@radix-ui/react-dialog": "^1.1.23",
     "@radix-ui/react-tabs": "^1.1.21",
     "@radix-ui/react-tooltip": "^1.2.16",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jszip": "^3.4.0",
     "@xyflow/react": "^12.11.6",
+    "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
+    "jszip": "^3.10.2",
     "lucide-react": "^1.46.0",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "tailwind-merge": "^3.7.0",
-    "zod": "^4.6.5",
-    "@prisma/client": "^5.22.0"
+    "zod": "^4.6.5"
   },
   "prisma": {
     "seed": "ts-node --compiler-options \"{\"module\":\"CommonJS\"}\" prisma/seed.ts"

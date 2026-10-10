@@ -13,11 +13,15 @@ datasource db {
 model Case {
   id              String          @id @default(uuid())
   caseNumber      String          @unique
-  incidentType    String          // "Task_Scam" | "Digital_Arrest" | "Investment_Fraud" | ...
+  incidentType    String          // "Task_Scam" | "Digital_Arrest" | "Investment_Fraud" | "KYC_Freeze" | "Romance_Scam"
   complainantName String
   jurisdiction    String?
   status          String          @default("OPEN") // "OPEN" | "UNDER_INQUIRY" | "CHARGESHEETED" | "CLOSED"
   amountDefrauded Int?            // in INR
+  description     String?         // case description / narrative
+  firNumber       String?         // FIR or reference number
+  officerName     String?         // assigned officer display name
+  officerBadge    String?         // assigned officer badge / service number
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
@@ -25,6 +29,8 @@ model Case {
   timeline           TimelineEvent[]
   entities           CaseEntity[]
   clusterMemberships ClusterMembership[]
+  legalMappings      CaseLegalMapping[]
+  dossierAudits      DossierExportAudit[]
 }
 
 model Evidence {
@@ -46,6 +52,7 @@ model Evidence {
   timelineRefs     TimelineEvent[]
   transcriptions   Transcription[]
   chatTranslations ChatTranslation[]
+  custodyEvents    CustodyEvent[]
 }
 
 model ExtractedFact {
@@ -148,3 +155,192 @@ model ClusterMembership {
 
   @@unique([clusterId, caseId])
 }
+
+model CustodyEvent {
+  id         String   @id @default(uuid())
+  evidenceId String
+  evidence   Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  eventType  String   // "INTAKE_UPLOAD" | "HASH_VERIFIED" | "EXTRACTION_COMPLETED" | "INTEGRITY_AUDIT" | "EVIDENCE_ACCESSED" | "EVIDENCE_DOWNLOADED" | "CUSTODY_TRANSFER" | "OFFICER_NOTE"
+  actor      String   // e.g. "System Worker", "Inspector Rajesh Kumar (Badge #DL-CY-042)"
+  action     String   // Human-readable description
+  result     String   // "SUCCESS" | "VERIFIED" | "FAILED" | "WARNING"
+  details    String?  // JSON string or notes
+  timestamp  DateTime @default(now())
+
+  @@index([evidenceId])
+  @@index([timestamp])
+}
+
+model LegalProvision {
+  id               String   @id @default(uuid())
+  act              String   // "Bharatiya Nyaya Sanhita, 2023" | "Information Technology Act, 2000" | "Bharatiya Sakshya Adhiniyam, 2023"
+  actCode          String   // "BNS" | "IT_ACT" | "BSA"
+  section          String   // "§ 318(4)"
+  title            String
+  description      String
+  offenceCategory  String?
+  cognizable       Boolean  @default(true)
+  bailable         Boolean  @default(false)
+  sourceUrl        String?
+  statutoryVersion String   @default("2023_OFFICIAL")
+  verifiedDate     String?
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model CaseLegalMapping {
+  id            String    @id @default(uuid())
+  caseId        String
+  case          Case      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  sectionCode   String
+  act           String
+  section       String
+  description   String
+  relevance     String    @default("PRIMARY") // "PRIMARY" | "SECONDARY"
+  status        String    @default("SUGGESTED") // "SUGGESTED" | "REVIEWED" | "APPROVED" | "REJECTED"
+  rationale     String?
+  reviewerName  String?
+  reviewedAt    DateTime?
+  reviewerNotes String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([caseId, sectionCode])
+  @@index([caseId])
+}
+
+model EvidenceLegalMapping {
+  id         String   @id @default(uuid())
+  caseId     String
+  evidenceId String
+  section    String
+  relevance  String   @default("HIGH") // "HIGH" | "MEDIUM" | "LOW"
+  rationale  String?
+  status     String   @default("MAPPED")
+  mappedBy   String?  @default("Inspector Rajesh Kumar (Badge #DL-CY-042)")
+  createdAt  DateTime @default(now())
+
+  @@unique([evidenceId, section])
+  @@index([caseId])
+  @@index([evidenceId])
+}
+
+model DossierExportAudit {
+  id               String   @id @default(uuid())
+  dossierNumber    String   @unique
+  caseId           String
+  case             Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  exportFormat     String   // "PDF" | "JSON" | "ZIP"
+  officerName      String
+  officerBadge     String?
+  templateVersion  String   @default("BSA_SEC63_V3")
+  validationStatus String   // "COMPLETE" | "INCOMPLETE" | "REQUIRES_REVIEW"
+  missingFields    String?  // JSON string
+  evidenceCount    Int
+  manifestHash     String?
+  generatedAt      DateTime @default(now())
+
+  @@index([caseId])
+  @@index([generatedAt])
+}
+
+// ─── Phase 8: Officers, Authentication & RBAC ────────────────────────────────
+
+model Officer {
+  id           String    @id @default(uuid())
+  badgeNumber  String    @unique // e.g. "DL-002"
+  name         String    // e.g. "ACP Vikram Singh"
+  email        String    @unique
+  passwordHash String
+  designation  String    // "ACP" | "Inspector" | "SI" | "Analyst" | "Head Constable"
+  role         String    @default("INVESTIGATOR") // "ADMIN" | "INVESTIGATOR" | "ANALYST" | "VIEWER"
+  jurisdiction String    // "Delhi" | "Mumbai" | "Bengaluru" | "Jaipur" | "Pune"
+  unit         String?   @default("Cyber Crime Cell")
+  status       String    @default("ACTIVE") // "ACTIVE" | "INACTIVE" | "SUSPENDED"
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions     OfficerSession[]
+  auditLogs    AuditLog[]
+  reports      GeneratedReport[]
+
+  @@index([badgeNumber])
+  @@index([role])
+}
+
+model OfficerSession {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  officerId String
+  officer   Officer  @relation(fields: [officerId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([officerId])
+}
+
+// ─── Phase 8: Centralized Audit Logging ───────────────────────────────────────
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  timestamp    DateTime @default(now())
+  officerId    String?
+  officer      Officer? @relation(fields: [officerId], references: [id], onDelete: SetNull)
+  officerName  String   // e.g. "ACP Vikram Singh"
+  officerBadge String?
+  action       String   // "LOGIN_SUCCESS" | "LOGIN_FAILED" | "LOGOUT" | "GENERATE_REPORT" | "UPDATE_CASE" | "VIEW_EVIDENCE" | "EXPORT_JSON" | "VIEW_TIMELINE" | "ADD_OFFICER" | "UPDATE_ROLE" | "DEACTIVATE_OFFICER" | "ACCESS_DENIED"
+  module       String   // "Auth" | "Cases" | "Evidence" | "Entities" | "Timeline" | "Syndicate" | "Legal" | "Reports" | "Officers"
+  targetType   String?  // "Case" | "Evidence" | "Officer" | "Report"
+  targetId     String?
+  details      String   // Human readable event description
+  result       String   @default("SUCCESS") // "SUCCESS" | "FAILED" | "BLOCKED"
+  ipAddress    String?  @default("103.45.67.89")
+  metadata     String?  // JSON string
+
+  @@index([timestamp])
+  @@index([officerId])
+  @@index([action])
+  @@index([module])
+}
+
+// ─── Phase 8: Report Generation & Scheduling ─────────────────────────────────
+
+model GeneratedReport {
+  id               String   @id @default(uuid())
+  reportNumber     String   @unique // e.g. "RPT-2026-012"
+  reportType       String   // "INVESTIGATION_COMPLETE" | "INVESTIGATION_SUMMARY" | "EVIDENCE_INTEGRITY" | "ENTITY_ANALYSIS" | "SYNDICATE_INTELLIGENCE" | "AUDIT_ACTIVITY"
+  caseId           String?
+  title            String
+  generatedBy      String   // e.g. "ACP Vikram Singh"
+  officerId        String?
+  officer          Officer? @relation(fields: [officerId], references: [id], onDelete: SetNull)
+  status           String   @default("COMPLETED") // "COMPLETED" | "FAILED" | "PROCESSING"
+  outputFormat     String   // "PDF" | "JSON"
+  sectionsIncluded String   // JSON string array
+  fileSizeBytes    Int?     @default(1048576)
+  filePath         String?
+  metadata         String?  // JSON string
+  createdAt        DateTime @default(now())
+
+  @@index([caseId])
+  @@index([createdAt])
+  @@index([reportType])
+}
+
+model ScheduledReport {
+  id         String   @id @default(uuid())
+  name       String   // e.g. "Weekly Case Summary", "High-Risk Entity Report", "Pending Reviews"
+  reportType String
+  frequency  String   // "DAILY" | "WEEKLY" | "MONTHLY"
+  nextRun    DateTime
+  status     String   @default("ACTIVE") // "ACTIVE" | "PAUSED"
+  recipients String?  // JSON string
+  createdAt  DateTime @default(now())
+}
+

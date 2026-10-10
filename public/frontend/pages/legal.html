@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak — Legal Matrix & BSA Section 63 Dossier. Automated statutory classification, evidence mapping and certificate generation for court submission." />
+  <title>Legal Matrix — Rakshak v3.0</title>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+  <!-- Offline vendor libraries -->
+  <script src="../vendor/jspdf.umd.min.js"></script>
+  <script src="../vendor/jszip.min.js"></script>
+</head>
+<body>
+  <div id="toast-container" aria-live="polite"></div>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <header class="app-header" role="banner"></header>
+
+    <div class="app-body">
+      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation"></aside>
+
+      <main class="app-main" role="main" aria-label="Legal Matrix & BSA Section 63 Dossier">
+        <div class="legal-matrix-layout">
+          
+          <!-- Top Header Bar -->
+          <div class="legal-header-bar">
+            <div class="legal-title-block">
+              <h1>Legal Matrix & BSA Section 63 Dossier</h1>
+              <p>Automated legal classification, evidence mapping and statutory certificate generation for court submission.</p>
+            </div>
+            <div class="legal-header-right">
+              <div class="legal-breadcrumbs">
+                Legal Matrix &gt; Case &gt; <span class="active" id="breadcrumb-case-no">#CASE-2026-0891</span>
+              </div>
+              <select id="case-select-dropdown" class="legal-case-picker" aria-label="Select Active Case">
+                <option value="CASE-2026-0891">#CASE-2026-0891 Part-Time Task Scam Mule Ring</option>
+                <option value="CASE-2026-0104">#CASE-2026-0104 Digital Arrest CBI Impersonation</option>
+                <option value="CASE-2026-0219">#CASE-2026-0219 Crypto Investment Fraud Ring</option>
+                <option value="CASE-2026-0331">#CASE-2026-0331 Loan App Extortion Syndicate</option>
+              </select>
+              <button class="legal-kpi-cta" id="top-generate-dossier-btn">
+                <span>📄</span>
+                <span>Generate BSA §63 Dossier</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- KPI Cards Strip (5 Cards) -->
+          <div class="legal-kpi-grid">
+            <div class="legal-kpi-card">
+              <div class="legal-kpi-left">
+                <div class="legal-kpi-icon">⚖</div>
+                <div>
+                  <div class="legal-kpi-val" id="kpi-applicable-sections">12</div>
+                  <div class="legal-kpi-label">Applicable Legal Sections</div>
+                </div>
+              </div>
+              <button class="legal-kpi-action-btn" id="btn-view-all-sections">View All</button>
+            </div>
+
+            <div class="legal-kpi-card">
+              <div class="legal-kpi-left">
+                <div class="legal-kpi-icon doc">📄</div>
+                <div>
+                  <div class="legal-kpi-val" id="kpi-evidence-mapped">28</div>
+                  <div class="legal-kpi-label">Evidence Items Mapped</div>
+                </div>
+              </div>
+              <button class="legal-kpi-action-btn" id="btn-view-evidence-map">View</button>
+            </div>
+
+            <div class="legal-kpi-card">
+              <div class="legal-kpi-left">
+                <div class="legal-kpi-icon link">🔗</div>
+                <div>
+                  <div class="legal-kpi-val" id="kpi-linked-cases">6</div>
+                  <div class="legal-kpi-label">Linked Cases</div>
+                </div>
+              </div>
+              <button class="legal-kpi-action-btn" id="btn-view-linked-cases">View</button>
+            </div>
+
+            <div class="legal-kpi-card">
+              <div class="legal-kpi-left">
+                <div class="legal-kpi-icon shield">🛡</div>
+                <div>
+                  <div class="legal-kpi-severity-badge" id="kpi-legal-severity">High</div>
+                  <div class="legal-kpi-label">Legal Severity</div>
+                </div>
+              </div>
+            </div>
+
+            <button class="legal-kpi-cta" id="cta-generate-dossier-card">
+              <span>📄</span>
+              <span>Generate BSA §63 Dossier</span>
+            </button>
+          </div>
+
+          <!-- Grid Row 1: Panels 1 & 2 -->
+          <div class="legal-row-1">
+            
+            <!-- Panel 1: Incident Analysis & Legal Classification -->
+            <div class="legal-panel">
+              <div class="legal-panel-header">
+                <div class="legal-panel-title">
+                  <span>1. Incident Analysis & Legal Classification</span>
+                  <span class="badge-auto-classified">
+                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4ade80;"></span>
+                    Auto Classified
+                  </span>
+                </div>
+                <button class="legal-btn-ghost-sm" id="btn-edit-classification">
+                  <span>✏</span>
+                  <span>Edit Classification</span>
+                </button>
+              </div>
+
+              <div class="incident-analysis-body">
+                <!-- Left metadata & badges -->
+                <div>
+                  <div class="incident-meta-grid">
+                    <div class="incident-meta-label">Case ID</div>
+                    <div class="incident-meta-val cyan" id="ia-case-id">#CASE-2026-0891</div>
+
+                    <div class="incident-meta-label">Case Title</div>
+                    <div class="incident-meta-val" id="ia-case-title">Part-Time Task Scam Mule Ring</div>
+
+                    <div class="incident-meta-label">Incident Type</div>
+                    <div class="incident-meta-val" id="ia-incident-type">Task Scam / Digital Fraud</div>
+
+                    <div class="incident-meta-label">Jurisdiction</div>
+                    <div class="incident-meta-val" id="ia-jurisdiction">Delhi Cyber Crime</div>
+                  </div>
+
+                  <div style="margin-top:12px">
+                    <div class="incident-meta-label" style="margin-bottom:4px">Modus Operandi</div>
+                    <div class="mo-badges-strip" id="ia-mo-strip">
+                      <span class="mo-badge contact">CONTACT</span>
+                      <span class="mo-badge trust">TRUST</span>
+                      <span class="mo-badge payment">PAYMENT</span>
+                      <span class="mo-badge severed">SEVERED</span>
+                    </div>
+                  </div>
+
+                  <div style="margin-top:12px">
+                    <div class="incident-meta-label" style="margin-bottom:4px">IIPC/IT Act Mapping</div>
+                    <div class="act-mapping-tags" id="ia-mapping-tags">
+                      <span class="act-tag">BNS §318(4)</span>
+                      <span class="act-tag">BNS §319(2)</span>
+                      <span class="act-tag">BNS §111</span>
+                      <span class="act-tag">IT Act §66C</span>
+                      <span class="act-tag">IT Act §66D</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right narrative & auto-detected factors -->
+                <div>
+                  <div class="case-summary-block">
+                    <div class="case-summary-title">Case Summary</div>
+                    <div class="case-summary-text" id="ia-case-summary">
+                      Victim was contacted via WhatsApp with part-time task opportunity. Small initial payouts were made to build trust, followed by larger fraudulent payments. UPI IDs and mule accounts were used across multiple cases. Communication stopped after major transfer.
+                    </div>
+                  </div>
+
+                  <div style="margin-top:10px">
+                    <div class="incident-meta-label" style="margin-bottom:6px">Auto Detected Factors</div>
+                    <div class="auto-factors-list" id="ia-factors-list">
+                      <div class="factor-item">
+                        <span class="factor-icon">👥</span>
+                        <span>Use of multiple UPI accounts</span>
+                      </div>
+                      <div class="factor-item">
+                        <span class="factor-icon">🌐</span>
+                        <span>Cross-jurisdiction activity (Delhi, Mumbai)</span>
+                      </div>
+                      <div class="factor-item">
+                        <span class="factor-icon">📱</span>
+                        <span>Same phone number in 6 other cases</span>
+                      </div>
+                      <div class="factor-item">
+                        <span class="factor-icon">⚠</span>
+                        <span>Investment / task fraud pattern</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel 2: Applicable Legal Sections -->
+            <div class="legal-panel">
+              <div class="legal-panel-header">
+                <div class="legal-panel-title">
+                  <span>2. Applicable Legal Sections</span>
+                </div>
+                <button class="legal-btn-primary-sm" id="btn-add-section-modal">
+                  <span>+</span>
+                  <span>Add Section</span>
+                </button>
+              </div>
+
+              <div class="legal-table-wrap">
+                <table class="legal-table" id="applicable-sections-table">
+                  <thead>
+                    <tr>
+                      <th style="width:24px"><input type="checkbox" id="chk-all-sections" /></th>
+                      <th>Act</th>
+                      <th>Section</th>
+                      <th>Description</th>
+                      <th>Relevance</th>
+                      <th style="text-align:right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="applicable-sections-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Grid Row 2: Panels 3 & 4 (Left) and Panel 5 (Right) -->
+          <div class="legal-row-2">
+            
+            <!-- Left Sub-Grid: Panel 3 & Panel 4 -->
+            <div style="display:flex;flex-direction:column;gap:14px">
+              
+              <!-- Panel 3: Evidence Mapping to Legal Sections -->
+              <div class="legal-panel">
+                <div class="legal-panel-header">
+                  <div class="legal-panel-title">
+                    <span>3. Evidence Mapping to Legal Sections</span>
+                  </div>
+                </div>
+
+                <div class="evidence-mapping-controls">
+                  <input type="text" id="filter-evidence-search" class="evidence-search-input" placeholder="🔍 Search evidence, hash, or entity..." />
+                  <select id="filter-evidence-category" class="evidence-select-filter">
+                    <option value="">All Categories</option>
+                    <option value="CHAT">CHAT</option>
+                    <option value="UPI_FINANCIAL">UPI_FINANCIAL</option>
+                    <option value="AUDIO">AUDIO</option>
+                    <option value="CALL_LOG">CALL_LOG</option>
+                    <option value="DOCUMENT">DOCUMENT</option>
+                  </select>
+                  <select id="filter-evidence-section" class="evidence-select-filter">
+                    <option value="">All Sections</option>
+                    <option value="§ 318(4)">§ 318(4)</option>
+                    <option value="§ 319(2)">§ 319(2)</option>
+                    <option value="§ 111">§ 111</option>
+                    <option value="§ 66D">§ 66D</option>
+                    <option value="§ 66C">§ 66C</option>
+                  </select>
+                  <select id="filter-evidence-relevance" class="evidence-select-filter">
+                    <option value="">Relevance</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </select>
+                  <button class="legal-btn-ghost-sm" id="btn-reset-evidence-filters">
+                    <span>🔄</span>
+                    <span>Reset</span>
+                  </button>
+                </div>
+
+                <div class="legal-table-wrap">
+                  <table class="legal-table" id="evidence-mappings-table">
+                    <thead>
+                      <tr>
+                        <th style="width:24px"><input type="checkbox" id="chk-all-evidence" /></th>
+                        <th>Evidence ID</th>
+                        <th>File Name</th>
+                        <th>Category</th>
+                        <th>Key Entities</th>
+                        <th>Mapped Sections</th>
+                        <th>Relevance</th>
+                        <th style="text-align:right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="evidence-mappings-tbody">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Panel 4: Legal Analysis & Notes -->
+              <div class="legal-panel">
+                <div class="legal-panel-header">
+                  <div class="legal-panel-title">
+                    <span>4. Legal Analysis & Notes</span>
+                  </div>
+                  <button class="legal-btn-ghost-sm" id="btn-regenerate-analysis">
+                    <span>🔄</span>
+                    <span>Regenerate Analysis</span>
+                  </button>
+                </div>
+
+                <div class="analysis-tab-header">
+                  <button class="analysis-tab-btn active" data-tab="analysis">Analysis</button>
+                  <button class="analysis-tab-btn" data-tab="notes">Investigator Notes</button>
+                  <button class="analysis-tab-btn" data-tab="checklist">Court Readiness Checklist</button>
+                </div>
+
+                <div class="analysis-tab-content">
+                  <!-- Tab 1: Analysis -->
+                  <div id="tab-pane-analysis" class="analysis-tab-pane">
+                    <div class="analysis-split-grid">
+                      <div>
+                        <div class="incident-meta-label" style="margin-bottom:8px;font-weight:600">AI/Rules Based Legal Analysis</div>
+                        <div class="analysis-bullet-list" id="analysis-points-list">
+                          <!-- Populated dynamically -->
+                        </div>
+                      </div>
+                      <div>
+                        <div class="incident-meta-label" style="margin-bottom:8px;font-weight:600">Recommended Actions</div>
+                        <div class="analysis-bullet-list" id="recommended-actions-list">
+                          <!-- Populated dynamically -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tab 2: Investigator Notes -->
+                  <div id="tab-pane-notes" class="analysis-tab-pane" style="display:none">
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                      <div class="incident-meta-label">Officer Notes & Case Theory Annotations:</div>
+                      <textarea id="investigator-notes-input" class="legal-form-textarea" rows="4" placeholder="Enter forensic officer remarks, witness corroborations, and judicial observations..."></textarea>
+                      <div style="display:flex;justify-content:flex-end">
+                        <button class="legal-btn-primary-sm" id="btn-save-notes">Save Notes</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tab 3: Court Readiness Checklist -->
+                  <div id="tab-pane-checklist" class="analysis-tab-pane" style="display:none">
+                    <div class="analysis-bullet-list" id="court-readiness-list">
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Sub-Grid: Panel 5 (BSA Section 63 Dossier Export) -->
+            <div class="legal-panel" style="height:100%">
+              <div class="legal-panel-header">
+                <div class="legal-panel-title">
+                  <span>5. BSA Section 63 Dossier Export</span>
+                </div>
+              </div>
+
+              <!-- Dossier Tabs -->
+              <div class="dossier-tab-header">
+                <button class="dossier-tab-btn active" data-tab="preview">Dossier Preview</button>
+                <button class="dossier-tab-btn" data-tab="manifest">Evidence Manifest</button>
+                <button class="dossier-tab-btn" data-tab="hash">Hash Verification</button>
+                <button class="dossier-tab-btn" data-tab="annexures">Annexures</button>
+              </div>
+
+              <!-- Toolbar -->
+              <div class="dossier-viewer-toolbar">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <button class="dossier-tool-btn" title="Table of Contents">☰</button>
+                  <span style="font-family:'JetBrains Mono',monospace">1 / 15</span>
+                  <button class="dossier-tool-btn" title="Previous Page">&lt;</button>
+                  <button class="dossier-tool-btn" title="Next Page">&gt;</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <button class="dossier-tool-btn" id="btn-zoom-out">-</button>
+                  <span id="zoom-level-text" style="font-family:'JetBrains Mono',monospace">100%</span>
+                  <button class="dossier-tool-btn" id="btn-zoom-in">+</button>
+                  <button class="dossier-tool-btn" id="btn-fullscreen-toggle" title="Fit to Screen">🗖</button>
+                </div>
+              </div>
+
+              <!-- Document Sheet Canvas -->
+              <div class="dossier-paper-container" id="dossier-container-scroll">
+                
+                <!-- Page 1: Official Section 63 Certificate -->
+                <div class="court-document-sheet" id="court-document-printable">
+                  <div class="court-for-law-badge">For Law Enforcement Use Only</div>
+                  
+                  <div class="court-doc-header">
+                    <div class="court-emblem-wrap">
+                      <!-- SVG Emblem of India (Satyameva Jayate) -->
+                      <svg class="court-emblem-svg" viewBox="0 0 100 100" fill="currentColor">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#0f172a" stroke-width="3" />
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-dasharray="3,3" />
+                        <path d="M50 15 L53 30 L65 30 L55 38 L59 52 L50 44 L41 52 L45 38 L35 30 L47 30 Z" fill="#0f172a" />
+                        <circle cx="50" cy="65" r="10" fill="none" stroke="#0f172a" stroke-width="2" />
+                        <line x1="50" y1="55" x2="50" y2="75" stroke="#0f172a" stroke-width="1.5" />
+                        <line x1="40" y1="65" x2="60" y2="65" stroke="#0f172a" stroke-width="1.5" />
+                        <text x="50" y="85" text-anchor="middle" font-size="6" font-weight="bold" fill="#0f172a">सत्यमेव जयते</text>
+                      </svg>
+                      <div style="text-align:left">
+                        <div class="court-app-title">RAKSHAK</div>
+                        <div class="court-app-sub">Digital Evidence Intelligence Platform</div>
+                      </div>
+                    </div>
+
+                    <div class="court-cert-title">CERTIFICATE UNDER SECTION 63</div>
+                    <div class="court-cert-sub">BHARATIYA SAKSHYA ADHINIYAM, 2023</div>
+                  </div>
+
+                  <div class="court-doc-preamble">
+                    This is to certify that the electronic records and digital evidence listed in this dossier have been obtained, processed and preserved in a manner that ensures their integrity, authenticity and admissibility under Section 63 of the Bharatiya Sakshya Adhiniyam, 2023.
+                  </div>
+
+                  <!-- Case Metadata Table -->
+                  <table class="court-meta-table">
+                    <tbody>
+                      <tr>
+                        <th>Case ID</th>
+                        <td id="cert-case-id">#CASE-2026-0891</td>
+                      </tr>
+                      <tr>
+                        <th>Case Title</th>
+                        <td id="cert-case-title">Part-Time Task Scam Mule Ring</td>
+                      </tr>
+                      <tr>
+                        <th>Investigating Agency</th>
+                        <td id="cert-agency">Delhi Cyber Crime</td>
+                      </tr>
+                      <tr>
+                        <th>Jurisdiction</th>
+                        <td id="cert-jurisdiction">Delhi</td>
+                      </tr>
+                      <tr>
+                        <th>Report Generated On</th>
+                        <td id="cert-generated-on">20 December 2026, 16:45 IST</td>
+                      </tr>
+                      <tr>
+                        <th>Total Evidence Items</th>
+                        <td id="cert-total-evidence">28</td>
+                      </tr>
+                      <tr>
+                        <th>Applicable Legal Sections</th>
+                        <td id="cert-applicable-sections">BNS §318(4), §319(2), §111 | IT Act §66C, §66D</td>
+                      </tr>
+                      <tr>
+                        <th>Generated By</th>
+                        <td id="cert-generated-by">ACP Vikram Singh (ID: 002)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Statutory Conditions & Officer Certification -->
+                  <div style="font-size:7.5px;color:#334155;margin-top:8px;line-height:1.35">
+                    <div style="font-weight:700;margin-bottom:3px;text-transform:uppercase">Statutory Particulars & Conditions (§63(2)):</div>
+                    <ol style="padding-left:14px;margin:0">
+                      <li>The electronic records were produced by the computer system during a period over which the computer was used regularly to store or process information.</li>
+                      <li>Throughout the material period, the computer system was operating properly, and the production of electronic records was unaffected by distortion or malfunction.</li>
+                      <li>Cryptographic SHA-256 hashes were calculated upon initial intake and have been verified to match canonical storage records without variance.</li>
+                    </ol>
+                  </div>
+
+                  <!-- Signatory Block -->
+                  <div class="court-sign-block">
+                    <div>
+                      <div><b>Place:</b> New Delhi</div>
+                      <div><b>Date:</b> <span id="cert-sign-date">20/12/2026</span></div>
+                      <div><b>Statutory Status:</b> <span style="color:#0369a1;font-weight:700">GENERATED DRAFT</span></div>
+                    </div>
+                    <div style="text-align:right">
+                      <div style="height:24px;border-bottom:1px solid #94a3b8;width:140px;margin-bottom:4px;display:flex;align-items:flex-end;justify-content:center;color:#64748b;font-style:italic;font-size:7px">
+                        [Pending Official Signature]
+                      </div>
+                      <div style="font-weight:700" id="cert-sign-officer">ACP Vikram Singh</div>
+                      <div>Investigating Officer, Cyber Crime Cell</div>
+                      <div>Badge #DL-002</div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- Bottom Actions Strip -->
+              <div class="dossier-actions-strip">
+                <button class="dossier-btn-pdf" id="btn-download-pdf">
+                  <span>⬇</span>
+                  <span>Download PDF</span>
+                </button>
+                <button class="dossier-btn-dark" id="btn-download-json">
+                  <span>&lt;/&gt;</span>
+                  <span>Download JSON</span>
+                </button>
+                <button class="dossier-btn-dark" id="btn-download-zip">
+                  <span>📦</span>
+                  <span>Download ZIP (All Evidence)</span>
+                </button>
+                <button class="dossier-btn-dark" id="btn-print-dossier">
+                  <span>🖨</span>
+                  <span>Print</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal 1: Add/Edit Statutory Section -->
+  <div class="legal-modal-backdrop" id="modal-section" style="display:none">
+    <div class="legal-modal-box">
+      <div class="legal-modal-header">
+        <span id="modal-section-title">Add Applicable Legal Section</span>
+        <button class="legal-action-icon" id="modal-section-close">✕</button>
+      </div>
+      <div class="legal-modal-body">
+        <div class="legal-form-group">
+          <label class="legal-form-label">Statutory Act</label>
+          <select id="modal-input-act" class="legal-form-select">
+            <option value="BNS">Bharatiya Nyaya Sanhita, 2023 (BNS)</option>
+            <option value="IT Act">Information Technology Act, 2000</option>
+            <option value="BSA">Bharatiya Sakshya Adhiniyam, 2023 (BSA)</option>
+          </select>
+        </div>
+        <div class="legal-form-group">
+          <label class="legal-form-label">Section Number</label>
+          <input type="text" id="modal-input-section" class="legal-form-input" placeholder="e.g. § 318(4)" />
+        </div>
+        <div class="legal-form-group">
+          <label class="legal-form-label">Official Title / Description</label>
+          <input type="text" id="modal-input-description" class="legal-form-input" placeholder="e.g. Cheating by personation" />
+        </div>
+        <div class="legal-form-group">
+          <label class="legal-form-label">Relevance Level</label>
+          <select id="modal-input-relevance" class="legal-form-select">
+            <option value="PRIMARY">Primary Provision</option>
+            <option value="SECONDARY">Secondary Provision</option>
+          </select>
+        </div>
+        <div class="legal-form-group">
+          <label class="legal-form-label">Investigation Rationale</label>
+          <textarea id="modal-input-rationale" class="legal-form-textarea" rows="2" placeholder="Explain the factual basis for applying this section..."></textarea>
+        </div>
+      </div>
+      <div class="legal-modal-footer">
+        <button class="legal-btn-ghost-sm" id="modal-section-cancel">Cancel</button>
+        <button class="legal-btn-primary-sm" id="modal-section-save">Save Section</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Map Evidence to Section -->
+  <div class="legal-modal-backdrop" id="modal-evidence-map" style="display:none">
+    <div class="legal-modal-box">
+      <div class="legal-modal-header">
+        <span>Map Evidence to Statutory Provision</span>
+        <button class="legal-action-icon" id="modal-evidence-close">✕</button>
+      </div>
+      <div class="legal-modal-body">
+        <div class="legal-form-group">
+          <label class="legal-form-label">Selected Evidence</label>
+          <input type="text" id="modal-ev-filename" class="legal-form-input" readonly />
+        </div>
+        <div class="legal-form-group">
+          <label class="legal-form-label">Applicable Sections</label>
+          <input type="text" id="modal-ev-sections" class="legal-form-input" placeholder="e.g. § 318(4), § 66D" />
+        </div>
+        <div class="legal-form-group">
+          <label class="legal-form-label">Evidentiary Relevance</label>
+          <select id="modal-ev-relevance" class="legal-form-select">
+            <option value="HIGH">High Relevance (Direct Evidence)</option>
+            <option value="MEDIUM">Medium Relevance (Corroborative)</option>
+            <option value="LOW">Low Relevance (Contextual)</option>
+          </select>
+        </div>
+        <div class="legal-form-group">
+          <label class="legal-form-label">Evidentiary Rationale</label>
+          <textarea id="modal-ev-rationale" class="legal-form-textarea" rows="2" placeholder="Describe how this digital artifact establishes elements of the offence..."></textarea>
+        </div>
+      </div>
+      <div class="legal-modal-footer">
+        <button class="legal-btn-ghost-sm" id="modal-evidence-cancel">Cancel</button>
+        <button class="legal-btn-primary-sm" id="modal-evidence-save">Save Mapping</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../js/legal.js"></script>
+</body>
+</html>

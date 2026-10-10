@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak — Case Detail. Full case workspace with evidence, entities, timeline, and legal matrix." />
+  <title>Case Detail — Rakshak v3.0</title>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <header class="app-header" role="banner"></header>
+
+    <div class="app-body">
+      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation"></aside>
+
+      <main class="app-main" role="main" aria-label="Case Detail">
+
+        <!-- Case Header Bar -->
+        <div class="case-detail-header" id="case-detail-header">
+          <div class="case-detail-header-loading">
+            <a href="/frontend/pages/cases.html" class="btn btn-ghost btn-sm">← Back to Cases</a>
+            <span class="spinner spinner-sm" style="margin-left:12px"></span>
+            <span style="font-size:12px;color:var(--text-muted);margin-left:8px">Loading case…</span>
+          </div>
+        </div>
+
+        <!-- Case Workspace Tabs -->
+        <div class="tab-bar" id="case-detail-tabs" style="display:none" role="tablist" aria-label="Case workspace">
+          <button class="tab-btn active" role="tab" data-tab="overview"   aria-selected="true"  aria-controls="tab-overview">
+            <span>📄</span> Overview
+          </button>
+          <button class="tab-btn" role="tab" data-tab="evidence"          aria-selected="false" aria-controls="tab-evidence">
+            <span>🛡</span> Evidence
+            <span class="tab-count" id="count-evidence" aria-label="evidence count"></span>
+          </button>
+          <button class="tab-btn" role="tab" data-tab="entities"          aria-selected="false" aria-controls="tab-entities">
+            <span>🔍</span> Entities
+            <span class="tab-count" id="count-entities" aria-label="entity count"></span>
+          </button>
+          <button class="tab-btn" role="tab" data-tab="timeline"          aria-selected="false" aria-controls="tab-timeline">
+            <span>📅</span> Timeline
+            <span class="tab-count" id="count-timeline" aria-label="timeline event count"></span>
+          </button>
+          <button class="tab-btn" role="tab" data-tab="syndicate"         aria-selected="false" aria-controls="tab-syndicate">
+            <span>🕸</span> Syndicate Links
+          </button>
+          <button class="tab-btn" role="tab" data-tab="legal"             aria-selected="false" aria-controls="tab-legal">
+            <span>⚖</span> Legal Matrix
+          </button>
+          <div style="flex:1"></div>
+          <div style="display:flex;align-items:center;padding:0 14px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted)" id="header-time"></div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="case-tab-content" style="display:none">
+
+          <!-- OVERVIEW TAB -->
+          <div class="tab-pane active" id="tab-overview" role="tabpanel">
+            <div class="case-overview-layout" id="overview-body">
+              <div class="loading-row" style="padding:48px">
+                <span class="spinner"></span><span>Loading overview…</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- EVIDENCE TAB -->
+          <div class="tab-pane" id="tab-evidence" role="tabpanel">
+            <div class="case-section-header">
+              <div class="section-title">🛡 Evidence Vault <span id="ev-count-badge" class="badge badge-slate"></span></div>
+              <a id="btn-open-vault" href="/frontend/pages/index.html" class="btn btn-secondary btn-sm">Open Full Vault →</a>
+            </div>
+            <div class="evidence-table-wrap" style="flex:1;overflow:hidden">
+              <div class="evidence-table-body" id="detail-evidence-body">
+                <div class="loading-row" style="padding:48px"><span class="spinner"></span><span>Loading evidence…</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ENTITIES TAB -->
+          <div class="tab-pane" id="tab-entities" role="tabpanel">
+            <div class="case-section-header">
+              <div class="section-title">🔍 Extracted Entities <span id="ent-count-badge" class="badge badge-slate"></span></div>
+            </div>
+            <div class="entities-grid-wrap" id="detail-entities-body">
+              <div class="loading-row" style="padding:48px"><span class="spinner"></span><span>Loading entities…</span></div>
+            </div>
+          </div>
+
+          <!-- TIMELINE TAB -->
+          <div class="tab-pane" id="tab-timeline" role="tabpanel">
+            <div class="case-section-header">
+              <div class="section-title">📅 Forensic Timeline <span id="tl-count-badge" class="badge badge-slate"></span></div>
+              <a href="/frontend/pages/timeline.html" class="btn btn-secondary btn-sm">Full Timeline View →</a>
+            </div>
+            <div class="timeline-scroll" id="detail-timeline-body">
+              <div class="loading-row" style="padding:48px"><span class="spinner"></span><span>Loading timeline…</span></div>
+            </div>
+          </div>
+
+          <!-- SYNDICATE TAB -->
+          <div class="tab-pane" id="tab-syndicate" role="tabpanel">
+            <div class="case-section-header">
+              <div class="section-title">🕸 Cross-Case Syndicate Links</div>
+              <a href="/frontend/pages/graph.html" class="btn btn-secondary btn-sm">Open Graph View →</a>
+            </div>
+            <div id="detail-syndicate-body">
+              <div class="loading-row" style="padding:48px"><span class="spinner"></span><span>Loading graph…</span></div>
+            </div>
+          </div>
+
+          <!-- LEGAL TAB -->
+          <div class="tab-pane" id="tab-legal" role="tabpanel">
+            <div class="case-section-header">
+              <div class="section-title">⚖ Legal Matrix & BSA §63 Classification</div>
+              <a href="/frontend/pages/legal.html" class="btn btn-secondary btn-sm">Open Legal Matrix →</a>
+            </div>
+            <div id="detail-legal-body">
+              <div class="loading-row" style="padding:48px"><span class="spinner"></span><span>Loading legal analysis…</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Edit Case Modal -->
+        <div class="modal-backdrop" id="edit-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+          <div class="modal" style="max-width:680px">
+            <div class="modal-header">
+              <span class="modal-title" id="edit-modal-title">Edit Case</span>
+              <button class="btn btn-ghost btn-icon" id="edit-modal-close" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body" id="edit-modal-body">
+              <div class="loading-row"><span class="spinner"></span> Loading…</div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" id="edit-modal-cancel">Cancel</button>
+              <button class="btn btn-primary" id="edit-modal-submit">Save Changes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assign Officer Modal -->
+        <div class="modal-backdrop" id="assign-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="assign-modal-title">
+          <div class="modal" style="max-width:460px">
+            <div class="modal-header">
+              <span class="modal-title" id="assign-modal-title">Assign Officer</span>
+              <button class="btn btn-ghost btn-icon" id="assign-modal-close" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-field">
+                <label class="form-label" for="assign-officer-name">Officer Name</label>
+                <input type="text" id="assign-officer-name" class="input" placeholder="Full name and designation" maxlength="100" />
+                <span class="field-error" id="err-assign-name"></span>
+              </div>
+              <div class="form-field" style="margin-top:12px">
+                <label class="form-label" for="assign-officer-badge">Badge / Service Number</label>
+                <input type="text" id="assign-officer-badge" class="input" placeholder="e.g. CCB-1147" maxlength="50" />
+                <span class="field-error" id="err-assign-badge"></span>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" id="assign-modal-cancel">Cancel</button>
+              <button class="btn btn-primary" id="assign-modal-submit">Assign Officer</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Update Status Modal -->
+        <div class="modal-backdrop" id="status-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="status-modal-title">
+          <div class="modal" style="max-width:400px">
+            <div class="modal-header">
+              <span class="modal-title" id="status-modal-title">Update Case Status</span>
+              <button class="btn btn-ghost btn-icon" id="status-modal-close" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-field">
+                <label class="form-label" for="new-status-select">New Status</label>
+                <select id="new-status-select" class="input">
+                  <option value="OPEN">Open</option>
+                  <option value="UNDER_INQUIRY">Under Inquiry</option>
+                  <option value="CHARGESHEETED">Chargesheeted</option>
+                  <option value="CLOSED">Closed</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" id="status-modal-cancel">Cancel</button>
+              <button class="btn btn-primary" id="status-modal-submit">Update Status</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    function updateClock() {
+      const el = document.getElementById('header-time');
+      if (el) el.textContent = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST';
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+  <script type="module" src="../js/case-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak — Forensic Digital Evidence & Cross-Case Syndicate Intelligence Platform. Investigation Dashboard." />
+  <title>Dashboard — Rakshak v3.0</title>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- Toast Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <!-- Header -->
+    <header class="app-header" role="banner" aria-label="Rakshak application header">
+      <!-- Injected by layout.js -->
+    </header>
+
+    <div class="app-body">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation">
+        <!-- Injected by layout.js -->
+      </aside>
+
+      <!-- Main Content -->
+      <main class="app-main" role="main" aria-label="Investigation Dashboard">
+        <div class="dashboard-layout" id="dashboard-content">
+
+          <!-- Page Header -->
+          <div class="page-header">
+            <div class="page-header-info">
+              <h1 class="page-title">Investigation Dashboard</h1>
+              <p class="page-subtitle" id="dashboard-subtitle">Loading overview…</p>
+            </div>
+            <div class="page-header-actions">
+              <button class="btn btn-secondary btn-sm" id="btn-refresh" aria-label="Refresh dashboard data">
+                ↻ Refresh
+              </button>
+            </div>
+          </div>
+
+          <!-- Metrics Grid -->
+          <div class="metrics-grid" id="metrics-grid" aria-label="Investigation metrics">
+            <!-- Populated by dashboard.js -->
+            <div class="metric-card blue">
+              <div class="metric-card-header">
+                <span class="metric-card-label">Total Cases</span>
+                <span class="metric-card-icon">📁</span>
+              </div>
+              <div class="metric-card-value" id="metric-total-cases">
+                <span class="spinner spinner-sm"></span>
+              </div>
+              <div class="metric-card-footer" id="metric-cases-footer">Loading…</div>
+            </div>
+
+            <div class="metric-card green">
+              <div class="metric-card-header">
+                <span class="metric-card-label">Evidence Items</span>
+                <span class="metric-card-icon">🛡</span>
+              </div>
+              <div class="metric-card-value" id="metric-total-evidence">
+                <span class="spinner spinner-sm"></span>
+              </div>
+              <div class="metric-card-footer" id="metric-evidence-footer">Loading…</div>
+            </div>
+
+            <div class="metric-card amber">
+              <div class="metric-card-header">
+                <span class="metric-card-label">Extracted Entities</span>
+                <span class="metric-card-icon">🔍</span>
+              </div>
+              <div class="metric-card-value" id="metric-total-entities">
+                <span class="spinner spinner-sm"></span>
+              </div>
+              <div class="metric-card-footer" id="metric-entities-footer">Loading…</div>
+            </div>
+
+            <div class="metric-card red">
+              <div class="metric-card-header">
+                <span class="metric-card-label">Syndicate Clusters</span>
+                <span class="metric-card-icon">🕸</span>
+              </div>
+              <div class="metric-card-value" id="metric-total-clusters">
+                <span class="spinner spinner-sm"></span>
+              </div>
+              <div class="metric-card-footer" id="metric-clusters-footer">Loading…</div>
+            </div>
+          </div>
+
+          <!-- Main Grid: Cases Table + Right Sidebar -->
+          <div class="dashboard-grid">
+
+            <!-- Recent Cases Table -->
+            <div class="cases-table-wrap">
+              <div class="cases-table-header">
+                <div class="cases-table-title">
+                  <span>📋</span>
+                  <span>Recent Cases</span>
+                  <span class="badge badge-slate" id="cases-count-badge">—</span>
+                </div>
+                <a href="/frontend/pages/index.html" class="btn btn-ghost btn-sm">View Evidence Vault →</a>
+              </div>
+              <div class="cases-table-body" id="cases-table-body">
+                <div class="loading-row">
+                  <span class="spinner" aria-hidden="true"></span>
+                  <span>Loading cases…</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="dashboard-sidebar">
+
+              <!-- Syndicate Alerts -->
+              <div class="alerts-card">
+                <div class="alerts-card-header">
+                  <div class="alerts-card-title">
+                    <span>⚠</span>
+                    <span>Syndicate Alerts</span>
+                  </div>
+                  <a href="/frontend/pages/graph.html" class="btn btn-ghost btn-sm" style="font-size:10px">Investigate →</a>
+                </div>
+                <div class="alerts-card-body" id="alerts-body">
+                  <div class="loading-row" style="padding:16px">
+                    <span class="spinner" aria-hidden="true"></span>
+                    <span>Scanning clusters…</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Actions -->
+              <div class="alerts-card">
+                <div class="alerts-card-header">
+                  <div class="alerts-card-title">
+                    <span>⚡</span>
+                    <span>Quick Actions</span>
+                  </div>
+                </div>
+                <div class="quick-actions-grid">
+                  <a href="/frontend/pages/index.html" class="quick-action-btn">
+                    <span class="quick-action-icon">🛡</span>
+                    <span class="quick-action-label">Evidence Vault</span>
+                  </a>
+                  <a href="/frontend/pages/timeline.html" class="quick-action-btn">
+                    <span class="quick-action-icon">📅</span>
+                    <span class="quick-action-label">Forensic Timeline</span>
+                  </a>
+                  <a href="/frontend/pages/graph.html" class="quick-action-btn">
+                    <span class="quick-action-icon">🕸</span>
+                    <span class="quick-action-label">Syndicate Graph</span>
+                  </a>
+                  <a href="/frontend/pages/legal.html" class="quick-action-btn">
+                    <span class="quick-action-icon">⚖</span>
+                    <span class="quick-action-label">Legal Matrix</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- System Status -->
+              <div class="alerts-card">
+                <div class="alerts-card-header">
+                  <div class="alerts-card-title">
+                    <span>📡</span>
+                    <span>System Status</span>
+                  </div>
+                </div>
+                <div class="system-status-list">
+                  <div class="system-status-item">
+                    <span class="status-dot online"></span>
+                    <span class="system-status-name">Extraction Engine</span>
+                    <span class="system-status-value" style="color:var(--status-success)">ONLINE</span>
+                  </div>
+                  <div class="system-status-item">
+                    <span class="status-dot online"></span>
+                    <span class="system-status-name">Syndicate Resolver</span>
+                    <span class="system-status-value" style="color:var(--status-success)">ONLINE</span>
+                  </div>
+                  <div class="system-status-item">
+                    <span class="status-dot online"></span>
+                    <span class="system-status-name">Database</span>
+                    <span class="system-status-value" style="color:var(--status-success)">SQLite</span>
+                  </div>
+                  <div class="system-status-item">
+                    <span class="status-dot" style="background:var(--status-warning)"></span>
+                    <span class="system-status-name">OCR / Vision</span>
+                    <span class="system-status-value" style="color:var(--status-warning)">PLANNED</span>
+                  </div>
+                  <div class="system-status-item">
+                    <span class="status-dot" style="background:var(--status-warning)"></span>
+                    <span class="system-status-name">Authentication</span>
+                    <span class="system-status-value" style="color:var(--status-warning)">NOT ACTIVE</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="../js/dashboard.js"></script>
+</body>
+</html>

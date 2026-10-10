@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak — Case Management. Register, search, filter, and manage all investigation cases." />
+  <title>Cases — Rakshak v3.0</title>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <header class="app-header" role="banner"></header>
+
+    <div class="app-body">
+      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation"></aside>
+
+      <main class="app-main" role="main" aria-label="Case Management">
+
+        <!-- Cases Workspace -->
+        <div class="cases-workspace">
+
+          <!-- Top Bar -->
+          <div class="cases-topbar">
+            <div class="cases-topbar-left">
+              <div class="page-header-info">
+                <h1 class="page-title">Cases</h1>
+                <p class="page-subtitle">Manage and track all investigation cases</p>
+              </div>
+            </div>
+            <div class="cases-topbar-right">
+              <button class="btn btn-primary" id="btn-new-case" aria-label="Register new investigation case">
+                + New Case
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter Bar -->
+          <div class="cases-filter-bar">
+            <!-- Search -->
+            <div class="cases-search-wrap">
+              <span class="cases-search-icon" aria-hidden="true">🔍</span>
+              <input
+                type="search"
+                id="cases-search"
+                class="input input-sm cases-search"
+                placeholder="Search by case ID, title, FIR, jurisdiction…"
+                aria-label="Search cases"
+                autocomplete="off"
+              />
+            </div>
+
+            <!-- Status Filter -->
+            <select id="filter-status" class="input input-sm cases-filter-select" aria-label="Filter by status">
+              <option value="">All Status</option>
+              <option value="OPEN">Open</option>
+              <option value="UNDER_INQUIRY">Under Inquiry</option>
+              <option value="CHARGESHEETED">Chargesheeted</option>
+              <option value="CLOSED">Closed</option>
+            </select>
+
+            <!-- Type Filter -->
+            <select id="filter-type" class="input input-sm cases-filter-select" aria-label="Filter by incident type">
+              <option value="">All Types</option>
+              <option value="Task_Scam">Task Scam</option>
+              <option value="Digital_Arrest">Digital Arrest</option>
+              <option value="Investment_Fraud">Investment Fraud</option>
+              <option value="KYC_Freeze">KYC Freeze</option>
+              <option value="Romance_Scam">Romance Scam</option>
+            </select>
+
+            <!-- Sort -->
+            <select id="filter-sort" class="input input-sm cases-filter-select" aria-label="Sort by">
+              <option value="createdAt">Date Registered</option>
+              <option value="updatedAt">Last Updated</option>
+              <option value="caseNumber">Case Number</option>
+              <option value="status">Status</option>
+            </select>
+
+            <!-- Reset -->
+            <button class="btn btn-ghost btn-sm" id="btn-reset-filters" aria-label="Reset all filters">
+              ✕ Reset
+            </button>
+
+            <!-- Count -->
+            <span class="cases-count-label" id="cases-count-label" aria-live="polite"></span>
+          </div>
+
+          <!-- Cases Table -->
+          <div class="cases-table-container">
+            <div class="cases-table-body" id="cases-table-body">
+              <div class="loading-row" style="padding:48px">
+                <span class="spinner" aria-hidden="true"></span>
+                <span>Loading cases…</span>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="cases-pagination" id="cases-pagination" aria-label="Pagination"></div>
+          </div>
+
+        </div>
+
+        <!-- New Case Modal -->
+        <div class="modal-backdrop" id="new-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="modal" style="max-width:680px">
+            <div class="modal-header">
+              <span class="modal-title" id="modal-title">Register New Case</span>
+              <button class="btn btn-ghost btn-icon" id="modal-close" aria-label="Close dialog">✕</button>
+            </div>
+            <div class="modal-body">
+              <form id="new-case-form" novalidate>
+                <div class="form-grid-2">
+                  <!-- Complainant Name -->
+                  <div class="form-field">
+                    <label class="form-label" for="f-complainant">Complainant Name <span class="required">*</span></label>
+                    <input type="text" id="f-complainant" class="input" placeholder="Full name of complainant" autocomplete="off" maxlength="100" required />
+                    <span class="field-error" id="err-complainant"></span>
+                  </div>
+
+                  <!-- Incident Type -->
+                  <div class="form-field">
+                    <label class="form-label" for="f-type">Incident Type <span class="required">*</span></label>
+                    <select id="f-type" class="input" required>
+                      <option value="">Select type…</option>
+                      <option value="Task_Scam">Task Scam</option>
+                      <option value="Digital_Arrest">Digital Arrest</option>
+                      <option value="Investment_Fraud">Investment Fraud</option>
+                      <option value="KYC_Freeze">KYC Freeze</option>
+                      <option value="Romance_Scam">Romance Scam</option>
+                    </select>
+                    <span class="field-error" id="err-type"></span>
+                  </div>
+
+                  <!-- Jurisdiction -->
+                  <div class="form-field">
+                    <label class="form-label" for="f-jurisdiction">Jurisdiction / Police Unit</label>
+                    <input type="text" id="f-jurisdiction" class="input" placeholder="e.g. Cyber Crime Branch — Chandigarh" maxlength="150" />
+                    <span class="field-error" id="err-jurisdiction"></span>
+                  </div>
+
+                  <!-- FIR Number -->
+                  <div class="form-field">
+                    <label class="form-label" for="f-fir">FIR / Reference Number</label>
+                    <input type="text" id="f-fir" class="input" placeholder="e.g. FIR/2026/CCB/0142" maxlength="80" />
+                    <span class="field-error" id="err-fir"></span>
+                  </div>
+
+                  <!-- Officer Name -->
+                  <div class="form-field">
+                    <label class="form-label" for="f-officer">Assigned Officer Name</label>
+                    <input type="text" id="f-officer" class="input" placeholder="e.g. SI Ramesh Kumar" maxlength="100" />
+                    <span class="field-error" id="err-officer"></span>
+                  </div>
+
+                  <!-- Officer Badge -->
+                  <div class="form-field">
+                    <label class="form-label" for="f-badge">Officer Badge / Service No.</label>
+                    <input type="text" id="f-badge" class="input" placeholder="e.g. CCB-1147" maxlength="50" />
+                    <span class="field-error" id="err-badge"></span>
+                  </div>
+
+                  <!-- Amount Defrauded -->
+                  <div class="form-field">
+                    <label class="form-label" for="f-amount">Amount Defrauded (₹)</label>
+                    <input type="number" id="f-amount" class="input" placeholder="0" min="0" max="999999999" />
+                    <span class="field-error" id="err-amount"></span>
+                  </div>
+
+                  <!-- Status -->
+                  <div class="form-field">
+                    <label class="form-label" for="f-status">Initial Status</label>
+                    <select id="f-status" class="input">
+                      <option value="OPEN">Open</option>
+                      <option value="UNDER_INQUIRY">Under Inquiry</option>
+                    </select>
+                    <span class="field-error" id="err-status"></span>
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-field" style="margin-top:12px">
+                  <label class="form-label" for="f-description">Case Description</label>
+                  <textarea id="f-description" class="input" rows="3" placeholder="Brief description of the incident, modus operandi, and key observations…" maxlength="2000" style="resize:vertical;min-height:72px"></textarea>
+                  <span class="field-error" id="err-description"></span>
+                </div>
+
+                <!-- Server Error -->
+                <div class="form-server-error" id="form-server-error" style="display:none"></div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
+              <button class="btn btn-primary" id="modal-submit" type="button">
+                Register Case
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit Case Modal -->
+        <div class="modal-backdrop" id="edit-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+          <div class="modal" style="max-width:680px">
+            <div class="modal-header">
+              <span class="modal-title" id="edit-modal-title">Edit Case</span>
+              <button class="btn btn-ghost btn-icon" id="edit-modal-close" aria-label="Close dialog">✕</button>
+            </div>
+            <div class="modal-body" id="edit-modal-body">
+              <div class="loading-row"><span class="spinner"></span> Loading…</div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" id="edit-modal-cancel">Cancel</button>
+              <button class="btn btn-primary" id="edit-modal-submit" type="button">Save Changes</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="../js/cases.js"></script>
+</body>
+</html>

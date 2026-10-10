@@ -209,6 +209,8 @@ export const GraphNodeTypeSchema = z.enum([
   "CURRENT_CASE",
   "LINKED_CASE",
   "ENTITY",
+  "PERSON",
+  "EVIDENCE",
 ]);
 export type GraphNodeType = z.infer<typeof GraphNodeTypeSchema>;
 
@@ -226,6 +228,20 @@ export const GraphNodeSchema = z.object({
   totalFraudAmount: z.number().min(0).default(0),
   jurisdictions: z.array(z.string()).default([]),
   flags: z.array(z.string()).default([]),
+  // Phase 6 enriched explainable properties
+  rawValue: z.string().optional(),
+  normalizedValue: z.string().optional(),
+  firstSeen: z.string().optional(),
+  lastSeen: z.string().optional(),
+  evidenceCount: z.number().int().optional(),
+  role: z.string().optional(),
+  incidentType: z.string().optional(),
+  status: z.string().optional(),
+  title: z.string().optional(),
+  linkedCases: z.array(z.any()).optional(),
+  relatedEntities: z.array(z.any()).optional(),
+  associatedPersons: z.array(z.string()).optional(),
+  context: z.string().optional(),
 });
 export type GraphNode = z.infer<typeof GraphNodeSchema>;
 
@@ -236,6 +252,15 @@ export const GraphEdgeSchema = z.object({
   label: z.string(),
   weight: z.number().min(0).max(1).default(1),
   animated: z.boolean().default(false),
+  // Phase 6 explainable relationship properties
+  relationshipType: z.string().optional(),
+  sharedEntity: z.string().optional(),
+  supportingEvidenceCount: z.number().int().optional(),
+  supportingEvidenceIds: z.array(z.string()).optional(),
+  caseIds: z.array(z.string()).optional(),
+  firstSeen: z.string().optional(),
+  lastSeen: z.string().optional(),
+  explanation: z.string().optional(),
 });
 export type GraphEdge = z.infer<typeof GraphEdgeSchema>;
 
@@ -252,6 +277,9 @@ export const GraphIntelligenceResponseSchema = z.object({
     sharedEntityCount: z.number().int(),
     highFrequencyMules: z.array(z.string()),
     jurisdictionsAffected: z.array(z.string()),
+    highRiskEntityCount: z.number().int().optional(),
+    totalFraudAmount: z.number().optional(),
+    jurisdictionCount: z.number().int().optional(),
   }),
 });
 export type GraphIntelligenceResponse = z.infer<

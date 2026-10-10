@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak — Forensic Timeline & Communication Intelligence. Chronological event reconstruction and multi-modal evidence analysis." />
+  <title>Forensic Timeline & Comm Intel — Rakshak v3.0</title>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- Toast Notification Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <!-- Header (Injected by layout.js) -->
+    <header class="app-header" role="banner" aria-label="Rakshak application header"></header>
+
+    <div class="app-body">
+      <!-- Sidebar Navigation (Injected by layout.js) -->
+      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation"></aside>
+
+      <!-- Main Workspace -->
+      <main class="app-main timeline-main-workspace" role="main" aria-label="Forensic Timeline & Communication Intelligence">
+
+        <!-- Top Metrics Ribbon -->
+        <div class="tl-metrics-strip" id="tl-metrics-strip">
+          <div class="tl-metric-card" id="card-total-events">
+            <div class="tl-metric-content">
+              <div class="tl-metric-val" id="metric-total-events">10</div>
+              <div class="tl-metric-label">Total Events</div>
+            </div>
+            <div class="tl-metric-icon">📈</div>
+          </div>
+          <div class="tl-metric-card" id="card-mo-phases">
+            <div class="tl-metric-content">
+              <div class="tl-metric-val" id="metric-mo-phases">4</div>
+              <div class="tl-metric-label">Modus Operandi Phases</div>
+            </div>
+            <div class="tl-metric-icon">👥</div>
+          </div>
+          <div class="tl-metric-card" id="card-evidence-sources">
+            <div class="tl-metric-content">
+              <div class="tl-metric-val" id="metric-evidence-sources">4</div>
+              <div class="tl-metric-label">Evidence Sources</div>
+            </div>
+            <div class="tl-metric-icon">🗄️</div>
+          </div>
+          <div class="tl-metric-card" id="card-linked-cases">
+            <div class="tl-metric-content">
+              <div class="tl-metric-val" id="metric-linked-cases">5</div>
+              <div class="tl-metric-label">Linked Cases</div>
+            </div>
+            <div class="tl-metric-icon">🔗</div>
+          </div>
+          <div class="tl-metric-card active-investigation-card" id="card-active-investigation">
+            <div class="tl-metric-content">
+              <div class="tl-metric-val" id="metric-active-investigation">1</div>
+              <div class="tl-metric-label">Active Investigation</div>
+            </div>
+            <div class="tl-metric-icon">🎯</div>
+          </div>
+        </div>
+
+        <!-- Section 1: Investigation Timeline Card -->
+        <div class="tl-section-card tl-inv-timeline-card">
+          <div class="tl-card-header flex-between flex-wrap gap-3">
+            <div>
+              <h2 class="tl-card-title">1. Investigation Timeline</h2>
+              <p class="tl-card-subtitle">Chronological view of all events extracted from evidence with modus operandi phase mapping.</p>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="tl-filter-controls flex-align gap-2 flex-wrap">
+              <select id="tl-filter-phase" class="tl-select" title="Filter by phase">
+                <option value="ALL">All Phases</option>
+                <option value="CONTACT">Contact</option>
+                <option value="TRUST">Trust</option>
+                <option value="PAYMENT">Payment</option>
+                <option value="SEVERED">Severed</option>
+              </select>
+
+              <div class="tl-date-range-badge" id="tl-date-range-display" title="Active investigation date range">
+                📅 <span id="tl-date-range-text">22 Aug 2026 – 29 Aug 2026</span>
+              </div>
+
+              <select id="tl-filter-source" class="tl-select" title="Filter by source type">
+                <option value="ALL">All Sources</option>
+                <option value="WHATSAPP">WhatsApp</option>
+                <option value="BANK_SMS">Bank SMS</option>
+                <option value="CALL_LOG">Call Log</option>
+                <option value="RECEIPT">Receipt</option>
+                <option value="SCREENSHOT">Screenshot</option>
+              </select>
+
+              <select id="tl-filter-evidence" class="tl-select" title="Filter by source evidence">
+                <option value="ALL">All Evidence</option>
+              </select>
+
+              <button class="btn btn-secondary btn-sm" id="btn-tl-reset-filters" title="Reset all filters">
+                ↺ Reset
+              </button>
+
+              <!-- View Switcher -->
+              <div class="tl-view-switcher" role="group" aria-label="Timeline views">
+                <button class="tl-view-btn active" id="btn-view-timeline" data-view="timeline">Timeline View</button>
+                <button class="tl-view-btn" id="btn-view-cluster" data-view="cluster">Cluster View</button>
+                <button class="tl-view-btn" id="btn-view-table" data-view="table">Table View</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modus Operandi Phase Chevron Ribbon -->
+          <div class="tl-chevron-ribbon">
+            <div class="tl-chevron-item chevron-contact" data-phase="CONTACT" title="Filter Contact Phase">
+              <div class="chevron-content">
+                <span class="chevron-title">CONTACT</span>
+                <span class="chevron-sub">Initial approach</span>
+              </div>
+            </div>
+            <div class="tl-chevron-item chevron-trust" data-phase="TRUST" title="Filter Trust Phase">
+              <div class="chevron-content">
+                <span class="chevron-title">TRUST</span>
+                <span class="chevron-sub">Small payout / legitimacy</span>
+              </div>
+            </div>
+            <div class="tl-chevron-item chevron-payment" data-phase="PAYMENT" title="Filter Payment Phase">
+              <div class="chevron-content">
+                <span class="chevron-title">PAYMENT</span>
+                <span class="chevron-sub">Major fraudulent transaction</span>
+              </div>
+            </div>
+            <div class="tl-chevron-item chevron-severed" data-phase="SEVERED" title="Filter Severed Phase">
+              <div class="chevron-content">
+                <span class="chevron-title">SEVERED</span>
+                <span class="chevron-sub">Blocked communication</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Horizontal Chronological Timeline Track -->
+          <div class="tl-track-container">
+            <button class="tl-track-nav-btn prev" id="btn-track-prev" title="Previous event">‹</button>
+            <div class="tl-track-scroll-area" id="tl-track-scroll-area">
+              <div class="tl-track-line"></div>
+              <div class="tl-track-nodes" id="tl-track-nodes">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+            <button class="tl-track-nav-btn next" id="btn-track-next" title="Next event">›</button>
+          </div>
+        </div>
+
+        <!-- Middle Grid: Section 2 (Table), Section 3 (Event Details), Section 4 (Comm Intel) -->
+        <div class="tl-three-col-grid">
+
+          <!-- Section 2: Timeline Events Table -->
+          <div class="tl-section-card tl-events-table-card">
+            <div class="tl-card-header flex-between">
+              <div>
+                <h3 class="tl-card-title">2. Timeline Events (<span id="table-events-count">10</span>)</h3>
+                <p class="tl-card-subtitle">Events extracted and normalized from all evidence sources.</p>
+              </div>
+              <button class="tl-icon-btn" id="btn-toggle-table-expand" title="Toggle table view">⛶</button>
+            </div>
+            <div class="tl-table-wrap">
+              <table class="tl-events-table" id="tl-events-table">
+                <thead>
+                  <tr>
+                    <th style="width:28px"><input type="checkbox" id="tl-select-all" aria-label="Select all" /></th>
+                    <th>Date & Time</th>
+                    <th>Event Type</th>
+                    <th>Details</th>
+                    <th>Phase</th>
+                    <th>Source</th>
+                    <th>Evidence ID</th>
+                  </tr>
+                </thead>
+                <tbody id="tl-events-tbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Section 3: Event Details Panel -->
+          <div class="tl-section-card tl-event-details-card">
+            <div class="tl-card-header flex-between">
+              <div>
+                <h3 class="tl-card-title">3. Event Details</h3>
+              </div>
+              <div class="flex-align gap-2">
+                <a class="btn btn-secondary btn-sm" id="btn-view-in-evidence" href="#" title="Inspect original file in Evidence Viewer">
+                  👁 View in Evidence
+                </a>
+                <div class="tl-nav-arrows">
+                  <button class="tl-mini-btn" id="btn-detail-prev" title="Previous event">‹</button>
+                  <button class="tl-mini-btn" id="btn-detail-next" title="Next event">›</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-detail-content" id="tl-detail-content">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Section 4: Communication Intelligence Panel -->
+          <div class="tl-section-card tl-comms-card">
+            <div class="tl-card-header flex-between">
+              <h3 class="tl-card-title">4. Communication Intelligence</h3>
+              <!-- Comms Tab Switcher -->
+              <div class="tl-comms-tabs" role="tablist">
+                <button class="tl-comm-tab active" data-comm-tab="chat" role="tab" aria-selected="true">Chat</button>
+                <button class="tl-comm-tab" data-comm-tab="call" role="tab" aria-selected="false">Call Recording</button>
+                <button class="tl-comm-tab" data-comm-tab="email" role="tab" aria-selected="false">Email</button>
+                <button class="tl-comm-tab" data-comm-tab="translation" role="tab" aria-selected="false">Translation</button>
+              </div>
+            </div>
+
+            <div class="tl-comms-panel-body" id="tl-comms-panel-body">
+              <!-- Rendered dynamically based on active comm tab -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Grid: Section 5 (Content), Section 6 & 7 (Entities & Linked Cases), Section 8 (MO Analysis) -->
+        <div class="tl-bottom-grid">
+
+          <!-- Section 5: Evidence Content & Context -->
+          <div class="tl-section-card tl-evidence-content-card">
+            <div class="tl-card-header flex-between">
+              <div>
+                <h3 class="tl-card-title">5. Evidence Content & Context</h3>
+                <p class="tl-card-subtitle">Original evidence with highlighted extracted content.</p>
+              </div>
+              <div class="flex-align gap-2">
+                <button class="tl-icon-btn" id="btn-evidence-zoom" title="Search / Zoom">🔍</button>
+                <span class="tl-zoom-level">100%</span>
+                <button class="tl-icon-btn" id="btn-evidence-fullscreen" title="Fullscreen">⛶</button>
+                <a class="tl-icon-btn" id="btn-evidence-download" href="#" download title="Download raw binary">⬇</a>
+              </div>
+            </div>
+
+            <!-- Evidence Selector Dropdown -->
+            <div class="tl-evidence-dropdown-wrap">
+              <select id="tl-evidence-selector" class="tl-select full-width" title="Select source evidence file">
+                <!-- Dynamically populated with case evidence -->
+              </select>
+            </div>
+
+            <!-- Evidence Render Area -->
+            <div class="tl-evidence-preview-area" id="tl-evidence-preview-area">
+              <!-- Dynamically populated based on file type -->
+            </div>
+          </div>
+
+          <!-- Center Column: Section 6 (Related Entities) + Section 7 (Related Cases) -->
+          <div class="tl-center-column">
+
+            <!-- Section 6: Related Entities From This Evidence -->
+            <div class="tl-section-card tl-entities-subcard">
+              <div class="tl-card-header">
+                <h3 class="tl-card-title">6. Related Entities From This Evidence (<span id="evidence-entities-count">0</span>)</h3>
+              </div>
+              <div class="tl-table-wrap compact">
+                <table class="tl-entities-table" id="tl-entities-table">
+                  <thead>
+                    <tr>
+                      <th style="width:24px"><input type="checkbox" id="tl-select-all-entities" /></th>
+                      <th>Type</th>
+                      <th>Value</th>
+                      <th>Context</th>
+                      <th>Confidence</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tl-entities-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Section 7: Related Cases & Evidence -->
+            <div class="tl-section-card tl-related-cases-subcard">
+              <div class="tl-card-header flex-between">
+                <h3 class="tl-card-title">7. Related Cases & Evidence</h3>
+                <div class="tl-cases-tabs" role="tablist">
+                  <button class="tl-case-tab active" data-case-tab="cases" role="tab">Related Cases (<span id="related-cases-count">0</span>)</button>
+                  <button class="tl-case-tab" data-case-tab="evidence" role="tab">Related Evidence (<span id="related-evidence-count">0</span>)</button>
+                </div>
+              </div>
+              <div class="tl-table-wrap compact" id="tl-related-cases-content">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Section 8: Modus Operandi Analysis -->
+          <div class="tl-section-card tl-mo-card">
+            <div class="tl-card-header flex-between">
+              <h3 class="tl-card-title">8. Modus Operandi Analysis</h3>
+              <button class="btn btn-secondary btn-sm" id="btn-view-full-analysis" title="View Full Syndicate MO Report">
+                🔍 View Full Analysis
+              </button>
+            </div>
+            <div class="tl-mo-stages-list" id="tl-mo-stages-list">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="../js/timeline.js"></script>
+</body>
+</html>

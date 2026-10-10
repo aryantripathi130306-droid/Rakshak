@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak — Evidence Viewer. Forensic analysis view with metadata, content preview, and extracted entities." />
+  <title>Evidence Viewer — Rakshak v3.0</title>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+  <!-- Toast Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <!-- Header -->
+    <header class="app-header" role="banner" aria-label="Rakshak application header">
+      <!-- Injected by layout.js -->
+    </header>
+
+    <div class="app-body">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation">
+        <!-- Injected by layout.js -->
+      </aside>
+
+      <!-- Main Content -->
+      <main class="app-main" role="main" aria-label="Evidence Viewer">
+
+        <!-- Loading State -->
+        <div class="viewer-loading" id="viewer-loading">
+          <div class="loading-spinner"></div>
+          <span>Loading evidence details...</span>
+        </div>
+
+        <!-- Error State -->
+        <div class="viewer-error" id="viewer-error" style="display:none">
+          <div class="error-icon">⚠</div>
+          <div class="error-msg" id="viewer-error-msg">Evidence not found.</div>
+          <a href="index.html" class="btn btn-secondary btn-sm">← Back to Evidence Vault</a>
+        </div>
+
+        <!-- Viewer Content -->
+        <div class="viewer-layout" id="viewer-layout" style="display:none">
+
+          <!-- Top Bar: Breadcrumb + Actions -->
+          <div class="viewer-topbar">
+            <div class="viewer-breadcrumb">
+              <a href="index.html" class="breadcrumb-link">Evidence Vault</a>
+              <span class="breadcrumb-sep">›</span>
+              <span class="breadcrumb-current" id="viewer-breadcrumb-name">—</span>
+            </div>
+            <div class="viewer-topbar-actions">
+              <button class="btn btn-secondary btn-sm" id="btn-re-extract" title="Re-run entity extraction">
+                🔄 Re-Extract
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btn-verify" title="Re-verify cryptographic integrity">
+                🔒 Re-Verify
+              </button>
+              <a class="btn btn-primary btn-sm" id="btn-download" href="#" download title="Download original evidence">
+                ⬇ Download
+              </a>
+            </div>
+          </div>
+
+          <!-- Evidence Metadata Card -->
+          <div class="viewer-meta-card" id="viewer-meta-card">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Tab Bar -->
+          <div class="viewer-tabs" role="tablist" aria-label="Evidence analysis tabs">
+            <button class="viewer-tab active" role="tab" data-viewer-tab="content" aria-selected="true">
+              📄 Content Preview
+            </button>
+            <button class="viewer-tab" role="tab" data-viewer-tab="entities">
+              🔬 Extracted Entities <span class="tab-count" id="tab-entity-count">0</span>
+            </button>
+            <button class="viewer-tab" role="tab" data-viewer-tab="custody">
+              🔗 Chain of Custody
+            </button>
+            <button class="viewer-tab" role="tab" data-viewer-tab="cross-case">
+              🕸 Cross-Case Links
+            </button>
+          </div>
+
+          <!-- Tab Panels -->
+          <div class="viewer-tab-panels">
+
+            <!-- Content Preview Panel -->
+            <div class="viewer-tab-panel active" id="panel-content" role="tabpanel">
+              <div class="content-preview-area" id="content-preview-area">
+                <!-- Populated by JS based on content type -->
+              </div>
+            </div>
+
+            <!-- Extracted Entities Panel -->
+            <div class="viewer-tab-panel" id="panel-entities" role="tabpanel" style="display:none">
+              <div class="viewer-entities-header">
+                <div class="viewer-entities-summary" id="viewer-entities-summary">
+                  <!-- Extraction summary cards -->
+                </div>
+                <div class="viewer-entities-search">
+                  <input type="text" class="filter-input" id="viewer-entity-search" placeholder="Search entities in this evidence..." />
+                </div>
+              </div>
+              <div class="viewer-entities-table-wrap">
+                <table class="entities-table compact" id="viewer-entities-table">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Value</th>
+                      <th>Normalized</th>
+                      <th>Confidence</th>
+                      <th>Method</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="viewer-entities-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="viewer-entities-empty" id="viewer-entities-empty" style="display:none">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-title">No Entities Extracted</div>
+                <div class="empty-desc">No entities have been extracted from this evidence yet. Use the Re-Extract button to run the extraction pipeline.</div>
+              </div>
+            </div>
+
+            <!-- Chain of Custody Panel -->
+            <div class="viewer-tab-panel" id="panel-custody" role="tabpanel" style="display:none">
+              <div id="custody-timeline-list">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <!-- Cross-Case Links Panel -->
+            <div class="viewer-tab-panel" id="panel-cross-case" role="tabpanel" style="display:none">
+              <div id="cross-case-content">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="../js/evidence-viewer.js"></script>
+</body>
+</html>

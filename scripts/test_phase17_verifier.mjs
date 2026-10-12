@@ -54,16 +54,34 @@ async function runTests() {
 
   setupFixtures();
   let passedCount = 0;
+  let failedCount = 0;
+  let skippedCount = 0;
+  let blockedCount = 0;
   const testResults = [];
 
-  function record(name, passed, details = "") {
-    if (passed) {
+  function record(name, passed, details = "", status = null) {
+    const isSkipped = status === "SKIPPED";
+    const isBlocked = status === "BLOCKED";
+
+    if (isSkipped) {
+      skippedCount++;
+      console.log(`  ⊘ SKIP: ${name} — ${details}`);
+    } else if (isBlocked) {
+      blockedCount++;
+      console.warn(`  ⚠ BLOCKED: ${name} — ${details}`);
+    } else if (passed) {
       passedCount++;
       console.log(`  ✓ PASS: ${name}`);
     } else {
+      failedCount++;
       console.error(`  ❌ FAIL: ${name} — ${details}`);
     }
-    testResults.push({ name, passed, details });
+    testResults.push({
+      name,
+      passed: Boolean(passed),
+      details,
+      status: isSkipped ? "SKIPPED" : isBlocked ? "BLOCKED" : passed ? "PASS" : "FAIL",
+    });
   }
 
   // ─── Scenario 1: Valid record and matching binary ────────────────────────────
@@ -309,14 +327,23 @@ async function runTests() {
     fs.writeFileSync(path.join(snapDir, "backup_manifest.sha256"), mHash);
 
     // Mock parent snapshots dir
+    // Mock parent snapshots dir
     const snapsRoot = path.join(process.cwd(), "backups", "snapshots");
     const testSnapName = "temp_snap_s8";
     const targetSnapDir = path.join(snapsRoot, testSnapName);
     if (fs.existsSync(targetSnapDir)) fs.rmSync(targetSnapDir, { recursive: true, force: true });
     fs.cpSync(snapDir, targetSnapDir, { recursive: true });
 
+    const mockPrisma8 = {
+      evidence: { findMany: async () => [] },
+      $disconnect: async () => {},
+    };
+
     const res = await reconcileEvidenceStore({
       snapshotName: testSnapName,
+      storagePath: rawDir,
+      databaseUrl: "file:./temp_s8.db",
+      prismaClient: mockPrisma8,
       emitArtifact: false,
     });
 
@@ -335,12 +362,21 @@ async function runTests() {
     const snapsRoot = path.join(process.cwd(), "backups", "snapshots");
     const testSnapName = "temp_snap_s9";
     const targetSnapDir = path.join(snapsRoot, testSnapName);
-    fs.mkdirSync(targetSnapDir, { recursive: true });
+    const snapRawDir = path.join(targetSnapDir, "evidence_raw");
+    fs.mkdirSync(snapRawDir, { recursive: true });
     fs.writeFileSync(path.join(targetSnapDir, "backup_manifest.json"), "{}");
     fs.writeFileSync(path.join(targetSnapDir, "backup_manifest.sha256"), "WRONG_CHECKSUM");
 
+    const mockPrisma9 = {
+      evidence: { findMany: async () => [] },
+      $disconnect: async () => {},
+    };
+
     const res = await reconcileEvidenceStore({
       snapshotName: testSnapName,
+      storagePath: snapRawDir,
+      databaseUrl: "file:./temp_s9.db",
+      prismaClient: mockPrisma9,
       emitArtifact: false,
     });
 
@@ -358,13 +394,18 @@ async function runTests() {
   try {
     const res = await reconcileEvidenceStore({
       storagePath: path.join(FIXTURE_ROOT, "NON_EXISTENT_DIR_XYZ"),
-      databaseUrl: "file:./dev.db",
+      databaseUrl: "file:./temp_s10.db",
+      prismaClient: {
+        evidence: { findMany: async () => [] },
+        $disconnect: async () => {},
+      },
+      silent: true,
       emitArtifact: false,
     });
 
     record(
       "10. Inaccessible storage directory guard",
-      res.status === "BLOCKED"
+      res.status === "BLOCKED" && res.error.includes("inaccessible")
     );
   } catch (err) {
     record("10. Inaccessible storage directory guard", false, err.message);
@@ -372,13 +413,66 @@ async function runTests() {
 
   // ─── Scenario 11: Path traversal attempt in evidence path ─────────────────────
   try {
-    const traversalCheck1 = validateStoragePath("/app/uploads/raw", "../../etc/passwd");
-    const traversalCheck2 = validateStoragePath("uploads/raw", "..\\..\\windows\\system32");
-    const normalCheck = validateStoragePath("uploads/raw", "abcdef.bin");
+    const s11Root = path.join(FIXTURE_ROOT, "s11_traversal_test");
+    const s11TargetOutside = path.join(FIXTURE_ROOT, "s11_outside_secret.txt");
+    fs.mkdirSync(s11Root, { recursive: true });
+    fs.writeFileSync(s11TargetOutside, "CONFIDENTIAL_EVIDENCE_TARGET_OUTSIDE_ROOT");
+    const outsideInitialHash = computeSha256File(s11TargetOutside);
+
+    // 1. Explicit traversal attempts across platforms
+    // A. POSIX relative traversal
+    const traversalPosix = validateStoragePath(s11Root, "../s11_outside_secret.txt");
+    // B. Windows backslash traversal
+    const traversalWin = validateStoragePath(s11Root, "..\\s11_outside_secret.txt");
+    // C. Deep multi-level traversal
+    const traversalDeep = validateStoragePath(s11Root, "../../etc/passwd");
+    // D. Mixed separator traversal
+    const traversalMixed = validateStoragePath(s11Root, "sub/../../s11_outside_secret.txt");
+    // E. Absolute path escape outside root
+    const traversalAbsolute = validateStoragePath(s11Root, path.resolve(s11TargetOutside));
+
+    // 2. Positive control cases (valid within root)
+    const validFilename = "legitimate_evidence_sample.bin";
+    const validFilePath = path.join(s11Root, validFilename);
+    fs.writeFileSync(validFilePath, "VALID_EVIDENCE_BYTES_INSIDE_ROOT");
+    const controlDirect = validateStoragePath(s11Root, validFilename);
+    const controlSubdir = validateStoragePath(s11Root, "sub/legitimate_nested.bin");
+
+    // 3. Assert outside target was NOT read, modified, or deleted
+    const outsideExists = fs.existsSync(s11TargetOutside);
+    const outsideUnchanged = outsideExists && computeSha256File(s11TargetOutside) === outsideInitialHash;
+
+    // 4. Assert validator rejected all traversal attempts with PATH_TRAVERSAL_DETECTED
+    const traversalsRejected =
+      traversalPosix.traversalDetected &&
+      !traversalPosix.valid &&
+      traversalPosix.reason === "PATH_TRAVERSAL_DETECTED" &&
+      traversalWin.traversalDetected &&
+      !traversalWin.valid &&
+      traversalWin.reason === "PATH_TRAVERSAL_DETECTED" &&
+      traversalDeep.traversalDetected &&
+      !traversalDeep.valid &&
+      traversalMixed.traversalDetected &&
+      !traversalMixed.valid &&
+      traversalAbsolute.traversalDetected &&
+      !traversalAbsolute.valid;
+
+    // 5. Assert positive controls passed
+    const controlsValid =
+      controlDirect.valid &&
+      !controlDirect.traversalDetected &&
+      controlDirect.reason === "OK" &&
+      controlSubdir.valid &&
+      !controlSubdir.traversalDetected;
+
+    const test11Passed = traversalsRejected && controlsValid && outsideUnchanged;
 
     record(
       "11. Path traversal immunity in path validator",
-      traversalCheck1.traversalDetected && traversalCheck2.traversalDetected && normalCheck.valid
+      test11Passed,
+      test11Passed
+        ? "All traversal vectors rejected; outside target untouched; controls valid"
+        : `Traversals rejected: ${traversalsRejected}, Controls valid: ${controlsValid}, Outside untouched: ${outsideUnchanged}`
     );
   } catch (err) {
     record("11. Path traversal immunity in path validator", false, err.message);
@@ -444,8 +538,16 @@ async function runTests() {
     const mHash = computeSha256File(manifestPath);
     fs.writeFileSync(path.join(targetSnapDir, "backup_manifest.sha256"), mHash);
 
+    const mockPrisma14 = {
+      evidence: { findMany: async () => [] },
+      $disconnect: async () => {},
+    };
+
     const res = await reconcileEvidenceStore({
       snapshotName: testSnapName,
+      storagePath: rawDir,
+      databaseUrl: "file:./temp_s14.db",
+      prismaClient: mockPrisma14,
       emitArtifact: false,
     });
 
@@ -482,11 +584,25 @@ async function runTests() {
 
   cleanupFixtures();
 
+  const totalExecuted = testResults.length;
+  const passPercentage = totalExecuted > 0 ? ((passedCount / totalExecuted) * 100).toFixed(1) : "0.0";
+
   console.log("\n==================================================================");
-  console.log(`   PHASE 17 VERIFIER TESTS: ${passedCount}/15 PASSED (100%)      `);
+  console.log(`   PHASE 17 VERIFIER TEST RESULTS:`);
+  console.log(`   Total Assertions Executed: ${totalExecuted}`);
+  console.log(`   Passed:                    ${passedCount} / ${totalExecuted} (${passPercentage}%)`);
+  if (failedCount > 0) {
+    console.log(`   Failed:                    ${failedCount}`);
+  }
+  if (skippedCount > 0) {
+    console.log(`   Skipped:                   ${skippedCount}`);
+  }
+  if (blockedCount > 0) {
+    console.log(`   Blocked:                   ${blockedCount}`);
+  }
   console.log("==================================================================\n");
 
-  if (passedCount < 15) {
+  if (passedCount !== totalExecuted || failedCount > 0) {
     process.exit(1);
   }
 }

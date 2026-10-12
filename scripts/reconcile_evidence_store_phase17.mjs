@@ -29,18 +29,80 @@ export function computeSha256File(filePath) {
 
 /**
  * Validates that an evidence path resolves strictly within the permitted storage directory.
+ * Defends against:
+ * 1. Directory traversal using '../' or mixed '\\' / '/' segments on all platforms (POSIX & Windows).
+ * 2. Absolute paths escaping the approved storage root.
+ * 3. Paths whose normalized destination escapes the approved root (e.g. prefix collisions like /base_extra).
+ * 4. Symlinks pointing outside the canonical storage root.
  */
 export function validateStoragePath(baseDir, relativeOrAbsolute) {
-  const resolvedBase = path.resolve(baseDir);
-  const normalized = path.isAbsolute(relativeOrAbsolute)
-    ? path.resolve(relativeOrAbsolute)
-    : path.resolve(resolvedBase, relativeOrAbsolute);
+  if (!baseDir || typeof baseDir !== "string" || !relativeOrAbsolute || typeof relativeOrAbsolute !== "string") {
+    return {
+      valid: false,
+      resolvedPath: "",
+      canonicalPath: "",
+      traversalDetected: true,
+      reason: "INVALID_ARGUMENTS",
+    };
+  }
 
-  const isInside = normalized.startsWith(resolvedBase + path.sep) || normalized === resolvedBase;
+  // 1. Resolve base directory canonical reference
+  const resolvedBase = path.resolve(baseDir);
+
+  // 2. Uniformly normalize separators for platform independence
+  // On POSIX (Linux), backslashes are not treated as path separators by path.resolve,
+  // so an attacker supplying '..\..\etc\passwd' must be converted to avoid escaping detection.
+  const normalizedInput = relativeOrAbsolute.replace(/\\/g, "/");
+
+  // Detect explicit traversal tokens in the input
+  const hasTraversalTokens =
+    /(?:^|\/)\.\.(?:\/|$)/.test(normalizedInput) ||
+    relativeOrAbsolute.includes("..\\") ||
+    relativeOrAbsolute.includes("../");
+
+  // 3. Resolve target destination
+  let resolvedTarget;
+  if (path.isAbsolute(relativeOrAbsolute) || path.isAbsolute(normalizedInput)) {
+    resolvedTarget = path.resolve(normalizedInput);
+  } else {
+    resolvedTarget = path.resolve(resolvedBase, normalizedInput);
+  }
+
+  // 4. Canonical symlink resolution if paths exist on disk
+  let canonicalBase = resolvedBase;
+  try {
+    if (fs.existsSync(resolvedBase)) {
+      canonicalBase = fs.realpathSync(resolvedBase);
+    }
+  } catch (_) {}
+
+  let canonicalTarget = resolvedTarget;
+  try {
+    if (fs.existsSync(resolvedTarget)) {
+      canonicalTarget = fs.realpathSync(resolvedTarget);
+    }
+  } catch (_) {}
+
+  // 5. Correct root-boundary comparison using path.relative (not string prefix)
+  const relStandard = path.relative(resolvedBase, resolvedTarget);
+  const relCanonical = path.relative(canonicalBase, canonicalTarget);
+
+  const isInsideStandard =
+    relStandard === "" ||
+    (!relStandard.startsWith("..") && !path.isAbsolute(relStandard));
+
+  const isInsideCanonical =
+    relCanonical === "" ||
+    (!relCanonical.startsWith("..") && !path.isAbsolute(relCanonical));
+
+  const isInside = isInsideStandard && isInsideCanonical && !hasTraversalTokens;
+
   return {
     valid: isInside,
-    resolvedPath: normalized,
+    resolvedPath: resolvedTarget,
+    canonicalPath: canonicalTarget,
     traversalDetected: !isInside,
+    reason: isInside ? "OK" : "PATH_TRAVERSAL_DETECTED",
   };
 }
 
@@ -78,7 +140,9 @@ export async function reconcileEvidenceStore(options = {}) {
   }
 
   if (!fs.existsSync(storageRoot)) {
-    console.error(`FATAL: Evidence storage directory does not exist: ${storageRoot}`);
+    if (!options.silent) {
+      console.warn(`[Safe Validation Guard] Evidence storage directory does not exist: ${storageRoot}`);
+    }
     return {
       status: "BLOCKED",
       error: `Storage root inaccessible: ${storageRoot}`,

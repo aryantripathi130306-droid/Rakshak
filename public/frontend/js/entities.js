@@ -109,265 +109,14 @@ const ENTITY_CONFIG = {
   }
 };
 
-// ─── Canonical Entities Dataset from Reference Image ─────────────────────────
-const CANONICAL_ENTITIES = [
-  {
-    id: 'ENT-2024-001',
-    name: 'Rahul Sharma',
-    type: 'PERSON',
-    keyDetailsPrimary: '+91 98765 43210',
-    keyDetailsSecondary: 'rahul.s@gmail.com',
-    relatedCasesCount: 3,
-    riskLevel: 'High',
-    status: 'Active',
-    dob: '12 Mar 1990',
-    gender: 'Male',
-    nationality: 'Indian',
-    createdOn: '15 Jan 2024, 10:30',
-    lastUpdated: '10 Jul 2024, 14:20',
-    identifiers: [
-      { type: 'Phone', value: '+91 98765 43210', isPrimary: true, icon: '📞' },
-      { type: 'Email', value: 'rahul.s@gmail.com', isPrimary: false, icon: '✉' },
-      { type: 'Aadhaar', value: 'Aadhaar: XXXX-XXXX-3210', isPrimary: false, icon: '🪪' },
-      { type: 'PAN', value: 'PAN: ABCPS1234D', isPrimary: false, icon: '💳' }
-    ],
-    aliases: ['R. Sharma', 'Rahul S.'],
-    relatedEntities: [
-      { name: 'Sharma Enterprises', type: 'Organization', rel: 'Business Partner', note: 'Linked in 3 cases', iconBg: '#EBF3FF', iconColor: '#3988F5' },
-      { name: '+91 98765 67890', type: 'Phone', rel: 'Secondary Number', note: 'Linked in 2 cases', iconBg: '#EBF3FF', iconColor: '#3988F5' },
-      { name: 'Ravi Verma', type: 'Person', rel: 'Known Associate', note: 'Linked in 2 cases', iconBg: '#EBF3FF', iconColor: '#3988F5' },
-      { name: 'HDFC Bank XXXX4321', type: 'Financial', rel: 'Account Holder', note: 'Linked in 1 case', iconBg: '#FEF6E8', iconColor: '#F5B544' }
-    ],
-    relatedCases: [
-      { caseNumber: 'CC/2024/001', title: 'Financial Fraud Investigation', role: 'Primary', date: '15 Jan 2024' },
-      { caseNumber: 'CC/2024/045', title: 'Cyber Extortion Case', role: 'Associated', date: '12 Mar 2024' },
-      { caseNumber: 'CC/2024/078', title: 'Money Laundering', role: 'Witness', date: '28 May 2024' }
-    ],
-    evidenceRefs: [
-      { name: 'MOBILE_001.jpg', type: 'Image', caseNumber: 'CC/2024/001', date: '15 Jan 2024', iconBg: '#E6F9F0', iconColor: '#10B981' },
-      { name: 'BANK_STMT.pdf', type: 'Document', caseNumber: 'CC/2024/045', date: '12 Mar 2024', iconBg: '#FEECEE', iconColor: '#EF4444' },
-      { name: 'EMAIL_TRAIL.eml', type: 'Email', caseNumber: 'CC/2024/045', date: '12 Mar 2024', iconBg: '#F2ECFD', iconColor: '#9461F5' },
-      { name: 'DEVICE_DUMP.zip', type: 'Device Data', caseNumber: 'CC/2024/078', date: '28 May 2024', iconBg: '#F1F5F9', iconColor: '#64748B' }
-    ]
-  },
-  {
-    id: 'ENT-2024-002',
-    name: 'Sharma Enterprises',
-    type: 'ORGANIZATION',
-    keyDetailsPrimary: 'MCA-123456',
-    keyDetailsSecondary: 'Private Limited',
-    relatedCasesCount: 5,
-    riskLevel: 'Medium',
-    status: 'Active',
-    dob: '01 Apr 2018',
-    gender: 'Corporate',
-    nationality: 'Indian Entity',
-    createdOn: '18 Jan 2024, 11:20',
-    lastUpdated: '08 Jul 2024, 09:15',
-    identifiers: [
-      { type: 'MCA', value: 'CIN: U72900DL2018PTC123456', isPrimary: true, icon: '🏢' },
-      { type: 'GST', value: 'GSTIN: 07AAACS1234D1Z5', isPrimary: false, icon: '🧾' },
-      { type: 'PAN', value: 'PAN: AAACS1234D', isPrimary: false, icon: '💳' }
-    ],
-    aliases: ['Sharma Ent', 'Sharma Global Logistics'],
-    relatedEntities: [
-      { name: 'Rahul Sharma', type: 'Person', rel: 'Director / Signatory', note: 'Linked in 3 cases', iconBg: '#FEECEE', iconColor: '#EF4444' },
-      { name: 'HDFC Bank XXXX4321', type: 'Financial', rel: 'Corporate Current Account', note: 'Linked in 2 cases', iconBg: '#FEF6E8', iconColor: '#F5B544' }
-    ],
-    relatedCases: [
-      { caseNumber: 'CC/2024/001', title: 'Financial Fraud Investigation', role: 'Subject Entity', date: '15 Jan 2024' },
-      { caseNumber: 'CC/2024/045', title: 'Cyber Extortion Case', role: 'Payment Gateway Conduit', date: '12 Mar 2024' }
-    ],
-    evidenceRefs: [
-      { name: 'BANK_STMT.pdf', type: 'Document', caseNumber: 'CC/2024/045', date: '12 Mar 2024', iconBg: '#FEECEE', iconColor: '#EF4444' }
-    ]
-  },
-  {
-    id: 'ENT-2024-003',
-    name: '+91 98765 43210',
-    type: 'PHONE',
-    keyDetailsPrimary: 'Airtel (India)',
-    keyDetailsSecondary: 'Mobile Number',
-    relatedCasesCount: 4,
-    riskLevel: 'Medium',
-    status: 'Active',
-    dob: 'N/A',
-    gender: 'Telecom',
-    nationality: 'India (Delhi Circle)',
-    createdOn: '15 Jan 2024, 10:45',
-    lastUpdated: '12 Jul 2024, 16:30',
-    identifiers: [
-      { type: 'MSISDN', value: '+91 98765 43210', isPrimary: true, icon: '📞' },
-      { type: 'IMSI', value: '404450123456789', isPrimary: false, icon: '📶' }
-    ],
-    aliases: ['Burner SIM Airtel-DL'],
-    relatedEntities: [
-      { name: 'Rahul Sharma', type: 'Person', rel: 'Subscriber Record', note: 'Linked in 3 cases', iconBg: '#FEECEE', iconColor: '#EF4444' },
-      { name: 'MacBook Pro', type: 'Device', rel: 'Paired Hotspot', note: 'Linked in 1 case', iconBg: '#E0F2FE', iconColor: '#0EA5E9' }
-    ],
-    relatedCases: [
-      { caseNumber: 'CC/2024/001', title: 'Financial Fraud Investigation', role: 'Registered MSISDN', date: '15 Jan 2024' },
-      { caseNumber: 'CC/2024/045', title: 'Cyber Extortion Case', role: 'Calling Target', date: '12 Mar 2024' }
-    ],
-    evidenceRefs: [
-      { name: 'MOBILE_001.jpg', type: 'Image', caseNumber: 'CC/2024/001', date: '15 Jan 2024', iconBg: '#E6F9F0', iconColor: '#10B981' }
-    ]
-  },
-  {
-    id: 'ENT-2024-004',
-    name: 'rahul.s@gmail.com',
-    type: 'EMAIL',
-    keyDetailsPrimary: 'Gmail',
-    keyDetailsSecondary: 'Email Address',
-    relatedCasesCount: 3,
-    riskLevel: 'Low',
-    status: 'Active',
-    dob: 'N/A',
-    gender: 'Digital',
-    nationality: 'Global',
-    createdOn: '12 Mar 2024, 16:22',
-    lastUpdated: '05 Jul 2024, 11:10',
-    identifiers: [
-      { type: 'Email', value: 'rahul.s@gmail.com', isPrimary: true, icon: '✉' },
-      { type: 'Recovery Email', value: 'backup.sharma@yahoo.com', isPrimary: false, icon: '📧' }
-    ],
-    aliases: ['rahul.sharma.corp@gmail.com'],
-    relatedEntities: [
-      { name: 'Rahul Sharma', type: 'Person', rel: 'Account Owner', note: 'Linked in 3 cases', iconBg: '#FEECEE', iconColor: '#EF4444' }
-    ],
-    relatedCases: [
-      { caseNumber: 'CC/2024/045', title: 'Cyber Extortion Case', role: 'Originating Sender', date: '12 Mar 2024' }
-    ],
-    evidenceRefs: [
-      { name: 'EMAIL_TRAIL.eml', type: 'Email', caseNumber: 'CC/2024/045', date: '12 Mar 2024', iconBg: '#F2ECFD', iconColor: '#9461F5' }
-    ]
-  },
-  {
-    id: 'ENT-2024-005',
-    name: 'HDFC Bank XXXX4321',
-    type: 'FINANCIAL',
-    keyDetailsPrimary: 'HDFC Bank',
-    keyDetailsSecondary: 'Account • 4321',
-    relatedCasesCount: 2,
-    riskLevel: 'High',
-    status: 'Active',
-    dob: 'Opened Jun 2021',
-    gender: 'Banking',
-    nationality: 'India (New Delhi)',
-    createdOn: '12 Mar 2024, 14:20',
-    lastUpdated: '14 Jul 2024, 18:00',
-    identifiers: [
-      { type: 'Account', value: 'A/C 50200012344321', isPrimary: true, icon: '🏦' },
-      { type: 'IFSC', value: 'HDFC0000123', isPrimary: false, icon: '🏛' }
-    ],
-    aliases: ['HDFC Mule Settlement A/C'],
-    relatedEntities: [
-      { name: 'Sharma Enterprises', type: 'Organization', rel: 'Account Beneficiary', note: 'Linked in 2 cases', iconBg: '#EBF3FF', iconColor: '#3988F5' },
-      { name: 'Rahul Sharma', type: 'Person', rel: 'Authorized Signatory', note: 'Linked in 1 case', iconBg: '#FEECEE', iconColor: '#EF4444' }
-    ],
-    relatedCases: [
-      { caseNumber: 'CC/2024/045', title: 'Cyber Extortion Case', role: 'Beneficiary Mule', date: '12 Mar 2024' },
-      { caseNumber: 'CC/2024/078', title: 'Money Laundering', role: 'Layering Account', date: '28 May 2024' }
-    ],
-    evidenceRefs: [
-      { name: 'BANK_STMT.pdf', type: 'Document', caseNumber: 'CC/2024/045', date: '12 Mar 2024', iconBg: '#FEECEE', iconColor: '#EF4444' }
-    ]
-  },
-  {
-    id: 'ENT-2024-006',
-    name: 'MacBook Pro',
-    type: 'DEVICE',
-    keyDetailsPrimary: 'MacOS 14.2',
-    keyDetailsSecondary: 'SN: C02X1234',
-    relatedCasesCount: 1,
-    riskLevel: 'Medium',
-    status: 'Inactive',
-    dob: 'Seized May 2024',
-    gender: 'Hardware',
-    nationality: 'Apple Inc.',
-    createdOn: '28 May 2024, 12:00',
-    lastUpdated: '10 Jun 2024, 15:40',
-    identifiers: [
-      { type: 'Serial Number', value: 'SN: C02X12345678', isPrimary: true, icon: '💻' },
-      { type: 'MAC Address', value: 'A4:83:E7:44:91:2B', isPrimary: false, icon: '🌐' }
-    ],
-    aliases: ['Suspect Laptop #1'],
-    relatedEntities: [
-      { name: 'Rahul Sharma', type: 'Person', rel: 'Physical Possessor', note: 'Linked in 1 case', iconBg: '#FEECEE', iconColor: '#EF4444' }
-    ],
-    relatedCases: [
-      { caseNumber: 'CC/2024/078', title: 'Money Laundering', role: 'Seized Device', date: '28 May 2024' }
-    ],
-    evidenceRefs: [
-      { name: 'DEVICE_DUMP.zip', type: 'Device Data', caseNumber: 'CC/2024/078', date: '28 May 2024', iconBg: '#F1F5F9', iconColor: '#64748B' }
-    ]
-  },
-  {
-    id: 'ENT-2024-007',
-    name: '142, MG Road',
-    type: 'LOCATION',
-    keyDetailsPrimary: 'Bengaluru, KA',
-    keyDetailsSecondary: 'Coordinates',
-    relatedCasesCount: 3,
-    riskLevel: 'Low',
-    status: 'Active',
-    dob: 'N/A',
-    gender: 'Geographic',
-    nationality: 'Karnataka, India',
-    createdOn: '15 Jan 2024, 11:15',
-    lastUpdated: '02 Jul 2024, 12:20',
-    identifiers: [
-      { type: 'Address', value: '142, MG Road, Bengaluru, KA - 560001', isPrimary: true, icon: '📍' },
-      { type: 'GPS', value: '12.9716° N, 77.5946° E', isPrimary: false, icon: '🛰' }
-    ],
-    aliases: ['MG Road Commercial Complex'],
-    relatedEntities: [
-      { name: 'Sharma Enterprises', type: 'Organization', rel: 'Registered Office', note: 'Linked in 3 cases', iconBg: '#EBF3FF', iconColor: '#3988F5' }
-    ],
-    relatedCases: [
-      { caseNumber: 'CC/2024/001', title: 'Financial Fraud Investigation', role: 'Raid Location', date: '15 Jan 2024' }
-    ],
-    evidenceRefs: [
-      { name: 'MOBILE_001.jpg', type: 'Image', caseNumber: 'CC/2024/001', date: '15 Jan 2024', iconBg: '#E6F9F0', iconColor: '#10B981' }
-    ]
-  },
-  {
-    id: 'ENT-2024-008',
-    name: 'Ravi Verma',
-    type: 'PERSON',
-    keyDetailsPrimary: '+91 91234 56789',
-    keyDetailsSecondary: 'ravi.v@gmail.com',
-    relatedCasesCount: 2,
-    riskLevel: 'Medium',
-    status: 'Active',
-    dob: '05 Aug 1993',
-    gender: 'Male',
-    nationality: 'Indian',
-    createdOn: '15 Jan 2024, 11:30',
-    lastUpdated: '09 Jul 2024, 13:10',
-    identifiers: [
-      { type: 'Phone', value: '+91 91234 56789', isPrimary: true, icon: '📞' },
-      { type: 'Email', value: 'ravi.v@gmail.com', isPrimary: false, icon: '✉' }
-    ],
-    aliases: ['Ravi V.', 'Verma Ji'],
-    relatedEntities: [
-      { name: 'Rahul Sharma', type: 'Person', rel: 'Co-accused Associate', note: 'Linked in 2 cases', iconBg: '#FEECEE', iconColor: '#EF4444' },
-      { name: 'Sharma Enterprises', type: 'Organization', rel: 'Accountant', note: 'Linked in 1 case', iconBg: '#EBF3FF', iconColor: '#3988F5' }
-    ],
-    relatedCases: [
-      { caseNumber: 'CC/2024/001', title: 'Financial Fraud Investigation', role: 'Accomplice', date: '15 Jan 2024' }
-    ],
-    evidenceRefs: [
-      { name: 'MOBILE_001.jpg', type: 'Image', caseNumber: 'CC/2024/001', date: '15 Jan 2024', iconBg: '#E6F9F0', iconColor: '#10B981' }
-    ]
-  }
-];
+// ─── Canonical Entities Dataset ─────────────────────────────────────────
+const CANONICAL_ENTITIES = [];
 
 // ─── State Management ──────────────────────────────────────────────────────────
 let entitiesState = {
-  allEntities: [...CANONICAL_ENTITIES],
-  filteredEntities: [...CANONICAL_ENTITIES],
-  selectedEntity: CANONICAL_ENTITIES[0],
+  allEntities: [],
+  filteredEntities: [],
+  selectedEntity: null,
   filters: {
     q: '',
     type: 'ALL',
@@ -378,7 +127,7 @@ let entitiesState = {
   pagination: {
     page: 1,
     perPage: 8,
-    total: 1248
+    total: 0
   }
 };
 
@@ -388,7 +137,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
   await loadBackendData();
   applyFiltersAndRender();
-  selectEntity(CANONICAL_ENTITIES[0]);
+  if (entitiesState.allEntities.length > 0) {
+    selectEntity(entitiesState.allEntities[0]);
+  }
 });
 
 // ─── Officer Session Setup ────────────────────────────────────────────────────
@@ -434,19 +185,52 @@ function initOfficerSession() {
 // ─── Backend Data Loading ─────────────────────────────────────────────────────
 async function loadBackendData() {
   try {
-    const res = await fetch('/api/entities?limit=100');
+    let token = null;
+    try {
+      if (typeof localStorage !== 'undefined') token = localStorage.getItem('rakshak_token');
+    } catch (_) {}
+    const headers = { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) };
+    const res = await fetch('/api/entities?limit=100', { credentials: 'include', headers });
     if (res.ok) {
       const data = await res.json();
-      if (data && data.typeCounts) {
-        // Update metric values from backend if available
-        const total = data.total || 1248;
-        const people = data.typeCounts.NAME || 642;
-        const orgs = (data.typeCounts.DOMAIN || 0) + (data.typeCounts.ORGANIZATION || 186);
-        const devices = (data.typeCounts.IP || 0) + (data.typeCounts.DEVICE || 210);
-        const accounts = (data.typeCounts.ACCOUNT || 0) + (data.typeCounts.UPI || 140);
-        const locations = (data.typeCounts.ADDRESS || 0) + (data.typeCounts.GPS_COORD || 70);
+      if (data && Array.isArray(data.entities)) {
+        entitiesState.allEntities = data.entities.map((e) => ({
+          id: e.id,
+          name: e.normalizedValue || e.rawValue,
+          type: e.entityType || 'PERSON',
+          keyDetailsPrimary: e.rawValue,
+          keyDetailsSecondary: e.factAssertion || (e.evidence ? e.evidence.fileName : 'Direct Extraction'),
+          relatedCasesCount: e.caseId ? 1 : 0,
+          riskLevel: e.confidence && e.confidence > 0.8 ? 'High' : (e.confidence && e.confidence > 0.5 ? 'Medium' : 'Low'),
+          status: e.verificationStatus || 'Active',
+          dob: '—',
+          gender: '—',
+          nationality: '—',
+          createdOn: e.extractedAt ? new Date(e.extractedAt).toLocaleDateString('en-IN') : 'Recent',
+          lastUpdated: e.extractedAt ? new Date(e.extractedAt).toLocaleDateString('en-IN') : 'Recent',
+          identifiers: [
+            { type: e.entityType || 'Entity', value: e.normalizedValue || e.rawValue, isPrimary: true, icon: '🔍' }
+          ],
+          aliases: [],
+          relatedEntities: [],
+          relatedCases: e.evidence?.case ? [{ caseNumber: e.evidence.case.caseNumber || e.caseId, title: e.evidence.case.incidentType || 'Investigation', role: 'Associated', date: '' }] : [],
+          evidenceRefs: e.evidence ? [{ name: e.evidence.fileName, type: e.evidence.evidenceCategory, caseNumber: e.caseId, date: '' }] : []
+        }));
 
-        // Update metric cards
+        entitiesState.pagination.total = data.total || entitiesState.allEntities.length;
+        if (entitiesState.allEntities.length > 0 && !entitiesState.selectedEntity) {
+          entitiesState.selectedEntity = entitiesState.allEntities[0];
+        }
+      }
+
+      if (data && data.typeCounts) {
+        const total = data.total || entitiesState.allEntities.length || 0;
+        const people = data.typeCounts.NAME || data.typeCounts.PERSON || 0;
+        const orgs = (data.typeCounts.DOMAIN || 0) + (data.typeCounts.ORGANIZATION || 0);
+        const devices = (data.typeCounts.IP || 0) + (data.typeCounts.DEVICE || 0);
+        const accounts = (data.typeCounts.ACCOUNT || 0) + (data.typeCounts.UPI || 0) + (data.typeCounts.FINANCIAL || 0);
+        const locations = (data.typeCounts.ADDRESS || 0) + (data.typeCounts.GPS_COORD || 0) + (data.typeCounts.LOCATION || 0);
+
         const elTotal = document.getElementById('metric-total-entities');
         const elPeople = document.getElementById('metric-count-people');
         const elOrgs = document.getElementById('metric-count-orgs');
@@ -461,16 +245,16 @@ async function loadBackendData() {
         if (elFin) elFin.textContent = Number(accounts).toLocaleString();
         if (elLoc) elLoc.textContent = Number(locations).toLocaleString();
 
-        // Percentages
-        document.getElementById('pct-people').textContent = `${Math.round((people / total) * 100)}%`;
-        document.getElementById('pct-orgs').textContent = `${Math.round((orgs / total) * 100)}%`;
-        document.getElementById('pct-devices').textContent = `${Math.round((devices / total) * 100)}%`;
-        document.getElementById('pct-financial').textContent = `${Math.round((accounts / total) * 100)}%`;
-        document.getElementById('pct-locations').textContent = `${Math.round((locations / total) * 100)}%`;
+        const pct = (val) => total > 0 ? `${Math.round((val / total) * 100)}%` : '0%';
+        const pP = document.getElementById('pct-people'); if (pP) pP.textContent = pct(people);
+        const pO = document.getElementById('pct-orgs'); if (pO) pO.textContent = pct(orgs);
+        const pD = document.getElementById('pct-devices'); if (pD) pD.textContent = pct(devices);
+        const pF = document.getElementById('pct-financial'); if (pF) pF.textContent = pct(accounts);
+        const pL = document.getElementById('pct-locations'); if (pL) pL.textContent = pct(locations);
       }
     }
   } catch (err) {
-    console.warn('[EntityManagement] Background API sync failed, using certified reference data:', err);
+    console.warn('[EntityManagement] Background API sync failed:', err);
   }
 }
 
@@ -515,9 +299,22 @@ function renderTable() {
   const tbody = document.getElementById('entity-table-body');
   const paginationInfo = document.getElementById('pagination-info');
   if (!tbody) return;
-
   tbody.innerHTML = '';
   const list = entitiesState.filteredEntities;
+
+  if (list.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 48px 16px; color: var(--neu-secondary);">
+          <div style="font-size: 28px; margin-bottom: 8px; opacity: 0.5;">🔬</div>
+          <div style="font-weight: 700; color: var(--neu-navy); margin-bottom: 4px;">No Extracted Entities Found</div>
+          <div style="font-size: 12px; color: var(--neu-secondary);">Extracted forensic entities will automatically populate when evidence items are analyzed.</div>
+        </td>
+      </tr>
+    `;
+    if (paginationInfo) paginationInfo.textContent = 'Showing 0 of 0 entities';
+    return;
+  }
 
   if (list.length === 0) {
     tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--neu-secondary);font-size:13px;">No entities found matching your filters.</td></tr>`;

@@ -202,9 +202,9 @@ const CANONICAL_LOGS = [
 
 // ─── Application State ────────────────────────────────────────────────────────
 const state = {
-  logs: [...CANONICAL_LOGS],
-  filteredLogs: [...CANONICAL_LOGS],
-  selectedLogId: "LOG-2024-00012345",
+  logs: [],
+  filteredLogs: [],
+  selectedLogId: null,
   activeDetailTab: "overview",
   searchQuery: "",
   filterEventType: "",
@@ -213,11 +213,11 @@ const state = {
   filterResource: "",
   filterStatus: "",
   currentUser: null,
-  totalEventsCount: 12486,
-  userActivitiesCount: 4782,
-  securityEventsCount: 1245,
-  dataAccessEventsCount: 3621,
-  systemEventsCount: 2838,
+  totalEventsCount: 0,
+  userActivitiesCount: 0,
+  securityEventsCount: 0,
+  dataAccessEventsCount: 0,
+  systemEventsCount: 0,
 };
 
 // ─── DOM References ───────────────────────────────────────────────────────────

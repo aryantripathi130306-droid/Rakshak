@@ -6,199 +6,13 @@
 import { submitDepartmentOnboardingRequest } from './api.js';
 
 // ─── CANONICAL ACCESS REQUESTS DATASET ─────────────────────────────────────────
-export const CANONICAL_REQUESTS = [
-  {
-    id: 'REQ-2024-001',
-    type: 'Case Access',
-    fromDept: 'Cyber Crime',
-    toDept: 'Economic Offences',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    purpose: 'Financial trail analysis',
-    fullPurpose: 'Requesting access to financial transaction data and related documents for cross-investigation of money laundering suspects.',
-    status: 'Pending',
-    priority: 'Medium',
-    date: '15 Jan 2024',
-    fullDateTime: '15 Jan 2024, 10:30 AM',
-    requestedBy: 'Inspector Rajesh Kumar',
-    requestingDept: 'Cyber Crime Department',
-    targetDept: 'Economic Offences Wing',
-    icon: '👤',
-    iconClass: 'neu-metric-icon-purple',
-    scopes: [
-      { name: 'Case Details', scope: 'Read Access', icon: '📄', color: 'neu-metric-icon-blue' },
-      { name: 'Evidence Metadata', scope: 'Read Access', icon: '📄', color: 'neu-metric-icon-green' },
-      { name: 'Financial Records', scope: 'Read Access', icon: '💳', color: 'neu-metric-icon-blue' },
-      { name: 'Investigation Notes', scope: 'Read Access', icon: '📝', color: 'neu-metric-icon-amber' }
-    ]
-  },
-  {
-    id: 'REQ-2024-002',
-    type: 'Evidence Access',
-    fromDept: 'Economic Offences',
-    toDept: 'Cyber Crime',
-    caseId: 'CC/2024/045',
-    caseTitle: 'Cyber Extortion Case',
-    purpose: 'Mobile device data',
-    fullPurpose: 'Inter-agency request for Cellebrite physical extraction archive and decrypted WhatsApp chat databases from seized mobile terminal.',
-    status: 'Approved',
-    priority: 'High',
-    date: '14 Jan 2024',
-    fullDateTime: '14 Jan 2024, 03:15 PM',
-    requestedBy: 'ACP Vikram Singh',
-    requestingDept: 'Economic Offences Wing',
-    targetDept: 'Cyber Crime Department',
-    icon: '📄',
-    iconClass: 'neu-metric-icon-blue',
-    scopes: [
-      { name: 'Evidence Metadata', scope: 'Read Access', icon: '📄', color: 'neu-metric-icon-green' },
-      { name: 'Device Image Artifacts', scope: 'Read Access', icon: '📱', color: 'neu-metric-icon-blue' }
-    ]
-  },
-  {
-    id: 'REQ-2024-003',
-    type: 'Information Share',
-    fromDept: 'Narcotics Control',
-    toDept: 'Cyber Crime',
-    caseId: 'CC/2024/078',
-    caseTitle: 'Money Laundering Syndicate',
-    purpose: 'Cross-case analysis',
-    fullPurpose: 'Sharing intelligence bulletin on transnational cryptocurrency payments tied to illicit narcotics syndicate accounts.',
-    status: 'Pending',
-    priority: 'High',
-    date: '13 Jan 2024',
-    fullDateTime: '13 Jan 2024, 11:45 AM',
-    requestedBy: 'Zonal Director R. K. Nair',
-    requestingDept: 'Narcotics Control Bureau',
-    targetDept: 'Cyber Crime Department',
-    icon: '📄',
-    iconClass: 'neu-metric-icon-blue',
-    scopes: [
-      { name: 'Syndicate Entities', scope: 'Read Access', icon: '👥', color: 'neu-metric-icon-purple' },
-      { name: 'Crypto Wallet Traces', scope: 'Read Access', icon: '🪙', color: 'neu-metric-icon-amber' }
-    ]
-  },
-  {
-    id: 'REQ-2024-004',
-    type: 'Joint Investigation',
-    fromDept: 'Cyber Crime',
-    toDept: 'Intelligence Bureau',
-    caseId: 'CC/2024/012',
-    caseTitle: 'Cross-Border Investment Scam',
-    purpose: 'Organized network',
-    fullPurpose: 'Requesting constitution of joint intelligence taskforce targeting overseas spoofed IP ranges and VPN nodes.',
-    status: 'Approved',
-    priority: 'Critical',
-    date: '12 Jan 2024',
-    fullDateTime: '12 Jan 2024, 04:30 PM',
-    requestedBy: 'Inspector Rajesh Kumar',
-    requestingDept: 'Cyber Crime Department',
-    targetDept: 'Intelligence Bureau',
-    icon: '📄',
-    iconClass: 'neu-metric-icon-green',
-    scopes: [
-      { name: 'Full Case Dossier', scope: 'Collaborative Access', icon: '📁', color: 'neu-metric-icon-blue' },
-      { name: 'Intercept Feeds', scope: 'Restricted Read', icon: '📡', color: 'neu-metric-icon-amber' }
-    ]
-  },
-  {
-    id: 'REQ-2024-005',
-    type: 'Entity Access',
-    fromDept: 'Cyber Crime',
-    toDept: 'State Police (Punjab)',
-    caseId: 'CC/2024/091',
-    caseTitle: 'Digital Arrest Threat Scheme',
-    purpose: 'Suspect verification',
-    fullPurpose: 'Verification of territorial residential addresses and local phone tower associations for primary suspect syndicate mule.',
-    status: 'Rejected',
-    priority: 'Medium',
-    date: '11 Jan 2024',
-    fullDateTime: '11 Jan 2024, 02:10 PM',
-    requestedBy: 'Inspector Rajesh Kumar',
-    requestingDept: 'Cyber Crime Department',
-    targetDept: 'State Police (Punjab)',
-    icon: '👤',
-    iconClass: 'neu-metric-icon-purple',
-    scopes: [
-      { name: 'Suspect KYC Profiles', scope: 'Read Access', icon: '🪪', color: 'neu-metric-icon-blue' }
-    ]
-  },
-  {
-    id: 'REQ-2024-006',
-    type: 'Case Access',
-    fromDept: 'State Police (Delhi)',
-    toDept: 'Cyber Crime',
-    caseId: 'CC/2024/063',
-    caseTitle: 'Card Cloning & Banking Fraud',
-    purpose: 'Related fraud cases',
-    fullPurpose: 'Territorial police station requesting access to cyber crime technical forensic ledger for linked ATM skimming incidents.',
-    status: 'Approved',
-    priority: 'Medium',
-    date: '10 Jan 2024',
-    fullDateTime: '10 Jan 2024, 09:20 AM',
-    requestedBy: 'Sub-Inspector Ankit Sharma',
-    requestingDept: 'State Police (Delhi)',
-    targetDept: 'Cyber Crime Department',
-    icon: '👤',
-    iconClass: 'neu-metric-icon-blue',
-    scopes: [
-      { name: 'ATM CCTV Stills', scope: 'Read Access', icon: '📷', color: 'neu-metric-icon-green' },
-      { name: 'Skimmer Device Forensics', scope: 'Read Access', icon: '💳', color: 'neu-metric-icon-blue' }
-    ]
-  },
-  {
-    id: 'REQ-2024-007',
-    type: 'Evidence Access',
-    fromDept: 'Cyber Crime',
-    toDept: 'NIA',
-    caseId: 'CC/2024/102',
-    caseTitle: 'Telegram Part-Time Job Scam',
-    purpose: 'Digital forensics',
-    fullPurpose: 'Requesting access to central forensic repository for sovereign threat correlation and national security assessment.',
-    status: 'Pending',
-    priority: 'High',
-    date: '09 Jan 2024',
-    fullDateTime: '09 Jan 2024, 05:40 PM',
-    requestedBy: 'Inspector Rajesh Kumar',
-    requestingDept: 'Cyber Crime Department',
-    targetDept: 'National Investigation Agency',
-    icon: '📄',
-    iconClass: 'neu-metric-icon-blue',
-    scopes: [
-      { name: 'Malware APK Sample', scope: 'Isolated Sandbox Access', icon: '🦠', color: 'neu-metric-icon-amber' },
-      { name: 'Server Traffic PCAP', scope: 'Read Access', icon: '🌐', color: 'neu-metric-icon-blue' }
-    ]
-  },
-  {
-    id: 'REQ-2024-008',
-    type: 'Information Share',
-    fromDept: 'CBI',
-    toDept: 'Cyber Crime',
-    caseId: 'CC/2024/118',
-    caseTitle: 'Cryptocurrency Hawala Ring',
-    purpose: 'Money laundering link',
-    fullPurpose: 'Interpol red notice and transnational banking flow confirmation for shell companies implicated in overseas wire fraud.',
-    status: 'Approved',
-    priority: 'Critical',
-    date: '08 Jan 2024',
-    fullDateTime: '08 Jan 2024, 01:15 PM',
-    requestedBy: 'Superintendent of Police M. Joshi',
-    requestingDept: 'Central Bureau of Investigation',
-    targetDept: 'Cyber Crime Department',
-    icon: '📄',
-    iconClass: 'neu-metric-icon-green',
-    scopes: [
-      { name: 'Foreign Wire Transfer Logs', scope: 'Read Access', icon: '🏦', color: 'neu-metric-icon-blue' },
-      { name: 'Shell Company Ledger', scope: 'Read Access', icon: '📊', color: 'neu-metric-icon-purple' }
-    ]
-  }
-];
+export const CANONICAL_REQUESTS = [];
 
 // ─── STATE MANAGEMENT ─────────────────────────────────────────────────────────
 export const crossDeptState = {
-  requests: [...CANONICAL_REQUESTS],
-  filteredRequests: [...CANONICAL_REQUESTS],
-  selectedRequestId: 'REQ-2024-001', // Default selection matching reference image
+  requests: [],
+  filteredRequests: [],
+  selectedRequestId: null,
   activeStatusPill: 'ALL',
   searchQuery: '',
   filterStatus: 'ALL',
@@ -209,11 +23,11 @@ export const crossDeptState = {
   activeWorkspaceTab: 'requests',
   activeDetailTab: 'overview',
   metrics: {
-    connectedDepts: 12,
-    pendingRequests: 8,
-    approvedRequests: 156,
-    sharedCases: 42,
-    activeCollabs: 28
+    connectedDepts: 0,
+    pendingRequests: 0,
+    approvedRequests: 0,
+    sharedCases: 0,
+    activeCollabs: 0
   }
 };
 
@@ -299,7 +113,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ─── AUTH SESSION & DEPARTMENT LOAD ───────────────────────────────────────────
 async function loadOfficerSession() {
   try {
-    const res = await fetch('/api/auth/me');
+    let token = null;
+    try {
+      if (typeof localStorage !== 'undefined') token = localStorage.getItem('rakshak_token');
+    } catch (_) {}
+    const headers = { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) };
+
+    const res = await fetch('/api/auth/me', { credentials: 'include', headers });
     if (res.ok) {
       const data = await res.json();
       if (data.officer) {
@@ -307,8 +127,60 @@ async function loadOfficerSession() {
         if (elements.officerDept) elements.officerDept.textContent = data.officer.jurisdiction || 'Cyber Crime Department';
       }
     }
+
+    // Load department directory count
+    const deptRes = await fetch('/api/departments', { credentials: 'include', headers });
+    if (deptRes.ok) {
+      const deptData = await deptRes.json();
+      if (deptData && typeof deptData.total === 'number') {
+        crossDeptState.metrics.connectedDepts = deptData.total;
+        if (elements.metricConnected) elements.metricConnected.textContent = deptData.total;
+      }
+    }
+
+    // Load onboarding requests queue
+    const reqRes = await fetch('/api/auth/onboard-requests', { credentials: 'include', headers });
+    if (reqRes.ok) {
+      const reqData = await reqRes.json();
+      if (reqData && Array.isArray(reqData.requests)) {
+        crossDeptState.requests = reqData.requests.map((r) => ({
+          id: r.id ? `REQ-${r.id.substring(0, 8).toUpperCase()}` : 'REQ-LIVE',
+          type: 'Agency Onboarding',
+          fromDept: r.departmentName || 'External Department',
+          toDept: 'Cyber Crime Special Cell',
+          caseId: 'INTER-AGENCY',
+          caseTitle: `Jurisdiction: ${r.jurisdiction || 'State Police'}`,
+          purpose: `Officer: ${r.nodalOfficerName || 'N/A'}`,
+          fullPurpose: `Official Onboarding Application for ${r.departmentName}. Reference: ${r.authorizationRef || 'N/A'}`,
+          status: r.status === 'APPROVED' ? 'Approved' : r.status === 'REJECTED' ? 'Rejected' : 'Pending',
+          priority: 'High',
+          date: r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN') : 'Recent',
+          fullDateTime: r.createdAt ? new Date(r.createdAt).toLocaleString('en-IN') : 'Recent',
+          requestedBy: r.nodalOfficerName || 'Nodal Officer',
+          requestingDept: r.departmentName || 'Department',
+          targetDept: 'Cyber Crime Special Cell',
+          icon: '🏛',
+          iconClass: 'neu-metric-icon-blue',
+          scopes: [
+            { name: 'Case Intelligence', scope: 'Read Access', icon: '📄', color: 'neu-metric-icon-blue' },
+            { name: 'Forensic Vault', scope: 'Restricted Access', icon: '🛡', color: 'neu-metric-icon-green' }
+          ]
+        }));
+
+        crossDeptState.filteredRequests = [...crossDeptState.requests];
+        crossDeptState.metrics.pendingRequests = crossDeptState.requests.filter(r => r.status === 'Pending').length;
+        crossDeptState.metrics.approvedRequests = crossDeptState.requests.filter(r => r.status === 'Approved').length;
+
+        if (elements.metricPending) elements.metricPending.textContent = crossDeptState.metrics.pendingRequests;
+        if (elements.metricApproved) elements.metricApproved.textContent = crossDeptState.metrics.approvedRequests;
+
+        if (crossDeptState.requests.length > 0) {
+          crossDeptState.selectedRequestId = crossDeptState.requests[0].id;
+        }
+      }
+    }
   } catch (err) {
-    console.warn('[Cross-Dept] Running in localized session mode:', err);
+    console.warn('[Cross-Dept] Background load notice:', err);
   }
 }
 
@@ -316,8 +188,21 @@ async function loadOfficerSession() {
 export function renderTable() {
   if (!elements.tableBody) return;
   elements.tableBody.innerHTML = '';
-
   const displayList = crossDeptState.filteredRequests;
+
+  if (displayList.length === 0) {
+    elements.tableBody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 48px 16px; color: var(--neu-secondary);">
+          <div style="font-size: 28px; margin-bottom: 8px; opacity: 0.5;">🏛️</div>
+          <div style="font-weight: 700; color: var(--neu-navy); margin-bottom: 4px;">No Inter-Agency Requests</div>
+          <div style="font-size: 12px; color: var(--neu-secondary);">Cross-department access applications and collaboration tickets will appear here.</div>
+        </td>
+      </tr>
+    `;
+    if (elements.paginationSummary) elements.paginationSummary.textContent = 'Showing 0 of 0 requests';
+    return;
+  }
 
   if (displayList.length === 0) {
     elements.tableBody.innerHTML = `

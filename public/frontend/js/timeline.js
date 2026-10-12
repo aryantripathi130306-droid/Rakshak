@@ -4,344 +4,13 @@
  */
 
 // ─── CANONICAL TIMELINE EVENTS DATASET ─────────────────────────────────────────
-export const CANONICAL_TIMELINE_EVENTS = [
-  {
-    id: 'EVT-2024-001001',
-    title: 'Case Created',
-    type: 'CASE_EVENT',
-    typeLabel: 'Case Event',
-    description: 'Case CC/2024/001 created by Inspector Rajesh Kumar',
-    date: '15 Jan 2024',
-    time: '10:30 AM',
-    fullDateTime: '15 Jan 2024, 10:30 AM',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    entityId: 'Rahul Sharma',
-    entitySub: 'Person (Suspect)',
-    evidenceId: 'None',
-    evidenceTitle: 'None (Initial Registration)',
-    createdBy: 'Inspector Rajesh Kumar',
-    department: 'Cyber Crime Department',
-    source: 'CCTNS / Case Portal',
-    status: 'Completed',
-    icon: '📁',
-    iconClass: 'tl-icon-case',
-    nodeClass: 'tl-node-case',
-    tagClass: 'tl-tag-case',
-    details: {
-      evidenceType: 'Case Docket',
-      fileName: 'FIR_CC_2024_001.pdf',
-      fileSize: '540 KB',
-      sha256Hash: 'f4b2a8d3e7c91024859a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcd',
-      collectionMethod: 'Digital Ingestion',
-      location: 'Cyber Police Station, Delhi',
-      remarks: 'Primary case record initialized with supervisory sign-off'
-    }
-  },
-  {
-    id: 'EVT-2024-001245', // Highlighted/Selected by default
-    title: 'Evidence Collected',
-    type: 'EVIDENCE_EVENT',
-    typeLabel: 'Evidence Event',
-    description: 'mobile_001.jpg accepted into evidence',
-    date: '15 Jan 2024',
-    time: '11:20 AM',
-    fullDateTime: '15 Jan 2024, 11:20 AM',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    entityId: '+91 98765 43210',
-    entitySub: 'Phone Number',
-    evidenceId: 'mobile_001.jpg',
-    evidenceTitle: 'Image (2.4 MB)',
-    createdBy: 'Inspector Rajesh Kumar',
-    department: 'Cyber Crime Department',
-    source: 'Evidence Intake System',
-    status: 'Completed',
-    icon: '📄',
-    iconClass: 'tl-icon-evidence',
-    nodeClass: 'tl-node-evidence',
-    tagClass: 'tl-tag-evidence',
-    details: {
-      evidenceType: 'Mobile Device',
-      fileName: 'mobile_001.jpg',
-      fileSize: '2.4 MB',
-      sha256Hash: 'a7f3b2e9d4c6f1e8b3a9d2e7f5c1d6e0a9b3c7d5e8f2a1b4c6d8e0f2a5b7c1d3e9',
-      collectionMethod: 'Physical Seizure',
-      location: 'Sector 17, Chandigarh',
-      remarks: 'Device sealed and stored as per protocol'
-    }
-  },
-  {
-    id: 'EVT-2024-001003',
-    title: 'Entity Identified',
-    type: 'ENTITY_EVENT',
-    typeLabel: 'Entity Event',
-    description: 'Phone number +91 98765 43210 linked to case',
-    date: '15 Jan 2024',
-    time: '12:15 PM',
-    fullDateTime: '15 Jan 2024, 12:15 PM',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    entityId: '+91 98765 43210',
-    entitySub: 'Airtel (India) Mobile Number',
-    evidenceId: 'mobile_001.jpg',
-    evidenceTitle: 'Extracted SIM Contact',
-    createdBy: 'Inspector Rajesh Kumar',
-    department: 'Cyber Crime Department',
-    source: 'Telecom CDR Ingestion',
-    status: 'Completed',
-    icon: '👤',
-    iconClass: 'tl-icon-entity',
-    nodeClass: 'tl-node-entity',
-    tagClass: 'tl-tag-entity',
-    details: {
-      evidenceType: 'Subscriber Records',
-      fileName: 'CDR_Export_9876543210.csv',
-      fileSize: '1.8 MB',
-      sha256Hash: 'e5b7a1d9c2e4f608192a3b4c5d6e7f809123456789abcdef0123456789abcdef',
-      collectionMethod: 'Telecom LIA Gateway',
-      location: 'New Delhi Telecom Circle',
-      remarks: 'IMSI and IMEI binding corroborated via Tower Dump analysis'
-    }
-  },
-  {
-    id: 'EVT-2024-001004',
-    title: 'Analysis Completed',
-    type: 'INVESTIGATION_ACTION',
-    typeLabel: 'Investigation Action',
-    description: 'Initial forensic analysis completed on mobile device',
-    date: '16 Jan 2024',
-    time: '09:45 AM',
-    fullDateTime: '16 Jan 2024, 09:45 AM',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    entityId: 'MacBook Pro',
-    entitySub: 'Host Extraction Workstation',
-    evidenceId: 'mobile_001.jpg',
-    evidenceTitle: 'Device Memory & SQLite Artifacts',
-    createdBy: 'Forensic Analyst S. Rao',
-    department: 'Digital Forensics Lab',
-    source: 'Cellebrite UFED Suite',
-    status: 'Completed',
-    icon: '🔍',
-    iconClass: 'tl-icon-action',
-    nodeClass: 'tl-node-action',
-    tagClass: 'tl-tag-action',
-    details: {
-      evidenceType: 'Physical Extraction Dump',
-      fileName: 'Cellebrite_Report_001.xml',
-      fileSize: '14.2 MB',
-      sha256Hash: '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b',
-      collectionMethod: 'Physical JTAG / EDL Extraction',
-      location: 'CFSL Central Laboratory',
-      remarks: 'SQLite databases and chat manifests successfully parsed without checksum discrepancies'
-    }
-  },
-  {
-    id: 'EVT-2024-001005',
-    title: 'Case Status Updated',
-    type: 'CASE_EVENT',
-    typeLabel: 'Case Event',
-    description: 'Status changed from Open to Under Investigation',
-    date: '16 Jan 2024',
-    time: '02:30 PM',
-    fullDateTime: '16 Jan 2024, 02:30 PM',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    entityId: 'Inspector Rajesh Kumar',
-    entitySub: 'Investigating Officer',
-    evidenceId: 'None',
-    evidenceTitle: 'Case Progress Note',
-    createdBy: 'ACP Rajeev Kumar',
-    department: 'Supervisory Command',
-    source: 'Investigation Workflow Engine',
-    status: 'Completed',
-    icon: '📁',
-    iconClass: 'tl-icon-case',
-    nodeClass: 'tl-node-case',
-    tagClass: 'tl-tag-case',
-    details: {
-      evidenceType: 'Administrative Order',
-      fileName: 'IO_Assignment_Order.pdf',
-      fileSize: '320 KB',
-      sha256Hash: '1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b',
-      collectionMethod: 'Departmental Notification',
-      location: 'Cyber Crime Headquarters',
-      remarks: 'Supervisory approval granted for multi-jurisdictional bank liaison'
-    }
-  },
-  {
-    id: 'EVT-2024-001006',
-    title: 'Evidence Analysis',
-    type: 'EVIDENCE_EVENT',
-    typeLabel: 'Evidence Event',
-    description: 'Hash verification completed - No tampering detected',
-    date: '17 Jan 2024',
-    time: '11:10 AM',
-    fullDateTime: '17 Jan 2024, 11:10 AM',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    entityId: 'Hash Verification Service',
-    entitySub: 'Section 63 BSA Validation Engine',
-    evidenceId: 'mobile_001.jpg',
-    evidenceTitle: 'Cryptographic Integrity Record',
-    createdBy: 'Inspector Rajesh Kumar',
-    department: 'Evidence Custody Vault',
-    source: 'Rakshak BSA Verifier',
-    status: 'Completed',
-    icon: '📄',
-    iconClass: 'tl-icon-evidence',
-    nodeClass: 'tl-node-evidence',
-    tagClass: 'tl-tag-evidence',
-    details: {
-      evidenceType: 'Section 63 Certificate',
-      fileName: 'BSA_Sec63_Certificate.pdf',
-      fileSize: '780 KB',
-      sha256Hash: 'a7f3b2e9d4c6f1e8b3a9d2e7f5c1d6e0a9b3c7d5e8f2a1b4c6d8e0f2a5b7c1d3e9',
-      collectionMethod: 'Automated SHA-256 Recalculation',
-      location: 'Vault Server Node 01',
-      remarks: 'Recalculated digest matches intake client hash identically'
-    }
-  },
-  {
-    id: 'EVT-2024-001007',
-    title: 'Entity Connection',
-    type: 'ENTITY_EVENT',
-    typeLabel: 'Entity Event',
-    description: 'Entity linked with CC/2024/045 (cross-case match)',
-    date: '18 Jan 2024',
-    time: '03:20 PM',
-    fullDateTime: '18 Jan 2024, 03:20 PM',
-    caseId: 'CC/2024/045',
-    caseTitle: 'Cyber Extortion Case',
-    entityId: 'Sharma Enterprises',
-    entitySub: 'Organization (Private Limited)',
-    evidenceId: 'BANK_STMT.pdf',
-    evidenceTitle: 'Mule Account Flow Match',
-    createdBy: 'Intelligence Engine',
-    department: 'Cross-Case Analytics Cell',
-    source: 'Graph Cross-Matching Engine',
-    status: 'Completed',
-    icon: '👤',
-    iconClass: 'tl-icon-entity',
-    nodeClass: 'tl-node-entity',
-    tagClass: 'tl-tag-entity',
-    details: {
-      evidenceType: 'Cross-Case Match Ledger',
-      fileName: 'CrossMatch_Report_CC045.pdf',
-      fileSize: '3.1 MB',
-      sha256Hash: 'b2c3d4e5f6a10718293a4b5c6d7e8f90123456789abcdef0123456789abcdef1',
-      collectionMethod: 'Automated Graph Cluster Resolution',
-      location: 'National Cyber Coordination Grid',
-      remarks: 'Shared banking beneficiary detected between extortion extortion demand and CC/2024/001'
-    }
-  },
-  {
-    id: 'EVT-2024-001008',
-    title: 'Investigation Note',
-    type: 'INVESTIGATION_ACTION',
-    typeLabel: 'Investigation Action',
-    description: 'Field investigation conducted at Sector 17',
-    date: '19 Jan 2024',
-    time: '10:00 AM',
-    fullDateTime: '19 Jan 2024, 10:00 AM',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    entityId: '142, MG Road',
-    entitySub: 'Physical Location',
-    evidenceId: 'None',
-    evidenceTitle: 'Field Case Diary #04',
-    createdBy: 'Inspector Rajesh Kumar',
-    department: 'Cyber Crime Department',
-    source: 'Field Investigator Diary',
-    status: 'Completed',
-    icon: '📞',
-    iconClass: 'tl-icon-action',
-    nodeClass: 'tl-node-action',
-    tagClass: 'tl-tag-action',
-    details: {
-      evidenceType: 'Case Diary Entry',
-      fileName: 'Field_Diary_Sector17.pdf',
-      fileSize: '950 KB',
-      sha256Hash: '3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d',
-      collectionMethod: 'On-site Inspection',
-      location: 'Sector 17, Chandigarh Commercial Complex',
-      remarks: 'Suspect registered commercial office found vacant; tenant lease verified with premises owner'
-    }
-  },
-  {
-    id: 'EVT-2024-001009',
-    title: 'Case Milestone',
-    type: 'CASE_EVENT',
-    typeLabel: 'Case Event',
-    description: 'Chargesheet preparation initiated',
-    date: '20 Jan 2024',
-    time: '04:15 PM',
-    fullDateTime: '20 Jan 2024, 04:15 PM',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    entityId: 'Legal Prosecution Wing',
-    entitySub: 'Chief Public Prosecutor',
-    evidenceId: 'EMAIL_TRAIL.eml',
-    evidenceTitle: 'Prosecution Dossier',
-    createdBy: 'Inspector Rajesh Kumar',
-    department: 'Legal Cell',
-    source: 'Judicial Filing Portal',
-    status: 'Completed',
-    icon: '📁',
-    iconClass: 'tl-icon-case',
-    nodeClass: 'tl-node-case',
-    tagClass: 'tl-tag-case',
-    details: {
-      evidenceType: 'Legal Document',
-      fileName: 'Draft_Chargesheet_CC001.pdf',
-      fileSize: '4.8 MB',
-      sha256Hash: '4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e',
-      collectionMethod: 'Forensic Compilation',
-      location: 'Patiala House Court, Delhi',
-      remarks: 'Offences under Section 318(4) BNS and Section 66D IT Act mapped to seized digital evidence'
-    }
-  },
-  {
-    id: 'EVT-2024-001010',
-    title: 'User Activity',
-    type: 'SYSTEM_EVENT',
-    typeLabel: 'System Event',
-    description: 'Report generated by Inspector Priya Singh',
-    date: '21 Jan 2024',
-    time: '09:30 AM',
-    fullDateTime: '21 Jan 2024, 09:30 AM',
-    caseId: 'CC/2024/001',
-    caseTitle: 'Financial Fraud Investigation',
-    entityId: 'Inspector Priya Singh',
-    entitySub: 'Investigating Officer (Cyber Cell)',
-    evidenceId: 'DEVICE_DUMP.zip',
-    evidenceTitle: 'Forensic Dossier Export',
-    createdBy: 'Inspector Priya Singh',
-    department: 'Cyber Crime Department',
-    source: 'Rakshak Audit Daemon',
-    status: 'Completed',
-    icon: '⚙️',
-    iconClass: 'tl-icon-system',
-    nodeClass: 'tl-node-system',
-    tagClass: 'tl-tag-system',
-    details: {
-      evidenceType: 'System Audit Record',
-      fileName: 'Audit_Export_Log_1010.json',
-      fileSize: '180 KB',
-      sha256Hash: '5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f',
-      collectionMethod: 'System Journal Ingestion',
-      location: 'Server Security Zone 02',
-      remarks: 'Comprehensive PDF forensic dossier with embedded digital signatures generated and archived'
-    }
-  }
-];
+export const CANONICAL_TIMELINE_EVENTS = [];
 
 // ─── STATE MANAGEMENT ─────────────────────────────────────────────────────────
 export const timelineState = {
-  events: [...CANONICAL_TIMELINE_EVENTS],
-  filteredEvents: [...CANONICAL_TIMELINE_EVENTS],
-  selectedEventId: 'EVT-2024-001245', // Default selected item in reference image
+  events: [],
+  filteredEvents: [],
+  selectedEventId: null,
   activeTab: 'overview',
   searchQuery: '',
   selectedTypes: new Set(['CASE_EVENT', 'EVIDENCE_EVENT', 'ENTITY_EVENT', 'INVESTIGATION_ACTION', 'SYSTEM_EVENT']),
@@ -352,11 +21,11 @@ export const timelineState = {
   currentPage: 1,
   pageSize: 10,
   metrics: {
-    totalEvents: 1842,
-    caseMilestones: 286,
-    evidenceEvents: 624,
-    entityActivities: 412,
-    systemActivities: 384
+    totalEvents: 0,
+    caseMilestones: 0,
+    evidenceEvents: 0,
+    entityActivities: 0,
+    systemActivities: 0
   }
 };
 
@@ -511,17 +180,17 @@ async function loadServerData() {
           };
         });
 
-        // Merge keeping canonical order from reference image
-        const seen = new Set();
-        const merged = [];
-        for (const item of [...CANONICAL_TIMELINE_EVENTS, ...dbEvents]) {
-          if (!seen.has(item.id)) {
-            seen.add(item.id);
-            merged.push(item);
-          }
-        }
-        timelineState.events = merged;
-        timelineState.filteredEvents = [...merged];
+        timelineState.events = dbEvents;
+        timelineState.filteredEvents = [...dbEvents];
+        timelineState.selectedEventId = dbEvents[0]?.id || null;
+        timelineState.metrics = {
+          totalEvents: dbEvents.length,
+          caseMilestones: dbEvents.filter(e => e.type === 'CASE_EVENT').length,
+          evidenceEvents: dbEvents.filter(e => e.type === 'EVIDENCE_EVENT').length,
+          entityActivities: dbEvents.filter(e => e.type === 'ENTITY_EVENT').length,
+          systemActivities: dbEvents.filter(e => e.type === 'SYSTEM_EVENT' || e.type === 'INVESTIGATION_ACTION').length
+        };
+        updateMetricsDisplay();
       }
     }
   } catch (err) {
@@ -538,12 +207,16 @@ export function renderStream() {
 
   if (displayEvents.length === 0) {
     elements.streamTrack.innerHTML = `
-      <div style="text-align: center; padding: 48px 16px; color: var(--neu-secondary);">
-        <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
-        <div style="font-weight: 700; font-size: 14px; color: var(--neu-navy);">No timeline events match your filters</div>
-        <div style="font-size: 12px; margin-top: 4px;">Try searching for a different keyword or click "Clear All"</div>
+      <div style="padding:48px 24px;text-align:center;color:var(--text-muted);margin:24px 0">
+        <div style="font-size:36px;margin-bottom:12px;opacity:0.6">⏱️</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:6px">No Timeline Events Recorded</div>
+        <div style="font-size:12px;max-width:380px;margin:0 auto">
+          Timeline events are automatically reconstructed and indexed chronologically as evidence items are uploaded and cases are processed.
+        </div>
       </div>
     `;
+    if (elements.streamCountBadge) elements.streamCountBadge.textContent = '0 events';
+    if (elements.paginationSummary) elements.paginationSummary.textContent = 'Showing 0 of 0 events';
     return;
   }
 
@@ -583,10 +256,10 @@ export function renderStream() {
 
   // Update counts
   if (elements.streamCountBadge) {
-    elements.streamCountBadge.textContent = `${displayEvents.length === 10 ? '1,842' : displayEvents.length} events`;
+    elements.streamCountBadge.textContent = `${displayEvents.length} events`;
   }
   if (elements.paginationSummary) {
-    elements.paginationSummary.textContent = `Showing 1–${Math.min(displayEvents.length, 10)} of 1,842 events`;
+    elements.paginationSummary.textContent = `Showing ${displayEvents.length ? 1 : 0}–${Math.min(displayEvents.length, 10)} of ${displayEvents.length} events`;
   }
 }
 
@@ -594,7 +267,12 @@ export function renderStream() {
 export function selectEvent(eventId) {
   timelineState.selectedEventId = eventId;
   const eventData = timelineState.events.find((e) => e.id === eventId) || timelineState.events[0];
-  if (!eventData) return;
+  if (!eventData) {
+    if (elements.heroTitle) elements.heroTitle.textContent = 'No Event Selected';
+    if (elements.detailEventDesc) elements.detailEventDesc.textContent = 'Select an event from the timeline stream to inspect details.';
+    if (elements.detailEventId) elements.detailEventId.textContent = '—';
+    return;
+  }
 
   // 1. Highlight selected card in stream
   document.querySelectorAll('.tl-event-card').forEach((card) => {

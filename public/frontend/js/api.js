@@ -33,12 +33,28 @@ export function setActiveCaseId(id) {
  */
 async function apiFetch(path, options = {}) {
   const url = `${API_BASE}${path}`;
+  let token = null;
+  try {
+    if (typeof localStorage !== 'undefined') {
+      token = localStorage.getItem('rakshak_token');
+    }
+  } catch (_) {}
+
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    ...options.headers,
+  };
+
+  // If body is FormData, delete Content-Type so browser sets multipart boundary
+  if (options.body instanceof FormData) {
+    delete headers['Content-Type'];
+  }
+
   const res = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    credentials: 'include',
     ...options,
+    headers,
   });
 
   if (!res.ok) {
@@ -51,6 +67,17 @@ async function apiFetch(path, options = {}) {
     } catch (_) {}
     const err = new Error(errMsg);
     err.status = res.status;
+
+    // If 401 Unauthorized on protected routes, purge obsolete client tokens
+    if (res.status === 401 && !path.includes('/api/auth/login')) {
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('rakshak_token');
+          localStorage.removeItem('rakshak_officer');
+        }
+      } catch (_) {}
+    }
+
     throw err;
   }
 
@@ -643,7 +670,68 @@ export async function getCluster(clusterId) {
   return apiFetch(`/api/clusters/${encodeURIComponent(clusterId)}`);
 }
 
+// ─── Entities API ────────────────────────────────────────────────────────────
+/**
+ * GET /api/entities
+ * @param {Object} [params] - { q, entityType, caseId, evidenceId, page, limit }
+ */
+export async function getEntities(params = {}) {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== '' && v != null && v !== 'ALL') qs.set(k, String(v));
+  });
+  const query = qs.toString() ? '?' + qs.toString() : '';
+  return apiFetch(`/api/entities${query}`);
+}
+
+// ─── Administration & Officers API ───────────────────────────────────────────
+/**
+ * GET /api/officers
+ * @param {Object} [params] - { q, role, status }
+ */
+export async function getOfficers(params = {}) {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== '' && v != null && v !== 'ALL') qs.set(k, String(v));
+  });
+  const query = qs.toString() ? '?' + qs.toString() : '';
+  return apiFetch(`/api/officers${query}`);
+}
+
+/**
+ * POST /api/officers
+ * Provision a new officer account
+ */
+export async function createOfficer(data) {
+  return apiFetch('/api/officers', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * GET /api/departments
+ */
+export async function getDepartments() {
+  return apiFetch('/api/departments');
+}
+
+/**
+ * POST /api/departments
+ */
+export async function createDepartment(data) {
+  return apiFetch('/api/departments', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
 // ─── Authentication & Session Management (Phase 21) ─────────────────────────
+
+let _sessionInflightPromise = null;
+let _sessionCachedResult = null;
+let _sessionCachedAt = 0;
+const SESSION_CACHE_TTL_MS = 2000;
 
 /**
  * POST /api/auth/login
@@ -652,17 +740,44 @@ export async function getCluster(clusterId) {
  * @returns {Promise<{ success: boolean, token: string, officer: Object, permissions: string[] }>}
  */
 export async function loginOfficer(identifier, password) {
-  return apiFetch('/api/auth/login', {
+  const res = await apiFetch('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({ identifier, password }),
   });
+
+  if (res && res.token) {
+    try {
+      localStorage.setItem('rakshak_token', res.token);
+      if (res.officer) {
+        localStorage.setItem('rakshak_officer', JSON.stringify(res.officer));
+        sessionStorage.setItem('rakshak_user_name', res.officer.name || '');
+        sessionStorage.setItem('rakshak_user_dept', res.officer.unit || res.officer.jurisdiction || '');
+        sessionStorage.setItem('rakshak_user_role', res.officer.role || '');
+      }
+    } catch (_) {}
+    _sessionCachedResult = { authenticated: true, officer: res.officer, permissions: res.permissions || [] };
+    _sessionCachedAt = Date.now();
+  }
+
+  return res;
 }
 
 /**
  * POST /api/auth/logout
- * Revokes current session and clears HTTP-only cookie
+ * Revokes current session, clears tokens and cookies
  */
 export async function logoutOfficer() {
+  try {
+    localStorage.removeItem('rakshak_token');
+    localStorage.removeItem('rakshak_officer');
+    sessionStorage.removeItem('rakshak_user_name');
+    sessionStorage.removeItem('rakshak_user_dept');
+    sessionStorage.removeItem('rakshak_user_role');
+  } catch (_) {}
+  _sessionCachedResult = null;
+  _sessionCachedAt = 0;
+  _sessionInflightPromise = null;
+
   return apiFetch('/api/auth/logout', {
     method: 'POST',
   });
@@ -670,10 +785,42 @@ export async function logoutOfficer() {
 
 /**
  * GET /api/auth/me
- * Retrieves currently active authenticated officer and role permissions
+ * Retrieves currently active authenticated officer and role permissions.
+ * Deduplicates concurrent parallel calls within TTL to prevent redundant round-trip redirect races.
  */
-export async function getCurrentOfficerSession() {
-  return apiFetch('/api/auth/me');
+export async function getCurrentOfficerSession(force = false) {
+  const now = Date.now();
+  if (!force && _sessionCachedResult && (now - _sessionCachedAt < SESSION_CACHE_TTL_MS)) {
+    return _sessionCachedResult;
+  }
+
+  if (!force && _sessionInflightPromise) {
+    return _sessionInflightPromise;
+  }
+
+  _sessionInflightPromise = apiFetch('/api/auth/me')
+    .then((data) => {
+      _sessionCachedResult = data;
+      _sessionCachedAt = Date.now();
+      _sessionInflightPromise = null;
+      if (data && data.officer) {
+        try {
+          localStorage.setItem('rakshak_officer', JSON.stringify(data.officer));
+          sessionStorage.setItem('rakshak_user_name', data.officer.name || '');
+          sessionStorage.setItem('rakshak_user_dept', data.officer.unit || data.officer.jurisdiction || '');
+          sessionStorage.setItem('rakshak_user_role', data.officer.role || '');
+        } catch (_) {}
+      }
+      return data;
+    })
+    .catch((err) => {
+      _sessionCachedResult = null;
+      _sessionCachedAt = 0;
+      _sessionInflightPromise = null;
+      throw err;
+    });
+
+  return _sessionInflightPromise;
 }
 
 /**

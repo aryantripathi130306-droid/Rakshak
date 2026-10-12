@@ -106,163 +106,8 @@ const NODE_TYPE_CONFIG = {
   }
 };
 
-// ─── Canonical Entities Setup matching the Reference Image ──────────────────
-const CANONICAL_GRAPH_NODES = [
-  {
-    id: 'Rajesh Kumar',
-    name: 'Rajesh Kumar',
-    type: 'PERSON',
-    caseId: 'CB-2025-1042',
-    isCentral: true,
-    risk: 'High',
-    riskScore: 0.82,
-    aliases: 'R. Kumar, Raj, RK',
-    phones: '+91 98765 43210, +91 91234 56789',
-    emails: 'r.kumar@example.com',
-    cases: ['CB-2025-1042', 'CB-2025-1036', 'CB-2025-1028'],
-    firstSeen: '12 Sep 2025',
-    lastSeen: '15 Oct 2025',
-    notes: 'Suspected involvement in multiple financial fraud cases.',
-    x: 0,
-    y: 0
-  },
-  {
-    id: 'Aman Traders',
-    name: 'Aman Traders',
-    type: 'ORGANIZATION',
-    caseId: 'CB-2025-1042',
-    risk: 'High',
-    riskScore: 0.78,
-    aliases: 'Aman Trading Co.',
-    phones: '+91 98765 43210',
-    emails: 'contact@amantraders.in',
-    cases: ['CB-2025-1042'],
-    firstSeen: '15 Sep 2025',
-    lastSeen: '16 Oct 2025',
-    notes: 'Shell company account receiving multiple fraud deposits.',
-    x: -160,
-    y: -140
-  },
-  {
-    id: 'Account XXXX1920',
-    name: 'Account XXXX1920',
-    type: 'ACCOUNT',
-    caseId: 'CB-2025-1036',
-    risk: 'High',
-    riskScore: 0.88,
-    aliases: 'HDFC Corp Mule',
-    phones: '+91 91234 56789',
-    emails: 'branch@bank.com',
-    cases: ['CB-2025-1036'],
-    firstSeen: '18 Sep 2025',
-    lastSeen: '15 Oct 2025',
-    notes: 'Layer-2 mule account routing investment fraud funds.',
-    x: 60,
-    y: -180
-  },
-  {
-    id: 'Cyber Group A',
-    name: 'Cyber Group A',
-    type: 'ORGANIZATION',
-    caseId: 'CB-2025-1028',
-    risk: 'High',
-    riskScore: 0.92,
-    aliases: 'Digital Extortion Cell',
-    phones: '+91 98222 33445',
-    emails: 'ops@cybergroup.org',
-    cases: ['CB-2025-1028'],
-    firstSeen: '01 Oct 2025',
-    lastSeen: '14 Oct 2025',
-    notes: 'Coordinated syndicate responsible for digital arrest threats.',
-    x: 230,
-    y: -130
-  },
-  {
-    id: '+91 98765 43210',
-    name: '+91 98765 43210',
-    type: 'PHONE',
-    caseId: 'CB-2025-1042',
-    risk: 'High',
-    riskScore: 0.85,
-    aliases: 'Burner SIM Delhi',
-    phones: '+91 98765 43210',
-    emails: 'N/A',
-    cases: ['CB-2025-1042', 'CB-2025-1036'],
-    firstSeen: '10 Sep 2025',
-    lastSeen: '16 Oct 2025',
-    notes: 'Registered under forged KYC; linked to multiple extortion calls.',
-    x: 250,
-    y: 40
-  },
-  {
-    id: 'Vehicle PB10AB1234',
-    name: 'Vehicle PB10AB1234',
-    type: 'DEVICE',
-    caseId: 'CB-2025-1031',
-    risk: 'Medium',
-    riskScore: 0.65,
-    aliases: 'White Swift Dzire',
-    phones: 'N/A',
-    emails: 'N/A',
-    cases: ['CB-2025-1031'],
-    firstSeen: '25 Sep 2025',
-    lastSeen: '14 Oct 2025',
-    notes: 'Vehicle spotted at ATM cash-out points in Rohini, Delhi.',
-    x: 130,
-    y: 170
-  },
-  {
-    id: 'Delhi (Location)',
-    name: 'Delhi (Location)',
-    type: 'LOCATION',
-    caseId: 'CB-2025-1036',
-    risk: 'Medium',
-    riskScore: 0.60,
-    aliases: 'NCR Central Hub',
-    phones: 'N/A',
-    emails: 'N/A',
-    cases: ['CB-2025-1036', 'CB-2025-1042'],
-    firstSeen: '12 Sep 2025',
-    lastSeen: '14 Oct 2025',
-    notes: 'Primary jurisdiction where mule ATM transactions occurred.',
-    x: -30,
-    y: 190
-  },
-  {
-    id: 'FakeDoc.pdf',
-    name: 'FakeDoc.pdf',
-    type: 'DOCUMENT',
-    caseId: 'CB-2025-1042',
-    risk: 'High',
-    riskScore: 0.79,
-    aliases: 'Forged Rent Deed',
-    phones: 'N/A',
-    emails: 'N/A',
-    cases: ['CB-2025-1042'],
-    firstSeen: '20 Sep 2025',
-    lastSeen: '12 Oct 2025',
-    notes: 'Seized PDF showing fabricated signature and rubber stamp.',
-    x: -210,
-    y: 120
-  },
-  {
-    id: 'Neha Singh',
-    name: 'Neha Singh',
-    type: 'PERSON',
-    caseId: 'CB-2025-1036',
-    risk: 'Medium',
-    riskScore: 0.58,
-    aliases: 'N. Singh, Neha S.',
-    phones: '+91 98111 22334',
-    emails: 'neha.s@example.com',
-    cases: ['CB-2025-1036'],
-    firstSeen: '22 Sep 2025',
-    lastSeen: '15 Oct 2025',
-    notes: 'Account holder associated with secondary transfer transactions.',
-    x: -240,
-    y: -40
-  }
-];
+// ─── Live Graph Nodes ────────────────────────────────────────────────────────
+let CANONICAL_GRAPH_NODES = [];
 
 const CANONICAL_GRAPH_EDGES = [
   { source: 'Rajesh Kumar', target: 'Aman Traders', label: 'Owner', color: '#F5B544' },
@@ -281,7 +126,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
   await loadIntelligenceData();
   renderGraph();
-  selectEntity(CANONICAL_GRAPH_NODES[0]);
+  if (CANONICAL_GRAPH_NODES.length > 0) {
+    selectEntity(CANONICAL_GRAPH_NODES[0]);
+  }
 });
 
 // ─── Officer Session Setup ────────────────────────────────────────────────────
@@ -327,43 +174,63 @@ function initOfficerSession() {
 // ─── Backend Data Loading ─────────────────────────────────────────────────────
 async function loadIntelligenceData() {
   try {
-    // 1. Fetch graph data from backend
-    const graphRes = await fetch('/api/graph?caseId=ALL');
+    let token = null;
+    try {
+      if (typeof localStorage !== 'undefined') token = localStorage.getItem('rakshak_token');
+    } catch (_) {}
+    const headers = { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) };
+
+    const graphRes = await fetch('/api/graph?caseId=ALL', { credentials: 'include', headers });
     if (graphRes.ok) {
       const graphJson = await graphRes.json();
-      if (graphJson && graphJson.summary) {
-        // Update metric values if present
-        const entEl = document.getElementById('metric-total-entities');
-        const conEl = document.getElementById('metric-total-connections');
-        const riskEl = document.getElementById('metric-high-risk-entities');
-        
-        // Use verified counts
-        if (entEl && graphJson.summary.sharedEntityCount) {
-          entEl.textContent = Math.max(124, graphJson.summary.sharedEntityCount);
-        }
-        if (conEl && graphJson.edges) {
-          conEl.textContent = Math.max(287, graphJson.edges.length);
-        }
-        if (riskEl && graphJson.summary.highRiskEntityCount) {
-          riskEl.textContent = Math.max(8, graphJson.summary.highRiskEntityCount);
-        }
+      if (graphJson && Array.isArray(graphJson.nodes)) {
+        CANONICAL_GRAPH_NODES = graphJson.nodes.map((n, idx) => ({
+          id: n.id,
+          name: n.name || n.id,
+          type: n.type || 'PERSON',
+          caseId: n.cases?.[0] || 'ALL',
+          isCentral: idx === 0,
+          risk: n.riskLevel || 'Medium',
+          riskScore: (n.riskScore || 50) / 100,
+          aliases: (n.aliases || []).join(', ') || 'None',
+          phones: (n.phones || []).join(', ') || '—',
+          emails: (n.emails || []).join(', ') || '—',
+          cases: n.cases || [],
+          firstSeen: n.firstSeen ? new Date(n.firstSeen).toLocaleDateString('en-IN') : 'Recent',
+          lastSeen: n.lastSeen ? new Date(n.lastSeen).toLocaleDateString('en-IN') : 'Recent',
+          notes: n.notes || 'Identified through forensic entity analysis',
+          x: (idx % 5 - 2) * 140,
+          y: (Math.floor(idx / 5) - 1) * 120
+        }));
+
+        CANONICAL_GRAPH_EDGES = (graphJson.edges || []).map((e) => ({
+          source: e.source,
+          target: e.target,
+          label: e.label || e.relation || 'Connected',
+          color: '#3988F5'
+        }));
       }
+
+      const entEl = document.getElementById('metric-total-entities');
+      const conEl = document.getElementById('metric-total-connections');
+      const riskEl = document.getElementById('metric-high-risk-entities');
+
+      if (entEl) entEl.textContent = graphJson?.summary?.sharedEntityCount ?? CANONICAL_GRAPH_NODES.length;
+      if (conEl) conEl.textContent = CANONICAL_GRAPH_EDGES.length;
+      if (riskEl) riskEl.textContent = graphJson?.summary?.highRiskEntityCount ?? 0;
     }
 
-    // 2. Fetch clusters from backend
-    const clusterRes = await fetch('/api/clusters');
+    const clusterRes = await fetch('/api/clusters', { credentials: 'include', headers });
     if (clusterRes.ok) {
       const clusterJson = await clusterRes.json();
       if (clusterJson && clusterJson.clusters) {
         graphState.clusters = clusterJson.clusters;
         const clusterCountEl = document.getElementById('metric-potential-clusters');
-        if (clusterCountEl) {
-          clusterCountEl.textContent = Math.max(12, clusterJson.clusters.length);
-        }
+        if (clusterCountEl) clusterCountEl.textContent = clusterJson.clusters.length;
       }
     }
   } catch (err) {
-    console.warn('[Intelligence] Background API sync failed, using cached forensic state:', err);
+    console.warn('[Intelligence] API sync warning:', err);
   }
 }
 
@@ -386,6 +253,18 @@ function renderGraph() {
 
   // Filter nodes according to checklist
   const visibleNodes = CANONICAL_GRAPH_NODES.filter((n) => graphState.activeFilters[n.type] !== false);
+  if (visibleNodes.length === 0) {
+    edgesLayer.innerHTML = '';
+    nodesLayer.innerHTML = `
+      <text x="0" y="-10" text-anchor="middle" fill="var(--text-muted)" font-size="14" font-weight="600">
+        No Syndicate Graph Nodes Available
+      </text>
+      <text x="0" y="16" text-anchor="middle" fill="var(--text-secondary)" font-size="11">
+        Cross-case graph links and cluster networks reconstruct automatically as cases share entities.
+      </text>
+    `;
+    return;
+  }
   const visibleNodeMap = new Map(visibleNodes.map((n) => [n.id, n]));
 
   // Render Edges

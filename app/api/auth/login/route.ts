@@ -160,9 +160,9 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
-    // Set secure HTTP-only cookie with production Secure flag
-    const isSecure = process.env.NODE_ENV === "production" || request.headers.get("x-forwarded-proto") === "https";
-    const secureFlag = isSecure ? "; Secure" : "";
+    // Set secure HTTP-only cookie (only apply Secure flag on HTTPS connections so HTTP local/staging keeps session)
+    const isHttps = request.nextUrl.protocol === "https:" || request.headers.get("x-forwarded-proto") === "https";
+    const secureFlag = isHttps ? "; Secure" : "";
     response.headers.set(
       "Set-Cookie",
       `rakshak_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400${secureFlag}`

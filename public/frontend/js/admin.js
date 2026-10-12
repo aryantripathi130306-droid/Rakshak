@@ -202,9 +202,9 @@ const CANONICAL_OFFICERS = [
 
 // ─── Application State ────────────────────────────────────────────────────────
 const state = {
-  officers: [...CANONICAL_OFFICERS],
-  filteredOfficers: [...CANONICAL_OFFICERS],
-  selectedOfficerId: "INS-001",
+  officers: [],
+  filteredOfficers: [],
+  selectedOfficerId: null,
   activeStatusTab: "ALL",
   activeProfileTab: "overview",
   searchQuery: "",
@@ -213,10 +213,10 @@ const state = {
   filterStatus: "",
   filterAccessLevel: "",
   currentUser: null,
-  totalOfficersCount: 248,
-  activeAccountsCount: 226,
-  inactiveAccountsCount: 12,
-  pendingApprovalsCount: 10,
+  totalOfficersCount: 0,
+  activeAccountsCount: 0,
+  inactiveAccountsCount: 0,
+  pendingApprovalsCount: 0,
   deactivatedAccountsCount: 0,
 };
 
@@ -1133,57 +1133,62 @@ async function syncLiveBackend() {
     console.warn("Live auth check skipped:", err);
   }
 
-  // 2. Fetch Live Officers from DB to supplement canonical baseline
+  // 2. Fetch Live Officers from DB
   try {
-    const offRes = await fetch("/api/officers");
+    let token = null;
+    try {
+      if (typeof localStorage !== 'undefined') token = localStorage.getItem('rakshak_token');
+    } catch (_) {}
+    const headers = { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) };
+
+    const offRes = await fetch("/api/officers", { credentials: 'include', headers });
     if (offRes.ok) {
       const offData = await offRes.json();
       if (offData.officers && Array.isArray(offData.officers)) {
-        offData.officers.forEach((dbOff) => {
-          const match = state.officers.find(
-            (o) => o.badgeNumber === dbOff.badgeNumber || o.email === dbOff.email
-          );
-          if (match) {
-            match.id = dbOff.id;
-            match.role = dbOff.designation || match.role;
-            match.rbacRole = dbOff.role || match.rbacRole;
-            match.status = dbOff.status === "ACTIVE" ? "Active" : dbOff.status === "SUSPENDED" ? "Pending" : "Inactive";
-          } else {
-            // Append newly created officer from DB
-            const initials = dbOff.name
-              .split(" ")
-              .map((p) => p[0])
-              .join("")
-              .slice(0, 2)
-              .toUpperCase();
+        state.officers = offData.officers.map((dbOff) => {
+          const initials = (dbOff.name || 'Officer')
+            .split(" ")
+            .map((p) => p[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase();
 
-            state.officers.push({
-              id: dbOff.id,
-              badgeNumber: dbOff.badgeNumber,
-              name: dbOff.name,
-              email: dbOff.email,
-              phone: "+91 98111 00000",
-              department: dbOff.unit || "Cyber Crime",
-              departmentFull: dbOff.department?.name || dbOff.unit || "Cyber Crime Department",
-              ministry: "Ministry of Home Affairs",
-              departmentCode: dbOff.department?.code || "CCD",
-              departmentHead: "DIG A. K. Verma",
-              role: dbOff.designation || "Investigator",
-              rbacRole: dbOff.role || "INVESTIGATOR",
-              accessLevel: dbOff.role === "ADMIN" ? "High" : "Medium",
-              status: dbOff.status === "ACTIVE" ? "Active" : "Inactive",
-              joiningDate: "15 Jan 2024",
-              lastLogin: "Recent",
-              avatarClass: "default",
-              avatarInitials: initials,
-              twoFactorAuth: true,
-              lastPasswordChange: "Recent",
-              assignedRoles: [dbOff.role || "Investigator"],
-              assignedCasesCount: 4,
-            });
-          }
+          return {
+            id: dbOff.id,
+            badgeNumber: dbOff.badgeNumber,
+            name: dbOff.name,
+            email: dbOff.email,
+            phone: dbOff.phone || "+91 98111 00000",
+            department: dbOff.unit || "Cyber Crime",
+            departmentFull: dbOff.department?.name || dbOff.unit || "Cyber Crime Department",
+            ministry: "Ministry of Home Affairs",
+            departmentCode: dbOff.department?.code || "CCD",
+            departmentHead: "Chief Cyber Crime Administrator",
+            role: dbOff.designation || "Investigator",
+            rbacRole: dbOff.role || "INVESTIGATOR",
+            accessLevel: dbOff.role === "ADMIN" ? "High" : "Medium",
+            status: dbOff.status === "ACTIVE" ? "Active" : dbOff.status === "SUSPENDED" ? "Pending" : "Inactive",
+            joiningDate: "15 Jan 2024",
+            lastLogin: "Recent",
+            avatarClass: "default",
+            avatarInitials: initials,
+            twoFactorAuth: true,
+            lastPasswordChange: "Recent",
+            assignedRoles: [dbOff.role || "Investigator"],
+            assignedCasesCount: 0,
+          };
         });
+
+        state.totalOfficersCount = state.officers.length;
+        state.activeAccountsCount = state.officers.filter(o => o.status === 'Active').length;
+        state.inactiveAccountsCount = state.officers.filter(o => o.status === 'Inactive').length;
+        state.pendingApprovalsCount = state.officers.filter(o => o.status === 'Pending').length;
+
+        updateSummaryMetrics();
         applyFilters();
+        if (state.officers.length > 0 && !state.selectedOfficerId) {
+          selectOfficer(state.officers[0].badgeNumber);
+        }
       }
     }
   } catch (err) {

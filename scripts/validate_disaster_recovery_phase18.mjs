@@ -8,6 +8,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import { createBackupSnapshot } from "./backup_evidence_db.mjs";
 
 const ACTIVE_DB_PATH = path.join(process.cwd(), "prisma", "dev.db");
 const ACTIVE_STORAGE_PATH = path.join(process.cwd(), "uploads", "raw");
@@ -28,10 +29,18 @@ async function runDisasterRecoveryValidation() {
   console.log("================================================================\n");
 
   const initialDbHash = sha256(ACTIVE_DB_PATH);
-  const initialFilesCount = fs.readdirSync(ACTIVE_STORAGE_PATH).filter((f) => f.endsWith(".bin")).length;
+  const initialFilesCount = fs.existsSync(ACTIVE_STORAGE_PATH)
+    ? fs.readdirSync(ACTIVE_STORAGE_PATH).filter((f) => f.endsWith(".bin")).length
+    : 0;
 
   console.log("[1/4] Auditing Latest Named Backup Snapshot...");
-  const snapshots = fs.readdirSync(SNAPSHOTS_ROOT).filter((d) => d.startsWith("backup_")).sort().reverse();
+  fs.mkdirSync(SNAPSHOTS_ROOT, { recursive: true });
+  let snapshots = fs.readdirSync(SNAPSHOTS_ROOT).filter((d) => d.startsWith("backup_")).sort().reverse();
+  if (snapshots.length === 0) {
+    console.log("  • No existing snapshots found in clean checkout. Provisioning fresh verified snapshot...");
+    await createBackupSnapshot();
+    snapshots = fs.readdirSync(SNAPSHOTS_ROOT).filter((d) => d.startsWith("backup_")).sort().reverse();
+  }
   if (snapshots.length === 0) {
     throw new Error("No backup snapshots found in backups/snapshots/");
   }

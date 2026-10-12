@@ -62,5 +62,9 @@ jobs:
 
       - name: 11. Release Gate Checks Safe in CI
         run: |
+          mkdir -p backups/migration_staging
+          cp prisma/dev.db backups/migration_staging/isolated_rehearsal_sandbox.db
+          node scripts/migrate_sqlite_to_postgres.mjs --source=backups/migration_staging/isolated_rehearsal_sandbox.db --output=backups/migration_staging/sqlite_migration_payload.json
+          node scripts/test_phase18_migration_rehearsal.mjs
           node scripts/rehearse_postgres_migration_phase18.mjs
           node scripts/validate_disaster_recovery_phase18.mjs

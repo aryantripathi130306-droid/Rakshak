@@ -81,7 +81,8 @@ async function runPipeline() {
   // Stage 4: Production dependency security audit
   stageResults.push(
     runStep("4. Production Dependency Security Audit", () => {
-      const out = execSync("npm.cmd audit --json", { stdio: "pipe" }).toString();
+      const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
+      const out = execSync(`${npmCmd} audit --json`, { stdio: "pipe" }).toString();
       const report = JSON.parse(out);
       const totalVulns = report.metadata?.vulnerabilities?.total ?? 0;
       if (totalVulns > 0) {

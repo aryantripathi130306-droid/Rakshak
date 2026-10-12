@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@prisma/client-pg": ["./node_modules/@prisma/client-pg"]
     }
   },
   "include": [

@@ -295,7 +295,8 @@ async function runAudit() {
   console.log("\n--- [6] Security Advisories & Dependency Audit ---");
   let npmAuditVulnerabilities = 0;
   try {
-    const auditOutput = execSync("npm.cmd audit --json", { encoding: "utf-8" });
+    const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
+    const auditOutput = execSync(`${npmCmd} audit --json`, { encoding: "utf-8" });
     const auditJson = JSON.parse(auditOutput);
     npmAuditVulnerabilities = auditJson.metadata?.vulnerabilities?.total || 0;
   } catch (err) {

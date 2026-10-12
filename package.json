@@ -16,6 +16,11 @@
     "db:reset": "prisma migrate reset --force",
     "postinstall": "npm run prisma:generate"
   },
+  "allowScripts": {
+    "@prisma/client": true,
+    "@prisma/engines": true,
+    "prisma": true
+  },
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-dialog": "^1.1.23",

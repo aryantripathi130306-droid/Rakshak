@@ -554,18 +554,10 @@
 
             <!-- Pagination Footer -->
             <div class="neu-pagination-footer">
-              <span id="pagination-summary">Showing 1-8 of 248 officers</span>
+              <span id="pagination-summary">Showing 0 officers</span>
 
               <div class="neu-pagination-controls" aria-label="Directory pagination">
-                <button class="neu-page-btn" aria-label="Previous page">&lt;</button>
-                <button class="neu-page-btn active">1</button>
-                <button class="neu-page-btn">2</button>
-                <button class="neu-page-btn">3</button>
-                <button class="neu-page-btn">4</button>
-                <button class="neu-page-btn">5</button>
-                <span style="padding: 0 4px;">...</span>
-                <button class="neu-page-btn">31</button>
-                <button class="neu-page-btn" aria-label="Next page">&gt;</button>
+                <!-- Injected dynamically -->
               </div>
 
               <select id="select-page-size" class="neu-page-size-select" aria-label="Page size">
@@ -666,7 +658,7 @@
                   <!-- Profile Photo Subcard -->
                   <div class="neu-subcard-photo">
                     <span class="neu-subcard-title" style="align-self: flex-start;">Profile Photo</span>
-                    <div class="neu-photo-preview" id="photo-preview">RK</div>
+                    <div class="neu-photo-preview" id="photo-preview">--</div>
                     <button class="neu-btn-change-photo" id="btn-change-photo">
                       <span>↑</span> Change Photo
                     </button>
@@ -685,7 +677,7 @@
                     </div>
                     <div class="neu-info-pair">
                       <span class="label">Last Password Change</span>
-                      <span class="value" id="info-pwd-change">10 Dec 2023</span>
+                      <span class="value" id="info-pwd-change">—</span>
                     </div>
                   </div>
                 </div>
@@ -698,9 +690,7 @@
                   <button class="neu-btn-manage-roles" id="btn-manage-roles-inline">Manage Roles</button>
                 </div>
                 <div class="neu-role-tags" id="assigned-roles-list">
-                  <span class="neu-role-tag blue">Investigator</span>
-                  <span class="neu-role-tag green">Case Approver</span>
-                  <span class="neu-role-tag purple">Evidence Viewer</span>
+                  <span class="neu-role-tag">—</span>
                 </div>
               </div>
 
@@ -725,12 +715,12 @@
 
                 <div class="neu-dept-meta-row">
                   <span class="label" style="color: var(--neu-secondary); font-size: 0.78rem;">Department Code</span>
-                  <span class="value" style="font-weight: 700;" id="card-dept-code">CCD</span>
+                  <span class="value" style="font-weight: 700;" id="card-dept-code">—</span>
                 </div>
 
                 <div class="neu-dept-meta-row">
                   <span class="label" style="color: var(--neu-secondary); font-size: 0.78rem;">Head</span>
-                  <span class="value" style="font-weight: 600;" id="card-dept-head">DIG A. K. Verma</span>
+                  <span class="value" style="font-weight: 600;" id="card-dept-head">—</span>
                 </div>
 
                 <a href="/frontend/pages/cross-dept.html" class="neu-link-view-dept" id="link-view-department">
@@ -792,7 +782,7 @@
                   <div class="neu-dept-item-icon">🛡️</div>
                   <span class="neu-dept-item-name">Cyber Crime Department</span>
                 </div>
-                <span class="neu-dept-item-count">42 officers</span>
+                <span class="neu-dept-item-count">—</span>
               </div>
 
               <div class="neu-dept-item">
@@ -800,7 +790,7 @@
                   <div class="neu-dept-item-icon">🏛️</div>
                   <span class="neu-dept-item-name">Economic Offences Wing</span>
                 </div>
-                <span class="neu-dept-item-count">38 officers</span>
+                <span class="neu-dept-item-count">—</span>
               </div>
 
               <div class="neu-dept-item">
@@ -808,7 +798,7 @@
                   <div class="neu-dept-item-icon">⚖️</div>
                   <span class="neu-dept-item-name">Narcotics Control Bureau</span>
                 </div>
-                <span class="neu-dept-item-count">28 officers</span>
+                <span class="neu-dept-item-count">—</span>
               </div>
 
               <div class="neu-dept-item">
@@ -816,7 +806,7 @@
                   <div class="neu-dept-item-icon">🚔</div>
                   <span class="neu-dept-item-name">State Police (Delhi)</span>
                 </div>
-                <span class="neu-dept-item-count">56 officers</span>
+                <span class="neu-dept-item-count">—</span>
               </div>
 
               <div class="neu-dept-item">
@@ -824,7 +814,7 @@
                   <div class="neu-dept-item-icon">👁️</div>
                   <span class="neu-dept-item-name">Intelligence Bureau</span>
                 </div>
-                <span class="neu-dept-item-count">34 officers</span>
+                <span class="neu-dept-item-count">—</span>
               </div>
             </div>
           </section>

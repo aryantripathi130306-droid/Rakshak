@@ -581,8 +581,8 @@ function populateCaseDetails(kase) {
 
   if (cellReg) cellReg.textContent = kase.createdAt ? new Date(kase.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
   if (cellUpd) cellUpd.textContent = kase.updatedAt ? new Date(kase.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
-  if (cellOff) cellOff.textContent = kase.investigatingOfficer || kase.officerName || 'Inspector Sharma';
-  if (cellDept) cellDept.textContent = kase.jurisdiction || 'Crime Branch (DEL)';
+  if (cellOff) cellOff.textContent = kase.investigatingOfficer || kase.officerName || '—';
+  if (cellDept) cellDept.textContent = kase.jurisdiction || '—';
 
   // Summary Text
   const summaryEl = document.getElementById('summary-text');
@@ -785,7 +785,7 @@ function bindModalEvents() {
           incidentType,
           jurisdiction: jurisdiction || currentOfficer?.jurisdiction || 'Delhi Police',
           firNumber,
-          officerName: officerName || currentOfficer?.name || 'Inspector Sharma',
+          officerName: officerName || currentOfficer?.name || 'Investigating Officer',
           amountDefrauded,
           status,
           description,

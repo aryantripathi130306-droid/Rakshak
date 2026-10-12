@@ -525,17 +525,11 @@
 
             <!-- Pagination Footer -->
             <div class="neu-pagination-footer">
-              <span id="pagination-summary">Showing 1-8 of 12,486 logs</span>
+              <span id="pagination-summary">Showing 0 logs</span>
 
               <div class="neu-pagination-controls" aria-label="Logs pagination">
                 <button class="neu-page-btn" aria-label="Previous page">&lt;</button>
                 <button class="neu-page-btn active">1</button>
-                <button class="neu-page-btn">2</button>
-                <button class="neu-page-btn">3</button>
-                <button class="neu-page-btn">4</button>
-                <button class="neu-page-btn">5</button>
-                <span style="padding: 0 4px;">...</span>
-                <button class="neu-page-btn">1561</button>
                 <button class="neu-page-btn" aria-label="Next page">&gt;</button>
               </div>
 
@@ -574,13 +568,13 @@
                   </svg>
                 </div>
                 <div class="neu-hero-hero-info">
-                  <span class="neu-hero-action-title" id="detail-hero-action">Viewed Evidence</span>
-                  <span class="neu-hero-timestamp" id="detail-hero-time">15 Jan 2024, 10:30:45 AM</span>
+                  <span class="neu-hero-action-title" id="detail-hero-action">—</span>
+                  <span class="neu-hero-timestamp" id="detail-hero-time">—</span>
                 </div>
               </div>
 
               <div>
-                <span class="neu-badge-status success" id="detail-hero-status">Success</span>
+                <span class="neu-badge-status" id="detail-hero-status">—</span>
               </div>
             </div>
 
@@ -602,43 +596,43 @@
                 
                 <div class="neu-info-grid-row">
                   <span class="label">Event ID</span>
-                  <span class="value mono" id="info-event-id">LOG-2024-00012345</span>
+                  <span class="value mono" id="info-event-id">—</span>
                 </div>
                 <div class="neu-info-grid-row">
                   <span class="label">Event Type</span>
-                  <span class="value" id="info-event-type">Data Access</span>
+                  <span class="value" id="info-event-type">—</span>
                 </div>
                 <div class="neu-info-grid-row">
                   <span class="label">Action</span>
-                  <span class="value" id="info-action">Viewed Evidence</span>
+                  <span class="value" id="info-action">—</span>
                 </div>
                 <div class="neu-info-grid-row">
                   <span class="label">Description</span>
-                  <span class="value" id="info-desc" style="max-width: 60%; font-weight: 500;">User viewed evidence file details in the system</span>
+                  <span class="value" id="info-desc" style="max-width: 60%; font-weight: 500;">—</span>
                 </div>
                 <div class="neu-info-grid-row">
                   <span class="label">Timestamp</span>
-                  <span class="value mono" id="info-time">15 Jan 2024, 10:30:45 AM</span>
+                  <span class="value mono" id="info-time">—</span>
                 </div>
                 <div class="neu-info-grid-row">
                   <span class="label">Status</span>
-                  <span class="neu-badge-status success" id="info-status">Success</span>
+                  <span class="neu-badge-status" id="info-status">—</span>
                 </div>
                 <div class="neu-info-grid-row">
                   <span class="label">IP Address</span>
-                  <span class="value mono" id="info-ip">192.168.1.45</span>
+                  <span class="value mono" id="info-ip">—</span>
                 </div>
                 <div class="neu-info-grid-row">
                   <span class="label">Session ID</span>
-                  <span class="value mono" id="info-session">sess_7f3a9c2d1e6b</span>
+                  <span class="value mono" id="info-session">—</span>
                 </div>
                 <div class="neu-info-grid-row">
                   <span class="label">User Agent</span>
-                  <span class="value" id="info-ua" style="font-size: 0.7rem; max-width: 65%;">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36</span>
+                  <span class="value" id="info-ua" style="font-size: 0.7rem; max-width: 65%;">—</span>
                 </div>
                 <div class="neu-info-grid-row">
                   <span class="label">Source</span>
-                  <span class="value" id="info-source">Web Application</span>
+                  <span class="value" id="info-source">—</span>
                 </div>
               </div>
 
@@ -848,39 +842,8 @@
 
             <!-- List of Security Alerts -->
             <div class="neu-alerts-list" id="security-alerts-list">
-              <div class="neu-alert-item">
-                <span class="neu-alert-time">15 Jan, 09:45 AM</span>
-                <span class="neu-alert-text">Multiple failed login attempts</span>
-                <span class="neu-badge-severity high">High</span>
-                <span class="neu-badge-investigation investigating">Investigating</span>
-              </div>
-
-              <div class="neu-alert-item">
-                <span class="neu-alert-time">15 Jan, 08:22 AM</span>
-                <span class="neu-alert-text">Suspicious IP address</span>
-                <span class="neu-badge-severity medium">Medium</span>
-                <span class="neu-badge-investigation resolved">Resolved</span>
-              </div>
-
-              <div class="neu-alert-item">
-                <span class="neu-alert-time">14 Jan, 11:30 PM</span>
-                <span class="neu-alert-text">Unauthorized data access attempt</span>
-                <span class="neu-badge-severity high">High</span>
-                <span class="neu-badge-investigation resolved">Resolved</span>
-              </div>
-
-              <div class="neu-alert-item">
-                <span class="neu-alert-time">14 Jan, 06:15 PM</span>
-                <span class="neu-alert-text">Privilege escalation attempt</span>
-                <span class="neu-badge-severity high">High</span>
-                <span class="neu-badge-investigation investigating">Investigating</span>
-              </div>
-
-              <div class="neu-alert-item">
-                <span class="neu-alert-time">13 Jan, 04:20 PM</span>
-                <span class="neu-alert-text">Unusual download activity</span>
-                <span class="neu-badge-severity medium">Medium</span>
-                <span class="neu-badge-investigation resolved">Resolved</span>
+              <div style="text-align: center; padding: 24px; color: var(--neu-secondary); font-size: 12px;">
+                No active security alerts recorded.
               </div>
             </div>
           </section>

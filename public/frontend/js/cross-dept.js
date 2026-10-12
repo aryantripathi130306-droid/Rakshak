@@ -255,7 +255,8 @@ export function renderTable() {
   });
 
   if (elements.paginationSummary) {
-    elements.paginationSummary.textContent = `Showing 1–${Math.min(displayList.length, 8)} of 24 requests`;
+    const total = crossDeptState.requests.length;
+    elements.paginationSummary.textContent = total > 0 ? `Showing 1–${Math.min(displayList.length, 8)} of ${total} requests` : 'Showing 0 requests';
   }
 }
 
@@ -570,26 +571,29 @@ function setupEventListeners() {
   elements.formRequestAccess?.addEventListener('submit', (e) => {
     e.preventDefault();
     const targetDept = document.getElementById('req-target-dept')?.value || 'Economic Offences Wing';
-    const caseId = document.getElementById('req-case-id')?.value || 'CC/2024/001';
+    const caseId = document.getElementById('req-case-id')?.value || '—';
     const type = document.getElementById('req-type')?.value || 'Case Access';
     const purpose = document.getElementById('req-purpose')?.value || 'Cross-agency investigation';
 
-    const newId = `REQ-2024-${Math.floor(100 + Math.random() * 900)}`;
+    const newId = `REQ-${Date.now().toString().slice(-6)}`;
+    const now = new Date();
+    const dateFormatted = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    const fullDateFormatted = now.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
     const newReq = {
       id: newId,
       type: type,
-      fromDept: 'Cyber Crime',
+      fromDept: sessionStorage.getItem('rakshak_officer_unit') || 'Cyber Crime',
       toDept: targetDept.split(' ')[0],
       caseId: caseId,
-      caseTitle: 'Financial Fraud Investigation',
+      caseTitle: 'Cross-Agency Investigation',
       purpose: purpose.slice(0, 30) + '...',
       fullPurpose: purpose,
       status: 'Pending',
       priority: 'Medium',
-      date: '15 Jan 2024',
-      fullDateTime: '15 Jan 2024, 11:00 AM',
-      requestedBy: 'Inspector Rajesh Kumar',
-      requestingDept: 'Cyber Crime Department',
+      date: dateFormatted,
+      fullDateTime: fullDateFormatted,
+      requestedBy: sessionStorage.getItem('rakshak_officer_name') || 'Officer',
+      requestingDept: sessionStorage.getItem('rakshak_officer_unit') || 'Cyber Crime Department',
       targetDept: targetDept,
       icon: '👤',
       iconClass: 'neu-metric-icon-blue',
@@ -743,10 +747,11 @@ function handleWorkspaceTabSwitch(view) {
     }
 
     if (view === 'shared-cases') {
+      const approved = crossDeptState.requests.filter(r => r.status === 'Approved');
       dynView.innerHTML = `
         <div class="cd-panel">
           <div class="cd-panel-header">
-            <h2 class="cd-panel-title">Shared Investigation Cases (42 Active)</h2>
+            <h2 class="cd-panel-title">Shared Investigation Cases (${approved.length} Active)</h2>
           </div>
           <div class="cd-table-container">
             <table class="cd-table">
@@ -757,38 +762,28 @@ function handleWorkspaceTabSwitch(view) {
                   <th>Originating Department</th>
                   <th>Collaborating Department</th>
                   <th>Access Scope</th>
-                  <th>Expiry Date</th>
+                  <th>Date</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><a href="/frontend/pages/cases.html?case=CC/2024/001" class="cd-case-link">CC/2024/001</a></td>
-                  <td>Financial Fraud</td>
-                  <td>Cyber Crime Department</td>
-                  <td>Economic Offences Wing</td>
-                  <td>Read Access (Financial Ledger)</td>
-                  <td>31 Dec 2024</td>
-                  <td><span class="cd-badge-status cd-status-approved">Active</span></td>
-                </tr>
-                <tr>
-                  <td><a href="/frontend/pages/cases.html?case=CC/2024/045" class="cd-case-link">CC/2024/045</a></td>
-                  <td>Cyber Extortion</td>
-                  <td>Cyber Crime Department</td>
-                  <td>Intelligence Bureau</td>
-                  <td>Full Case Dossier</td>
-                  <td>15 Nov 2024</td>
-                  <td><span class="cd-badge-status cd-status-approved">Active</span></td>
-                </tr>
-                <tr>
-                  <td><a href="/frontend/pages/cases.html?case=CC/2024/078" class="cd-case-link">CC/2024/078</a></td>
-                  <td>Money Laundering</td>
-                  <td>Narcotics Control Bureau</td>
-                  <td>Cyber Crime Department</td>
-                  <td>Evidence Metadata</td>
-                  <td>28 Feb 2025</td>
-                  <td><span class="cd-badge-status cd-status-approved">Active</span></td>
-                </tr>
+                ${approved.length === 0 ? `
+                  <tr>
+                    <td colspan="7" style="text-align: center; padding: 32px; color: var(--neu-secondary);">
+                      No shared investigation cases are currently active across collaborating agencies.
+                    </td>
+                  </tr>
+                ` : approved.map(r => `
+                  <tr>
+                    <td><a href="/frontend/pages/cases.html?case=${encodeURIComponent(r.caseId)}" class="cd-case-link">${escapeHtml(r.caseId)}</a></td>
+                    <td>${escapeHtml(r.caseTitle)}</td>
+                    <td>${escapeHtml(r.requestingDept || r.fromDept)}</td>
+                    <td>${escapeHtml(r.targetDept || r.toDept)}</td>
+                    <td>${escapeHtml(r.scopes?.map(s => s.name).join(', ') || 'Read Access')}</td>
+                    <td>${escapeHtml(r.date)}</td>
+                    <td><span class="cd-badge-status cd-status-approved">Active</span></td>
+                  </tr>
+                `).join('')}
               </tbody>
             </table>
           </div>

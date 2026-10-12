@@ -154,13 +154,13 @@ async function loadServerData() {
             date: formatTimelineDate(ev.timestamp),
             time: formatTimelineTime(ev.timestamp),
             fullDateTime: `${formatTimelineDate(ev.timestamp)}, ${formatTimelineTime(ev.timestamp)}`,
-            caseId: ev.case?.caseNumber || 'CC/2024/001',
-            caseTitle: ev.case?.incidentType ? `${ev.case.incidentType.replace('_', ' ')} Investigation` : 'Financial Fraud Investigation',
-            entityId: ev.extractedEntities?.[0]?.value || '+91 98765 43210',
-            entitySub: ev.extractedEntities?.[0]?.type || 'Phone Number',
-            evidenceId: ev.evidence?.fileName || 'mobile_001.jpg',
-            evidenceTitle: `${ev.evidence?.fileType || 'Image'} (${formatBytes(ev.evidence?.fileSize || 2516582)})`,
-            createdBy: 'Inspector Rajesh Kumar',
+            caseId: ev.case?.caseNumber || '—',
+            caseTitle: ev.case?.incidentType ? `${ev.case.incidentType.replace('_', ' ')} Investigation` : 'Case Investigation',
+            entityId: ev.extractedEntities?.[0]?.value || '—',
+            entitySub: ev.extractedEntities?.[0]?.type || '—',
+            evidenceId: ev.evidence?.fileName || '—',
+            evidenceTitle: ev.evidence ? `${ev.evidence.fileType || 'File'} (${formatBytes(ev.evidence.fileSize || 0)})` : 'None',
+            createdBy: 'Investigating Officer',
             department: 'Cyber Crime Department',
             source: ev.sourceType === 'SCREENSHOT' ? 'Evidence Intake System' : 'Rakshak Timeline Engine',
             status: 'Completed',
@@ -169,12 +169,12 @@ async function loadServerData() {
             nodeClass: config.nodeClass,
             tagClass: config.tagClass,
             details: {
-              evidenceType: ev.evidence?.evidenceCategory || 'Mobile Device',
-              fileName: ev.evidence?.fileName || 'mobile_001.jpg',
-              fileSize: formatBytes(ev.evidence?.fileSize || 2516582),
-              sha256Hash: ev.evidence?.sha256Hash || 'a7f3b2e9d4c6f1e8b3a9d2e7f5c1d6e0a9b3c7d5e8f2a1b4c6d8e0f2a5b7c1d3e9',
-              collectionMethod: 'Physical Seizure',
-              location: 'Sector 17, Chandigarh',
+              evidenceType: ev.evidence?.evidenceCategory || '—',
+              fileName: ev.evidence?.fileName || '—',
+              fileSize: ev.evidence?.fileSize ? formatBytes(ev.evidence.fileSize) : '—',
+              sha256Hash: ev.evidence?.sha256Hash || '—',
+              collectionMethod: 'Forensic Intake',
+              location: '—',
               remarks: 'Validated against PostgreSQL chain-of-custody ledger'
             }
           };
@@ -298,9 +298,7 @@ export function selectEvent(eventId) {
   if (elements.detailEventType) elements.detailEventType.textContent = eventData.typeLabel;
   if (elements.detailEventTitle) elements.detailEventTitle.textContent = eventData.description;
   if (elements.detailEventDesc) {
-    elements.detailEventDesc.textContent = eventData.type === 'EVIDENCE_EVENT'
-      ? 'Mobile device image collected from suspect and added to evidence repository'
-      : eventData.description;
+    elements.detailEventDesc.textContent = eventData.description || 'Forensic timeline milestone';
   }
   if (elements.detailEventDateTime) elements.detailEventDateTime.textContent = eventData.fullDateTime;
   if (elements.detailEventCreator) elements.detailEventCreator.textContent = eventData.createdBy;
@@ -308,18 +306,38 @@ export function selectEvent(eventId) {
   if (elements.detailEventSource) elements.detailEventSource.textContent = eventData.source;
   if (elements.detailEventStatus) elements.detailEventStatus.textContent = eventData.status;
 
-  // 4. Update Related Information
   if (elements.relCaseTitle) elements.relCaseTitle.textContent = eventData.caseId;
   if (elements.relCaseSub) elements.relCaseSub.textContent = eventData.caseTitle;
-  if (elements.relCaseLink) elements.relCaseLink.href = `/frontend/pages/cases.html?case=${encodeURIComponent(eventData.caseId)}`;
+  if (elements.relCaseLink) {
+    if (eventData.caseId && eventData.caseId !== '—') {
+      elements.relCaseLink.style.display = 'inline-block';
+      elements.relCaseLink.href = `/frontend/pages/cases.html?case=${encodeURIComponent(eventData.caseId)}`;
+    } else {
+      elements.relCaseLink.style.display = 'none';
+    }
+  }
 
   if (elements.relEntityTitle) elements.relEntityTitle.textContent = eventData.entityId;
   if (elements.relEntitySub) elements.relEntitySub.textContent = eventData.entitySub;
-  if (elements.relEntityLink) elements.relEntityLink.href = `/frontend/pages/entities.html?q=${encodeURIComponent(eventData.entityId)}`;
+  if (elements.relEntityLink) {
+    if (eventData.entityId && eventData.entityId !== '—') {
+      elements.relEntityLink.style.display = 'inline-block';
+      elements.relEntityLink.href = `/frontend/pages/entities.html?q=${encodeURIComponent(eventData.entityId)}`;
+    } else {
+      elements.relEntityLink.style.display = 'none';
+    }
+  }
 
   if (elements.relEvTitle) elements.relEvTitle.textContent = eventData.evidenceId;
   if (elements.relEvSub) elements.relEvSub.textContent = eventData.evidenceTitle;
-  if (elements.relEvLink) elements.relEvLink.href = `/frontend/pages/evidence.html?file=${encodeURIComponent(eventData.evidenceId)}`;
+  if (elements.relEvLink) {
+    if (eventData.evidenceId && eventData.evidenceId !== '—') {
+      elements.relEvLink.style.display = 'inline-block';
+      elements.relEvLink.href = `/frontend/pages/evidence.html?file=${encodeURIComponent(eventData.evidenceId)}`;
+    } else {
+      elements.relEvLink.style.display = 'none';
+    }
+  }
 
   // 5. Update Additional Details
   if (elements.addType) elements.addType.textContent = eventData.details.evidenceType;
@@ -490,7 +508,7 @@ function setupEventListeners() {
   // 8. Form Submission (Create Timeline Event)
   elements.formAddEvent?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const caseId = document.getElementById('add-case-id')?.value || 'CC/2024/001';
+    const caseId = document.getElementById('add-case-id')?.value || '—';
     const title = document.getElementById('add-event-title')?.value || 'New Event';
     const type = document.getElementById('add-event-type')?.value || 'INVESTIGATION_ACTION';
     const desc = document.getElementById('add-event-desc')?.value || '';
@@ -499,7 +517,7 @@ function setupEventListeners() {
 
     const config = getEventVisualConfig(type);
     const dateObj = new Date(dt);
-    const newId = `EVT-2024-${Math.floor(100000 + Math.random() * 900000)}`;
+    const newId = `EVT-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const newEvent = {
       id: newId,
@@ -511,13 +529,13 @@ function setupEventListeners() {
       time: formatTimelineTime(dateObj),
       fullDateTime: `${formatTimelineDate(dateObj)}, ${formatTimelineTime(dateObj)}`,
       caseId: caseId,
-      caseTitle: 'Financial Fraud Investigation',
-      entityId: 'Inspector Rajesh Kumar',
+      caseTitle: 'Investigation Incident',
+      entityId: sessionStorage.getItem('rakshak_officer_name') || 'Investigating Officer',
       entitySub: 'Recording Officer',
       evidenceId: evFile,
       evidenceTitle: evFile !== 'None' ? 'Associated Evidence File' : 'None',
-      createdBy: 'Inspector Rajesh Kumar',
-      department: 'Cyber Crime Department',
+      createdBy: sessionStorage.getItem('rakshak_officer_name') || 'Investigating Officer',
+      department: sessionStorage.getItem('rakshak_officer_unit') || 'Cyber Crime Department',
       source: 'Investigator Manual Entry',
       status: 'Completed',
       icon: config.icon,
@@ -641,7 +659,7 @@ function handleTabSwitch(tabKey) {
           </div>
           <div class="tl-meta-row">
             <span class="tl-meta-key">Signing Officer</span>
-            <span class="tl-meta-val">Inspector Rajesh Kumar (DL-CC-001)</span>
+            <span class="tl-meta-val">${escapeHtml(currentEvent.createdBy || currentEvent.officerName || sessionStorage.getItem('rakshak_officer_name') || 'Investigating Officer')}</span>
           </div>
           <div class="tl-meta-row">
             <span class="tl-meta-key">Log Timestamp</span>

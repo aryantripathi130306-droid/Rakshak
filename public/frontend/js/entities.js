@@ -144,8 +144,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ─── Officer Session Setup ────────────────────────────────────────────────────
 function initOfficerSession() {
-  const officerName = sessionStorage.getItem('rakshak_user_name') || 'Inspector Rajesh Kumar';
-  const officerDept = sessionStorage.getItem('rakshak_user_dept') || 'Cyber Crime Department';
+  const officerName = sessionStorage.getItem('rakshak_user_name') || 'Officer';
+  const officerDept = sessionStorage.getItem('rakshak_user_dept') || '—';
   const officerRole = sessionStorage.getItem('rakshak_user_role') || 'INVESTIGATOR';
 
   const nameEl = document.getElementById('officer-display-name');
@@ -436,8 +436,8 @@ function selectEntity(item) {
   document.getElementById('profile-nationality-val').textContent = item.nationality || 'Indian';
   document.getElementById('profile-status-badge').textContent = item.status;
   document.getElementById('profile-status-badge').className = item.status === 'Active' ? 'neu-badge-status-active' : 'neu-badge-status-inactive';
-  document.getElementById('profile-created-val').textContent = item.createdOn || '15 Jan 2024, 10:30';
-  document.getElementById('profile-updated-val').textContent = item.lastUpdated || '10 Jul 2024, 14:20';
+  document.getElementById('profile-created-val').textContent = item.createdOn || '—';
+  document.getElementById('profile-updated-val').textContent = item.lastUpdated || '—';
 
   // Update Identifiers
   const idContainer = document.getElementById('profile-identifiers-list');
@@ -477,92 +477,104 @@ function selectEntity(item) {
 function updateLowerPanels(item) {
   // Panel 1: Related Entities
   const entList = document.getElementById('list-related-entities');
-  if (entList && item.relatedEntities) {
+  if (entList) {
     entList.innerHTML = '';
-    item.relatedEntities.forEach((re) => {
-      const row = document.createElement('div');
-      row.className = 'neu-bottom-item';
-      row.innerHTML = `
-        <div class="neu-item-left">
-          <div class="neu-item-icon" style="background-color:${re.iconBg}; color:${re.iconColor};">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
-            </svg>
+    if (!item.relatedEntities || item.relatedEntities.length === 0) {
+      entList.innerHTML = '<div style="padding:16px;text-align:center;color:var(--neu-secondary);font-size:12px;">No related entities recorded</div>';
+    } else {
+      item.relatedEntities.forEach((re) => {
+        const row = document.createElement('div');
+        row.className = 'neu-bottom-item';
+        row.innerHTML = `
+          <div class="neu-item-left">
+            <div class="neu-item-icon" style="background-color:${re.iconBg || 'var(--neu-blue-light)'}; color:${re.iconColor || 'var(--neu-blue)'};">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="neu-item-text">
+              <span class="neu-item-title">${re.name}</span>
+              <span class="neu-item-sub">${re.type}</span>
+            </div>
           </div>
-          <div class="neu-item-text">
-            <span class="neu-item-title">${re.name}</span>
-            <span class="neu-item-sub">${re.type}</span>
-          </div>
-        </div>
-        <div class="neu-item-right">
-          <span class="neu-item-badge">${re.rel}</span>
-          <span class="neu-item-date">${re.note}</span>
-        </div>`;
-      row.addEventListener('click', () => {
-        showToast(`Selected associated entity: ${re.name}`, 'info');
+          <div class="neu-item-right">
+            <span class="neu-item-badge">${re.rel}</span>
+            <span class="neu-item-date">${re.note}</span>
+          </div>`;
+        row.addEventListener('click', () => {
+          showToast(`Selected associated entity: ${re.name}`, 'info');
+        });
+        entList.appendChild(row);
       });
-      entList.appendChild(row);
-    });
+    }
   }
 
   // Panel 2: Related Cases
   const caseList = document.getElementById('list-related-cases');
-  if (caseList && item.relatedCases) {
+  if (caseList) {
     caseList.innerHTML = '';
-    item.relatedCases.forEach((rc) => {
-      const row = document.createElement('div');
-      row.className = 'neu-bottom-item';
-      row.innerHTML = `
-        <div class="neu-item-left">
-          <div class="neu-item-icon" style="background-color:var(--neu-blue-light); color:var(--neu-blue);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
-            </svg>
+    if (!item.relatedCases || item.relatedCases.length === 0) {
+      caseList.innerHTML = '<div style="padding:16px;text-align:center;color:var(--neu-secondary);font-size:12px;">No linked cases recorded</div>';
+    } else {
+      item.relatedCases.forEach((rc) => {
+        const row = document.createElement('div');
+        row.className = 'neu-bottom-item';
+        row.innerHTML = `
+          <div class="neu-item-left">
+            <div class="neu-item-icon" style="background-color:var(--neu-blue-light); color:var(--neu-blue);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+              </svg>
+            </div>
+            <div class="neu-item-text">
+              <span class="neu-item-title">${rc.caseNumber}</span>
+              <span class="neu-item-sub">${rc.title}</span>
+            </div>
           </div>
-          <div class="neu-item-text">
-            <span class="neu-item-title">${rc.caseNumber}</span>
-            <span class="neu-item-sub">${rc.title}</span>
-          </div>
-        </div>
-        <div class="neu-item-right">
-          <span class="neu-item-badge">${rc.role}</span>
-          <span class="neu-item-date">${rc.date}</span>
-        </div>`;
-      row.addEventListener('click', () => {
-        showToast(`Opening case docket for ${rc.caseNumber}...`, 'info');
+          <div class="neu-item-right">
+            <span class="neu-item-badge">${rc.role}</span>
+            <span class="neu-item-date">${rc.date}</span>
+          </div>`;
+        row.addEventListener('click', () => {
+          showToast(`Opening case docket for ${rc.caseNumber}...`, 'info');
+        });
+        caseList.appendChild(row);
       });
-      caseList.appendChild(row);
-    });
+    }
   }
 
   // Panel 3: Evidence References
   const evList = document.getElementById('list-evidence-references');
-  if (evList && item.evidenceRefs) {
+  if (evList) {
     evList.innerHTML = '';
-    item.evidenceRefs.forEach((ev) => {
-      const row = document.createElement('div');
-      row.className = 'neu-bottom-item';
-      row.innerHTML = `
-        <div class="neu-item-left">
-          <div class="neu-item-icon" style="background-color:${ev.iconBg}; color:${ev.iconColor};">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
-            </svg>
+    if (!item.evidenceRefs || item.evidenceRefs.length === 0) {
+      evList.innerHTML = '<div style="padding:16px;text-align:center;color:var(--neu-secondary);font-size:12px;">No evidence files attached</div>';
+    } else {
+      item.evidenceRefs.forEach((ev) => {
+        const row = document.createElement('div');
+        row.className = 'neu-bottom-item';
+        row.innerHTML = `
+          <div class="neu-item-left">
+            <div class="neu-item-icon" style="background-color:${ev.iconBg || 'var(--neu-blue-light)'}; color:${ev.iconColor || 'var(--neu-blue)'};">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+            </div>
+            <div class="neu-item-text">
+              <span class="neu-item-title">${ev.name}</span>
+              <span class="neu-item-sub">${ev.type}</span>
+            </div>
           </div>
-          <div class="neu-item-text">
-            <span class="neu-item-title">${ev.name}</span>
-            <span class="neu-item-sub">${ev.type}</span>
-          </div>
-        </div>
-        <div class="neu-item-right">
-          <span class="neu-item-badge">${ev.caseNumber}</span>
-          <span class="neu-item-date">${ev.date}</span>
-        </div>`;
-      row.addEventListener('click', () => {
-        showToast(`Viewing evidence manifest: ${ev.name}`, 'info');
+          <div class="neu-item-right">
+            <span class="neu-item-badge">${ev.caseNumber}</span>
+            <span class="neu-item-date">${ev.date}</span>
+          </div>`;
+        row.addEventListener('click', () => {
+          showToast(`Viewing evidence manifest: ${ev.name}`, 'info');
+        });
+        evList.appendChild(row);
       });
-      evList.appendChild(row);
-    });
+    }
   }
 }
 
@@ -687,7 +699,7 @@ function setupModals() {
 
       // Prepend to dataset
       const newEntity = {
-        id: `ENT-2024-${String(entitiesState.allEntities.length + 1).padStart(3, '0')}`,
+        id: `ENT-${new Date().getFullYear()}-${String(entitiesState.allEntities.length + 1).padStart(3, '0')}`,
         name: val,
         type: type,
         keyDetailsPrimary: val,

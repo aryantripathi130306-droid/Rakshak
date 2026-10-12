@@ -460,11 +460,7 @@
             <div class="tl-filter-group">
               <label for="filter-select-case" class="tl-filter-label">Related Case</label>
               <select id="filter-select-case" class="tl-select-custom" aria-label="Filter by Related Case">
-                <option value="ALL">All Cases</option>
-                <option value="CC/2024/001" selected>CC/2024/001 — Financial Fraud</option>
-                <option value="CC/2024/045">CC/2024/045 — Cyber Extortion</option>
-                <option value="CC/2024/078">CC/2024/078 — Money Laundering</option>
-                <option value="CB-2025-1042">CB-2025-1042 — Task Scam</option>
+                <option value="ALL" selected>All Cases</option>
               </select>
             </div>
 
@@ -473,11 +469,6 @@
               <label for="filter-select-entity" class="tl-filter-label">Related Entity</label>
               <select id="filter-select-entity" class="tl-select-custom" aria-label="Filter by Related Entity">
                 <option value="ALL" selected>All Entities</option>
-                <option value="Rahul Sharma">Rahul Sharma (ENT-2024-001)</option>
-                <option value="Sharma Enterprises">Sharma Enterprises (ENT-2024-002)</option>
-                <option value="+91 98765 43210">+91 98765 43210 (Phone)</option>
-                <option value="rahul.s@gmail.com">rahul.s@gmail.com (Email)</option>
-                <option value="HDFC Bank XXXX4321">HDFC Bank XXXX4321 (Account)</option>
               </select>
             </div>
 
@@ -603,11 +594,11 @@
                   <div class="tl-meta-table">
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Event ID</span>
-                      <span class="tl-meta-val" id="detail-event-id">EVT-2024-001245</span>
+                      <span class="tl-meta-val" id="detail-event-id">—</span>
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Event Type</span>
-                      <span class="tl-meta-val" id="detail-event-type">Evidence Event</span>
+                      <span class="tl-meta-val" id="detail-event-type">—</span>
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Title</span>
@@ -615,11 +606,11 @@
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Description</span>
-                      <span class="tl-meta-val" id="detail-event-desc">Mobile device image collected from suspect and added to evidence repository</span>
+                      <span class="tl-meta-val" id="detail-event-desc">—</span>
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Date & Time</span>
-                      <span class="tl-meta-val" id="detail-event-datetime">15 Jan 2024, 11:20 AM</span>
+                      <span class="tl-meta-val" id="detail-event-datetime">—</span>
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Created By</span>
@@ -627,15 +618,15 @@
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Department</span>
-                      <span class="tl-meta-val" id="detail-event-department">Cyber Crime Department</span>
+                      <span class="tl-meta-val" id="detail-event-department">—</span>
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Source</span>
-                      <span class="tl-meta-val" id="detail-event-source">Evidence Intake System</span>
+                      <span class="tl-meta-val" id="detail-event-source">—</span>
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Status</span>
-                      <span class="tl-badge-status-completed" id="detail-event-status">Completed</span>
+                      <span class="tl-badge-status-completed" id="detail-event-status">—</span>
                     </div>
                   </div>
                 </div>
@@ -649,8 +640,8 @@
                     <div class="tl-related-icon tl-icon-case" aria-hidden="true">📁</div>
                     <div class="tl-related-body">
                       <span class="tl-related-title" id="detail-rel-case-title">—</span>
-                      <span class="tl-related-subtitle" id="detail-rel-case-sub">Financial Fraud Investigation</span>
-                      <a href="/frontend/pages/cases.html?case=CC/2024/001" class="tl-related-link" id="detail-rel-case-link">View Case →</a>
+                      <span class="tl-related-subtitle" id="detail-rel-case-sub">No linked case</span>
+                      <a href="#" class="tl-related-link" id="detail-rel-case-link" style="display:none">View Case →</a>
                     </div>
                   </div>
 
@@ -658,9 +649,9 @@
                   <div class="tl-related-card" id="detail-related-entity-card">
                     <div class="tl-related-icon tl-icon-entity" aria-hidden="true">👤</div>
                     <div class="tl-related-body">
-                      <span class="tl-related-title" id="detail-rel-entity-title">+91 98765 43210</span>
-                      <span class="tl-related-subtitle" id="detail-rel-entity-sub">Phone Number</span>
-                      <a href="/frontend/pages/entities.html?q=9876543210" class="tl-related-link" id="detail-rel-entity-link">View Entity →</a>
+                      <span class="tl-related-title" id="detail-rel-entity-title">—</span>
+                      <span class="tl-related-subtitle" id="detail-rel-entity-sub">No linked entity</span>
+                      <a href="#" class="tl-related-link" id="detail-rel-entity-link" style="display:none">View Entity →</a>
                     </div>
                   </div>
 
@@ -669,8 +660,8 @@
                     <div class="tl-related-icon tl-icon-evidence" aria-hidden="true">📄</div>
                     <div class="tl-related-body">
                       <span class="tl-related-title" id="detail-rel-ev-title">—</span>
-                      <span class="tl-related-subtitle" id="detail-rel-ev-sub">Image (2.4 MB)</span>
-                      <a href="/frontend/pages/evidence.html?id=ev-cc001-mobile" class="tl-related-link" id="detail-rel-ev-link">View Evidence →</a>
+                      <span class="tl-related-subtitle" id="detail-rel-ev-sub">No linked evidence</span>
+                      <a href="#" class="tl-related-link" id="detail-rel-ev-link" style="display:none">View Evidence →</a>
                     </div>
                   </div>
 
@@ -684,7 +675,7 @@
                 <div class="tl-meta-table">
                   <div class="tl-meta-row">
                     <span class="tl-meta-key">Evidence Type</span>
-                    <span class="tl-meta-val" id="detail-add-type">Mobile Device</span>
+                    <span class="tl-meta-val" id="detail-add-type">—</span>
                   </div>
                   <div class="tl-meta-row">
                     <span class="tl-meta-key">File Name</span>
@@ -692,26 +683,26 @@
                   </div>
                   <div class="tl-meta-row">
                     <span class="tl-meta-key">File Size</span>
-                    <span class="tl-meta-val" id="detail-add-size">2.4 MB</span>
+                    <span class="tl-meta-val" id="detail-add-size">—</span>
                   </div>
                   <div class="tl-meta-row">
                     <span class="tl-meta-key">SHA-256 Hash</span>
                     <div class="tl-hash-row">
-                      <span class="tl-hash-val" id="detail-add-hash">a7f3b2e9d4c6f1e8b3a9d2e7f5c1d6e0a9b3c7d5e8f2a1b4c6d8e0f2a5b7c1d3e9</span>
+                      <span class="tl-hash-val" id="detail-add-hash">—</span>
                       <button class="tl-copy-btn" id="btn-copy-hash" title="Copy SHA-256 hash" aria-label="Copy SHA-256 hash">📋</button>
                     </div>
                   </div>
                   <div class="tl-meta-row">
                     <span class="tl-meta-key">Collection Method</span>
-                    <span class="tl-meta-val" id="detail-add-method">Physical Seizure</span>
+                    <span class="tl-meta-val" id="detail-add-method">—</span>
                   </div>
                   <div class="tl-meta-row">
                     <span class="tl-meta-key">Location</span>
-                    <span class="tl-meta-val" id="detail-add-location">Sector 17, Chandigarh</span>
+                    <span class="tl-meta-val" id="detail-add-location">—</span>
                   </div>
                   <div class="tl-meta-row">
                     <span class="tl-meta-key">Remarks</span>
-                    <span class="tl-meta-val" id="detail-add-remarks">Device sealed and stored as per protocol</span>
+                    <span class="tl-meta-val" id="detail-add-remarks">—</span>
                   </div>
                 </div>
               </div>
@@ -739,10 +730,7 @@
         <div class="neu-form-field">
           <label class="neu-form-label" for="add-case-id">Related Case *</label>
           <select id="add-case-id" class="neu-form-select" required>
-            <option value="CC/2024/001">CC/2024/001 — Financial Fraud Investigation</option>
-            <option value="CC/2024/045">CC/2024/045 — Cyber Extortion Case</option>
-            <option value="CC/2024/078">CC/2024/078 — Money Laundering</option>
-            <option value="CB-2025-1042">CB-2025-1042 — Task Scam</option>
+            <option value="">Select Case…</option>
           </select>
         </div>
         <div class="neu-form-field">

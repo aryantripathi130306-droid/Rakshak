@@ -700,7 +700,7 @@ function populateDetailPanel(item) {
     }
   }
   if (infoUploader) {
-    infoUploader.textContent = item.metadata?.uploadedBy || (state.currentOfficer ? `${state.currentOfficer.designation || 'Inspector'} ${state.currentOfficer.name} (${state.currentOfficer.badgeNumber})` : 'Forensic Officer (DEL-001)');
+    infoUploader.textContent = item.metadata?.uploadedBy || (state.currentOfficer ? `${state.currentOfficer.designation || 'Inspector'} ${state.currentOfficer.name} (${state.currentOfficer.badgeNumber})` : 'Forensic Officer');
   }
   if (infoUploadDate) infoUploadDate.textContent = formatIST(item.uploadedAt);
   if (infoStorage) {

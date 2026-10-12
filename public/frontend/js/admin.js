@@ -5,200 +5,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─── Canonical Baseline Officers (Matches Reference Image Exactly) ───────────
-const CANONICAL_OFFICERS = [
-  {
-    id: "INS-001",
-    badgeNumber: "INS-001",
-    name: "Rajesh Kumar",
-    email: "rajesh.kumar@gov.in",
-    phone: "+91 98765 43210",
-    department: "Cyber Crime",
-    departmentFull: "Cyber Crime Department",
-    ministry: "Ministry of Home Affairs",
-    departmentCode: "CCD",
-    departmentHead: "DIG A. K. Verma",
-    role: "Inspector",
-    rbacRole: "INVESTIGATOR",
-    accessLevel: "High",
-    status: "Active",
-    joiningDate: "12 Mar 2018",
-    lastLogin: "15 Jan 2024, 10:30 AM",
-    avatarClass: "rk",
-    avatarInitials: "RK",
-    twoFactorAuth: true,
-    lastPasswordChange: "10 Dec 2023",
-    assignedRoles: ["Investigator", "Case Approver", "Evidence Viewer"],
-    assignedCasesCount: 14,
-  },
-  {
-    id: "SI-027",
-    badgeNumber: "SI-027",
-    name: "Priya Singh",
-    email: "priya.singh@gov.in",
-    phone: "+91 98765 43211",
-    department: "Cyber Crime",
-    departmentFull: "Cyber Crime Department",
-    ministry: "Ministry of Home Affairs",
-    departmentCode: "CCD",
-    departmentHead: "DIG A. K. Verma",
-    role: "Sub Inspector",
-    rbacRole: "INVESTIGATOR",
-    accessLevel: "Medium",
-    status: "Active",
-    joiningDate: "05 Aug 2020",
-    lastLogin: "15 Jan 2024, 09:15 AM",
-    avatarClass: "ps",
-    avatarInitials: "PS",
-    twoFactorAuth: true,
-    lastPasswordChange: "18 Nov 2023",
-    assignedRoles: ["Investigator", "Evidence Viewer"],
-    assignedCasesCount: 9,
-  },
-  {
-    id: "HC-105",
-    badgeNumber: "HC-105",
-    name: "Amit Sharma",
-    email: "amit.sharma@gov.in",
-    phone: "+91 98765 43212",
-    department: "State Police (Delhi)",
-    departmentFull: "State Police (Delhi)",
-    ministry: "Delhi NCT Police Command",
-    departmentCode: "DL-POLICE",
-    departmentHead: "CP Sanjay Arora",
-    role: "Head Constable",
-    rbacRole: "INVESTIGATOR",
-    accessLevel: "Medium",
-    status: "Active",
-    joiningDate: "19 Jan 2016",
-    lastLogin: "15 Jan 2024, 08:45 AM",
-    avatarClass: "as",
-    avatarInitials: "AS",
-    twoFactorAuth: true,
-    lastPasswordChange: "02 Oct 2023",
-    assignedRoles: ["Investigator"],
-    assignedCasesCount: 7,
-  },
-  {
-    id: "SI-043",
-    badgeNumber: "SI-043",
-    name: "Neha Verma",
-    email: "neha.verma@gov.in",
-    phone: "+91 98765 43213",
-    department: "Economic Offences",
-    departmentFull: "Economic Offences Wing",
-    ministry: "Ministry of Home Affairs",
-    departmentCode: "EOW",
-    departmentHead: "Joint CP Chhaya Sharma",
-    role: "Sub Inspector",
-    rbacRole: "INVESTIGATOR",
-    accessLevel: "Medium",
-    status: "Pending",
-    joiningDate: "01 Nov 2023",
-    lastLogin: "14 Jan 2024, 05:20 PM",
-    avatarClass: "nv",
-    avatarInitials: "NV",
-    twoFactorAuth: false,
-    lastPasswordChange: "01 Nov 2023",
-    assignedRoles: ["Investigator"],
-    assignedCasesCount: 3,
-  },
-  {
-    id: "INS-012",
-    badgeNumber: "INS-012",
-    name: "Vikram Patel",
-    email: "vikram.patel@gov.in",
-    phone: "+91 98765 43214",
-    department: "Narcotics Control",
-    departmentFull: "Narcotics Control Bureau",
-    ministry: "Ministry of Home Affairs",
-    departmentCode: "NCB",
-    departmentHead: "DG Satya Narayan Pradhan",
-    role: "Inspector",
-    rbacRole: "INVESTIGATOR",
-    accessLevel: "High",
-    status: "Active",
-    joiningDate: "14 Feb 2017",
-    lastLogin: "15 Jan 2024, 07:30 AM",
-    avatarClass: "vp",
-    avatarInitials: "VP",
-    twoFactorAuth: true,
-    lastPasswordChange: "22 Dec 2023",
-    assignedRoles: ["Investigator", "Case Approver"],
-    assignedCasesCount: 11,
-  },
-  {
-    id: "HC-221",
-    badgeNumber: "HC-221",
-    name: "Sandeep Rai",
-    email: "sandeep.rai@gov.in",
-    phone: "+91 98765 43215",
-    department: "Intelligence Bureau",
-    departmentFull: "Intelligence Bureau",
-    ministry: "Ministry of Home Affairs",
-    departmentCode: "IB",
-    departmentHead: "Director Tapan Deka",
-    role: "Head Constable",
-    rbacRole: "VIEWER",
-    accessLevel: "Low",
-    status: "Active",
-    joiningDate: "10 Jun 2019",
-    lastLogin: "13 Jan 2024, 04:10 PM",
-    avatarClass: "sr",
-    avatarInitials: "SR",
-    twoFactorAuth: true,
-    lastPasswordChange: "15 Jan 2024",
-    assignedRoles: ["Evidence Viewer"],
-    assignedCasesCount: 2,
-  },
-  {
-    id: "SI-067",
-    badgeNumber: "SI-067",
-    name: "Karan Mehta",
-    email: "karan.mehta@gov.in",
-    phone: "+91 98765 43216",
-    department: "CBI",
-    departmentFull: "Central Bureau of Investigation",
-    ministry: "Department of Personnel and Training",
-    departmentCode: "CBI",
-    departmentHead: "Director Praveen Sood",
-    role: "Sub Inspector",
-    rbacRole: "INVESTIGATOR",
-    accessLevel: "High",
-    status: "Active",
-    joiningDate: "23 Apr 2021",
-    lastLogin: "15 Jan 2024, 06:50 AM",
-    avatarClass: "km",
-    avatarInitials: "KM",
-    twoFactorAuth: true,
-    lastPasswordChange: "05 Nov 2023",
-    assignedRoles: ["Investigator", "Case Approver"],
-    assignedCasesCount: 8,
-  },
-  {
-    id: "ANL-015",
-    badgeNumber: "ANL-015",
-    name: "Pooja Arora",
-    email: "pooja.arora@gov.in",
-    phone: "+91 98765 43217",
-    department: "Forensic Lab",
-    departmentFull: "Central Forensic Science Laboratory",
-    ministry: "Directorate of Forensic Science Services",
-    departmentCode: "FSL",
-    departmentHead: "Director Dr. S. K. Jain",
-    role: "Analyst",
-    rbacRole: "ANALYST",
-    accessLevel: "Medium",
-    status: "Inactive",
-    joiningDate: "18 Sep 2022",
-    lastLogin: "02 Jan 2024, 11:20 AM",
-    avatarClass: "pa",
-    avatarInitials: "PA",
-    twoFactorAuth: false,
-    lastPasswordChange: "18 Sep 2022",
-    assignedRoles: ["Evidence Viewer"],
-    assignedCasesCount: 1,
-  },
-];
+const CANONICAL_OFFICERS = [];
+
 
 // ─── Application State ────────────────────────────────────────────────────────
 const state = {
@@ -428,7 +236,7 @@ function selectOfficer(badgeNumber) {
   if (DOM.infoFullname) DOM.infoFullname.textContent = officer.name;
   if (DOM.infoBadge) DOM.infoBadge.textContent = officer.badgeNumber;
   if (DOM.infoEmail) DOM.infoEmail.textContent = officer.email;
-  if (DOM.infoPhone) DOM.infoPhone.textContent = officer.phone || "+91 98765 00000";
+  if (DOM.infoPhone) DOM.infoPhone.textContent = officer.phone || "—";
   if (DOM.infoDept) DOM.infoDept.textContent = officer.departmentFull || officer.department;
   if (DOM.infoDesignation) DOM.infoDesignation.textContent = officer.role;
   if (DOM.infoJoining) DOM.infoJoining.textContent = officer.joiningDate || "15 Jan 2022";
@@ -672,45 +480,20 @@ function renderProfileTabContent(tabName) {
         <div class="neu-activity-item">
           <div class="neu-activity-left">
             <div class="neu-activity-avatar orange">👤</div>
-            <span class="neu-activity-text">Successful login via Gov-SSO MFA</span>
+            <span class="neu-activity-text">Account Session Authenticated</span>
           </div>
-          <span class="neu-activity-time">${officer.lastLogin}</span>
-        </div>
-        <div class="neu-activity-item">
-          <div class="neu-activity-left">
-            <div class="neu-activity-avatar blue">📄</div>
-            <span class="neu-activity-text">Reviewed case evidence records</span>
-          </div>
-          <span class="neu-activity-time">15 Jan 2024, 09:15 AM</span>
-        </div>
-        <div class="neu-activity-item">
-          <div class="neu-activity-left">
-            <div class="neu-activity-avatar blue">🛡️</div>
-            <span class="neu-activity-text">Session authenticated from 103.45.67.89</span>
-          </div>
-          <span class="neu-activity-time">14 Jan 2024, 18:30 PM</span>
+          <span class="neu-activity-time">${officer.lastLogin || 'Recent'}</span>
         </div>
       </div>
     `;
   } else if (tabName === "cases") {
     DOM.profileContentArea.innerHTML = `
       <div class="neu-subcard-basic" style="gap: 12px;">
-        <span class="neu-subcard-title">Assigned Active Cases (${officer.assignedCasesCount || 8})</span>
-        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem;">
-          <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--neu-border);">
-            <span><strong>CC/2026/001</strong> — Investment Syndicate Fraud</span>
-            <span class="neu-badge-status active">Under Inquiry</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--neu-border);">
-            <span><strong>CC/2026/002</strong> — Digital Arrest Extortion Case</span>
-            <span class="neu-badge-status active">Active</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding: 6px 0;">
-            <span><strong>CC/2026/005</strong> — Telegram Task Scam Ring</span>
-            <span class="neu-badge-status pending">Verification</span>
-          </div>
+        <span class="neu-subcard-title">Assigned Active Cases (${officer.assignedCasesCount || 0})</span>
+        <div style="padding: 12px 0; color: var(--neu-secondary); font-size: 0.8rem;">
+          ${(officer.assignedCasesCount || 0) > 0 ? 'Officer assigned to active investigation cases.' : 'No active case assignments currently recorded.'}
         </div>
-        <a href="/frontend/pages/cases.html" class="neu-link-view-dept" style="margin-top: 6px;">View All Assigned Cases →</a>
+        <a href="/frontend/pages/cases.html" class="neu-link-view-dept" style="margin-top: 6px;">View Investigation Cases →</a>
       </div>
     `;
   }
@@ -991,7 +774,7 @@ async function handleAddOfficerSubmit(e) {
       departmentFull: dept,
       ministry: "Ministry of Home Affairs",
       departmentCode: badgeNumber.split("-")[0] || "CCD",
-      departmentHead: "DIG A. K. Verma",
+      departmentHead: "—",
       role: designation,
       rbacRole: role,
       accessLevel: role === "ADMIN" ? "High" : role === "INVESTIGATOR" ? "Medium" : "Low",

@@ -100,7 +100,7 @@
             </svg>
           </div>
           <div class="neu-officer-details">
-            <span class="neu-officer-name" id="officer-display-name">Inspector Sharma</span>
+            <span class="neu-officer-name" id="officer-display-name">Officer</span>
             <span class="neu-officer-dept" id="officer-display-dept">Crime Branch (DEL)</span>
           </div>
           <span class="neu-chevron" aria-hidden="true">
@@ -112,8 +112,8 @@
           <!-- Popover Dropdown -->
           <div class="neu-profile-dropdown" id="profile-dropdown" role="menu">
             <div class="neu-dropdown-user-info">
-              <span id="profile-full-name" style="font-weight:700;color:var(--neu-navy)">Inspector Sharma</span>
-              <span id="profile-badge-num" class="neu-dropdown-badge-num">Badge: DEL-001</span>
+              <span id="profile-full-name" style="font-weight:700;color:var(--neu-navy)">Officer</span>
+              <span id="profile-badge-num" class="neu-dropdown-badge-num">Badge: —</span>
               <span id="profile-role-tag" class="neu-dropdown-role">Role: INVESTIGATOR</span>
               <span id="profile-jurisdiction" style="font-size:10.5px;color:var(--neu-secondary);margin-top:2px">Crime Branch Delhi</span>
             </div>
@@ -636,9 +636,9 @@
             <!-- Tab Navigation Strip -->
             <nav class="neu-tabs-nav" aria-label="Entity Detail Tabs">
               <button class="neu-tab-btn active" data-tab="tab-overview">Overview</button>
-              <button class="neu-tab-btn" data-tab="tab-connections" id="tab-btn-connections">Connections (8)</button>
-              <button class="neu-tab-btn" data-tab="tab-cases" id="tab-btn-cases">Related Cases (4)</button>
-              <button class="neu-tab-btn" data-tab="tab-evidence" id="tab-btn-evidence">Evidence (12)</button>
+              <button class="neu-tab-btn" data-tab="tab-connections" id="tab-btn-connections">Connections</button>
+              <button class="neu-tab-btn" data-tab="tab-cases" id="tab-btn-cases">Related Cases</button>
+              <button class="neu-tab-btn" data-tab="tab-evidence" id="tab-btn-evidence">Evidence</button>
               <button class="neu-tab-btn" data-tab="tab-timeline">Timeline</button>
             </nav>
 
@@ -648,47 +648,47 @@
                 
                 <div class="neu-meta-row">
                   <span class="neu-meta-key">Entity Type</span>
-                  <span class="neu-meta-val" id="meta-entity-type">Person</span>
+                  <span class="neu-meta-val" id="meta-entity-type">—</span>
                 </div>
 
                 <div class="neu-meta-row">
                   <span class="neu-meta-key">Aliases</span>
-                  <span class="neu-meta-val" id="meta-aliases">R. Kumar, Raj, RK</span>
+                  <span class="neu-meta-val" id="meta-aliases">—</span>
                 </div>
 
                 <div class="neu-meta-row">
                   <span class="neu-meta-key">Phone Numbers</span>
-                  <span class="neu-meta-val" id="meta-phones">+91 98765 43210, +91 91234 56789</span>
+                  <span class="neu-meta-val" id="meta-phones">—</span>
                 </div>
 
                 <div class="neu-meta-row">
                   <span class="neu-meta-key">Email Addresses</span>
-                  <span class="neu-meta-val" id="meta-emails">r.kumar@example.com</span>
+                  <span class="neu-meta-val" id="meta-emails">—</span>
                 </div>
 
                 <div class="neu-meta-row">
                   <span class="neu-meta-key">Linked Cases</span>
-                  <span class="neu-meta-val" id="meta-linked-cases">CB-2025-1042, CB-2025-1036, CB-2025-1028</span>
+                  <span class="neu-meta-val" id="meta-linked-cases">—</span>
                 </div>
 
                 <div class="neu-meta-row">
                   <span class="neu-meta-key">Risk Score</span>
-                  <span class="neu-meta-val" id="meta-risk-score" style="color:var(--neu-red); font-weight:700;">High (0.82)</span>
+                  <span class="neu-meta-val" id="meta-risk-score">—</span>
                 </div>
 
                 <div class="neu-meta-row">
                   <span class="neu-meta-key">First Seen</span>
-                  <span class="neu-meta-val" id="meta-first-seen">12 Sep 2025</span>
+                  <span class="neu-meta-val" id="meta-first-seen">—</span>
                 </div>
 
                 <div class="neu-meta-row">
                   <span class="neu-meta-key">Last Activity</span>
-                  <span class="neu-meta-val" id="meta-last-seen">15 Oct 2025</span>
+                  <span class="neu-meta-val" id="meta-last-seen">—</span>
                 </div>
 
                 <div class="neu-meta-row">
                   <span class="neu-meta-key">Notes</span>
-                  <span class="neu-meta-val" id="meta-notes">Suspected involvement in multiple financial fraud cases.</span>
+                  <span class="neu-meta-val" id="meta-notes">Select an entity from graph to view forensic notes.</span>
                 </div>
 
               </div>
@@ -810,76 +810,9 @@
             </div>
 
             <div class="neu-insights-list" id="insights-container">
-              
-              <!-- Insight 1 -->
-              <div class="neu-insight-item">
-                <div class="neu-insight-left">
-                  <div class="neu-insight-icon" style="background-color:var(--neu-red-light); color:var(--neu-red);">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                    </svg>
-                  </div>
-                  <div class="neu-insight-text">
-                    <span class="neu-insight-title">Common Phone Number</span>
-                    <span class="neu-insight-sub">3 cases linked via +91 98765 43210</span>
-                  </div>
-                </div>
-                <span class="neu-badge-risk">High</span>
+              <div style="padding:16px;text-align:center;color:var(--neu-secondary);font-size:12px;">
+                Cross-case syndicate anomalies will be detected dynamically from shared evidence and entities.
               </div>
-
-              <!-- Insight 2 -->
-              <div class="neu-insight-item">
-                <div class="neu-insight-left">
-                  <div class="neu-insight-icon" style="background-color:var(--neu-green-light); color:var(--neu-green);">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                      <line x1="2" y1="10" x2="22" y2="10"></line>
-                    </svg>
-                  </div>
-                  <div class="neu-insight-text">
-                    <span class="neu-insight-title">Shared Bank Account</span>
-                    <span class="neu-insight-sub">5 entities linked to account XXXX1920</span>
-                  </div>
-                </div>
-                <span class="neu-badge-risk">High</span>
-              </div>
-
-              <!-- Insight 3 -->
-              <div class="neu-insight-item">
-                <div class="neu-insight-left">
-                  <div class="neu-insight-icon" style="background-color:var(--neu-amber-light); color:var(--neu-amber);">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                  </div>
-                  <div class="neu-insight-text">
-                    <span class="neu-insight-title">Location Overlap</span>
-                    <span class="neu-insight-sub">4 cases at same location (Delhi)</span>
-                  </div>
-                </div>
-                <span class="neu-badge-medium">Medium</span>
-              </div>
-
-              <!-- Insight 4 -->
-              <div class="neu-insight-item">
-                <div class="neu-insight-left">
-                  <div class="neu-insight-icon" style="background-color:var(--neu-purple-light); color:var(--neu-purple);">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="16" y1="13" x2="8" y2="13"></line>
-                      <line x1="16" y1="17" x2="8" y2="17"></line>
-                    </svg>
-                  </div>
-                  <div class="neu-insight-text">
-                    <span class="neu-insight-title">Document Similarity</span>
-                    <span class="neu-insight-sub">2 cases with similar fake documents</span>
-                  </div>
-                </div>
-                <span class="neu-badge-medium">Medium</span>
-              </div>
-
             </div>
 
           </div>
@@ -960,9 +893,7 @@
         <div>
           <label class="neu-input-label" for="input-target-case">Associate with Target Case</label>
           <select id="input-target-case" class="neu-input-control">
-            <option value="CB-2025-1042">CB-2025-1042 (Financial Crime &amp; Mule Ring)</option>
-            <option value="CB-2025-1036">CB-2025-1036 (Investment Scam)</option>
-            <option value="CB-2025-1028">CB-2025-1028 (Digital Arrest Ring)</option>
+            <option value="">Select Target Case…</option>
           </select>
         </div>
         <div>
@@ -1029,11 +960,11 @@
         </div>
         <div>
           <label class="neu-input-label" for="input-edit-aliases">Aliases (comma-separated)</label>
-          <input type="text" id="input-edit-aliases" class="neu-input-control" value="R. Kumar, Raj, RK" />
+          <input type="text" id="input-edit-aliases" class="neu-input-control" value="" placeholder="Aliases (comma-separated)" />
         </div>
         <div>
           <label class="neu-input-label" for="input-edit-notes">Investigator Notes</label>
-          <textarea id="input-edit-notes" class="neu-input-control" rows="3">Suspected involvement in multiple financial fraud cases.</textarea>
+          <textarea id="input-edit-notes" class="neu-input-control" rows="3" placeholder="Investigator notes…"></textarea>
         </div>
       </div>
       <div class="neu-modal-footer">

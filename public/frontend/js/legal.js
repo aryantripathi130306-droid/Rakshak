@@ -627,6 +627,10 @@ function renderCertificatePreview(data) {
   if (cSecs) cSecs.textContent = data.mappingTags?.length ? data.mappingTags.slice(0, 5).join(' | ') : '—';
   if (cGenBy) cGenBy.textContent = officer.label;
   if (cDate) cDate.textContent = dateStr;
+  const cSignOfficer = document.getElementById('cert-sign-officer');
+  if (cSignOfficer) cSignOfficer.textContent = officer.name || 'Investigating Officer';
+  const cSignBadge = document.getElementById('cert-sign-badge');
+  if (cSignBadge) cSignBadge.textContent = officer.badge ? `Badge #${officer.badge}` : 'Badge #—';
 }
 
 // ─── Tabs Switchers ──────────────────────────────────────────────────────────

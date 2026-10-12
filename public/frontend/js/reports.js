@@ -166,7 +166,7 @@ async function initOfficerSession() {
   } catch (err) {
     console.warn('[Session Warning] Running in unauthenticated sandbox mode:', err.message);
     const nameEl = document.getElementById('officer-display-name');
-    if (nameEl) nameEl.textContent = 'Inspector Sharma';
+    if (nameEl) nameEl.textContent = 'Officer';
   }
 }
 
@@ -491,7 +491,7 @@ function renderTableRows() {
           <td>
             <div class="neu-title-cell">
               <span class="neu-report-title-text">${escapeHtml(r.title)}</span>
-              <span class="neu-case-subtext">${escapeHtml(r.caseNumber || 'CB-2025-1042')}</span>
+              <span class="neu-case-subtext">${escapeHtml(r.caseNumber || '—')}</span>
             </div>
           </td>
           <td>
@@ -727,8 +727,8 @@ function renderDetailPane(detail) {
   }
   if (infoGenOn) infoGenOn.textContent = formattedDateTime;
   if (infoUpdated) infoUpdated.textContent = formattedDateTime;
-  if (infoGenBy) infoGenBy.textContent = r.generatedBy || 'Inspector Sharma (DEL-001)';
-  if (infoApprBy) infoApprBy.textContent = r.approvedBy || 'ACP Rajeev Kumar';
+  if (infoGenBy) infoGenBy.textContent = r.generatedBy || state.currentOfficer?.name || 'Investigating Officer';
+  if (infoApprBy) infoApprBy.textContent = r.approvedBy || 'Supervising Authority';
 
   if (summaryBox) {
     summaryBox.textContent = r.summary || 'Comprehensive investigative analysis of financial records, communication intelligence, and digital evidence assets associated with the case.';
@@ -758,8 +758,8 @@ function renderDetailPane(detail) {
   const appOff = document.getElementById('approval-officer');
   const appSup = document.getElementById('approval-supervisor');
   const appAud = document.getElementById('approval-audit-ref');
-  if (appOff) appOff.textContent = r.generatedBy || 'Inspector Sharma (DEL-001)';
-  if (appSup) appSup.textContent = r.approvedBy || 'ACP Rajeev Kumar';
+  if (appOff) appOff.textContent = r.generatedBy || 'Investigating Officer';
+  if (appSup) appSup.textContent = r.approvedBy || 'Supervising Officer';
   if (appAud) appAud.textContent = `AUDIT-${r.reportNumber}-SHA256-VALID`;
 }
 
@@ -863,7 +863,7 @@ function renderFindingsTab(findingsList) {
             <span>•</span>
             <span>Confidence: <strong>${Math.round((f.confidence || 0.95) * 100)}%</strong></span>
             <span>•</span>
-            <span>Verified By: <strong>${escapeHtml(f.verifiedBy || 'ACP Rajeev Kumar')}</strong></span>
+            <span>Verified By: <strong>${escapeHtml(f.verifiedBy || 'Supervising Officer')}</strong></span>
           </div>
         </div>
       `;
@@ -1082,7 +1082,7 @@ function generateClientPdf(reportData) {
 
     y += 16;
     doc.text(`Reporting Officer : ${r.generatedBy}`, 40, y);
-    doc.text(`Supervisory Sign : ${r.approvedBy || 'ACP Rajeev Kumar'}`, 320, y);
+    doc.text(`Supervisory Sign : ${r.approvedBy || 'Supervising Officer'}`, 320, y);
 
     // Divider
     y += 20;

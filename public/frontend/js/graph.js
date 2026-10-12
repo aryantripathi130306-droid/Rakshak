@@ -48,7 +48,7 @@ let graphState = {
     DOCUMENT: true,
     OTHER: true
   },
-  selectedNodeId: 'Rajesh Kumar',
+  selectedNodeId: null,
   transform: { x: 380, y: 260, scale: 1.15 },
   isDragging: false,
   dragStart: { x: 0, y: 0 }
@@ -109,16 +109,7 @@ const NODE_TYPE_CONFIG = {
 // ─── Live Graph Nodes ────────────────────────────────────────────────────────
 let CANONICAL_GRAPH_NODES = [];
 
-const CANONICAL_GRAPH_EDGES = [
-  { source: 'Rajesh Kumar', target: 'Aman Traders', label: 'Owner', color: '#F5B544' },
-  { source: 'Rajesh Kumar', target: 'Account XXXX1920', label: 'Financial', color: '#36C98F' },
-  { source: 'Rajesh Kumar', target: 'Cyber Group A', label: 'Member', color: '#9461F5' },
-  { source: 'Rajesh Kumar', target: '+91 98765 43210', label: 'Co-accused', color: '#EF4444' },
-  { source: 'Rajesh Kumar', target: 'Vehicle PB10AB1234', label: 'Uses', color: '#3988F5' },
-  { source: 'Rajesh Kumar', target: 'Delhi (Location)', label: 'Seen At', color: '#F5B544' },
-  { source: 'Rajesh Kumar', target: 'FakeDoc.pdf', label: 'Document', color: '#9461F5' },
-  { source: 'Neha Singh', target: 'Account XXXX1920', label: 'Financial', color: '#36C98F' }
-];
+const CANONICAL_GRAPH_EDGES = [];
 
 // ─── DOM Initialization ───────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
@@ -133,8 +124,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ─── Officer Session Setup ────────────────────────────────────────────────────
 function initOfficerSession() {
-  const officerName = sessionStorage.getItem('rakshak_user_name') || 'Inspector Sharma';
-  const officerDept = sessionStorage.getItem('rakshak_user_dept') || 'Crime Branch (DEL)';
+  const officerName = sessionStorage.getItem('rakshak_user_name') || 'Officer';
+  const officerDept = sessionStorage.getItem('rakshak_user_dept') || '—';
   const officerRole = sessionStorage.getItem('rakshak_user_role') || 'INVESTIGATOR';
 
   const nameEl = document.getElementById('officer-display-name');
@@ -561,13 +552,18 @@ function populateTimelineTab(entity) {
   const container = document.getElementById('entity-timeline-list');
   if (!container) return;
 
-  const events = [
-    { date: '16 Oct 2025', desc: 'Transfer received from Aman Traders via UPI gateway' },
-    { date: '15 Oct 2025', desc: 'Device location ping detected in Rohini, Delhi' },
-    { date: '12 Sep 2025', desc: 'First recorded occurrence in FIR CB-2025-1042' }
-  ];
+  const events = Array.isArray(entity?.metadata?.timeline) ? entity.metadata.timeline : [];
 
   container.innerHTML = '';
+  if (events.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 24px; color: var(--neu-secondary); font-size: 12px;">
+        No forensic timeline events recorded for this entity.
+      </div>
+    `;
+    return;
+  }
+
   events.forEach((ev) => {
     const row = document.createElement('div');
     row.className = 'neu-link-item';
@@ -579,11 +575,11 @@ function populateTimelineTab(entity) {
           </svg>
         </div>
         <div class="neu-link-text">
-          <span class="neu-link-title">${ev.desc}</span>
-          <span class="neu-link-sub">Verified Evidence Timestamp</span>
+          <span class="neu-link-title">${escapeHtml(ev.desc || ev.title || 'Event')}</span>
+          <span class="neu-link-sub">${escapeHtml(ev.date || 'Verified Evidence Timestamp')}</span>
         </div>
       </div>
-      <span class="neu-link-date">${ev.date}</span>`;
+      <a href="/frontend/pages/timeline.html" class="neu-link-date" style="color:var(--neu-blue);text-decoration:none;">View →</a>`;
     container.appendChild(row);
   });
 }
@@ -772,21 +768,11 @@ function setupEventListeners() {
   const insightItems = document.querySelectorAll('#insights-container .neu-insight-item');
   insightItems.forEach((item) => {
     item.addEventListener('click', () => {
-      const title = item.querySelector('.neu-insight-title')?.textContent;
-      if (title.includes('Phone')) {
-        const node = CANONICAL_GRAPH_NODES.find((n) => n.id === '+91 98765 43210');
-        if (node) selectEntity(node);
-      } else if (title.includes('Bank')) {
-        const node = CANONICAL_GRAPH_NODES.find((n) => n.id === 'Account XXXX1920');
-        if (node) selectEntity(node);
-      } else if (title.includes('Location')) {
-        const node = CANONICAL_GRAPH_NODES.find((n) => n.id === 'Delhi (Location)');
-        if (node) selectEntity(node);
-      } else if (title.includes('Document')) {
-        const node = CANONICAL_GRAPH_NODES.find((n) => n.id === 'FakeDoc.pdf');
+      const targetId = item.getAttribute('data-target-id');
+      if (targetId) {
+        const node = CANONICAL_GRAPH_NODES.find((n) => n.id === targetId);
         if (node) selectEntity(node);
       }
-      showToast(`Selected insight: ${title}`, 'info');
     });
   });
 }

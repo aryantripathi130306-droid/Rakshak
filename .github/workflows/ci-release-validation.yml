@@ -1,0 +1,71 @@
+name: Rakshak v3.0 Release Gate & Operational Hardening Pipeline
+
+on:
+  push:
+    branches: [main, master, staging]
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-release-gates:
+    name: Validate Release Gates & Operational Hardening
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Runtime (v24)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Validate Dependency Lockfile & Install
+        run: |
+          npm ci --ignore-scripts
+          npx prisma generate
+
+      - name: TypeScript Static Compilation
+        run: npx tsc --noEmit
+
+      - name: Verify Production Next.js Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          NODE_ENV: production
+
+      - name: Dependency Security Audit
+        run: npm audit --audit-level=high
+
+      - name: Validate Historical Regression Suites (Phases 6–15)
+        run: |
+          node scripts/test_phase6_graph.mjs
+          node scripts/test_phase7_legal.mjs
+          node scripts/test_phase8_reports_rbac.mjs
+          node scripts/test_phase9_e2e_ocr.mjs
+          node scripts/test_phase10_release_validation.mjs
+          node scripts/test_phase11_staging_smoke.mjs
+          node scripts/test_phase12_pilot_acceptance.mjs
+          node scripts/test_phase13_pilot_operations.mjs
+          node scripts/test_phase14_security_assessment.mjs
+          node scripts/test_phase15_synthetic_pilot.mjs
+
+      - name: Validate Phase 16.5 Comprehensive Website Audit Suite
+        run: node scripts/test_phase16_5_full_audit.mjs
+
+      - name: Validate Phase 17 Evidence Store Verifier Tests
+        run: node scripts/test_phase17_verifier.mjs
+
+      - name: Rehearse Phase 18 PostgreSQL Migration
+        run: node scripts/rehearse_postgres_migration_phase18.mjs
+
+      - name: Validate Phase 18 Disaster Recovery
+        run: node scripts/validate_disaster_recovery_phase18.mjs
+
+      - name: Execute Full Release Gate Pipeline
+        run: node scripts/validate_release_pipeline_phase18.mjs

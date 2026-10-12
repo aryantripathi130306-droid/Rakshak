@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     const caseNumber = targetCase?.caseNumber || caseId || "GLOBAL";
-    const reportSeq = Math.floor(100 + Math.random() * 900);
+    const reportSeq = `${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 100).toString().padStart(2, "0")}`;
     const reportNumber = `RPT-${new Date().getFullYear()}-${reportSeq}`;
 
     const reportTitle = targetCase

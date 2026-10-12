@@ -3,223 +3,706 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Rakshak — Case Management. Register, search, filter, and manage all investigation cases." />
+  <meta name="description" content="Rakshak v3.0 — Cases Management & Forensic Case Details." />
   <title>Cases — Rakshak v3.0</title>
-  <link rel="stylesheet" href="../css/global.css" />
-  <link rel="stylesheet" href="../css/components.css" />
-  <link rel="stylesheet" href="../css/pages.css" />
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Isolated Stylesheet -->
+  <link rel="stylesheet" href="../css/cases-neumorphic.css" />
 </head>
-<body>
-  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
-  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+<body class="neu-cases-body">
 
-  <div class="app-shell">
-    <header class="app-header" role="banner"></header>
+  <div class="neu-shell">
+    
+    <!-- ══════════════════════════════════════════════════════════
+         TOPBAR NAVIGATION
+         ══════════════════════════════════════════════════════════ -->
+    <header class="neu-topbar" role="banner" aria-label="Rakshak Platform Header">
+      
+      <!-- Brand & Version -->
+      <a href="/frontend/pages/dashboard.html" class="neu-topbar-brand" aria-label="Rakshak Dashboard Home">
+        <div class="neu-topbar-shield" aria-hidden="true">
+          <svg viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="navShieldBg" x1="20" y1="10" x2="100" y2="120" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FFFFFF" />
+                <stop offset="50%" stop-color="#F2F7FC" />
+                <stop offset="100%" stop-color="#DCE6F2" />
+              </linearGradient>
+              <linearGradient id="navEmblemGrad" x1="40" y1="36" x2="80" y2="92" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#559CF8" />
+                <stop offset="100%" stop-color="#2873DE" />
+              </linearGradient>
+            </defs>
+            <path d="M 60 14 C 84 14 104 22 104 38 C 104 76 84 104 60 118 C 36 104 16 76 16 38 C 16 22 36 14 60 14 Z" fill="url(#navShieldBg)" stroke="#C8D8E9" stroke-width="2.5" />
+            <path d="M 60 22 C 80 22 96 29 96 42 C 96 73 80 97 60 109 C 40 97 24 73 24 42 C 24 29 40 22 60 22 Z" fill="#EEF5FD" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" />
+            <path d="M 60 38 L 86 52 L 34 52 Z" fill="url(#navEmblemGrad)" />
+            <rect x="36" y="54" width="48" height="4" rx="1.5" fill="url(#navEmblemGrad)" />
+            <rect x="40" y="60" width="5.5" height="22" rx="1" fill="url(#navEmblemGrad)" />
+            <rect x="49.5" y="60" width="5.5" height="22" rx="1" fill="url(#navEmblemGrad)" />
+            <rect x="65" y="60" width="5.5" height="22" rx="1" fill="url(#navEmblemGrad)" />
+            <rect x="74.5" y="60" width="5.5" height="22" rx="1" fill="url(#navEmblemGrad)" />
+            <rect x="37" y="83" width="46" height="4" rx="1.5" fill="url(#navEmblemGrad)" />
+            <rect x="33" y="88" width="54" height="4.5" rx="2" fill="url(#navEmblemGrad)" />
+          </svg>
+        </div>
+        <div class="neu-topbar-brand-text">
+          <div class="neu-topbar-title">
+            <span>RAKSHAK</span>
+            <span class="neu-topbar-version">v3.0</span>
+          </div>
+          <div class="neu-topbar-subtitle">Investigation &amp; Evidence Management</div>
+        </div>
+      </a>
 
-    <div class="app-body">
-      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation"></aside>
+      <!-- Global Search Field -->
+      <div class="neu-search-wrapper" role="search">
+        <form id="global-search-form" class="neu-search-input-wrap">
+          <span class="neu-search-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
+          <input
+            type="search"
+            id="global-search-input"
+            class="neu-search-input"
+            placeholder="Search cases, FIR number, suspects, locations…"
+            aria-label="Search cases, FIR number, suspects, locations"
+            autocomplete="off"
+          />
+        </form>
+      </div>
 
-      <main class="app-main" role="main" aria-label="Case Management">
+      <!-- Controls -->
+      <div class="neu-topbar-right">
+        
+        <!-- Notifications -->
+        <button class="neu-icon-btn" id="btn-notifications" aria-label="Notifications" title="System Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="neu-notif-badge">0</span>
+        </button>
 
-        <!-- Cases Workspace -->
-        <div class="cases-workspace">
+        <!-- Settings -->
+        <a href="/frontend/pages/reports.html" class="neu-icon-btn" id="btn-settings" aria-label="System Settings" title="Reports &amp; Administration">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </a>
 
-          <!-- Top Bar -->
-          <div class="cases-topbar">
-            <div class="cases-topbar-left">
-              <div class="page-header-info">
-                <h1 class="page-title">Cases</h1>
-                <p class="page-subtitle">Manage and track all investigation cases</p>
-              </div>
+        <!-- Officer Profile Pill -->
+        <div class="neu-officer-pill" id="officer-profile-pill" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" aria-label="Officer Profile Menu">
+          <div class="neu-officer-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="neu-officer-details">
+            <span class="neu-officer-name" id="officer-display-name">Loading…</span>
+            <span class="neu-officer-dept" id="officer-display-dept">Authorized Session</span>
+          </div>
+          <span class="neu-chevron" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+
+          <!-- Dropdown Popover -->
+          <div class="neu-profile-dropdown" id="profile-dropdown" role="menu">
+            <div class="neu-dropdown-user-info">
+              <span id="profile-full-name" style="font-weight:700;color:var(--neu-navy)"></span>
+              <span id="profile-badge-num" class="neu-dropdown-badge-num"></span>
+              <span id="profile-role-tag" class="neu-dropdown-role"></span>
+              <span id="profile-jurisdiction" style="font-size:10.5px;color:var(--neu-secondary);margin-top:2px"></span>
             </div>
-            <div class="cases-topbar-right">
-              <button class="btn btn-primary" id="btn-new-case" aria-label="Register new investigation case">
-                + New Case
-              </button>
+            <button id="btn-officer-logout" class="neu-dropdown-logout-btn" role="menuitem">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Sign Out &amp; End Session</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BODY: SIDEBAR + CASES WORKSPACE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="neu-body-wrapper">
+      
+      <!-- Left Sidebar Navigation -->
+      <aside class="neu-sidebar" aria-label="Investigation Navigation">
+        
+        <!-- Navigation Links -->
+        <nav class="neu-sidebar-nav neu-nav-group" aria-label="Platform Modules">
+          <!-- 1: Dashboard -->
+          <a href="/frontend/pages/dashboard.html" class="neu-nav-item" id="nav-dashboard">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7"></rect>
+      <rect x="14" y="3" width="7" height="7"></rect>
+      <rect x="14" y="14" width="7" height="7"></rect>
+      <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+            </span>
+            <span>Dashboard</span>
+          </a>
+
+          <!-- 2: Cases (Active) -->
+          <a href="/frontend/pages/cases.html" class="neu-nav-item active" id="nav-cases" aria-current="page">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+    </svg>
+            </span>
+            <span>Cases</span>
+          </a>
+
+          <!-- 3: Evidence -->
+          <a href="/frontend/pages/evidence.html" class="neu-nav-item" id="nav-evidence">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+            </span>
+            <span>Evidence</span>
+          </a>
+
+          <!-- 4: Reports -->
+          <a href="/frontend/pages/reports.html" class="neu-nav-item" id="nav-reports">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="12" y1="18" x2="12" y2="12"></line>
+      <line x1="9" y1="15" x2="15" y2="15"></line>
+    </svg>
+            </span>
+            <span>Reports</span>
+          </a>
+
+          <!-- 5: Intelligence -->
+          <a href="/frontend/pages/graph.html" class="neu-nav-item" id="nav-graph">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+            </span>
+            <span>Intelligence</span>
+          </a>
+
+          <!-- 6: Entities -->
+          <a href="/frontend/pages/entities.html" class="neu-nav-item" id="nav-entities">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+            </span>
+            <span>Entities</span>
+          </a>
+
+          <!-- 7: Timeline -->
+          <a href="/frontend/pages/timeline.html" class="neu-nav-item" id="nav-timeline">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+            </span>
+            <span>Timeline</span>
+          </a>
+
+          <!-- 8: Cross-Department -->
+          <a href="/frontend/pages/cross-dept.html" class="neu-nav-item" id="nav-cross-dept">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"></path>
+      <path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"></path>
+      <circle cx="8" cy="12" r="2"></circle>
+    </svg>
+            </span>
+            <span>Cross-Department</span>
+          </a>
+
+          <!-- 9: Administration -->
+          <a href="/frontend/pages/admin.html" class="neu-nav-item" id="nav-admin">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+            </span>
+            <span>Administration</span>
+          </a>
+
+          <!-- 10: Audit Logs -->
+          <a href="/frontend/pages/audit.html" class="neu-nav-item" id="nav-audit">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <path d="M16 13H8"></path>
+      <path d="M16 17H8"></path>
+      <path d="M10 9H8"></path>
+    </svg>
+            </span>
+            <span>Audit Logs</span>
+          </a>
+        </nav>
+
+        <!-- Department Card -->
+        <div class="neu-dept-card" role="status">
+          <div class="neu-dept-badge-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <div class="neu-dept-info">
+            <span class="neu-dept-title" id="sidebar-dept-title">Cyber Crime Unit</span>
+            <span class="neu-dept-sub" id="sidebar-dept-sub">Delhi Police</span>
+            <div class="neu-dept-status">
+              <span class="neu-pulse-dot" aria-hidden="true"></span>
+              <span>Connected</span>
             </div>
           </div>
+        </div>
 
-          <!-- Filter Bar -->
-          <div class="cases-filter-bar">
-            <!-- Search -->
-            <div class="cases-search-wrap">
-              <span class="cases-search-icon" aria-hidden="true">🔍</span>
+      </aside>
+
+      <!-- ══════════════════════════════════════════════════════════
+           MAIN CASES WORKSPACE (TWO COLUMNS)
+           ══════════════════════════════════════════════════════════ -->
+      <main class="neu-cases-workspace" role="main" aria-label="Cases Management and Details Workspace">
+        
+        <!-- ─── Center Section: Cases List & Table ─── -->
+        <section class="neu-cases-main" aria-label="Cases List">
+          
+          <!-- Header -->
+          <div class="neu-cases-header-row">
+            <div class="neu-cases-title-wrap">
+              <h1 class="neu-cases-page-title">Cases</h1>
+              <p class="neu-cases-page-sub">Manage and track all investigation cases</p>
+            </div>
+            <button class="neu-btn-primary-action" id="btn-new-case" aria-label="Create New Investigation Case">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Create New Case</span>
+            </button>
+          </div>
+
+          <!-- Filter & Search Bar -->
+          <div class="neu-cases-filter-bar" role="search" aria-label="Filter Cases">
+            
+            <!-- Keyword Search -->
+            <div class="neu-table-search-wrap">
+              <span class="neu-table-search-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </span>
               <input
                 type="search"
                 id="cases-search"
-                class="input input-sm cases-search"
-                placeholder="Search by case ID, title, FIR, jurisdiction…"
-                aria-label="Search cases"
+                class="neu-table-search-input"
+                placeholder="Search by case number, title, or keyword…"
+                aria-label="Search cases by number or keyword"
                 autocomplete="off"
               />
             </div>
 
-            <!-- Status Filter -->
-            <select id="filter-status" class="input input-sm cases-filter-select" aria-label="Filter by status">
-              <option value="">All Status</option>
-              <option value="OPEN">Open</option>
-              <option value="UNDER_INQUIRY">Under Inquiry</option>
-              <option value="CHARGESHEETED">Chargesheeted</option>
-              <option value="CLOSED">Closed</option>
-            </select>
+            <!-- Status Dropdown -->
+            <div class="neu-filter-select-wrap">
+              <span class="neu-filter-select-label">Status</span>
+              <select id="filter-status" class="neu-filter-select" aria-label="Filter cases by status">
+                <option value="">All</option>
+                <option value="OPEN">Open</option>
+                <option value="UNDER_INQUIRY">Under Inquiry</option>
+                <option value="CHARGESHEETED">Chargesheeted</option>
+                <option value="CLOSED">Closed</option>
+              </select>
+            </div>
 
-            <!-- Type Filter -->
-            <select id="filter-type" class="input input-sm cases-filter-select" aria-label="Filter by incident type">
-              <option value="">All Types</option>
+            <!-- Category Dropdown -->
+            <div class="neu-filter-select-wrap">
+              <span class="neu-filter-select-label">Category</span>
+              <select id="filter-type" class="neu-filter-select" aria-label="Filter cases by incident type">
+                <option value="">All</option>
+                <option value="Task_Scam">Task Scam</option>
+                <option value="Digital_Arrest">Digital Arrest</option>
+                <option value="Investment_Fraud">Investment Fraud</option>
+                <option value="KYC_Freeze">KYC Freeze</option>
+                <option value="Romance_Scam">Romance Scam</option>
+              </select>
+            </div>
+
+            <!-- Date Range Dropdown -->
+            <div class="neu-filter-select-wrap">
+              <span class="neu-filter-select-label">Date Range</span>
+              <select id="filter-date-range" class="neu-filter-select" aria-label="Filter cases by date range">
+                <option value="all">All Time</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="7">Last 7 Days</option>
+                <option value="90">Last 90 Days</option>
+              </select>
+            </div>
+
+            <!-- Reset Filters -->
+            <button class="neu-btn-filter-icon" id="btn-reset-filters" aria-label="Reset all filters" title="Reset all search filters">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+              </svg>
+              <span>Reset</span>
+            </button>
+
+          </div>
+
+          <!-- Table Card -->
+          <div class="neu-cases-table-card">
+            <div class="neu-table-scroll">
+              <table class="neu-cases-table" aria-label="Investigation Cases Table">
+                <thead>
+                  <tr>
+                    <th style="width:40px;text-align:center">
+                      <input type="checkbox" id="select-all-cases" class="neu-row-checkbox" aria-label="Select all cases" />
+                    </th>
+                    <th class="sortable" id="th-sort-caseNumber">
+                      Case Number <span class="neu-th-sort-icon">↕</span>
+                    </th>
+                    <th class="sortable" id="th-sort-title">
+                      Title <span class="neu-th-sort-icon">↕</span>
+                    </th>
+                    <th class="sortable" id="th-sort-type">
+                      Category <span class="neu-th-sort-icon">↕</span>
+                    </th>
+                    <th class="sortable" id="th-sort-status">
+                      Status <span class="neu-th-sort-icon">↕</span>
+                    </th>
+                    <th class="sortable" id="th-sort-updatedAt">
+                      Last Updated <span class="neu-th-sort-icon">↕</span>
+                    </th>
+                    <th style="width:40px"></th>
+                  </tr>
+                </thead>
+                <tbody id="cases-table-body">
+                  <tr>
+                    <td colspan="7">
+                      <div class="neu-empty-row">
+                        <span class="neu-spinner"></span>
+                        <span>Loading investigation cases…</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="neu-table-footer">
+              <span id="cases-count-label">Showing 0 cases</span>
+              <div class="neu-pagination-wrap" id="cases-pagination" role="navigation" aria-label="Cases Pagination">
+                <!-- Injected dynamically -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ─── Right Section: Selected Case Details Panel ─── -->
+        <aside class="neu-cases-detail-panel" id="selected-case-panel" aria-label="Selected Case Details">
+          
+          <!-- Header Card -->
+          <div class="neu-detail-header-card">
+            <div class="neu-detail-folder-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+              </svg>
+            </div>
+            <div class="neu-detail-header-meta">
+              <div class="neu-detail-num-row">
+                <span class="neu-detail-case-num" id="d-case-num">—</span>
+                <span class="neu-status-pill active" id="d-status-pill">Active</span>
+              </div>
+              <span class="neu-detail-title" id="d-case-title">Select an Investigation</span>
+              <span class="neu-detail-desc" id="d-case-desc">Select a case from the table to view details.</span>
+            </div>
+            <button class="neu-detail-more-btn" id="btn-case-options" aria-label="Case Options Menu" title="Case Options">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Tab Navigation -->
+          <nav class="neu-detail-nav-tabs" role="tablist">
+            <button class="neu-detail-tab active" role="tab" id="tab-overview" aria-selected="true">Overview</button>
+            <button class="neu-detail-tab" role="tab" id="tab-evidence" aria-selected="false">Evidence</button>
+            <button class="neu-detail-tab" role="tab" id="tab-persons" aria-selected="false">Persons</button>
+            <button class="neu-detail-tab" role="tab" id="tab-timeline" aria-selected="false">Timeline</button>
+            <button class="neu-detail-tab" role="tab" id="tab-reports" aria-selected="false">Reports</button>
+          </nav>
+
+          <!-- Tab Content: Overview -->
+          <div id="tab-content-overview" class="neu-tab-pane" style="display:flex;flex-direction:column;gap:20px;">
+            
+            <!-- Case Information -->
+            <div class="neu-info-card-wrap">
+              <div class="neu-info-card-header">
+                <h2 class="neu-section-heading">Case Information</h2>
+                <button class="neu-btn-edit-action" id="btn-edit-case">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                  <span>Edit</span>
+                </button>
+              </div>
+
+              <div class="neu-info-grid">
+                <div class="neu-info-cell">
+                  <span class="neu-cell-label">Case Number</span>
+                  <span class="neu-cell-value" id="cell-case-num">—</span>
+                </div>
+                <div class="neu-info-cell">
+                  <span class="neu-cell-label">Status</span>
+                  <div><span class="neu-status-pill active" id="cell-status">—</span></div>
+                </div>
+                <div class="neu-info-cell">
+                  <span class="neu-cell-label">Category</span>
+                  <span class="neu-cell-value" id="cell-category">—</span>
+                </div>
+                <div class="neu-info-cell">
+                  <span class="neu-cell-label">Priority</span>
+                  <div><span class="neu-priority-badge neu-priority-high" id="cell-priority">High</span></div>
+                </div>
+                <div class="neu-info-cell">
+                  <span class="neu-cell-label">Registered On</span>
+                  <span class="neu-cell-value" id="cell-registered">—</span>
+                </div>
+                <div class="neu-info-cell">
+                  <span class="neu-cell-label">Last Updated</span>
+                  <span class="neu-cell-value" id="cell-updated">—</span>
+                </div>
+                <div class="neu-info-cell">
+                  <span class="neu-cell-label">Investigating Officer</span>
+                  <span class="neu-cell-value" id="cell-officer">—</span>
+                </div>
+                <div class="neu-info-cell">
+                  <span class="neu-cell-label">Department</span>
+                  <span class="neu-cell-value" id="cell-department">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Case Summary -->
+            <div class="neu-summary-card">
+              <h2 class="neu-section-heading">Case Summary</h2>
+              <p class="neu-summary-text" id="summary-text">
+                Select an investigation case to view its verified summary, modus operandi, and financial losses.
+              </p>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="neu-activity-card">
+              <div class="neu-activity-header">
+                <h2 class="neu-section-heading">Recent Activity</h2>
+                <a href="#" class="neu-view-all-link" id="link-view-timeline">View All &rarr;</a>
+              </div>
+              <div class="neu-activity-list" id="activity-list">
+                <div style="font-size:11.5px;color:var(--neu-secondary);padding:6px 0;">
+                  No recent activities recorded for this case.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </aside>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL: REGISTER NEW CASE
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="new-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="new-modal-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h2 class="neu-modal-title" id="new-modal-title">Register New Case</h2>
+        <button class="neu-modal-close-btn" id="modal-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="new-case-form" novalidate>
+        <div class="neu-form-grid">
+          
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="f-complainant">Complainant Name <span class="required">*</span></label>
+            <input type="text" id="f-complainant" class="neu-form-input" placeholder="Full name of complainant" required />
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="f-type">Incident Type / Category <span class="required">*</span></label>
+            <select id="f-type" class="neu-form-select" required>
+              <option value="">Select category…</option>
               <option value="Task_Scam">Task Scam</option>
               <option value="Digital_Arrest">Digital Arrest</option>
               <option value="Investment_Fraud">Investment Fraud</option>
               <option value="KYC_Freeze">KYC Freeze</option>
               <option value="Romance_Scam">Romance Scam</option>
             </select>
+          </div>
 
-            <!-- Sort -->
-            <select id="filter-sort" class="input input-sm cases-filter-select" aria-label="Sort by">
-              <option value="createdAt">Date Registered</option>
-              <option value="updatedAt">Last Updated</option>
-              <option value="caseNumber">Case Number</option>
-              <option value="status">Status</option>
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="f-jurisdiction">Jurisdiction / Police Unit</label>
+            <input type="text" id="f-jurisdiction" class="neu-form-input" placeholder="e.g. Cyber Crime Branch — Delhi" />
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="f-fir">FIR / Reference Number</label>
+            <input type="text" id="f-fir" class="neu-form-input" placeholder="e.g. FIR/2026/CCB/0142" />
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="f-officer">Assigned Officer</label>
+            <input type="text" id="f-officer" class="neu-form-input" placeholder="e.g. Inspector Sharma" />
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="f-amount">Amount Defrauded (₹)</label>
+            <input type="number" id="f-amount" class="neu-form-input" placeholder="0" min="0" />
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="f-status">Initial Status</label>
+            <select id="f-status" class="neu-form-select">
+              <option value="OPEN">Open</option>
+              <option value="UNDER_INQUIRY">Under Inquiry</option>
             </select>
-
-            <!-- Reset -->
-            <button class="btn btn-ghost btn-sm" id="btn-reset-filters" aria-label="Reset all filters">
-              ✕ Reset
-            </button>
-
-            <!-- Count -->
-            <span class="cases-count-label" id="cases-count-label" aria-live="polite"></span>
-          </div>
-
-          <!-- Cases Table -->
-          <div class="cases-table-container">
-            <div class="cases-table-body" id="cases-table-body">
-              <div class="loading-row" style="padding:48px">
-                <span class="spinner" aria-hidden="true"></span>
-                <span>Loading cases…</span>
-              </div>
-            </div>
-
-            <!-- Pagination -->
-            <div class="cases-pagination" id="cases-pagination" aria-label="Pagination"></div>
           </div>
 
         </div>
 
-        <!-- New Case Modal -->
-        <div class="modal-backdrop" id="new-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-          <div class="modal" style="max-width:680px">
-            <div class="modal-header">
-              <span class="modal-title" id="modal-title">Register New Case</span>
-              <button class="btn btn-ghost btn-icon" id="modal-close" aria-label="Close dialog">✕</button>
-            </div>
-            <div class="modal-body">
-              <form id="new-case-form" novalidate>
-                <div class="form-grid-2">
-                  <!-- Complainant Name -->
-                  <div class="form-field">
-                    <label class="form-label" for="f-complainant">Complainant Name <span class="required">*</span></label>
-                    <input type="text" id="f-complainant" class="input" placeholder="Full name of complainant" autocomplete="off" maxlength="100" required />
-                    <span class="field-error" id="err-complainant"></span>
-                  </div>
-
-                  <!-- Incident Type -->
-                  <div class="form-field">
-                    <label class="form-label" for="f-type">Incident Type <span class="required">*</span></label>
-                    <select id="f-type" class="input" required>
-                      <option value="">Select type…</option>
-                      <option value="Task_Scam">Task Scam</option>
-                      <option value="Digital_Arrest">Digital Arrest</option>
-                      <option value="Investment_Fraud">Investment Fraud</option>
-                      <option value="KYC_Freeze">KYC Freeze</option>
-                      <option value="Romance_Scam">Romance Scam</option>
-                    </select>
-                    <span class="field-error" id="err-type"></span>
-                  </div>
-
-                  <!-- Jurisdiction -->
-                  <div class="form-field">
-                    <label class="form-label" for="f-jurisdiction">Jurisdiction / Police Unit</label>
-                    <input type="text" id="f-jurisdiction" class="input" placeholder="e.g. Cyber Crime Branch — Chandigarh" maxlength="150" />
-                    <span class="field-error" id="err-jurisdiction"></span>
-                  </div>
-
-                  <!-- FIR Number -->
-                  <div class="form-field">
-                    <label class="form-label" for="f-fir">FIR / Reference Number</label>
-                    <input type="text" id="f-fir" class="input" placeholder="e.g. FIR/2026/CCB/0142" maxlength="80" />
-                    <span class="field-error" id="err-fir"></span>
-                  </div>
-
-                  <!-- Officer Name -->
-                  <div class="form-field">
-                    <label class="form-label" for="f-officer">Assigned Officer Name</label>
-                    <input type="text" id="f-officer" class="input" placeholder="e.g. SI Ramesh Kumar" maxlength="100" />
-                    <span class="field-error" id="err-officer"></span>
-                  </div>
-
-                  <!-- Officer Badge -->
-                  <div class="form-field">
-                    <label class="form-label" for="f-badge">Officer Badge / Service No.</label>
-                    <input type="text" id="f-badge" class="input" placeholder="e.g. CCB-1147" maxlength="50" />
-                    <span class="field-error" id="err-badge"></span>
-                  </div>
-
-                  <!-- Amount Defrauded -->
-                  <div class="form-field">
-                    <label class="form-label" for="f-amount">Amount Defrauded (₹)</label>
-                    <input type="number" id="f-amount" class="input" placeholder="0" min="0" max="999999999" />
-                    <span class="field-error" id="err-amount"></span>
-                  </div>
-
-                  <!-- Status -->
-                  <div class="form-field">
-                    <label class="form-label" for="f-status">Initial Status</label>
-                    <select id="f-status" class="input">
-                      <option value="OPEN">Open</option>
-                      <option value="UNDER_INQUIRY">Under Inquiry</option>
-                    </select>
-                    <span class="field-error" id="err-status"></span>
-                  </div>
-                </div>
-
-                <!-- Description -->
-                <div class="form-field" style="margin-top:12px">
-                  <label class="form-label" for="f-description">Case Description</label>
-                  <textarea id="f-description" class="input" rows="3" placeholder="Brief description of the incident, modus operandi, and key observations…" maxlength="2000" style="resize:vertical;min-height:72px"></textarea>
-                  <span class="field-error" id="err-description"></span>
-                </div>
-
-                <!-- Server Error -->
-                <div class="form-server-error" id="form-server-error" style="display:none"></div>
-              </form>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
-              <button class="btn btn-primary" id="modal-submit" type="button">
-                Register Case
-              </button>
-            </div>
-          </div>
+        <div class="neu-form-group" style="margin-top:16px">
+          <label class="neu-form-label" for="f-description">Case Summary &amp; Modus Operandi</label>
+          <textarea id="f-description" class="neu-form-textarea" rows="3" placeholder="Brief description of the incident and preliminary findings…"></textarea>
         </div>
 
-        <!-- Edit Case Modal -->
-        <div class="modal-backdrop" id="edit-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
-          <div class="modal" style="max-width:680px">
-            <div class="modal-header">
-              <span class="modal-title" id="edit-modal-title">Edit Case</span>
-              <button class="btn btn-ghost btn-icon" id="edit-modal-close" aria-label="Close dialog">✕</button>
-            </div>
-            <div class="modal-body" id="edit-modal-body">
-              <div class="loading-row"><span class="spinner"></span> Loading…</div>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-ghost" id="edit-modal-cancel">Cancel</button>
-              <button class="btn btn-primary" id="edit-modal-submit" type="button">Save Changes</button>
-            </div>
+        <div id="modal-error-msg" style="color:var(--neu-error);font-size:12px;margin-top:10px;display:none"></div>
+
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn-secondary" id="modal-cancel">Cancel</button>
+          <button type="submit" class="neu-btn-primary-action" id="modal-submit-btn">
+            <span>Register Case</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL: EDIT CASE
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="edit-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h2 class="neu-modal-title" id="edit-modal-title">Edit Case Information</h2>
+        <button class="neu-modal-close-btn" id="edit-modal-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="edit-case-form" novalidate>
+        <div class="neu-form-grid">
+          
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="ef-status">Case Status</label>
+            <select id="ef-status" class="neu-form-select">
+              <option value="OPEN">Open</option>
+              <option value="UNDER_INQUIRY">Under Inquiry</option>
+              <option value="CHARGESHEETED">Chargesheeted</option>
+              <option value="CLOSED">Closed</option>
+            </select>
           </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="ef-type">Incident Type / Category</label>
+            <select id="ef-type" class="neu-form-select">
+              <option value="Task_Scam">Task Scam</option>
+              <option value="Digital_Arrest">Digital Arrest</option>
+              <option value="Investment_Fraud">Investment Fraud</option>
+              <option value="KYC_Freeze">KYC Freeze</option>
+              <option value="Romance_Scam">Romance Scam</option>
+            </select>
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="ef-officer">Assigned Officer</label>
+            <input type="text" id="ef-officer" class="neu-form-input" />
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="ef-amount">Amount Defrauded (₹)</label>
+            <input type="number" id="ef-amount" class="neu-form-input" min="0" />
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="ef-fir">FIR Number</label>
+            <input type="text" id="ef-fir" class="neu-form-input" />
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="ef-jurisdiction">Jurisdiction</label>
+            <input type="text" id="ef-jurisdiction" class="neu-form-input" />
+          </div>
+
         </div>
 
-      </main>
+        <div class="neu-form-group" style="margin-top:16px">
+          <label class="neu-form-label" for="ef-description">Case Description</label>
+          <textarea id="ef-description" class="neu-form-textarea" rows="3"></textarea>
+        </div>
+
+        <div id="edit-error-msg" style="color:var(--neu-error);font-size:12px;margin-top:10px;display:none"></div>
+
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn-secondary" id="edit-modal-cancel">Cancel</button>
+          <button type="submit" class="neu-btn-primary-action" id="edit-modal-submit-btn">
+            <span>Save Changes</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

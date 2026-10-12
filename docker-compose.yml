@@ -1,0 +1,104 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.yml — Rakshak v3.0 Production Staging Stack
+# Closed network perimeter, internal PostgreSQL 16, persistent cold storage
+# ─────────────────────────────────────────────────────────────────────────────
+version: "3.8"
+
+services:
+  rakshak-postgres:
+    image: postgres:16-alpine
+    container_name: rakshak-db-staging
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rakshak_staging
+      POSTGRES_USER: rakshak_app_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./deploy/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - rakshak-internal
+    # Database is strictly accessible only on the internal container network
+    # Never expose port 5432 to host or public interfaces
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rakshak_app_user -d rakshak_staging"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    secrets:
+      - db_password
+
+  rakshak-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rakshak-core-app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      APP_ORIGIN: https://rakshak.law-enforcement.internal
+      DATABASE_URL: postgresql://rakshak_app_user:${DB_PASSWORD_RAW}@rakshak-postgres:5432/rakshak_staging?schema=public&sslmode=prefer
+      STRICT_AUTH: "true"
+      SESSION_TTL_HOURS: 12
+      EVIDENCE_STORAGE_PATH: /app/uploads/raw
+      MAX_UPLOAD_SIZE_MB: 100
+      TRUST_PROXY: "true"
+    volumes:
+      - evidence-cold-storage:/app/uploads/raw
+      - backup-storage:/app/backups
+    networks:
+      - rakshak-internal
+    expose:
+      - "3000"
+    depends_on:
+      rakshak-postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  rakshak-proxy:
+    image: nginx:1.27-alpine
+    container_name: rakshak-reverse-proxy
+    restart: unless-stopped
+    ports:
+      # Bound to loopback interface for local evaluation; in prod bind to authorized VPN interface
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/nginx/rakshak.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./deploy/nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - rakshak-internal
+    depends_on:
+      - rakshak-app
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/api/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+networks:
+  rakshak-internal:
+    driver: bridge
+    internal: false # allows outbound for updates if needed; containers communicate internally
+
+volumes:
+  postgres-data:
+    name: rakshak-postgres-data
+  evidence-cold-storage:
+    name: rakshak-evidence-cold-storage
+  backup-storage:
+    name: rakshak-backup-storage
+
+secrets:
+  db_password:
+    file: ./deploy/secrets/db_password.txt

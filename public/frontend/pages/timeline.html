@@ -3,324 +3,956 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Rakshak — Forensic Timeline & Communication Intelligence. Chronological event reconstruction and multi-modal evidence analysis." />
-  <title>Forensic Timeline & Comm Intel — Rakshak v3.0</title>
-  <link rel="stylesheet" href="../css/global.css" />
-  <link rel="stylesheet" href="../css/components.css" />
-  <link rel="stylesheet" href="../css/pages.css" />
+  <meta name="description" content="Rakshak v3.0 — Investigation Timeline & Event Details. Chronological view of key events, evidence, and activities across cases." />
+  <title>Investigation Timeline — Rakshak v3.0</title>
+
+  <!-- Google Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Isolated Page 08 Neumorphic Stylesheet -->
+  <link rel="stylesheet" href="../css/timeline-neumorphic.css" />
 </head>
-<body>
+<body class="neu-timeline-body">
+
   <!-- Toast Notification Container -->
-  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <div id="toast-container" class="neu-toast-container" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- Mobile Sidebar Overlay -->
-  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <div class="neu-shell">
+    
+    <!-- ══════════════════════════════════════════════════════════
+         TOPBAR NAVIGATION
+         ══════════════════════════════════════════════════════════ -->
+    <header class="neu-topbar" role="banner" aria-label="Rakshak Platform Header">
+      
+      <!-- Brand Logo & Platform Title -->
+      <a href="/frontend/pages/dashboard.html" class="neu-topbar-brand" aria-label="Rakshak Forensic Platform Home">
+        <div class="neu-topbar-shield" aria-hidden="true">
+          <svg viewBox="0 0 44 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3988F5"/>
+                <stop offset="100%" stop-color="#1E66CF"/>
+              </linearGradient>
+            </defs>
+            <path d="M22 2L4 9.5V23C4 34.5 11.5 44 22 47C32.5 44 40 34.5 40 23V9.5L22 2Z" fill="url(#shieldGrad)"/>
+            <path d="M22 6L7.5 12V23C7.5 32.5 13.8 40.5 22 43.2C30.2 40.5 36.5 32.5 36.5 23V12L22 6Z" fill="#F5F8FC" fill-opacity="0.22"/>
+            <rect x="14" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="20.5" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="27" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <path d="M12 17H32V15L22 11L12 15V17Z" fill="#FFFFFF"/>
+            <rect x="11" y="33" width="22" height="3" rx="1.5" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="neu-topbar-brand-text">
+          <span class="neu-topbar-title">RAKSHAK <span class="neu-topbar-version">v3.0</span></span>
+          <span class="neu-topbar-subtitle">Digital Forensics Platform</span>
+        </div>
+      </a>
 
-  <div class="app-shell">
-    <!-- Header (Injected by layout.js) -->
-    <header class="app-header" role="banner" aria-label="Rakshak application header"></header>
+      <!-- Global Search Field -->
+      <div class="neu-topbar-search-wrap" role="search">
+        <span class="neu-topbar-search-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input 
+          type="text" 
+          id="global-search-input" 
+          class="neu-topbar-search-input" 
+          placeholder="Search cases, evidence, entities, events..." 
+          aria-label="Search cases, evidence, entities, events"
+        />
+      </div>
 
-    <div class="app-body">
-      <!-- Sidebar Navigation (Injected by layout.js) -->
-      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation"></aside>
+      <!-- Action Icons & Authenticated Officer Pill -->
+      <div class="neu-topbar-actions">
+        <!-- Notifications Bell -->
+        <button class="neu-topbar-icon-btn" id="btn-notifications" aria-label="Notifications, 5 unread">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="neu-badge-count" id="notif-count">5</span>
+        </button>
 
-      <!-- Main Workspace -->
-      <main class="app-main timeline-main-workspace" role="main" aria-label="Forensic Timeline & Communication Intelligence">
+        <!-- Settings Cog -->
+        <button class="neu-topbar-icon-btn" id="btn-settings" aria-label="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
 
-        <!-- Top Metrics Ribbon -->
-        <div class="tl-metrics-strip" id="tl-metrics-strip">
-          <div class="tl-metric-card" id="card-total-events">
-            <div class="tl-metric-content">
-              <div class="tl-metric-val" id="metric-total-events">10</div>
-              <div class="tl-metric-label">Total Events</div>
-            </div>
-            <div class="tl-metric-icon">📈</div>
+        <!-- Officer Profile Pill -->
+        <div class="neu-profile-pill" id="officer-profile-pill" role="button" tabindex="0" aria-label="Officer Profile menu">
+          <div class="neu-profile-avatar" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
           </div>
-          <div class="tl-metric-card" id="card-mo-phases">
-            <div class="tl-metric-content">
-              <div class="tl-metric-val" id="metric-mo-phases">4</div>
-              <div class="tl-metric-label">Modus Operandi Phases</div>
-            </div>
-            <div class="tl-metric-icon">👥</div>
+          <div class="neu-profile-info">
+            <span class="neu-profile-name" id="officer-name">Inspector Rajesh Kumar</span>
+            <span class="neu-profile-role" id="officer-dept">Cyber Crime Department</span>
           </div>
-          <div class="tl-metric-card" id="card-evidence-sources">
-            <div class="tl-metric-content">
-              <div class="tl-metric-val" id="metric-evidence-sources">4</div>
-              <div class="tl-metric-label">Evidence Sources</div>
+          <span class="neu-profile-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BODY LAYOUT: SIDEBAR + MAIN WORKSPACE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="neu-body-layout">
+      
+      <!-- PERSISTENT SIDEBAR NAVIGATION -->
+      <aside class="neu-sidebar" role="navigation" aria-label="Primary Navigation">
+        <nav class="neu-sidebar-nav neu-nav-group" aria-label="Platform Modules">
+          <!-- 1: Dashboard -->
+          <a href="/frontend/pages/dashboard.html" class="neu-nav-item" id="nav-dashboard">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7"></rect>
+      <rect x="14" y="3" width="7" height="7"></rect>
+      <rect x="14" y="14" width="7" height="7"></rect>
+      <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+            </span>
+            <span>Dashboard</span>
+          </a>
+
+          <!-- 2: Cases -->
+          <a href="/frontend/pages/cases.html" class="neu-nav-item" id="nav-cases">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+    </svg>
+            </span>
+            <span>Cases</span>
+          </a>
+
+          <!-- 3: Evidence -->
+          <a href="/frontend/pages/evidence.html" class="neu-nav-item" id="nav-evidence">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+            </span>
+            <span>Evidence</span>
+          </a>
+
+          <!-- 4: Reports -->
+          <a href="/frontend/pages/reports.html" class="neu-nav-item" id="nav-reports">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="12" y1="18" x2="12" y2="12"></line>
+      <line x1="9" y1="15" x2="15" y2="15"></line>
+    </svg>
+            </span>
+            <span>Reports</span>
+          </a>
+
+          <!-- 5: Intelligence -->
+          <a href="/frontend/pages/graph.html" class="neu-nav-item" id="nav-graph">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+            </span>
+            <span>Intelligence</span>
+          </a>
+
+          <!-- 6: Entities -->
+          <a href="/frontend/pages/entities.html" class="neu-nav-item" id="nav-entities">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+            </span>
+            <span>Entities</span>
+          </a>
+
+          <!-- 7: Timeline (Active) -->
+          <a href="/frontend/pages/timeline.html" class="neu-nav-item active" id="nav-timeline" aria-current="page">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+            </span>
+            <span>Timeline</span>
+          </a>
+
+          <!-- 8: Cross-Department -->
+          <a href="/frontend/pages/cross-dept.html" class="neu-nav-item" id="nav-cross-dept">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"></path>
+      <path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"></path>
+      <circle cx="8" cy="12" r="2"></circle>
+    </svg>
+            </span>
+            <span>Cross-Department</span>
+          </a>
+
+          <!-- 9: Administration -->
+          <a href="/frontend/pages/admin.html" class="neu-nav-item" id="nav-admin">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+            </span>
+            <span>Administration</span>
+          </a>
+
+          <!-- 10: Audit Logs -->
+          <a href="/frontend/pages/audit.html" class="neu-nav-item" id="nav-audit">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <path d="M16 13H8"></path>
+      <path d="M16 17H8"></path>
+      <path d="M10 9H8"></path>
+    </svg>
+            </span>
+            <span>Audit Logs</span>
+          </a>
+        </nav>
+
+        <!-- Sidebar Footer: Cyber Crime Department Badge -->
+        <div class="neu-sidebar-footer">
+          <div class="neu-dept-badge">
+            <div class="neu-dept-emblem" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="M16 2L4 7V15C4 22.5 9 28.5 16 30.5C23 28.5 28 22.5 28 15V7L16 2Z" fill="#3988F5" fill-opacity="0.15" stroke="#3988F5" stroke-width="1.8"/>
+                <path d="M16 8L8 12V16C8 20.5 11.5 24.5 16 26C20.5 24.5 24 20.5 24 16V12L16 8Z" fill="#3988F5"/>
+              </svg>
             </div>
-            <div class="tl-metric-icon">🗄️</div>
+            <div class="neu-dept-text">
+              <span class="neu-dept-title">Cyber Crime Department</span>
+              <span class="neu-dept-sub">Government of India</span>
+            </div>
           </div>
-          <div class="tl-metric-card" id="card-linked-cases">
-            <div class="tl-metric-content">
-              <div class="tl-metric-val" id="metric-linked-cases">5</div>
-              <div class="tl-metric-label">Linked Cases</div>
-            </div>
-            <div class="tl-metric-icon">🔗</div>
+        </div>
+      </aside>
+
+      <!-- ══════════════════════════════════════════════════════════
+           MAIN WORKSPACE CONTENT
+           ══════════════════════════════════════════════════════════ -->
+      <main class="neu-main-content" role="main" aria-label="Investigation Timeline Workspace">
+        
+        <!-- PAGE HEADER & PRIMARY ACTIONS -->
+        <div class="neu-page-header">
+          <div class="neu-page-heading-group">
+            <h1 class="neu-page-title">Investigation Timeline</h1>
+            <p class="neu-page-subtitle">Chronological view of key events, evidence, and activities across cases</p>
           </div>
-          <div class="tl-metric-card active-investigation-card" id="card-active-investigation">
-            <div class="tl-metric-content">
-              <div class="tl-metric-val" id="metric-active-investigation">1</div>
-              <div class="tl-metric-label">Active Investigation</div>
-            </div>
-            <div class="tl-metric-icon">🎯</div>
+
+          <div class="neu-page-header-actions">
+            <!-- Date Range Selector -->
+            <button class="neu-date-range-picker-btn" id="btn-date-range" aria-label="Filter Date Range: 01 Jan 2024 to 31 Dec 2024">
+              <span>📅</span>
+              <span id="label-date-range">01 Jan 2024 - 31 Dec 2024</span>
+              <span>▾</span>
+            </button>
+
+            <!-- Add Timeline Event -->
+            <button class="neu-btn-primary" id="btn-add-event" aria-label="Add New Timeline Event">
+              <span>+</span>
+              <span>Add Timeline Event</span>
+            </button>
+
+            <!-- Contextual Menu -->
+            <button class="neu-btn-icon-neu" id="btn-context-menu" aria-label="More Options">
+              <span>⋮</span>
+            </button>
           </div>
         </div>
 
-        <!-- Section 1: Investigation Timeline Card -->
-        <div class="tl-section-card tl-inv-timeline-card">
-          <div class="tl-card-header flex-between flex-wrap gap-3">
-            <div>
-              <h2 class="tl-card-title">1. Investigation Timeline</h2>
-              <p class="tl-card-subtitle">Chronological view of all events extracted from evidence with modus operandi phase mapping.</p>
+        <!-- ══════════════════════════════════════════════════════════
+             5-COLUMN HORIZONTAL METRIC CARDS STRIP
+             Total Events, Case Milestones, Evidence Events, Entity Activities, System Activities
+             ══════════════════════════════════════════════════════════ -->
+        <section class="neu-metric-strip-5" aria-label="Investigation Timeline Summary Metrics">
+          
+          <!-- Metric 1: Total Events -->
+          <div class="neu-metric-card" id="card-metric-total">
+            <div class="neu-metric-icon-wrap neu-metric-icon-blue" aria-hidden="true">
+              👤
+            </div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">Total Events</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-total-events">1,842</span>
+                <span class="neu-metric-badge green" id="metric-total-badge">↑ +12%</span>
+              </div>
+              <span class="neu-metric-subtext">All investigation events</span>
+            </div>
+          </div>
+
+          <!-- Metric 2: Case Milestones -->
+          <div class="neu-metric-card" id="card-metric-milestones">
+            <div class="neu-metric-icon-wrap neu-metric-icon-cyan" aria-hidden="true">
+              📁
+            </div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">Case Milestones</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-milestones-count">286</span>
+                <span class="neu-metric-badge green">↑ 8%</span>
+              </div>
+              <span class="neu-metric-subtext">Status changes & key actions</span>
+            </div>
+          </div>
+
+          <!-- Metric 3: Evidence Events -->
+          <div class="neu-metric-card" id="card-metric-evidence">
+            <div class="neu-metric-icon-wrap neu-metric-icon-green" aria-hidden="true">
+              📄
+            </div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">Evidence Events</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-evidence-count">624</span>
+                <span class="neu-metric-badge green">↑ 15%</span>
+              </div>
+              <span class="neu-metric-subtext">Evidence collection & analysis</span>
+            </div>
+          </div>
+
+          <!-- Metric 4: Entity Activities -->
+          <div class="neu-metric-card" id="card-metric-entities">
+            <div class="neu-metric-icon-wrap neu-metric-icon-purple" aria-hidden="true">
+              👥
+            </div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">Entity Activities</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-entity-count">412</span>
+                <span class="neu-metric-badge green">↑ 10%</span>
+              </div>
+              <span class="neu-metric-subtext">Entity related events</span>
+            </div>
+          </div>
+
+          <!-- Metric 5: System Activities -->
+          <div class="neu-metric-card" id="card-metric-system">
+            <div class="neu-metric-icon-wrap neu-metric-icon-steel" aria-hidden="true">
+              🛡️
+            </div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">System Activities</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-system-count">384</span>
+                <span class="neu-metric-badge green">↑ 6%</span>
+              </div>
+              <span class="neu-metric-subtext">Logins, access & admin actions</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             3-COLUMN TIMELINE WORKSTATION GRID
+             Left: Filters (~280px)
+             Center: Timeline Events (~1.35fr)
+             Right: Event Details (~1fr)
+             ══════════════════════════════════════════════════════════ -->
+        <div class="tl-workstation-grid" id="tl-workstation-container">
+          
+          <!-- ─── COLUMN 1: FILTERS PANEL ───────────────────────────── -->
+          <aside class="tl-panel" id="panel-filters" aria-label="Investigation Timeline Filters">
+            <div class="tl-panel-header">
+              <div class="tl-panel-title-wrap">
+                <span class="tl-panel-icon">⚙️</span>
+                <h2 class="tl-panel-title">Filters</h2>
+              </div>
+              <span class="tl-panel-badge-count">▴</span>
             </div>
 
-            <!-- Filter Controls -->
-            <div class="tl-filter-controls flex-align gap-2 flex-wrap">
-              <select id="tl-filter-phase" class="tl-select" title="Filter by phase">
-                <option value="ALL">All Phases</option>
-                <option value="CONTACT">Contact</option>
-                <option value="TRUST">Trust</option>
-                <option value="PAYMENT">Payment</option>
-                <option value="SEVERED">Severed</option>
-              </select>
-
-              <div class="tl-date-range-badge" id="tl-date-range-display" title="Active investigation date range">
-                📅 <span id="tl-date-range-text">22 Aug 2026 – 29 Aug 2026</span>
+            <!-- Search Events -->
+            <div class="tl-filter-group">
+              <label for="filter-search-input" class="tl-filter-label">Search Events</label>
+              <div class="tl-search-input-wrap">
+                <span class="tl-search-icon" aria-hidden="true">🔍</span>
+                <input 
+                  type="text" 
+                  id="filter-search-input" 
+                  class="tl-search-input" 
+                  placeholder="Search by keyword, case ID, entity, evidence..." 
+                  aria-label="Search timeline events"
+                />
               </div>
+            </div>
 
-              <select id="tl-filter-source" class="tl-select" title="Filter by source type">
-                <option value="ALL">All Sources</option>
-                <option value="WHATSAPP">WhatsApp</option>
-                <option value="BANK_SMS">Bank SMS</option>
-                <option value="CALL_LOG">Call Log</option>
-                <option value="RECEIPT">Receipt</option>
-                <option value="SCREENSHOT">Screenshot</option>
+            <!-- Event Type Checkboxes -->
+            <div class="tl-filter-group">
+              <span class="tl-filter-label">Event Type</span>
+              <div class="tl-type-checklist" id="filter-type-checklist">
+                
+                <div class="tl-type-check-item active" data-type="CASE_EVENT">
+                  <div class="tl-type-check-left">
+                    <div class="tl-checkbox-custom" aria-hidden="true">✓</div>
+                    <div class="tl-type-check-icon tl-icon-case" aria-hidden="true">📁</div>
+                    <span class="tl-type-check-name">Case Event</span>
+                  </div>
+                  <span class="tl-type-check-count">12</span>
+                </div>
+
+                <div class="tl-type-check-item active" data-type="EVIDENCE_EVENT">
+                  <div class="tl-type-check-left">
+                    <div class="tl-checkbox-custom" aria-hidden="true">✓</div>
+                    <div class="tl-type-check-icon tl-icon-evidence" aria-hidden="true">📄</div>
+                    <span class="tl-type-check-name">Evidence Event</span>
+                  </div>
+                  <span class="tl-type-check-count">8</span>
+                </div>
+
+                <div class="tl-type-check-item active" data-type="ENTITY_EVENT">
+                  <div class="tl-type-check-left">
+                    <div class="tl-checkbox-custom" aria-hidden="true">✓</div>
+                    <div class="tl-type-check-icon tl-icon-entity" aria-hidden="true">👤</div>
+                    <span class="tl-type-check-name">Entity Event</span>
+                  </div>
+                  <span class="tl-type-check-count">6</span>
+                </div>
+
+                <div class="tl-type-check-item active" data-type="INVESTIGATION_ACTION">
+                  <div class="tl-type-check-left">
+                    <div class="tl-checkbox-custom" aria-hidden="true">✓</div>
+                    <div class="tl-type-check-icon tl-icon-action" aria-hidden="true">📞</div>
+                    <span class="tl-type-check-name">Investigation Action</span>
+                  </div>
+                  <span class="tl-type-check-count">4</span>
+                </div>
+
+                <div class="tl-type-check-item active" data-type="SYSTEM_EVENT">
+                  <div class="tl-type-check-left">
+                    <div class="tl-checkbox-custom" aria-hidden="true">✓</div>
+                    <div class="tl-type-check-icon tl-icon-system" aria-hidden="true">⚙️</div>
+                    <span class="tl-type-check-name">System Event</span>
+                  </div>
+                  <span class="tl-type-check-count">6</span>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Related Case Select -->
+            <div class="tl-filter-group">
+              <label for="filter-select-case" class="tl-filter-label">Related Case</label>
+              <select id="filter-select-case" class="tl-select-custom" aria-label="Filter by Related Case">
+                <option value="ALL">All Cases</option>
+                <option value="CC/2024/001" selected>CC/2024/001 — Financial Fraud</option>
+                <option value="CC/2024/045">CC/2024/045 — Cyber Extortion</option>
+                <option value="CC/2024/078">CC/2024/078 — Money Laundering</option>
+                <option value="CB-2025-1042">CB-2025-1042 — Task Scam</option>
               </select>
+            </div>
 
-              <select id="tl-filter-evidence" class="tl-select" title="Filter by source evidence">
-                <option value="ALL">All Evidence</option>
+            <!-- Related Entity Select -->
+            <div class="tl-filter-group">
+              <label for="filter-select-entity" class="tl-filter-label">Related Entity</label>
+              <select id="filter-select-entity" class="tl-select-custom" aria-label="Filter by Related Entity">
+                <option value="ALL" selected>All Entities</option>
+                <option value="Rahul Sharma">Rahul Sharma (ENT-2024-001)</option>
+                <option value="Sharma Enterprises">Sharma Enterprises (ENT-2024-002)</option>
+                <option value="+91 98765 43210">+91 98765 43210 (Phone)</option>
+                <option value="rahul.s@gmail.com">rahul.s@gmail.com (Email)</option>
+                <option value="HDFC Bank XXXX4321">HDFC Bank XXXX4321 (Account)</option>
               </select>
+            </div>
 
-              <button class="btn btn-secondary btn-sm" id="btn-tl-reset-filters" title="Reset all filters">
-                ↺ Reset
+            <!-- Related Evidence Select -->
+            <div class="tl-filter-group">
+              <label for="filter-select-evidence" class="tl-filter-label">Related Evidence</label>
+              <select id="filter-select-evidence" class="tl-select-custom" aria-label="Filter by Related Evidence">
+                <option value="ALL" selected>All Evidence</option>
+                <option value="MOBILE_001.jpg">MOBILE_001.jpg (Image)</option>
+                <option value="BANK_STMT.pdf">BANK_STMT.pdf (Document)</option>
+                <option value="EMAIL_TRAIL.eml">EMAIL_TRAIL.eml (Email)</option>
+                <option value="DEVICE_DUMP.zip">DEVICE_DUMP.zip (Device Data)</option>
+              </select>
+            </div>
+
+            <!-- User/Officer Select -->
+            <div class="tl-filter-group">
+              <label for="filter-select-officer" class="tl-filter-label">User/Officer</label>
+              <select id="filter-select-officer" class="tl-select-custom" aria-label="Filter by User or Officer">
+                <option value="ALL" selected>All Users</option>
+                <option value="Inspector Rajesh Kumar">Inspector Rajesh Kumar</option>
+                <option value="Inspector Priya Singh">Inspector Priya Singh</option>
+                <option value="ACP Rajeev Kumar">ACP Rajeev Kumar</option>
+              </select>
+            </div>
+
+            <!-- Date Range Display inside filter -->
+            <div class="tl-filter-group">
+              <span class="tl-filter-label">Date Range</span>
+              <div class="tl-date-range-badge-filter">
+                <span>📅</span>
+                <span id="filter-date-range-label">01 Jan 2024 - 31 Dec 2024</span>
+              </div>
+            </div>
+
+            <!-- Filter Buttons: Apply & Clear All -->
+            <div class="tl-filter-btn-row">
+              <button class="tl-btn-apply" id="btn-apply-filters">
+                <span>⚡</span>
+                <span>Apply Filters</span>
               </button>
+              <button class="tl-btn-clear" id="btn-clear-filters">Clear All</button>
+            </div>
+          </aside>
 
-              <!-- View Switcher -->
-              <div class="tl-view-switcher" role="group" aria-label="Timeline views">
-                <button class="tl-view-btn active" id="btn-view-timeline" data-view="timeline">Timeline View</button>
-                <button class="tl-view-btn" id="btn-view-cluster" data-view="cluster">Cluster View</button>
-                <button class="tl-view-btn" id="btn-view-table" data-view="table">Table View</button>
+          <!-- ─── COLUMN 2: TIMELINE EVENTS STREAM ──────────────────── -->
+          <section class="tl-panel" id="panel-timeline-stream" aria-label="Chronological Timeline Stream">
+            <div class="tl-panel-header">
+              <div class="tl-panel-title-wrap">
+                <span class="tl-panel-icon">⏱️</span>
+                <h2 class="tl-panel-title">Timeline Events</h2>
               </div>
+              <span class="tl-panel-badge-count" id="stream-events-count">1,842 events</span>
             </div>
-          </div>
 
-          <!-- Modus Operandi Phase Chevron Ribbon -->
-          <div class="tl-chevron-ribbon">
-            <div class="tl-chevron-item chevron-contact" data-phase="CONTACT" title="Filter Contact Phase">
-              <div class="chevron-content">
-                <span class="chevron-title">CONTACT</span>
-                <span class="chevron-sub">Initial approach</span>
-              </div>
-            </div>
-            <div class="tl-chevron-item chevron-trust" data-phase="TRUST" title="Filter Trust Phase">
-              <div class="chevron-content">
-                <span class="chevron-title">TRUST</span>
-                <span class="chevron-sub">Small payout / legitimacy</span>
-              </div>
-            </div>
-            <div class="tl-chevron-item chevron-payment" data-phase="PAYMENT" title="Filter Payment Phase">
-              <div class="chevron-content">
-                <span class="chevron-title">PAYMENT</span>
-                <span class="chevron-sub">Major fraudulent transaction</span>
-              </div>
-            </div>
-            <div class="tl-chevron-item chevron-severed" data-phase="SEVERED" title="Filter Severed Phase">
-              <div class="chevron-content">
-                <span class="chevron-title">SEVERED</span>
-                <span class="chevron-sub">Blocked communication</span>
-              </div>
-            </div>
-          </div>
+            <!-- Vertical Timeline Track with Event Nodes & Cards -->
+            <div class="tl-stream-container">
+              <div class="tl-timeline-track" id="timeline-events-track">
+                
+                <!-- Event 1: Case Created -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001001" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-case" aria-hidden="true">📁</div>
+                  <div class="tl-event-card">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">Case Created</h3>
+                      <p class="tl-event-desc">Case CC/2024/001 created by Inspector Rajesh Kumar</p>
+                      <span class="tl-event-tag-badge tl-tag-case">Case Event</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">15 Jan 2024</span>
+                      <span class="tl-event-time">10:30 AM</span>
+                    </div>
+                  </div>
+                </div>
 
-          <!-- Horizontal Chronological Timeline Track -->
-          <div class="tl-track-container">
-            <button class="tl-track-nav-btn prev" id="btn-track-prev" title="Previous event">‹</button>
-            <div class="tl-track-scroll-area" id="tl-track-scroll-area">
-              <div class="tl-track-line"></div>
-              <div class="tl-track-nodes" id="tl-track-nodes">
-                <!-- Rendered dynamically -->
+                <!-- Event 2: Evidence Collected (SELECTED in reference) -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001245" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-evidence" aria-hidden="true">📄</div>
+                  <div class="tl-event-card selected">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">Evidence Collected</h3>
+                      <p class="tl-event-desc">mobile_001.jpg accepted into evidence</p>
+                      <span class="tl-event-tag-badge tl-tag-evidence">Evidence Event</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">15 Jan 2024</span>
+                      <span class="tl-event-time">11:20 AM</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Event 3: Entity Identified -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001003" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-entity" aria-hidden="true">👤</div>
+                  <div class="tl-event-card">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">Entity Identified</h3>
+                      <p class="tl-event-desc">Phone number +91 98765 43210 linked to case</p>
+                      <span class="tl-event-tag-badge tl-tag-entity">Entity Event</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">15 Jan 2024</span>
+                      <span class="tl-event-time">12:15 PM</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Event 4: Analysis Completed -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001004" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-action" aria-hidden="true">🔍</div>
+                  <div class="tl-event-card">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">Analysis Completed</h3>
+                      <p class="tl-event-desc">Initial forensic analysis completed on mobile device</p>
+                      <span class="tl-event-tag-badge tl-tag-action">Investigation Action</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">16 Jan 2024</span>
+                      <span class="tl-event-time">09:45 AM</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Event 5: Case Status Updated -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001005" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-case" aria-hidden="true">📁</div>
+                  <div class="tl-event-card">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">Case Status Updated</h3>
+                      <p class="tl-event-desc">Status changed from Open to Under Investigation</p>
+                      <span class="tl-event-tag-badge tl-tag-case">Case Event</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">16 Jan 2024</span>
+                      <span class="tl-event-time">02:30 PM</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Event 6: Evidence Analysis -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001006" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-evidence" aria-hidden="true">📄</div>
+                  <div class="tl-event-card">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">Evidence Analysis</h3>
+                      <p class="tl-event-desc">Hash verification completed - No tampering detected</p>
+                      <span class="tl-event-tag-badge tl-tag-evidence">Evidence Event</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">17 Jan 2024</span>
+                      <span class="tl-event-time">11:10 AM</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Event 7: Entity Connection -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001007" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-entity" aria-hidden="true">👤</div>
+                  <div class="tl-event-card">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">Entity Connection</h3>
+                      <p class="tl-event-desc">Entity linked with CC/2024/045 (cross-case match)</p>
+                      <span class="tl-event-tag-badge tl-tag-entity">Entity Event</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">18 Jan 2024</span>
+                      <span class="tl-event-time">03:20 PM</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Event 8: Investigation Note -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001008" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-action" aria-hidden="true">📞</div>
+                  <div class="tl-event-card">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">Investigation Note</h3>
+                      <p class="tl-event-desc">Field investigation conducted at Sector 17</p>
+                      <span class="tl-event-tag-badge tl-tag-action">Investigation Action</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">19 Jan 2024</span>
+                      <span class="tl-event-time">10:00 AM</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Event 9: Case Milestone -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001009" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-case" aria-hidden="true">📁</div>
+                  <div class="tl-event-card">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">Case Milestone</h3>
+                      <p class="tl-event-desc">Chargesheet preparation initiated</p>
+                      <span class="tl-event-tag-badge tl-tag-case">Case Event</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">20 Jan 2024</span>
+                      <span class="tl-event-time">04:15 PM</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Event 10: User Activity -->
+                <div class="tl-event-row" data-event-id="EVT-2024-001010" tabindex="0" role="button">
+                  <div class="tl-event-node tl-node-system" aria-hidden="true">⚙️</div>
+                  <div class="tl-event-card">
+                    <div class="tl-event-content-left">
+                      <h3 class="tl-event-title">User Activity</h3>
+                      <p class="tl-event-desc">Report generated by Inspector Priya Singh</p>
+                      <span class="tl-event-tag-badge tl-tag-system">System Event</span>
+                    </div>
+                    <div class="tl-event-content-right">
+                      <span class="tl-event-date">21 Jan 2024</span>
+                      <span class="tl-event-time">09:30 AM</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
-            <button class="tl-track-nav-btn next" id="btn-track-next" title="Next event">›</button>
-          </div>
-        </div>
 
-        <!-- Middle Grid: Section 2 (Table), Section 3 (Event Details), Section 4 (Comm Intel) -->
-        <div class="tl-three-col-grid">
-
-          <!-- Section 2: Timeline Events Table -->
-          <div class="tl-section-card tl-events-table-card">
-            <div class="tl-card-header flex-between">
-              <div>
-                <h3 class="tl-card-title">2. Timeline Events (<span id="table-events-count">10</span>)</h3>
-                <p class="tl-card-subtitle">Events extracted and normalized from all evidence sources.</p>
+            <!-- Bottom Pagination Bar -->
+            <div class="tl-pagination-bar">
+              <span class="tl-pagination-summary" id="tl-pagination-summary">Showing 1–10 of 1,842 events</span>
+              <div class="tl-pagination-pages">
+                <button class="tl-page-btn" aria-label="Previous page">‹</button>
+                <button class="tl-page-btn active" aria-label="Page 1">1</button>
+                <button class="tl-page-btn" aria-label="Page 2">2</button>
+                <button class="tl-page-btn" aria-label="Page 3">3</button>
+                <button class="tl-page-btn" aria-label="Page 4">4</button>
+                <button class="tl-page-btn" aria-label="Page 5">5</button>
+                <span class="tl-page-btn ellipsis">…</span>
+                <button class="tl-page-btn" aria-label="Page 185">185</button>
+                <button class="tl-page-btn" aria-label="Next page">›</button>
               </div>
-              <button class="tl-icon-btn" id="btn-toggle-table-expand" title="Toggle table view">⛶</button>
+              <select class="tl-per-page-select" id="tl-select-per-page" aria-label="Items per page">
+                <option value="10" selected>10 / page</option>
+                <option value="25">25 / page</option>
+                <option value="50">50 / page</option>
+              </select>
             </div>
-            <div class="tl-table-wrap">
-              <table class="tl-events-table" id="tl-events-table">
-                <thead>
-                  <tr>
-                    <th style="width:28px"><input type="checkbox" id="tl-select-all" aria-label="Select all" /></th>
-                    <th>Date & Time</th>
-                    <th>Event Type</th>
-                    <th>Details</th>
-                    <th>Phase</th>
-                    <th>Source</th>
-                    <th>Evidence ID</th>
-                  </tr>
-                </thead>
-                <tbody id="tl-events-tbody">
-                  <!-- Rendered dynamically -->
-                </tbody>
-              </table>
-            </div>
-          </div>
+          </section>
 
-          <!-- Section 3: Event Details Panel -->
-          <div class="tl-section-card tl-event-details-card">
-            <div class="tl-card-header flex-between">
-              <div>
-                <h3 class="tl-card-title">3. Event Details</h3>
+          <!-- ─── COLUMN 3: EVENT DETAILS PANEL ─────────────────────── -->
+          <aside class="tl-panel tl-details-panel" id="panel-event-details" aria-label="Selected Event Details">
+            <div class="tl-panel-header">
+              <div class="tl-panel-title-wrap">
+                <span class="tl-panel-icon">📋</span>
+                <h2 class="tl-panel-title">Event Details</h2>
               </div>
-              <div class="flex-align gap-2">
-                <a class="btn btn-secondary btn-sm" id="btn-view-in-evidence" href="#" title="Inspect original file in Evidence Viewer">
-                  👁 View in Evidence
-                </a>
-                <div class="tl-nav-arrows">
-                  <button class="tl-mini-btn" id="btn-detail-prev" title="Previous event">‹</button>
-                  <button class="tl-mini-btn" id="btn-detail-next" title="Next event">›</button>
+              <div class="tl-details-actions">
+                <button class="tl-details-btn-icon" id="btn-details-menu" aria-label="Event Details Options">⋮</button>
+                <button class="tl-details-btn-icon" id="btn-details-close" aria-label="Close Details Panel">✕</button>
+              </div>
+            </div>
+
+            <!-- Selected Event Hero Banner -->
+            <div class="tl-hero-event-wrap" id="detail-hero-banner">
+              <div class="tl-hero-icon-box tl-icon-evidence" id="detail-hero-icon" aria-hidden="true">
+                📄
+              </div>
+              <div class="tl-hero-text">
+                <div class="tl-hero-title-row">
+                  <h3 class="tl-hero-title" id="detail-hero-title">Evidence Collected</h3>
+                  <span class="tl-hero-badge tl-tag-evidence" id="detail-hero-badge">Evidence Event</span>
+                </div>
+                <span class="tl-hero-timestamp" id="detail-hero-timestamp">15 Jan 2024, 11:20 AM</span>
+              </div>
+            </div>
+
+            <!-- Details Tabs Navigation Strip -->
+            <nav class="tl-tabs-strip" role="tablist" aria-label="Event Details Sub-views">
+              <button class="tl-tab-item active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+              <button class="tl-tab-item" role="tab" aria-selected="false" data-tab="related-case">Related Case</button>
+              <button class="tl-tab-item" role="tab" aria-selected="false" data-tab="related-entity">Related Entity</button>
+              <button class="tl-tab-item" role="tab" aria-selected="false" data-tab="related-evidence">Related Evidence</button>
+              <button class="tl-tab-item" role="tab" aria-selected="false" data-tab="audit-log">Audit Log</button>
+            </nav>
+
+            <!-- Tab Content: Overview -->
+            <div class="tl-tab-content" id="tab-content-overview">
+              <div class="tl-details-grid">
+                
+                <!-- Basic Information (Left Subcolumn) -->
+                <div class="tl-details-block">
+                  <h4 class="tl-block-heading">Basic Information</h4>
+                  <div class="tl-meta-table">
+                    <div class="tl-meta-row">
+                      <span class="tl-meta-key">Event ID</span>
+                      <span class="tl-meta-val" id="detail-event-id">EVT-2024-001245</span>
+                    </div>
+                    <div class="tl-meta-row">
+                      <span class="tl-meta-key">Event Type</span>
+                      <span class="tl-meta-val" id="detail-event-type">Evidence Event</span>
+                    </div>
+                    <div class="tl-meta-row">
+                      <span class="tl-meta-key">Title</span>
+                      <span class="tl-meta-val" id="detail-event-title">mobile_001.jpg accepted into evidence</span>
+                    </div>
+                    <div class="tl-meta-row">
+                      <span class="tl-meta-key">Description</span>
+                      <span class="tl-meta-val" id="detail-event-desc">Mobile device image collected from suspect and added to evidence repository</span>
+                    </div>
+                    <div class="tl-meta-row">
+                      <span class="tl-meta-key">Date & Time</span>
+                      <span class="tl-meta-val" id="detail-event-datetime">15 Jan 2024, 11:20 AM</span>
+                    </div>
+                    <div class="tl-meta-row">
+                      <span class="tl-meta-key">Created By</span>
+                      <span class="tl-meta-val" id="detail-event-creator">Inspector Rajesh Kumar</span>
+                    </div>
+                    <div class="tl-meta-row">
+                      <span class="tl-meta-key">Department</span>
+                      <span class="tl-meta-val" id="detail-event-department">Cyber Crime Department</span>
+                    </div>
+                    <div class="tl-meta-row">
+                      <span class="tl-meta-key">Source</span>
+                      <span class="tl-meta-val" id="detail-event-source">Evidence Intake System</span>
+                    </div>
+                    <div class="tl-meta-row">
+                      <span class="tl-meta-key">Status</span>
+                      <span class="tl-badge-status-completed" id="detail-event-status">Completed</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Related Information (Right Subcolumn) -->
+                <div class="tl-details-block">
+                  <h4 class="tl-block-heading">Related Information</h4>
+                  
+                  <!-- Related Case -->
+                  <div class="tl-related-card" id="detail-related-case-card">
+                    <div class="tl-related-icon tl-icon-case" aria-hidden="true">📁</div>
+                    <div class="tl-related-body">
+                      <span class="tl-related-title" id="detail-rel-case-title">CC/2024/001</span>
+                      <span class="tl-related-subtitle" id="detail-rel-case-sub">Financial Fraud Investigation</span>
+                      <a href="/frontend/pages/cases.html?case=CC/2024/001" class="tl-related-link" id="detail-rel-case-link">View Case →</a>
+                    </div>
+                  </div>
+
+                  <!-- Related Entity -->
+                  <div class="tl-related-card" id="detail-related-entity-card">
+                    <div class="tl-related-icon tl-icon-entity" aria-hidden="true">👤</div>
+                    <div class="tl-related-body">
+                      <span class="tl-related-title" id="detail-rel-entity-title">+91 98765 43210</span>
+                      <span class="tl-related-subtitle" id="detail-rel-entity-sub">Phone Number</span>
+                      <a href="/frontend/pages/entities.html?q=9876543210" class="tl-related-link" id="detail-rel-entity-link">View Entity →</a>
+                    </div>
+                  </div>
+
+                  <!-- Related Evidence -->
+                  <div class="tl-related-card" id="detail-related-evidence-card">
+                    <div class="tl-related-icon tl-icon-evidence" aria-hidden="true">📄</div>
+                    <div class="tl-related-body">
+                      <span class="tl-related-title" id="detail-rel-ev-title">mobile_001.jpg</span>
+                      <span class="tl-related-subtitle" id="detail-rel-ev-sub">Image (2.4 MB)</span>
+                      <a href="/frontend/pages/evidence.html?id=ev-cc001-mobile" class="tl-related-link" id="detail-rel-ev-link">View Evidence →</a>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- Additional Details (Full Width Lower Section) -->
+              <div class="tl-additional-details">
+                <h4 class="tl-block-heading">Additional Details</h4>
+                <div class="tl-meta-table">
+                  <div class="tl-meta-row">
+                    <span class="tl-meta-key">Evidence Type</span>
+                    <span class="tl-meta-val" id="detail-add-type">Mobile Device</span>
+                  </div>
+                  <div class="tl-meta-row">
+                    <span class="tl-meta-key">File Name</span>
+                    <span class="tl-meta-val" id="detail-add-filename">mobile_001.jpg</span>
+                  </div>
+                  <div class="tl-meta-row">
+                    <span class="tl-meta-key">File Size</span>
+                    <span class="tl-meta-val" id="detail-add-size">2.4 MB</span>
+                  </div>
+                  <div class="tl-meta-row">
+                    <span class="tl-meta-key">SHA-256 Hash</span>
+                    <div class="tl-hash-row">
+                      <span class="tl-hash-val" id="detail-add-hash">a7f3b2e9d4c6f1e8b3a9d2e7f5c1d6e0a9b3c7d5e8f2a1b4c6d8e0f2a5b7c1d3e9</span>
+                      <button class="tl-copy-btn" id="btn-copy-hash" title="Copy SHA-256 hash" aria-label="Copy SHA-256 hash">📋</button>
+                    </div>
+                  </div>
+                  <div class="tl-meta-row">
+                    <span class="tl-meta-key">Collection Method</span>
+                    <span class="tl-meta-val" id="detail-add-method">Physical Seizure</span>
+                  </div>
+                  <div class="tl-meta-row">
+                    <span class="tl-meta-key">Location</span>
+                    <span class="tl-meta-val" id="detail-add-location">Sector 17, Chandigarh</span>
+                  </div>
+                  <div class="tl-meta-row">
+                    <span class="tl-meta-key">Remarks</span>
+                    <span class="tl-meta-val" id="detail-add-remarks">Device sealed and stored as per protocol</span>
+                  </div>
                 </div>
               </div>
+
             </div>
 
-            <div class="tl-detail-content" id="tl-detail-content">
-              <!-- Rendered dynamically -->
-            </div>
-          </div>
-
-          <!-- Section 4: Communication Intelligence Panel -->
-          <div class="tl-section-card tl-comms-card">
-            <div class="tl-card-header flex-between">
-              <h3 class="tl-card-title">4. Communication Intelligence</h3>
-              <!-- Comms Tab Switcher -->
-              <div class="tl-comms-tabs" role="tablist">
-                <button class="tl-comm-tab active" data-comm-tab="chat" role="tab" aria-selected="true">Chat</button>
-                <button class="tl-comm-tab" data-comm-tab="call" role="tab" aria-selected="false">Call Recording</button>
-                <button class="tl-comm-tab" data-comm-tab="email" role="tab" aria-selected="false">Email</button>
-                <button class="tl-comm-tab" data-comm-tab="translation" role="tab" aria-selected="false">Translation</button>
-              </div>
-            </div>
-
-            <div class="tl-comms-panel-body" id="tl-comms-panel-body">
-              <!-- Rendered dynamically based on active comm tab -->
-            </div>
-          </div>
+          </aside>
 
         </div>
-
-        <!-- Bottom Grid: Section 5 (Content), Section 6 & 7 (Entities & Linked Cases), Section 8 (MO Analysis) -->
-        <div class="tl-bottom-grid">
-
-          <!-- Section 5: Evidence Content & Context -->
-          <div class="tl-section-card tl-evidence-content-card">
-            <div class="tl-card-header flex-between">
-              <div>
-                <h3 class="tl-card-title">5. Evidence Content & Context</h3>
-                <p class="tl-card-subtitle">Original evidence with highlighted extracted content.</p>
-              </div>
-              <div class="flex-align gap-2">
-                <button class="tl-icon-btn" id="btn-evidence-zoom" title="Search / Zoom">🔍</button>
-                <span class="tl-zoom-level">100%</span>
-                <button class="tl-icon-btn" id="btn-evidence-fullscreen" title="Fullscreen">⛶</button>
-                <a class="tl-icon-btn" id="btn-evidence-download" href="#" download title="Download raw binary">⬇</a>
-              </div>
-            </div>
-
-            <!-- Evidence Selector Dropdown -->
-            <div class="tl-evidence-dropdown-wrap">
-              <select id="tl-evidence-selector" class="tl-select full-width" title="Select source evidence file">
-                <!-- Dynamically populated with case evidence -->
-              </select>
-            </div>
-
-            <!-- Evidence Render Area -->
-            <div class="tl-evidence-preview-area" id="tl-evidence-preview-area">
-              <!-- Dynamically populated based on file type -->
-            </div>
-          </div>
-
-          <!-- Center Column: Section 6 (Related Entities) + Section 7 (Related Cases) -->
-          <div class="tl-center-column">
-
-            <!-- Section 6: Related Entities From This Evidence -->
-            <div class="tl-section-card tl-entities-subcard">
-              <div class="tl-card-header">
-                <h3 class="tl-card-title">6. Related Entities From This Evidence (<span id="evidence-entities-count">0</span>)</h3>
-              </div>
-              <div class="tl-table-wrap compact">
-                <table class="tl-entities-table" id="tl-entities-table">
-                  <thead>
-                    <tr>
-                      <th style="width:24px"><input type="checkbox" id="tl-select-all-entities" /></th>
-                      <th>Type</th>
-                      <th>Value</th>
-                      <th>Context</th>
-                      <th>Confidence</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tl-entities-tbody">
-                    <!-- Populated dynamically -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Section 7: Related Cases & Evidence -->
-            <div class="tl-section-card tl-related-cases-subcard">
-              <div class="tl-card-header flex-between">
-                <h3 class="tl-card-title">7. Related Cases & Evidence</h3>
-                <div class="tl-cases-tabs" role="tablist">
-                  <button class="tl-case-tab active" data-case-tab="cases" role="tab">Related Cases (<span id="related-cases-count">0</span>)</button>
-                  <button class="tl-case-tab" data-case-tab="evidence" role="tab">Related Evidence (<span id="related-evidence-count">0</span>)</button>
-                </div>
-              </div>
-              <div class="tl-table-wrap compact" id="tl-related-cases-content">
-                <!-- Populated dynamically -->
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Section 8: Modus Operandi Analysis -->
-          <div class="tl-section-card tl-mo-card">
-            <div class="tl-card-header flex-between">
-              <h3 class="tl-card-title">8. Modus Operandi Analysis</h3>
-              <button class="btn btn-secondary btn-sm" id="btn-view-full-analysis" title="View Full Syndicate MO Report">
-                🔍 View Full Analysis
-              </button>
-            </div>
-            <div class="tl-mo-stages-list" id="tl-mo-stages-list">
-              <!-- Populated dynamically -->
-            </div>
-          </div>
-
-        </div>
-
       </main>
+
     </div>
   </div>
 
+  <!-- ══════════════════════════════════════════════════════════
+       ADD TIMELINE EVENT MODAL
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-overlay" id="modal-add-event" role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h3 class="neu-modal-title" id="modal-add-title">Add Timeline Event</h3>
+        <button class="neu-modal-close" id="btn-close-add-modal" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="form-add-event" class="neu-modal-body">
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="add-case-id">Related Case *</label>
+          <select id="add-case-id" class="neu-form-select" required>
+            <option value="CC/2024/001">CC/2024/001 — Financial Fraud Investigation</option>
+            <option value="CC/2024/045">CC/2024/045 — Cyber Extortion Case</option>
+            <option value="CC/2024/078">CC/2024/078 — Money Laundering</option>
+            <option value="CB-2025-1042">CB-2025-1042 — Task Scam</option>
+          </select>
+        </div>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="add-event-title">Event Title *</label>
+          <input type="text" id="add-event-title" class="neu-form-input" placeholder="e.g. Suspect Interrogation Completed" required />
+        </div>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="add-event-type">Event Type *</label>
+          <select id="add-event-type" class="neu-form-select" required>
+            <option value="CASE_EVENT">Case Event</option>
+            <option value="EVIDENCE_EVENT">Evidence Event</option>
+            <option value="ENTITY_EVENT">Entity Event</option>
+            <option value="INVESTIGATION_ACTION" selected>Investigation Action</option>
+            <option value="SYSTEM_EVENT">System Event</option>
+          </select>
+        </div>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="add-event-desc">Description *</label>
+          <textarea id="add-event-desc" class="neu-form-textarea" placeholder="Detailed chronological log entry..." required></textarea>
+        </div>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="add-event-datetime">Date & Time *</label>
+          <input type="datetime-local" id="add-event-datetime" class="neu-form-input" required />
+        </div>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="add-evidence-id">Associated Evidence (Optional)</label>
+          <select id="add-evidence-id" class="neu-form-select">
+            <option value="MOBILE_001.jpg">MOBILE_001.jpg (Mobile Device Image)</option>
+            <option value="BANK_STMT.pdf">BANK_STMT.pdf (Bank Statement)</option>
+            <option value="EMAIL_TRAIL.eml">EMAIL_TRAIL.eml (Email Communication)</option>
+            <option value="DEVICE_DUMP.zip">DEVICE_DUMP.zip (Physical Dump)</option>
+          </select>
+        </div>
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn-secondary" id="btn-cancel-add-modal">Cancel</button>
+          <button type="submit" class="neu-btn-primary">
+            <span>✓</span>
+            <span>Record Event</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Controller -->
   <script type="module" src="../js/timeline.js"></script>
 </body>
 </html>

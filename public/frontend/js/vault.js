@@ -62,15 +62,15 @@ function initTabBar() {
   });
 }
 
-// ─── Load Cases for Dropdowns ─────────────────────────────────────────────────
 async function loadCasesList() {
   try {
     const res = await getCases({ limit: 100 });
-    if (res?.cases?.length > 0) {
-      allCases = res.cases;
+    allCases = res?.cases || [];
+    const uploadSelect = document.getElementById('upload-case-select');
+    const filterSelect = document.getElementById('filter-case-select');
 
+    if (allCases.length > 0) {
       // Populate Upload Case Select
-      const uploadSelect = document.getElementById('upload-case-select');
       if (uploadSelect) {
         uploadSelect.innerHTML = allCases.map(c => `
           <option value="${escapeHtml(c.caseNumber)}" ${c.caseNumber === ACTIVE_CASE_ID ? 'selected' : ''}>
@@ -80,7 +80,6 @@ async function loadCasesList() {
       }
 
       // Populate Filter Case Select
-      const filterSelect = document.getElementById('filter-case-select');
       if (filterSelect) {
         filterSelect.innerHTML = `
           <option value="ALL">All Cases</option>
@@ -89,9 +88,20 @@ async function loadCasesList() {
           `).join('')}
         `;
       }
+    } else {
+      if (uploadSelect) {
+        uploadSelect.innerHTML = `<option value="">No cases registered (create a case first)</option>`;
+      }
+      if (filterSelect) {
+        filterSelect.innerHTML = `<option value="ALL">All Cases (0 registered)</option>`;
+      }
     }
   } catch (err) {
     console.warn('Failed to fetch cases list for dropdowns:', err);
+    const uploadSelect = document.getElementById('upload-case-select');
+    if (uploadSelect) {
+      uploadSelect.innerHTML = `<option value="">Failed to load cases</option>`;
+    }
   }
 }
 
@@ -274,7 +284,7 @@ function renderEvidenceTable() {
       </td>
       <td style="text-align:right">
         <div class="ev-actions" style="justify-content:flex-end">
-          <a class="ev-action-btn" href="./evidence-viewer.html?id=${encodeURIComponent(ev.id)}" title="Open Full Evidence Viewer & Entity Analysis">
+          <a class="ev-action-btn" href="./evidence.html?id=${encodeURIComponent(ev.id)}" title="Open Full Evidence Viewer & Entity Analysis">
             🔬 Analyze
           </a>
           <button class="ev-action-btn inspect-btn" data-ev-id="${escapeHtml(ev.id)}" title="Open Evidence Inspector">
@@ -382,6 +392,10 @@ async function handleFiles(fileList) {
   const tamperCheckbox = document.getElementById('tamper-test-checkbox');
 
   const caseId = targetCaseSelect?.value || ACTIVE_CASE_ID;
+  if (!caseId) {
+    showToast('Please create or select an active case first before uploading evidence.', 'warning');
+    return;
+  }
   const categoryOverride = targetCategorySelect?.value || undefined;
   const simulateTampering = tamperCheckbox?.checked || false;
 
@@ -630,7 +644,7 @@ function renderInspectorContent(ev) {
       <div class="cross-case-card">
         <div style="display:flex;flex-direction:column;gap:2px">
           <span style="font-size:9px;color:var(--text-muted);font-weight:600">${escapeHtml(m.entityType)}: ${escapeHtml(m.normalizedValue)}</span>
-          <a href="./case-detail.html?caseId=${encodeURIComponent(m.otherCaseNumber)}" class="cross-case-link">
+          <a href="./cases.html?caseId=${encodeURIComponent(m.otherCaseNumber)}" class="cross-case-link">
             🔗 ${escapeHtml(m.otherCaseNumber)} · ${escapeHtml(m.otherCaseComplainant)}
           </a>
         </div>
@@ -692,13 +706,13 @@ function renderInspectorContent(ev) {
 
     <!-- Actions Row -->
     <div style="display:flex;gap:6px;margin:12px 0;flex-wrap:wrap;">
-      <a class="btn btn-primary btn-sm" href="./evidence-viewer.html?id=${encodeURIComponent(ev.id)}" style="flex:1;text-align:center;font-size:10px;">
+      <a class="btn btn-primary btn-sm" href="./evidence.html?id=${encodeURIComponent(ev.id)}" style="flex:1;text-align:center;font-size:10px;">
         🔬 Full Evidence Viewer
       </a>
       <button class="btn btn-secondary btn-sm" id="btn-reverify-inspector" style="flex:1;font-size:10px;">
         🔄 Live Digest Audit
       </button>
-      <a class="btn btn-secondary btn-sm" href="./case-detail.html?caseId=${encodeURIComponent(ev.case?.caseNumber || ev.caseId || '')}" style="flex:1;text-align:center;font-size:10px;">
+      <a class="btn btn-secondary btn-sm" href="./cases.html?caseId=${encodeURIComponent(ev.case?.caseNumber || ev.caseId || '')}" style="flex:1;text-align:center;font-size:10px;">
         📁 Case: ${escapeHtml(ev.case?.caseNumber || ev.caseId || 'Open')}
       </a>
     </div>

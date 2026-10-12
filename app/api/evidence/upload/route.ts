@@ -22,11 +22,11 @@ import {
 import { isValidSha256 } from "@/lib/crypto";
 import prisma from "@/lib/prisma";
 import {
-  extractEntities,
-  bufferToText,
   extractEmailMetadata,
   extractImageMetadata,
 } from "@/services/extractionService";
+import { executeOcrAndEntityExtraction } from "@/services/ocrService";
+import { authenticateOfficer, hasPermission, logAuditEvent } from "@/services/authService";
 
 export const runtime = "nodejs";
 // File uploads can be large — allow up to 50 MB
@@ -34,6 +34,7 @@ export const maxDuration = 30;
 
 // Ensure uploads directory exists at startup (idempotent)
 const UPLOAD_DIR = path.join(process.cwd(), "uploads", "raw");
+const MAX_UPLOAD_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB hard limit
 
 /**
  * Infer evidence category from file name and MIME type when not explicitly supplied.
@@ -72,6 +73,20 @@ function inferEvidenceCategory(fileName: string, mimeType: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    const auth = await authenticateOfficer(request);
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to upload evidence." },
+        { status: 401 }
+      );
+    }
+    if (!hasPermission(auth.officer.role, "evidence:upload")) {
+      return Response.json(
+        { error: "Access denied: requires evidence:upload permission." },
+        { status: 403 }
+      );
+    }
+
     // ── 1. Parse FormData ──────────────────────────────────────────────────
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
@@ -83,6 +98,12 @@ export async function POST(request: NextRequest) {
       return Response.json(
         { error: "Missing or invalid field: file" },
         { status: 400 }
+      );
+    }
+    if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+      return Response.json(
+        { error: `File exceeds maximum upload limit of 100 MB (${(file.size / (1024 * 1024)).toFixed(1)} MB supplied).` },
+        { status: 413 }
       );
     }
     if (!caseId || typeof caseId !== "string") {
@@ -122,10 +143,9 @@ export async function POST(request: NextRequest) {
     assertHashIntegrity(serverHash, clientHash); // throws HashMismatchError on fail
 
     // ── 5. Write to immutable cold storage ────────────────────────────────
-    await mkdir(UPLOAD_DIR, { recursive: true });
-    const storagePath = path.join(UPLOAD_DIR, `${serverHash}.bin`);
-    await writeFile(storagePath, fileBuffer);
-    const relativeStoragePath = `/uploads/raw/${serverHash}.bin`;
+    const storageAdapter = (await import("@/services/storageAdapter")).getEvidenceStorageAdapter();
+    const writeResult = await storageAdapter.storeEvidence(fileBuffer, clientHash);
+    const relativeStoragePath = writeResult.storagePath;
 
     // ── 6. Determine Category & Persist Evidence row ────────────────────────
     const mimeType = file.type || "application/octet-stream";
@@ -152,7 +172,7 @@ export async function POST(request: NextRequest) {
         {
           evidenceId: evidence.id,
           eventType: "INTAKE_UPLOAD",
-          actor: "Evidence Ingestion Gateway",
+          actor: `${auth.officer.name} (${auth.officer.badgeNumber})`,
           action: `Raw evidence ingested: ${file.name} (${fileBuffer.length} bytes)`,
           result: "SUCCESS",
           details: JSON.stringify({
@@ -178,6 +198,21 @@ export async function POST(request: NextRequest) {
       ],
     }).catch((e: unknown) => console.error("[Upload] Error logging intake custody events:", e));
 
+    // Also register in centralized audit trail
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
+    await logAuditEvent({
+      officerId: auth.officer.id,
+      officerName: auth.officer.name,
+      officerBadge: auth.officer.badgeNumber,
+      action: "UPLOAD_EVIDENCE",
+      module: "Evidence",
+      targetType: "Evidence",
+      targetId: evidence.id,
+      details: `Ingested ${file.name} (${fileBuffer.length} bytes) with verified SHA-256 for case ${caseRecord.caseNumber}`,
+      result: "SUCCESS",
+      ipAddress: ip,
+    });
+
     // ── 8. Async extraction worker (fire-and-forget, non-blocking) ─────────
     runExtractionWorker(fileBuffer, mimeType, file.name, category, evidence.id, caseRecord.id, serverHash).catch(
       (err) => console.error("[ExtractionWorker] Failed:", err)
@@ -197,8 +232,8 @@ export async function POST(request: NextRequest) {
     };
 
     return Response.json(responsePayload, { status: 201 });
-  } catch (err) {
-    if (err instanceof HashMismatchError) {
+  } catch (err: any) {
+    if (err instanceof HashMismatchError || err?.name === "HashMismatchError" || err?.statusCode === 422) {
       return Response.json(
         { error: err.message, code: "INTEGRITY_VIOLATION" },
         { status: 422 }
@@ -217,6 +252,7 @@ export async function POST(request: NextRequest) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // Extraction worker — runs asynchronously after upload response is sent
 // ─────────────────────────────────────────────────────────────────────────────
 async function runExtractionWorker(
@@ -228,82 +264,28 @@ async function runExtractionWorker(
   caseId: string,
   sourceHash: string
 ): Promise<void> {
-  const text = bufferToText(buffer, mimeType, fileName);
-  const payload = await extractEntities(text, evidenceId, sourceHash);
+  // Execute full OCR and deterministic entity extraction
+  const { ocr, entities } = await executeOcrAndEntityExtraction(evidenceId, caseId, buffer);
 
   // Category-specific metadata parsing
   let metadataBlob: Record<string, unknown> = {};
   if (category === "EMAIL" || category === "PHISHING_EMAIL") {
-    metadataBlob = extractEmailMetadata(text) as unknown as Record<string, unknown>;
+    metadataBlob = extractEmailMetadata(ocr.rawText) as unknown as Record<string, unknown>;
   } else if (category === "CRIME_SCENE_PHOTO") {
     metadataBlob = extractImageMetadata(buffer, mimeType) as unknown as Record<string, unknown>;
   }
 
   if (Object.keys(metadataBlob).length > 0) {
-    await prisma.evidence.update({
-      where: { id: evidenceId },
-      data: { metadata: JSON.stringify(metadataBlob) },
-    });
-  }
-
-  if (payload.entities.length === 0) return;
-
-  // Persist ExtractedFact rows
-  await prisma.extractedFact.createMany({
-    data: payload.entities.map((ent) => ({
-      evidenceId,
-      caseId,
-      factAssertion: `${ent.type} identifier detected: ${ent.normalizedValue}`,
-      entityType: ent.type,
-      rawValue: ent.rawValue,
-      normalizedValue: ent.normalizedValue,
-      confidence: ent.confidence,
-      sourceHash: ent.sourceHash,
-      verificationStatus: ent.verificationStatus || "UNVERIFIED",
-      verifiedBy: ent.verifiedBy || null,
-      boundingBox: ent.boundingBox ? JSON.stringify(ent.boundingBox) : null,
-    })),
-  });
-
-  // Upsert into CaseEntity for cross-case graph resolution
-  for (const ent of payload.entities) {
-    if (!["UPI", "PHONE", "ACCOUNT", "IFSC", "DOMAIN", "EMAIL", "NAME", "IP", "GPS_COORD"].includes(ent.type))
-      continue;
-    await prisma.caseEntity
-      .upsert({
-        where: {
-          caseId_entityType_normalizedValue: {
-            caseId,
-            entityType: ent.type,
-            normalizedValue: ent.normalizedValue,
-          },
-        },
-        update: {},
-        create: {
-          caseId,
-          entityType: ent.type,
-          rawValue: ent.rawValue,
-          normalizedValue: ent.normalizedValue,
-        },
-      })
-      .catch(() => {
-        /* ignore unique constraint on concurrent uploads */
+    try {
+      const existing = await prisma.evidence.findUnique({ where: { id: evidenceId }, select: { metadata: true } });
+      const merged = { ...(existing?.metadata ? JSON.parse(existing.metadata) : {}), ...metadataBlob };
+      await prisma.evidence.update({
+        where: { id: evidenceId },
+        data: { metadata: JSON.stringify(merged) },
       });
+    } catch (e) {
+      console.warn("[ExtractionWorker] Error updating category metadata:", e);
+    }
   }
-
-  // Record extraction completion custody audit event
-  await (prisma as any).custodyEvent.create({
-    data: {
-      evidenceId,
-      eventType: "EXTRACTION_COMPLETED",
-      actor: "Forensic Intelligence Extractor",
-      action: `Deterministic entity extraction completed: ${payload.entities.length} entities extracted`,
-      result: "SUCCESS",
-      details: JSON.stringify({
-        entityCount: payload.entities.length,
-        types: Array.from(new Set(payload.entities.map((e: any) => e.type))),
-      }),
-    },
-  }).catch((e: unknown) => console.error("[ExtractionWorker] Error logging extraction custody event:", e));
 }
 

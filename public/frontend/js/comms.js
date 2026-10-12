@@ -3,7 +3,7 @@
  * Displays call transcriptions and chat translations.
  */
 
-import { getCaseCommunications, ACTIVE_CASE_ID } from './api.js';
+import { getCaseCommunications, getCases, ACTIVE_CASE_ID, setActiveCaseId } from './api.js';
 import { escapeHtml, renderEntityChip, formatUTC } from './utils.js';
 import { initLayout } from './layout.js';
 
@@ -28,7 +28,36 @@ async function fetchComms() {
   }
 
   try {
-    const data = await getCaseCommunications(ACTIVE_CASE_ID);
+    let caseId = ACTIVE_CASE_ID;
+    if (!caseId) {
+      const urlParams = new URLSearchParams(window.location.search);
+      caseId = urlParams.get('caseId') || urlParams.get('id') ||
+        (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rakshak_active_case_id') : '') ||
+        (typeof localStorage !== 'undefined' ? localStorage.getItem('rakshak_active_case') : '');
+    }
+    if (!caseId) {
+      try {
+        const cRes = await getCases({ limit: 1 });
+        if (cRes?.cases?.length > 0) {
+          caseId = cRes.cases[0].id || cRes.cases[0].caseNumber;
+          setActiveCaseId(caseId);
+        }
+      } catch (_) {}
+    }
+
+    if (!caseId) {
+      if (container) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📡</div>
+            <div class="empty-state-title">No Case Selected</div>
+            <div class="empty-state-text">Select or register an active investigation case to analyze communication transcripts.</div>
+          </div>`;
+      }
+      return;
+    }
+
+    const data = await getCaseCommunications(caseId);
     transcriptions = data?.transcriptions || [];
     chatTranslations = data?.chatTranslations || [];
     renderTranscriptList();

@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak v3.0 — Administration & Officer Management. Manage officers, roles, departments, access control, and system security configurations." />
+  <title>Administration & Officer Management — Rakshak v3.0</title>
+
+  <!-- Google Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Isolated Page 10 Neumorphic Stylesheet -->
+  <link rel="stylesheet" href="../css/admin-neumorphic.css" />
+</head>
+<body class="neu-admin-body">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="neu-toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="neu-shell">
+    
+    <!-- ══════════════════════════════════════════════════════════
+         TOPBAR NAVIGATION
+         ══════════════════════════════════════════════════════════ -->
+    <header class="neu-topbar" role="banner" aria-label="Rakshak Platform Header">
+      
+      <!-- Brand Logo & Platform Title -->
+      <a href="/frontend/pages/dashboard.html" class="neu-topbar-brand" aria-label="Rakshak Forensic Platform Home">
+        <div class="neu-topbar-shield" aria-hidden="true">
+          <svg viewBox="0 0 44 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3988F5"/>
+                <stop offset="100%" stop-color="#1E66CF"/>
+              </linearGradient>
+            </defs>
+            <path d="M22 2L4 9.5V23C4 34.5 11.5 44 22 47C32.5 44 40 34.5 40 23V9.5L22 2Z" fill="url(#shieldGrad)"/>
+            <path d="M22 6L7.5 12V23C7.5 32.5 13.8 40.5 22 43.2C30.2 40.5 36.5 32.5 36.5 23V12L22 6Z" fill="#F5F8FC" fill-opacity="0.22"/>
+            <rect x="14" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="20.5" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="27" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <path d="M12 17H32V15L22 11L12 15V17Z" fill="#FFFFFF"/>
+            <rect x="11" y="33" width="22" height="3" rx="1.5" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="neu-topbar-brand-text">
+          <span class="neu-topbar-title">RAKSHAK <span class="neu-topbar-version">v3.0</span></span>
+          <span class="neu-topbar-subtitle">Digital Forensics Platform</span>
+        </div>
+      </a>
+
+      <!-- Global Search Field -->
+      <div class="neu-topbar-search-wrap" role="search">
+        <span class="neu-topbar-search-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input 
+          type="text" 
+          id="global-search-input" 
+          class="neu-topbar-search-input" 
+          placeholder="Search officers, departments, roles, permissions..." 
+          aria-label="Search officers, departments, roles, permissions"
+        />
+      </div>
+
+      <!-- Action Icons & Authenticated Officer Pill -->
+      <div class="neu-topbar-actions">
+        <!-- Notifications Bell -->
+        <button class="neu-topbar-icon-btn" id="btn-notifications" aria-label="Notifications, 5 unread">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="neu-badge-count" id="notif-count">5</span>
+        </button>
+
+        <!-- Settings Cog -->
+        <button class="neu-topbar-icon-btn" id="btn-settings" aria-label="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+
+        <!-- Officer Profile Pill -->
+        <div class="neu-profile-pill" id="officer-profile-pill" role="button" tabindex="0" aria-label="Officer Profile menu">
+          <div class="neu-profile-avatar" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="neu-profile-info">
+            <span class="neu-profile-name" id="officer-name">Inspector Rajesh Kumar</span>
+            <span class="neu-profile-role" id="officer-dept">Cyber Crime Department</span>
+          </div>
+          <span class="neu-profile-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BODY LAYOUT: SIDEBAR + MAIN WORKSPACE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="neu-body-layout">
+      
+      <!-- PERSISTENT SIDEBAR NAVIGATION -->
+      <aside class="neu-sidebar" role="navigation" aria-label="Primary Navigation">
+        <nav class="neu-sidebar-nav neu-nav-group" aria-label="Platform Modules">
+          <!-- 1: Dashboard -->
+          <a href="/frontend/pages/dashboard.html" class="neu-nav-item" id="nav-dashboard">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7"></rect>
+      <rect x="14" y="3" width="7" height="7"></rect>
+      <rect x="14" y="14" width="7" height="7"></rect>
+      <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+            </span>
+            <span>Dashboard</span>
+          </a>
+
+          <!-- 2: Cases -->
+          <a href="/frontend/pages/cases.html" class="neu-nav-item" id="nav-cases">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+    </svg>
+            </span>
+            <span>Cases</span>
+          </a>
+
+          <!-- 3: Evidence -->
+          <a href="/frontend/pages/evidence.html" class="neu-nav-item" id="nav-evidence">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+            </span>
+            <span>Evidence</span>
+          </a>
+
+          <!-- 4: Reports -->
+          <a href="/frontend/pages/reports.html" class="neu-nav-item" id="nav-reports">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="12" y1="18" x2="12" y2="12"></line>
+      <line x1="9" y1="15" x2="15" y2="15"></line>
+    </svg>
+            </span>
+            <span>Reports</span>
+          </a>
+
+          <!-- 5: Intelligence -->
+          <a href="/frontend/pages/graph.html" class="neu-nav-item" id="nav-graph">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+            </span>
+            <span>Intelligence</span>
+          </a>
+
+          <!-- 6: Entities -->
+          <a href="/frontend/pages/entities.html" class="neu-nav-item" id="nav-entities">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+            </span>
+            <span>Entities</span>
+          </a>
+
+          <!-- 7: Timeline -->
+          <a href="/frontend/pages/timeline.html" class="neu-nav-item" id="nav-timeline">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+            </span>
+            <span>Timeline</span>
+          </a>
+
+          <!-- 8: Cross-Department -->
+          <a href="/frontend/pages/cross-dept.html" class="neu-nav-item" id="nav-cross-dept">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"></path>
+      <path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"></path>
+      <circle cx="8" cy="12" r="2"></circle>
+    </svg>
+            </span>
+            <span>Cross-Department</span>
+          </a>
+
+          <!-- 9: Administration (Active) -->
+          <a href="/frontend/pages/admin.html" class="neu-nav-item active" id="nav-admin" aria-current="page">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+            </span>
+            <span>Administration</span>
+          </a>
+
+          <!-- 10: Audit Logs -->
+          <a href="/frontend/pages/audit.html" class="neu-nav-item" id="nav-audit">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <path d="M16 13H8"></path>
+      <path d="M16 17H8"></path>
+      <path d="M10 9H8"></path>
+    </svg>
+            </span>
+            <span>Audit Logs</span>
+          </a>
+        </nav>
+
+        <!-- Sidebar Footer: Cyber Crime Department Badge -->
+        <div class="neu-sidebar-footer">
+          <div class="neu-dept-badge">
+            <div class="neu-dept-emblem" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="M16 2L4 7V15C4 22.5 9 28.5 16 30.5C23 28.5 28 22.5 28 15V7L16 2Z" fill="#3988F5" fill-opacity="0.15" stroke="#3988F5" stroke-width="1.8"/>
+                <path d="M16 8L8 12V16C8 20.5 11.5 24.5 16 26C20.5 24.5 24 20.5 24 16V12L16 8Z" fill="#3988F5"/>
+              </svg>
+            </div>
+            <div class="neu-dept-text">
+              <span class="neu-dept-name">Cyber Crime Department</span>
+              <span class="neu-dept-gov">Government of India</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ══════════════════════════════════════════════════════════
+           MAIN WORKSPACE
+           ══════════════════════════════════════════════════════════ -->
+      <main class="neu-main-content" role="main">
+        
+        <!-- Page Header & Action Buttons -->
+        <div class="neu-page-header">
+          <div class="neu-header-titles">
+            <h1 class="neu-page-title">Administration & Officer Management</h1>
+            <p class="neu-page-subtitle">Manage users, roles, departments and system settings</p>
+          </div>
+
+          <div class="neu-header-actions">
+            <!-- Add New Officer -->
+            <button class="neu-btn-primary" id="btn-add-officer">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>+ Add New Officer</span>
+            </button>
+
+            <!-- Create Department -->
+            <button class="neu-btn-secondary" id="btn-create-dept">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 21h18"></path>
+                <path d="M5 21V7l8-4v18"></path>
+                <path d="M19 21V11l-6-4"></path>
+                <path d="M9 9h1"></path>
+                <path d="M9 13h1"></path>
+                <path d="M9 17h1"></path>
+              </svg>
+              <span>Create Department</span>
+            </button>
+
+            <!-- Role Management -->
+            <button class="neu-btn-secondary" id="btn-role-mgmt">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span>Role Management</span>
+            </button>
+
+            <!-- Contextual Menu Button -->
+            <button class="neu-btn-icon-square" id="btn-header-more" aria-label="More admin options">
+              <span>⋮</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             FIVE SUMMARY CARDS STRIP
+             ══════════════════════════════════════════════════════════ -->
+        <section class="neu-stats-strip" aria-label="Administrative metrics summary">
+          
+          <!-- Card 1: Total Officers -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap blue" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">Total Officers</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-total-officers">248</span>
+                <span class="neu-stat-trend positive">↑ 12%</span>
+              </div>
+              <span class="neu-stat-desc">Active system users</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Departments -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap blue" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                <line x1="9" y1="22" x2="9" y2="2"></line>
+                <path d="M8 6h.01"></path>
+                <path d="M16 6h.01"></path>
+                <path d="M8 10h.01"></path>
+                <path d="M16 10h.01"></path>
+                <path d="M16 14h.01"></path>
+                <path d="M8 14h.01"></path>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">Departments</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-total-departments">18</span>
+                <span class="neu-stat-trend neutral">No change</span>
+              </div>
+              <span class="neu-stat-desc">Government departments</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Roles -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap purple" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="6"></circle>
+                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">Roles</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-total-roles">6</span>
+                <span class="neu-stat-trend neutral">No change</span>
+              </div>
+              <span class="neu-stat-desc">System access roles</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Active Accounts -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap blue" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">Active Accounts</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-active-accounts">226</span>
+                <span class="neu-stat-trend positive">↑ 8%</span>
+              </div>
+              <span class="neu-stat-desc">Currently active users</span>
+            </div>
+          </div>
+
+          <!-- Card 5: Pending Approvals -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap cyan" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">Pending Approvals</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-pending-approvals">12</span>
+                <span class="neu-stat-trend negative">↓ 25%</span>
+              </div>
+              <span class="neu-stat-desc">Awaiting verification</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             MAIN TWO-COLUMN WORKSPACE: DIRECTORY & SELECTED PROFILE
+             ══════════════════════════════════════════════════════════ -->
+        <div class="neu-admin-main-grid">
+          
+          <!-- LEFT COLUMN: OFFICER MANAGEMENT DIRECTORY -->
+          <section class="neu-card neu-directory-card" aria-label="Officer Management Directory">
+            
+            <!-- Directory Header: Title & Status Filter Tabs -->
+            <div class="neu-dir-header">
+              <div class="neu-dir-title-wrap">
+                <span class="neu-dir-title-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                  </svg>
+                </span>
+                <span class="neu-dir-title">Officers</span>
+              </div>
+
+              <!-- Status Tabs -->
+              <div class="neu-status-tabs" role="tablist" aria-label="Officer account status filter">
+                <button class="neu-status-tab-btn active" data-status="ALL" role="tab" aria-selected="true">
+                  All Officers (<span id="tab-cnt-all">248</span>)
+                </button>
+                <button class="neu-status-tab-btn" data-status="ACTIVE" role="tab" aria-selected="false">
+                  Active (<span id="tab-cnt-active">226</span>)
+                </button>
+                <button class="neu-status-tab-btn" data-status="INACTIVE" role="tab" aria-selected="false">
+                  Inactive (<span id="tab-cnt-inactive">12</span>)
+                </button>
+                <button class="neu-status-tab-btn" data-status="PENDING" role="tab" aria-selected="false">
+                  Pending (<span id="tab-cnt-pending">10</span>)
+                </button>
+                <button class="neu-status-tab-btn" data-status="DEACTIVATED" role="tab" aria-selected="false">
+                  Deactivated (<span id="tab-cnt-deactivated">0</span>)
+                </button>
+              </div>
+            </div>
+
+            <!-- Search Input and Clear Filters -->
+            <div class="neu-dir-search-row">
+              <div class="neu-dir-search-wrap">
+                <span class="neu-dir-search-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  id="officer-search-input" 
+                  class="neu-dir-search-input" 
+                  placeholder="Search by name, email, badge number, department..." 
+                  aria-label="Search officers directory"
+                />
+              </div>
+
+              <button class="neu-btn-clear-filters" id="btn-clear-filters">
+                Clear Filters
+              </button>
+            </div>
+
+            <!-- Secondary Filters: Department, Role, Status, Access Level -->
+            <div class="neu-filters-row">
+              
+              <!-- Department Filter -->
+              <div class="neu-filter-select-wrap">
+                <select id="filter-department" class="neu-filter-select" aria-label="Filter by Department">
+                  <option value="">Department</option>
+                  <option value="Cyber Crime">Cyber Crime</option>
+                  <option value="State Police (Delhi)">State Police (Delhi)</option>
+                  <option value="Economic Offences">Economic Offences</option>
+                  <option value="Narcotics Control">Narcotics Control</option>
+                  <option value="Intelligence Bureau">Intelligence Bureau</option>
+                  <option value="CBI">CBI</option>
+                  <option value="Forensic Lab">Forensic Lab</option>
+                </select>
+                <span class="neu-select-arrow" aria-hidden="true">▾</span>
+              </div>
+
+              <!-- Role Filter -->
+              <div class="neu-filter-select-wrap">
+                <select id="filter-role" class="neu-filter-select" aria-label="Filter by Role">
+                  <option value="">Role</option>
+                  <option value="Inspector">Inspector</option>
+                  <option value="Sub Inspector">Sub Inspector</option>
+                  <option value="Head Constable">Head Constable</option>
+                  <option value="Analyst">Analyst</option>
+                  <option value="Administrator">Administrator</option>
+                </select>
+                <span class="neu-select-arrow" aria-hidden="true">▾</span>
+              </div>
+
+              <!-- Status Filter -->
+              <div class="neu-filter-select-wrap">
+                <select id="filter-status" class="neu-filter-select" aria-label="Filter by Status">
+                  <option value="">Status</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Deactivated">Deactivated</option>
+                </select>
+                <span class="neu-select-arrow" aria-hidden="true">▾</span>
+              </div>
+
+              <!-- Access Level Filter -->
+              <div class="neu-filter-select-wrap">
+                <select id="filter-access-level" class="neu-filter-select" aria-label="Filter by Access Level">
+                  <option value="">Access Level</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+                <span class="neu-select-arrow" aria-hidden="true">▾</span>
+              </div>
+            </div>
+
+            <!-- Officers Table -->
+            <div class="neu-table-responsive">
+              <table class="neu-table" id="officers-table" aria-label="Officers directory table">
+                <thead>
+                  <tr>
+                    <th style="width: 32px;"><input type="checkbox" id="check-all-officers" aria-label="Select all officers" /></th>
+                    <th>Name</th>
+                    <th>Badge No.</th>
+                    <th>Department</th>
+                    <th>Role</th>
+                    <th>Access Level</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="officers-table-body">
+                  <!-- Populated by admin.js or fallback rendered below -->
+                  <tr class="officer-row selected" data-id="INS-001">
+                    <td><input type="checkbox" checked /></td>
+                    <td>
+                      <div class="neu-cell-officer">
+                        <div class="neu-avatar-circle rk">RK</div>
+                        <div class="neu-officer-meta">
+                          <span class="neu-officer-fullname">Rajesh Kumar</span>
+                          <span class="neu-officer-email">rajesh.kumar@gov.in</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="neu-badge-code">INS-001</span></td>
+                    <td>Cyber Crime</td>
+                    <td>Inspector</td>
+                    <td><span class="neu-badge-access high">High</span></td>
+                    <td><span class="neu-badge-status active">Active</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Officer actions">•••</button></td>
+                  </tr>
+                  <tr class="officer-row" data-id="SI-027">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-officer">
+                        <div class="neu-avatar-circle ps">PS</div>
+                        <div class="neu-officer-meta">
+                          <span class="neu-officer-fullname">Priya Singh</span>
+                          <span class="neu-officer-email">priya.singh@gov.in</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="neu-badge-code">SI-027</span></td>
+                    <td>Cyber Crime</td>
+                    <td>Sub Inspector</td>
+                    <td><span class="neu-badge-access medium">Medium</span></td>
+                    <td><span class="neu-badge-status active">Active</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Officer actions">•••</button></td>
+                  </tr>
+                  <tr class="officer-row" data-id="HC-105">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-officer">
+                        <div class="neu-avatar-circle as">AS</div>
+                        <div class="neu-officer-meta">
+                          <span class="neu-officer-fullname">Amit Sharma</span>
+                          <span class="neu-officer-email">amit.sharma@gov.in</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="neu-badge-code">HC-105</span></td>
+                    <td>State Police (Delhi)</td>
+                    <td>Head Constable</td>
+                    <td><span class="neu-badge-access medium">Medium</span></td>
+                    <td><span class="neu-badge-status active">Active</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Officer actions">•••</button></td>
+                  </tr>
+                  <tr class="officer-row" data-id="SI-043">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-officer">
+                        <div class="neu-avatar-circle nv">NV</div>
+                        <div class="neu-officer-meta">
+                          <span class="neu-officer-fullname">Neha Verma</span>
+                          <span class="neu-officer-email">neha.verma@gov.in</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="neu-badge-code">SI-043</span></td>
+                    <td>Economic Offences</td>
+                    <td>Sub Inspector</td>
+                    <td><span class="neu-badge-access medium">Medium</span></td>
+                    <td><span class="neu-badge-status pending">Pending</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Officer actions">•••</button></td>
+                  </tr>
+                  <tr class="officer-row" data-id="INS-012">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-officer">
+                        <div class="neu-avatar-circle vp">VP</div>
+                        <div class="neu-officer-meta">
+                          <span class="neu-officer-fullname">Vikram Patel</span>
+                          <span class="neu-officer-email">vikram.patel@gov.in</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="neu-badge-code">INS-012</span></td>
+                    <td>Narcotics Control</td>
+                    <td>Inspector</td>
+                    <td><span class="neu-badge-access high">High</span></td>
+                    <td><span class="neu-badge-status active">Active</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Officer actions">•••</button></td>
+                  </tr>
+                  <tr class="officer-row" data-id="HC-221">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-officer">
+                        <div class="neu-avatar-circle sr">SR</div>
+                        <div class="neu-officer-meta">
+                          <span class="neu-officer-fullname">Sandeep Rai</span>
+                          <span class="neu-officer-email">sandeep.rai@gov.in</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="neu-badge-code">HC-221</span></td>
+                    <td>Intelligence Bureau</td>
+                    <td>Head Constable</td>
+                    <td><span class="neu-badge-access low">Low</span></td>
+                    <td><span class="neu-badge-status active">Active</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Officer actions">•••</button></td>
+                  </tr>
+                  <tr class="officer-row" data-id="SI-067">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-officer">
+                        <div class="neu-avatar-circle km">KM</div>
+                        <div class="neu-officer-meta">
+                          <span class="neu-officer-fullname">Karan Mehta</span>
+                          <span class="neu-officer-email">karan.mehta@gov.in</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="neu-badge-code">SI-067</span></td>
+                    <td>CBI</td>
+                    <td>Sub Inspector</td>
+                    <td><span class="neu-badge-access high">High</span></td>
+                    <td><span class="neu-badge-status active">Active</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Officer actions">•••</button></td>
+                  </tr>
+                  <tr class="officer-row" data-id="ANL-015">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-officer">
+                        <div class="neu-avatar-circle pa">PA</div>
+                        <div class="neu-officer-meta">
+                          <span class="neu-officer-fullname">Pooja Arora</span>
+                          <span class="neu-officer-email">pooja.arora@gov.in</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="neu-badge-code">ANL-015</span></td>
+                    <td>Forensic Lab</td>
+                    <td>Analyst</td>
+                    <td><span class="neu-badge-access medium">Medium</span></td>
+                    <td><span class="neu-badge-status inactive">Inactive</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Officer actions">•••</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="neu-pagination-footer">
+              <span id="pagination-summary">Showing 1-8 of 248 officers</span>
+
+              <div class="neu-pagination-controls" aria-label="Directory pagination">
+                <button class="neu-page-btn" aria-label="Previous page">&lt;</button>
+                <button class="neu-page-btn active">1</button>
+                <button class="neu-page-btn">2</button>
+                <button class="neu-page-btn">3</button>
+                <button class="neu-page-btn">4</button>
+                <button class="neu-page-btn">5</button>
+                <span style="padding: 0 4px;">...</span>
+                <button class="neu-page-btn">31</button>
+                <button class="neu-page-btn" aria-label="Next page">&gt;</button>
+              </div>
+
+              <select id="select-page-size" class="neu-page-size-select" aria-label="Page size">
+                <option value="8">8 / page</option>
+                <option value="16">16 / page</option>
+                <option value="24">24 / page</option>
+              </select>
+            </div>
+          </section>
+
+          <!-- RIGHT COLUMN: SELECTED OFFICER PROFILE PANEL -->
+          <section class="neu-card neu-profile-card" id="selected-officer-panel" aria-label="Selected Officer Profile Details">
+            
+            <!-- Hero Profile Banner -->
+            <div class="neu-profile-hero">
+              <div class="neu-hero-left">
+                <div class="neu-hero-avatar" id="hero-avatar">RK</div>
+                <div class="neu-hero-info">
+                  <div class="neu-hero-name-row">
+                    <span class="neu-hero-name" id="hero-fullname">Rajesh Kumar</span>
+                    <span class="neu-badge-status active" id="hero-status">Active</span>
+                  </div>
+                  <span class="neu-hero-sub" id="hero-subtext">
+                    <span id="hero-badge">INS-001</span> • 👤 <span id="hero-role-title">Inspector</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="neu-hero-actions">
+                <button class="neu-btn-edit-profile" id="btn-edit-selected-officer">
+                  ✎ Edit
+                </button>
+                <button class="neu-btn-icon-square" id="btn-profile-more" aria-label="More profile actions">
+                  ⋮
+                </button>
+              </div>
+            </div>
+
+            <!-- Profile Sub-navigation Tabs -->
+            <div class="neu-profile-subtabs" role="tablist">
+              <button class="neu-subtab-btn active" data-tab="overview" role="tab" aria-selected="true">Overview</button>
+              <button class="neu-subtab-btn" data-tab="roles" role="tab" aria-selected="false">Role & Permissions</button>
+              <button class="neu-subtab-btn" data-tab="dept" role="tab" aria-selected="false">Department</button>
+              <button class="neu-subtab-btn" data-tab="activity" role="tab" aria-selected="false">Activity Logs</button>
+              <button class="neu-subtab-btn" data-tab="cases" role="tab" aria-selected="false">Assigned Cases</button>
+            </div>
+
+            <!-- Profile Content Area (Overview Tab) -->
+            <div class="neu-profile-content-area" id="profile-content-area">
+              
+              <div class="neu-profile-overview-grid">
+                
+                <!-- Left Subcard: Basic Information -->
+                <div class="neu-subcard-basic">
+                  <span class="neu-subcard-title">Basic Information</span>
+                  
+                  <div class="neu-info-pair">
+                    <span class="label">Full Name</span>
+                    <span class="value" id="info-fullname">Rajesh Kumar</span>
+                  </div>
+                  <div class="neu-info-pair">
+                    <span class="label">Badge Number</span>
+                    <span class="value" id="info-badge">INS-001</span>
+                  </div>
+                  <div class="neu-info-pair">
+                    <span class="label">Email</span>
+                    <span class="value" id="info-email">rajesh.kumar@gov.in</span>
+                  </div>
+                  <div class="neu-info-pair">
+                    <span class="label">Phone</span>
+                    <span class="value" id="info-phone">+91 98765 43210</span>
+                  </div>
+                  <div class="neu-info-pair">
+                    <span class="label">Department</span>
+                    <span class="value" id="info-dept">Cyber Crime Department</span>
+                  </div>
+                  <div class="neu-info-pair">
+                    <span class="label">Designation</span>
+                    <span class="value" id="info-designation">Inspector</span>
+                  </div>
+                  <div class="neu-info-pair">
+                    <span class="label">Joining Date</span>
+                    <span class="value" id="info-joining">12 Mar 2018</span>
+                  </div>
+                  <div class="neu-info-pair">
+                    <span class="label">Status</span>
+                    <span class="value active-status" id="info-status">Active</span>
+                  </div>
+                  <div class="neu-info-pair">
+                    <span class="label">Last Login</span>
+                    <span class="value" id="info-last-login">15 Jan 2024, 10:30 AM</span>
+                  </div>
+                </div>
+
+                <!-- Right Column: Profile Photo & Account Security -->
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  
+                  <!-- Profile Photo Subcard -->
+                  <div class="neu-subcard-photo">
+                    <span class="neu-subcard-title" style="align-self: flex-start;">Profile Photo</span>
+                    <div class="neu-photo-preview" id="photo-preview">RK</div>
+                    <button class="neu-btn-change-photo" id="btn-change-photo">
+                      <span>↑</span> Change Photo
+                    </button>
+                  </div>
+
+                  <!-- Account Security Subcard -->
+                  <div class="neu-subcard-security">
+                    <span class="neu-subcard-title">Account Security</span>
+                    <div class="neu-info-pair">
+                      <span class="label">Access Level</span>
+                      <span class="neu-badge-access high" id="info-access-level">High</span>
+                    </div>
+                    <div class="neu-info-pair">
+                      <span class="label">Two-Factor Auth</span>
+                      <span class="neu-badge-status active" id="info-2fa">Enabled</span>
+                    </div>
+                    <div class="neu-info-pair">
+                      <span class="label">Last Password Change</span>
+                      <span class="value" id="info-pwd-change">10 Dec 2023</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Assigned Roles Subcard -->
+              <div class="neu-subcard-roles">
+                <div class="neu-roles-header">
+                  <span class="neu-subcard-title" style="margin: 0;">Assigned Roles</span>
+                  <button class="neu-btn-manage-roles" id="btn-manage-roles-inline">Manage Roles</button>
+                </div>
+                <div class="neu-role-tags" id="assigned-roles-list">
+                  <span class="neu-role-tag blue">Investigator</span>
+                  <span class="neu-role-tag green">Case Approver</span>
+                  <span class="neu-role-tag purple">Evidence Viewer</span>
+                </div>
+              </div>
+
+              <!-- Department Information Subcard -->
+              <div class="neu-subcard-dept">
+                <div class="neu-dept-card-header">
+                  <div class="neu-dept-icon-box" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                      <line x1="9" y1="22" x2="9" y2="2"></line>
+                      <path d="M8 6h.01"></path>
+                      <path d="M16 6h.01"></path>
+                      <path d="M8 10h.01"></path>
+                      <path d="M16 10h.01"></path>
+                    </svg>
+                  </div>
+                  <div class="neu-dept-header-text">
+                    <span class="neu-dept-title" id="card-dept-name">Cyber Crime Department</span>
+                    <span class="neu-dept-sub" id="card-dept-ministry">Ministry of Home Affairs</span>
+                  </div>
+                </div>
+
+                <div class="neu-dept-meta-row">
+                  <span class="label" style="color: var(--neu-secondary); font-size: 0.78rem;">Department Code</span>
+                  <span class="value" style="font-weight: 700;" id="card-dept-code">CCD</span>
+                </div>
+
+                <div class="neu-dept-meta-row">
+                  <span class="label" style="color: var(--neu-secondary); font-size: 0.78rem;">Head</span>
+                  <span class="value" style="font-weight: 600;" id="card-dept-head">DIG A. K. Verma</span>
+                </div>
+
+                <a href="/frontend/pages/cross-dept.html" class="neu-link-view-dept" id="link-view-department">
+                  View Department →
+                </a>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             THREE LOWER PANELS: RECENT ACTIVITIES, DEPT OVERVIEW, SETTINGS
+             ══════════════════════════════════════════════════════════ -->
+        <div class="neu-admin-bottom-grid">
+          
+          <!-- Panel 1: Recent User Activities -->
+          <section class="neu-panel-card" aria-label="Recent User Activities">
+            <div class="neu-panel-header">
+              <div class="neu-panel-title-wrap">
+                <span class="neu-panel-title-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
+                <span class="neu-panel-title">Recent User Activities</span>
+              </div>
+              <a href="/frontend/pages/audit.html" class="neu-panel-view-all">View All</a>
+            </div>
+
+            <div class="neu-activities-list" id="recent-activities-list">
+              <div class="neu-activity-item">
+                <div class="neu-activity-left">
+                  <div class="neu-activity-avatar orange">👤</div>
+                  <span class="neu-activity-text"><strong>Rajesh Kumar</strong> logged in to the system</span>
+                </div>
+                <span class="neu-activity-time">15 Jan 2024, 10:30 AM</span>
+              </div>
+
+              <div class="neu-activity-item">
+                <div class="neu-activity-left">
+                  <div class="neu-activity-avatar blue">👤</div>
+                  <span class="neu-activity-text"><strong>Priya Singh</strong> updated evidence record</span>
+                </div>
+                <span class="neu-activity-time">15 Jan 2024, 09:15 AM</span>
+              </div>
+
+              <div class="neu-activity-item">
+                <div class="neu-activity-left">
+                  <div class="neu-activity-avatar blue">👤</div>
+                  <span class="neu-activity-text"><strong>Amit Sharma</strong> created a new case</span>
+                </div>
+                <span class="neu-activity-time">15 Jan 2024, 08:45 AM</span>
+              </div>
+
+              <div class="neu-activity-item">
+                <div class="neu-activity-left">
+                  <div class="neu-activity-avatar orange">👤</div>
+                  <span class="neu-activity-text"><strong>Neha Verma</strong> requested access to CC/2024/001</span>
+                </div>
+                <span class="neu-activity-time">14 Jan 2024, 05:20 PM</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Panel 2: Department Overview -->
+          <section class="neu-panel-card" aria-label="Department Overview">
+            <div class="neu-panel-header">
+              <div class="neu-panel-title-wrap">
+                <span class="neu-panel-title-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"></path>
+                    <path d="M5 21V7l8-4v18"></path>
+                    <path d="M19 21V11l-6-4"></path>
+                  </svg>
+                </span>
+                <span class="neu-panel-title">Department Overview</span>
+              </div>
+              <a href="/frontend/pages/cross-dept.html" class="neu-panel-view-all">View All</a>
+            </div>
+
+            <div class="neu-departments-list" id="departments-overview-list">
+              <div class="neu-dept-item">
+                <div class="neu-dept-item-left">
+                  <div class="neu-dept-item-icon">🛡️</div>
+                  <span class="neu-dept-item-name">Cyber Crime Department</span>
+                </div>
+                <span class="neu-dept-item-count">42 officers</span>
+              </div>
+
+              <div class="neu-dept-item">
+                <div class="neu-dept-item-left">
+                  <div class="neu-dept-item-icon">🏛️</div>
+                  <span class="neu-dept-item-name">Economic Offences Wing</span>
+                </div>
+                <span class="neu-dept-item-count">38 officers</span>
+              </div>
+
+              <div class="neu-dept-item">
+                <div class="neu-dept-item-left">
+                  <div class="neu-dept-item-icon">⚖️</div>
+                  <span class="neu-dept-item-name">Narcotics Control Bureau</span>
+                </div>
+                <span class="neu-dept-item-count">28 officers</span>
+              </div>
+
+              <div class="neu-dept-item">
+                <div class="neu-dept-item-left">
+                  <div class="neu-dept-item-icon">🚔</div>
+                  <span class="neu-dept-item-name">State Police (Delhi)</span>
+                </div>
+                <span class="neu-dept-item-count">56 officers</span>
+              </div>
+
+              <div class="neu-dept-item">
+                <div class="neu-dept-item-left">
+                  <div class="neu-dept-item-icon">👁️</div>
+                  <span class="neu-dept-item-name">Intelligence Bureau</span>
+                </div>
+                <span class="neu-dept-item-count">34 officers</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Panel 3: System Settings -->
+          <section class="neu-panel-card" aria-label="System Settings Configuration">
+            <div class="neu-panel-header">
+              <div class="neu-panel-title-wrap">
+                <span class="neu-panel-title-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                </span>
+                <span class="neu-panel-title">System Settings</span>
+              </div>
+            </div>
+
+            <div class="neu-settings-list" id="system-settings-list">
+              <div class="neu-setting-item" data-setting="user_registration">
+                <div class="neu-setting-left">
+                  <span class="neu-setting-icon">👤</span>
+                  <span class="neu-setting-title">User Registration</span>
+                </div>
+                <div class="neu-setting-right">
+                  <span>Controlled (Admin only)</span>
+                  <span class="neu-setting-arrow">→</span>
+                </div>
+              </div>
+
+              <div class="neu-setting-item" data-setting="password_policy">
+                <div class="neu-setting-left">
+                  <span class="neu-setting-icon">🔒</span>
+                  <span class="neu-setting-title">Password Policy</span>
+                </div>
+                <div class="neu-setting-right">
+                  <span style="color: var(--neu-green); font-weight: 700;">Enabled</span>
+                  <span class="neu-setting-arrow">→</span>
+                </div>
+              </div>
+
+              <div class="neu-setting-item" data-setting="session_timeout">
+                <div class="neu-setting-left">
+                  <span class="neu-setting-icon">⏱️</span>
+                  <span class="neu-setting-title">Session Timeout</span>
+                </div>
+                <div class="neu-setting-right">
+                  <span>30 minutes</span>
+                  <span class="neu-setting-arrow">→</span>
+                </div>
+              </div>
+
+              <div class="neu-setting-item" data-setting="audit_logging">
+                <div class="neu-setting-left">
+                  <span class="neu-setting-icon">📋</span>
+                  <span class="neu-setting-title">Audit Logging</span>
+                </div>
+                <div class="neu-setting-right">
+                  <span style="color: var(--neu-green); font-weight: 700;">Enabled</span>
+                  <span class="neu-setting-arrow">→</span>
+                </div>
+              </div>
+
+              <div class="neu-setting-item" data-setting="rbac">
+                <div class="neu-setting-left">
+                  <span class="neu-setting-icon">🔏</span>
+                  <span class="neu-setting-title">Data Access Control</span>
+                </div>
+                <div class="neu-setting-right">
+                  <span>Role-based (RBAC)</span>
+                  <span class="neu-setting-arrow">→</span>
+                </div>
+              </div>
+
+              <div class="neu-setting-item" data-setting="notifications">
+                <div class="neu-setting-left">
+                  <span class="neu-setting-icon">🔔</span>
+                  <span class="neu-setting-title">Notification Settings</span>
+                </div>
+                <div class="neu-setting-right">
+                  <span style="color: var(--neu-green); font-weight: 700;">Enabled</span>
+                  <span class="neu-setting-arrow">→</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL 1: ADD NEW OFFICER
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="modal-add-officer" role="dialog" aria-modal="true" aria-labelledby="modal-add-officer-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h2 class="neu-modal-title" id="modal-add-officer-title">Provision New Officer Account</h2>
+        <button class="neu-modal-close-btn" id="btn-close-modal-officer" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="form-add-officer">
+        <div class="neu-modal-body">
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="add-officer-name">Full Name *</label>
+            <input type="text" id="add-officer-name" class="neu-form-input" placeholder="e.g. Inspector Ramesh Chawla" required />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="neu-form-group">
+              <label class="neu-form-label" for="add-officer-badge">Badge / Service Number *</label>
+              <input type="text" id="add-officer-badge" class="neu-form-input" placeholder="e.g. INS-045" required />
+            </div>
+            <div class="neu-form-group">
+              <label class="neu-form-label" for="add-officer-designation">Designation *</label>
+              <select id="add-officer-designation" class="neu-form-select" required>
+                <option value="Inspector">Inspector</option>
+                <option value="Sub Inspector">Sub Inspector</option>
+                <option value="Head Constable">Head Constable</option>
+                <option value="Analyst">Forensic Analyst</option>
+                <option value="Superintendent">Superintendent / ACP</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="neu-form-group">
+              <label class="neu-form-label" for="add-officer-email">Official Email</label>
+              <input type="email" id="add-officer-email" class="neu-form-input" placeholder="e.g. ramesh.chawla@gov.in" />
+            </div>
+            <div class="neu-form-group">
+              <label class="neu-form-label" for="add-officer-phone">Official Phone</label>
+              <input type="tel" id="add-officer-phone" class="neu-form-input" placeholder="e.g. +91 98111 22334" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="neu-form-group">
+              <label class="neu-form-label" for="add-officer-role">RBAC System Role *</label>
+              <select id="add-officer-role" class="neu-form-select" required>
+                <option value="INVESTIGATOR">INVESTIGATOR</option>
+                <option value="ANALYST">ANALYST</option>
+                <option value="VIEWER">VIEWER</option>
+                <option value="ADMIN">ADMIN</option>
+              </select>
+            </div>
+            <div class="neu-form-group">
+              <label class="neu-form-label" for="add-officer-dept">Assigned Department *</label>
+              <select id="add-officer-dept" class="neu-form-select" required>
+                <option value="Cyber Crime Department">Cyber Crime Department</option>
+                <option value="Economic Offences Wing">Economic Offences Wing</option>
+                <option value="Narcotics Control Bureau">Narcotics Control Bureau</option>
+                <option value="State Police (Delhi)">State Police (Delhi)</option>
+                <option value="Intelligence Bureau">Intelligence Bureau</option>
+                <option value="Central Bureau of Investigation">CBI</option>
+                <option value="Forensic Science Laboratory">Forensic Lab</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn-secondary" id="btn-cancel-add-officer">Cancel</button>
+          <button type="submit" class="neu-btn-primary" id="btn-submit-officer">Provision Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL 2: CREATE DEPARTMENT
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="modal-create-dept" role="dialog" aria-modal="true" aria-labelledby="modal-create-dept-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h2 class="neu-modal-title" id="modal-create-dept-title">Register Government Department</h2>
+        <button class="neu-modal-close-btn" id="btn-close-modal-dept" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="form-create-dept">
+        <div class="neu-modal-body">
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="add-dept-code">Department Unique Code *</label>
+            <input type="text" id="add-dept-code" class="neu-form-input" placeholder="e.g. ATS-MH-01" required />
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="add-dept-name">Full Department Name *</label>
+            <input type="text" id="add-dept-name" class="neu-form-input" placeholder="e.g. Anti-Terrorism Squad Maharashtra" required />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="neu-form-group">
+              <label class="neu-form-label" for="add-dept-state">State / Territory *</label>
+              <input type="text" id="add-dept-state" class="neu-form-input" placeholder="e.g. Maharashtra" required />
+            </div>
+            <div class="neu-form-group">
+              <label class="neu-form-label" for="add-dept-jurisdiction">Jurisdiction Scope</label>
+              <input type="text" id="add-dept-jurisdiction" class="neu-form-input" placeholder="e.g. Mumbai & Konkan Division" />
+            </div>
+          </div>
+        </div>
+
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn-secondary" id="btn-cancel-create-dept">Cancel</button>
+          <button type="submit" class="neu-btn-primary" id="btn-submit-dept">Register Department</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL 3: MANAGE ROLES & PERMISSIONS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="modal-manage-roles" role="dialog" aria-modal="true" aria-labelledby="modal-manage-roles-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h2 class="neu-modal-title" id="modal-manage-roles-title">Manage Officer Roles & Permissions</h2>
+        <button class="neu-modal-close-btn" id="btn-close-modal-roles" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="form-manage-roles">
+        <div class="neu-modal-body">
+          <p style="font-size: 0.8rem; color: var(--neu-secondary); margin: 0;">
+            Adjust assigned roles and RBAC security clearance for <strong id="modal-role-officer-name">Rajesh Kumar</strong> (<span id="modal-role-officer-badge">INS-001</span>).
+          </p>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="modal-select-rbac-role">Primary System Role</label>
+            <select id="modal-select-rbac-role" class="neu-form-select">
+              <option value="INVESTIGATOR">INVESTIGATOR (Full Case & Evidence Management)</option>
+              <option value="ANALYST">ANALYST (Intelligence & Graph Analysis)</option>
+              <option value="VIEWER">VIEWER (Read-Only Access)</option>
+              <option value="ADMIN">ADMIN (Full Platform Administration)</option>
+            </select>
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label">Active Capabilities</label>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="cap-investigator" checked />
+                <span>Investigator (Create/Edit cases, upload and hash forensic evidence)</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="cap-approver" checked />
+                <span>Case Approver (Review cross-department sharing and dossiers)</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="cap-evidence-viewer" checked />
+                <span>Evidence Viewer (Inspect raw files and SHA-256 verification hashes)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn-secondary" id="btn-cancel-roles">Cancel</button>
+          <button type="submit" class="neu-btn-primary" id="btn-submit-roles">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Module Controller Script -->
+  <script type="module" src="../js/admin.js"></script>
+</body>
+</html>

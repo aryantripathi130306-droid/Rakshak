@@ -3,7 +3,7 @@
 // Multilingual Communication Intelligence & Transcription Service
 // Preserves immutable original transcript and original message text at all times.
 // ─────────────────────────────────────────────────────────────────────────────
-import { MOCK_TRANSCRIPTION, MOCK_CHAT_TRANSLATION, TranscriptionData, ChatTranslationData } from "@/lib/mock-data";
+import type { TranscriptionData, ChatTranslationData } from "@/lib/mock-data";
 
 export interface LanguageOption {
   code: string;
@@ -57,20 +57,13 @@ export function getAvailableLanguages(): LanguageOption[] {
 /**
  * Retrieve transcription data for audio evidence item.
  */
-export async function getEvidenceTranscription(evidenceId: string): Promise<TranscriptionData> {
-  // If requesting EV-104 or generic audio, return mock with original + translated text
-  return {
-    ...MOCK_TRANSCRIPTION,
-    evidenceId,
-  };
+export async function getEvidenceTranscription(evidenceId: string): Promise<TranscriptionData | null> {
+  return null;
 }
 
 /**
  * Retrieve chat translation data for message exports.
  */
-export async function getEvidenceChatTranslation(evidenceId: string): Promise<ChatTranslationData> {
-  return {
-    ...MOCK_CHAT_TRANSLATION,
-    evidenceId,
-  };
+export async function getEvidenceChatTranslation(evidenceId: string): Promise<ChatTranslationData | null> {
+  return null;
 }

@@ -4,7 +4,7 @@
 // Detects shared mule accounts, phone numbers, and domains across FIRs.
 // ─────────────────────────────────────────────────────────────────────────────
 import { PrismaClient } from "@prisma/client";
-import { MOCK_CLUSTER, MOCK_CLUSTER_COMPARISON, MOCK_CLUSTER_TIMELINE, CaseClusterData } from "@/lib/mock-data";
+import { CaseClusterData } from "@/lib/mock-data";
 
 /**
  * Auto-detect clusters across all registered cases based on shared entities.
@@ -19,7 +19,7 @@ export async function autoDetectClusters(prisma: PrismaClient): Promise<CaseClus
     });
 
     if (!caseEntities || caseEntities.length === 0) {
-      return [MOCK_CLUSTER];
+      return [];
     }
 
     // 2. Build map of entity -> caseIds
@@ -64,15 +64,15 @@ export async function autoDetectClusters(prisma: PrismaClient): Promise<CaseClus
           victimName: m.case.complainantName,
           amountDefrauded: m.case.amountDefrauded || 0,
         })),
-        commonEntities: MOCK_CLUSTER.commonEntities,
-        relationships: MOCK_CLUSTER.relationships,
+        commonEntities: [],
+        relationships: [],
       }));
     }
 
-    return [MOCK_CLUSTER];
+    return [];
   } catch (err) {
     console.error("[clusterService.autoDetectClusters] Error:", err);
-    return [MOCK_CLUSTER];
+    return [];
   }
 }
 
@@ -80,7 +80,27 @@ export async function autoDetectClusters(prisma: PrismaClient): Promise<CaseClus
  * Get cluster comparison matrix
  */
 export async function getClusterComparison(clusterId: string, prisma: PrismaClient) {
-  return MOCK_CLUSTER_COMPARISON;
+  try {
+    const cluster = await prisma.caseCluster.findUnique({
+      where: { id: clusterId },
+      include: {
+        memberships: {
+          include: {
+            case: true,
+          },
+        },
+      },
+    });
+    if (!cluster) return null;
+    return {
+      clusterId,
+      name: cluster.name,
+      cases: cluster.memberships.map((m: typeof cluster.memberships[number]) => m.case),
+      commonEntities: [],
+    };
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -105,7 +125,7 @@ export async function getClusterTimeline(clusterId: string, prisma: PrismaClient
       },
     });
 
-    if (!cluster) return MOCK_CLUSTER_TIMELINE;
+    if (!cluster) return [];
 
     const allEvents: any[] = [];
     const colorPalette = ["#3b82f6", "#10b981", "#8b5cf6", "#f59e0b", "#ec4899"];
@@ -126,12 +146,10 @@ export async function getClusterTimeline(clusterId: string, prisma: PrismaClient
       });
     });
 
-    if (allEvents.length === 0) return MOCK_CLUSTER_TIMELINE;
-
     allEvents.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
     return allEvents;
   } catch (err) {
     console.error("[clusterService.getClusterTimeline] Error:", err);
-    return MOCK_CLUSTER_TIMELINE;
+    return [];
   }
 }

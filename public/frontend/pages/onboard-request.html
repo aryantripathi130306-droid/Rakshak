@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak v3.0 — Department Onboarding Request. Institutional access intake for authorized police and cyber investigation units." />
+  <title>Department Onboarding Request — Rakshak v3.0</title>
+  <script>
+    window.location.replace('/frontend/pages/cross-dept.html?action=onboard');
+  </script>
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body class="auth-page-body">
+  <!-- Toast Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="auth-wrapper wide">
+    <div class="auth-card" role="region" aria-labelledby="onboard-portal-title">
+      <!-- Header -->
+      <div class="auth-header">
+        <div class="auth-badge-icon" aria-hidden="true">
+          <span class="auth-emblem">🏛️</span>
+        </div>
+        <div class="auth-branding">
+          <div class="auth-brand-badge">DEPARTMENT ENROLLMENT GATEWAY</div>
+          <h1 class="auth-title" id="onboard-portal-title">Department Onboarding Request</h1>
+          <p class="auth-subtitle">Institutional Multi-Tenant Evidence Intake & Syndicate Intelligence Access</p>
+        </div>
+      </div>
+
+      <!-- Non-Negotiable Gate Advisory -->
+      <div class="auth-statutory-notice warning" role="note">
+        <span class="notice-icon">⚠️</span>
+        <div>
+          <strong>STRICT VERIFICATION GATE:</strong> Submitting this institutional request creates a <em>pending review record</em> only. It does <strong>not</strong> create an active officer account, issue tokens, or grant access to investigative cases or evidence. A verified Platform Administrator must explicitly authenticate government credentials before access provisioning.
+        </div>
+      </div>
+
+      <!-- Alert Container -->
+      <div id="onboard-alert" class="auth-alert hidden" role="alert">
+        <span id="onboard-alert-icon" class="auth-alert-icon">⚠️</span>
+        <span id="onboard-alert-msg" class="auth-alert-msg"></span>
+      </div>
+
+      <!-- Success Container (Shown after submission) -->
+      <div id="onboard-success-card" class="onboard-success-card hidden">
+        <div class="success-icon">✅</div>
+        <h2 class="success-title">Onboarding Request Logged Successfully</h2>
+        <p class="success-desc">
+          Your institutional application has been cryptographically registered in the pending queue. Platform administrators will verify the official credentials with the designated nodal authority.
+        </p>
+        <div class="tracking-pill">
+          <span>REQUEST REFERENCE:</span>
+          <strong id="success-req-id">REQ-PENDING</strong>
+        </div>
+        <div class="action-row" style="margin-top:20px;">
+          <a href="/frontend/pages/login.html" class="btn btn-secondary">Return to Officer Login</a>
+        </div>
+      </div>
+
+      <!-- Onboarding Request Form -->
+      <form id="dept-onboard-form" class="auth-form" novalidate>
+        <div class="form-grid-2">
+          <!-- Department / Organization Name -->
+          <div class="form-group">
+            <label for="dept-name" class="auth-label">
+              <span>DEPARTMENT / UNIT NAME</span>
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="dept-name"
+              name="departmentName"
+              class="auth-input"
+              placeholder="e.g. Cyber Crime Police Station, Sector 17"
+              required
+            />
+          </div>
+
+          <!-- State / Territory Jurisdiction -->
+          <div class="form-group">
+            <label for="dept-jurisdiction" class="auth-label">
+              <span>STATE / JURISDICTION SCOPE</span>
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="dept-jurisdiction"
+              name="jurisdiction"
+              class="auth-input"
+              placeholder="e.g. Chandigarh, Delhi NCR, Maharashtra CID"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <!-- Designated Nodal Officer -->
+          <div class="form-group">
+            <label for="nodal-officer-name" class="auth-label">
+              <span>DESIGNATED NODAL OFFICER</span>
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="nodal-officer-name"
+              name="nodalOfficerName"
+              class="auth-input"
+              placeholder="Full name & Rank (e.g. SP Rajesh Varma, IPS)"
+              required
+            />
+          </div>
+
+          <!-- Officer Service / Badge ID -->
+          <div class="form-group">
+            <label for="nodal-officer-badge" class="auth-label">
+              <span>SERVICE / BADGE IDENTIFIER</span>
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="nodal-officer-badge"
+              name="nodalOfficerBadge"
+              class="auth-input"
+              placeholder="e.g. IPS-2018-9942 or CCB-8812"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <!-- Official Institutional Email -->
+          <div class="form-group">
+            <label for="nodal-email" class="auth-label">
+              <span>OFFICIAL GOVERNMENT EMAIL</span>
+              <span class="required">*</span>
+            </label>
+            <input
+              type="email"
+              id="nodal-email"
+              name="nodalEmail"
+              class="auth-input"
+              placeholder="officer@police.gov.in or dept@nic.in"
+              required
+            />
+          </div>
+
+          <!-- Department Phone -->
+          <div class="form-group">
+            <label for="contact-phone" class="auth-label">
+              <span>DEPARTMENT TELEPHONE / EPABX</span>
+              <span class="required">*</span>
+            </label>
+            <input
+              type="tel"
+              id="contact-phone"
+              name="contactPhone"
+              class="auth-input"
+              placeholder="e.g. +91 172 2740000"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Authorization Reference Memo -->
+        <div class="form-group">
+          <label for="authorization-ref" class="auth-label">
+            <span>STATUTORY AUTHORIZATION MEMO / DISPATCH REF</span>
+            <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="authorization-ref"
+            name="authorizationRef"
+            class="auth-input"
+            placeholder="Official Order / Standing Directive No. authorizing platform onboarding"
+            required
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-actions-row">
+          <a href="/frontend/pages/login.html" class="btn btn-secondary">Cancel & Back to Login</a>
+          <button type="submit" id="onboard-submit-btn" class="btn btn-primary">
+            <span id="onboard-spinner" class="spinner spinner-sm hidden" aria-hidden="true"></span>
+            <span id="onboard-btn-text">Submit Request for Platform Verification</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Footer Info -->
+      <div class="auth-footer">
+        <div class="auth-footer-divider"></div>
+        <div class="auth-security-footer">
+          <span>Non-Public Provisioning</span> &bull; 
+          <span>Server-Side Authentication Mandated</span> &bull; 
+          <span>No Self-Service Escalation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../js/onboard-request.js"></script>
+</body>
+</html>

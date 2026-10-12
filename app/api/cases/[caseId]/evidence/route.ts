@@ -7,29 +7,51 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import { authenticateOfficer, hasPermission, canAccessDepartment } from "@/services/authService";
 
 export const runtime = "nodejs";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ caseId: string }> }
 ) {
   try {
+    const auth = await authenticateOfficer(request);
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to access case evidence." },
+        { status: 401 }
+      );
+    }
+    if (!hasPermission(auth.officer.role, "evidence:view")) {
+      return Response.json(
+        { error: "Access denied: requires evidence:view permission." },
+        { status: 403 }
+      );
+    }
+
     const { caseId } = await params;
 
     if (!caseId || typeof caseId !== "string") {
       return Response.json({ error: "Missing or invalid caseId" }, { status: 400 });
     }
 
-    const caseRecord = await prisma.case.findFirst({
+    const caseRecord = await (prisma.case as any).findFirst({
       where: {
         OR: [{ id: caseId }, { caseNumber: caseId }],
       },
-      select: { id: true, caseNumber: true },
+      select: { id: true, caseNumber: true, jurisdiction: true, departmentId: true },
     });
 
     if (!caseRecord) {
       return Response.json({ error: `Case not found: ${caseId}` }, { status: 404 });
+    }
+
+    if (!canAccessDepartment(auth.officer, caseRecord.jurisdiction, (caseRecord as any).departmentId)) {
+      return Response.json(
+        { error: "Access denied: Case belongs to another departmental jurisdiction." },
+        { status: 403 }
+      );
     }
 
     const evidenceList = await prisma.evidence.findMany({

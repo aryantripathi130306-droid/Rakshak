@@ -1,24 +1,30 @@
 /**
- * Rakshak — Cases Management Page Script
- * Interacts with /api/cases for search, filter, pagination, creation, and updating.
+ * Rakshak v3.0 — Cases Management & Case Details Controller
+ * Light-neumorphic case listing, server-side filtering, interactive selection,
+ * case detail inspection, timeline activity, and authorized creation/editing.
  */
 
 import {
+  getCurrentOfficerSession,
+  logoutOfficer,
   getCases,
   getCase,
   createCase,
   patchCase,
+  getCaseTimeline,
+  getCaseEvidence,
   setActiveCaseId,
+  ACTIVE_CASE_ID,
 } from './api.js';
 import {
   escapeHtml,
   formatIST,
   formatINR,
-  showNotification,
+  showToast,
 } from './utils.js';
-import { initLayout } from './layout.js';
 
-// ─── State ────────────────────────────────────────────────────────────────────
+let currentOfficer = null;
+
 let state = {
   cases: [],
   total: 0,
@@ -28,24 +34,154 @@ let state = {
   search: '',
   statusFilter: '',
   typeFilter: '',
+  dateRange: '30',
   sortBy: 'createdAt',
   sortOrder: 'desc',
-  editingCaseId: null,
+  selectedCaseId: null,
+  selectedCaseData: null,
 };
 
 let searchDebounceTimer = null;
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  initLayout({ activePage: 'cases' });
-  bindEvents();
-  await fetchAndRenderCases();
-});
+document.addEventListener('DOMContentLoaded', initCasesPage);
 
-// ─── Event Bindings ───────────────────────────────────────────────────────────
-function bindEvents() {
-  // Search input with debounce
-  const searchInput = document.getElementById('search-input');
+async function initCasesPage() {
+  // ─── 1. Authenticate & Session Guard ─────────────────────────────────────────
+  try {
+    const session = await getCurrentOfficerSession();
+    if (!session || !session.authenticated || !session.officer) {
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.replace(`/frontend/pages/login.html?returnUrl=${returnUrl}`);
+      return;
+    }
+    currentOfficer = session.officer;
+  } catch (_) {
+    const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.replace(`/frontend/pages/login.html?returnUrl=${returnUrl}`);
+    return;
+  }
+
+  // ─── 2. Topbar & Officer Shell Setup ─────────────────────────────────────────
+  setupOfficerHeader(currentOfficer);
+  setupSidebarNavigation(currentOfficer);
+
+  // ─── 3. Check Initial URL Query Parameters ──────────────────────────────────
+  const urlParams = new URLSearchParams(window.location.search);
+  const qParam = urlParams.get('q');
+  const caseIdParam = urlParams.get('caseId') || urlParams.get('id') || ACTIVE_CASE_ID;
+  const actionParam = urlParams.get('action');
+
+  if (qParam) {
+    state.search = qParam.trim();
+    const searchInput = document.getElementById('cases-search');
+    if (searchInput) searchInput.value = state.search;
+  }
+
+  if (caseIdParam && caseIdParam !== 'null' && caseIdParam !== 'undefined') {
+    state.selectedCaseId = caseIdParam;
+  }
+
+  // ─── 4. Bind Table & Filter Events ──────────────────────────────────────────
+  bindFilterEvents();
+  bindModalEvents();
+  bindDetailTabEvents();
+
+  // ─── 5. Fetch Initial Cases List ────────────────────────────────────────────
+  await fetchAndRenderCases();
+
+  // If action=new was passed in query, open creation modal
+  if (actionParam === 'new') {
+    openCreateCaseModal();
+  }
+}
+
+// ─── Shell Setup ──────────────────────────────────────────────────────────────
+function setupOfficerHeader(officer) {
+  const nameEl = document.getElementById('officer-display-name');
+  const deptEl = document.getElementById('officer-display-dept');
+
+  if (nameEl) nameEl.textContent = officer.name || 'Officer';
+  if (deptEl) deptEl.textContent = officer.unit || officer.jurisdiction || 'Investigation Unit';
+
+  const profileFullName = document.getElementById('profile-full-name');
+  const profileBadgeNum = document.getElementById('profile-badge-num');
+  const profileRoleTag = document.getElementById('profile-role-tag');
+  const profileJur = document.getElementById('profile-jurisdiction');
+
+  if (profileFullName) profileFullName.textContent = `${officer.designation || 'Officer'} ${officer.name}`;
+  if (profileBadgeNum) profileBadgeNum.textContent = `Badge: ${officer.badgeNumber || 'N/A'}`;
+  if (profileRoleTag) profileRoleTag.textContent = `Role: ${officer.role || 'INVESTIGATOR'}`;
+  if (profileJur) profileJur.textContent = officer.jurisdiction || 'Department Scoped';
+
+  const profilePill = document.getElementById('officer-profile-pill');
+  const dropdown = document.getElementById('profile-dropdown');
+
+  if (profilePill && dropdown) {
+    profilePill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isVisible = dropdown.classList.contains('show');
+      dropdown.classList.toggle('show', !isVisible);
+    });
+
+    document.addEventListener('click', () => {
+      dropdown.classList.remove('show');
+    });
+  }
+
+  const logoutBtn = document.getElementById('btn-officer-logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await logoutOfficer();
+      } catch (_) {}
+      window.location.href = '/frontend/pages/login.html?loggedOut=1';
+    });
+  }
+
+  // Global topbar search
+  const globalSearchForm = document.getElementById('global-search-form');
+  const globalSearchInput = document.getElementById('global-search-input');
+  if (globalSearchForm && globalSearchInput) {
+    globalSearchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = globalSearchInput.value.trim();
+      const localSearch = document.getElementById('cases-search');
+      if (localSearch) localSearch.value = q;
+      state.search = q;
+      state.page = 1;
+      fetchAndRenderCases();
+    });
+  }
+}
+
+function setupSidebarNavigation(officer) {
+  const isAdmin = officer.role === 'ADMIN';
+  const permissions = officer.permissions || [];
+
+  const crossDeptLink = document.getElementById('nav-cross-dept');
+  const adminLink = document.getElementById('nav-admin');
+  const auditLink = document.getElementById('nav-audit');
+
+  if (crossDeptLink && (isAdmin || permissions.includes('case:transfer'))) {
+    crossDeptLink.style.display = 'flex';
+  }
+  if (adminLink && isAdmin) {
+    adminLink.style.display = 'flex';
+  }
+  if (auditLink && (isAdmin || permissions.includes('audit:view'))) {
+    auditLink.style.display = 'flex';
+  }
+
+  // Sidebar Dept Card
+  const sidebarDeptTitle = document.getElementById('sidebar-dept-title');
+  const sidebarDeptSub = document.getElementById('sidebar-dept-sub');
+  if (sidebarDeptTitle) sidebarDeptTitle.textContent = officer.unit || 'Cyber Crime Branch';
+  if (sidebarDeptSub) sidebarDeptSub.textContent = officer.jurisdiction || 'Delhi Police';
+}
+
+// ─── Filter & Search Bindings ─────────────────────────────────────────────────
+function bindFilterEvents() {
+  const searchInput = document.getElementById('cases-search');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       clearTimeout(searchDebounceTimer);
@@ -57,86 +193,301 @@ function bindEvents() {
     });
   }
 
-  // Filter dropdowns
-  const statusFilter = document.getElementById('filter-status');
-  if (statusFilter) {
-    statusFilter.addEventListener('change', (e) => {
+  const statusSelect = document.getElementById('filter-status');
+  if (statusSelect) {
+    statusSelect.addEventListener('change', (e) => {
       state.statusFilter = e.target.value;
       state.page = 1;
       fetchAndRenderCases();
     });
   }
 
-  const typeFilter = document.getElementById('filter-type');
-  if (typeFilter) {
-    typeFilter.addEventListener('change', (e) => {
+  const typeSelect = document.getElementById('filter-type');
+  if (typeSelect) {
+    typeSelect.addEventListener('change', (e) => {
       state.typeFilter = e.target.value;
       state.page = 1;
       fetchAndRenderCases();
     });
   }
 
-  const sortBySelect = document.getElementById('filter-sort');
-  if (sortBySelect) {
-    sortBySelect.addEventListener('change', (e) => {
-      const [by, order] = e.target.value.split('-');
-      state.sortBy = by || 'createdAt';
-      state.sortOrder = order || 'desc';
+  const dateSelect = document.getElementById('filter-date-range');
+  if (dateSelect) {
+    dateSelect.addEventListener('change', (e) => {
+      state.dateRange = e.target.value;
+      state.page = 1;
       fetchAndRenderCases();
     });
   }
 
-  // New Case Modal
-  const btnNewCase = document.getElementById('btn-new-case');
-  const newCaseModal = document.getElementById('new-case-modal');
-  const modalClose = document.getElementById('modal-close');
-  const modalCancel = document.getElementById('modal-cancel');
-  const modalSubmit = document.getElementById('modal-submit');
+  const btnReset = document.getElementById('btn-reset-filters');
+  if (btnReset) {
+    btnReset.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      if (statusSelect) statusSelect.value = '';
+      if (typeSelect) typeSelect.value = '';
+      if (dateSelect) dateSelect.value = 'all';
 
-  if (btnNewCase && newCaseModal) {
-    btnNewCase.addEventListener('click', () => {
-      resetNewCaseForm();
-      newCaseModal.style.display = 'flex';
+      state.search = '';
+      state.statusFilter = '';
+      state.typeFilter = '';
+      state.dateRange = 'all';
+      state.page = 1;
+      fetchAndRenderCases();
     });
   }
 
-  const closeModal = () => {
-    if (newCaseModal) newCaseModal.style.display = 'none';
-  };
-  if (modalClose) modalClose.addEventListener('click', closeModal);
-  if (modalCancel) modalCancel.addEventListener('click', closeModal);
+  // Sortable column headers
+  bindSortHeader('th-sort-caseNumber', 'caseNumber');
+  bindSortHeader('th-sort-title', 'complainantName');
+  bindSortHeader('th-sort-type', 'incidentType');
+  bindSortHeader('th-sort-status', 'status');
+  bindSortHeader('th-sort-updatedAt', 'updatedAt');
+}
 
-  if (modalSubmit) {
-    modalSubmit.addEventListener('click', handleNewCaseSubmit);
+function bindSortHeader(elementId, field) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  el.addEventListener('click', () => {
+    if (state.sortBy === field) {
+      state.sortOrder = state.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      state.sortBy = field;
+      state.sortOrder = 'desc';
+    }
+    fetchAndRenderCases();
+  });
+}
+
+// ─── Fetch Cases from Live Backend ────────────────────────────────────────────
+async function fetchAndRenderCases() {
+  const tbody = document.getElementById('cases-table-body');
+  if (tbody) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7">
+          <div class="neu-empty-row">
+            <span class="neu-spinner"></span>
+            <span>Loading investigation cases…</span>
+          </div>
+        </td>
+      </tr>
+    `;
   }
 
-  // Edit Case Modal close handlers
-  const editModal = document.getElementById('edit-case-modal');
-  const editModalClose = document.getElementById('edit-modal-close');
-  const editModalCancel = document.getElementById('edit-modal-cancel');
-  const editModalSubmit = document.getElementById('edit-modal-submit');
+  try {
+    const params = {
+      page: state.page,
+      limit: state.limit,
+      sortBy: state.sortBy,
+      sortOrder: state.sortOrder,
+    };
+    if (state.search) params.q = state.search;
+    if (state.statusFilter) params.status = state.statusFilter;
+    if (state.typeFilter) params.type = state.typeFilter;
 
-  const closeEditModal = () => {
-    if (editModal) editModal.style.display = 'none';
-    state.editingCaseId = null;
-  };
-  if (editModalClose) editModalClose.addEventListener('click', closeEditModal);
-  if (editModalCancel) editModalCancel.addEventListener('click', closeEditModal);
-  if (editModalSubmit) editModalSubmit.addEventListener('click', handleEditCaseSubmit);
+    const res = await getCases(params);
 
-  // Pagination buttons
-  const prevBtn = document.getElementById('btn-prev');
-  const nextBtn = document.getElementById('btn-next');
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
+    state.cases = res.cases || [];
+    state.total = res.total || 0;
+    state.totalPages = res.totalPages || Math.ceil(state.total / state.limit) || 1;
+
+    renderCasesTable(state.cases);
+    renderPagination();
+
+    // Auto-select first case if none selected, or restore active selected case
+    if (state.cases.length > 0) {
+      const match = state.cases.find(c => c.caseNumber === state.selectedCaseId || c.id === state.selectedCaseId);
+      if (match) {
+        selectCase(match.caseNumber || match.id);
+      } else {
+        selectCase(state.cases[0].caseNumber || state.cases[0].id);
+      }
+    } else {
+      renderEmptyCaseDetails();
+    }
+
+  } catch (err) {
+    console.error('[Cases] Error fetching cases:', err);
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7">
+            <div class="neu-empty-row" style="color:var(--neu-error)">
+              <span>Failed to load investigation cases from server.</span>
+              <button class="neu-btn-secondary" id="btn-retry-fetch" style="margin-top:6px">Retry</button>
+            </div>
+          </td>
+        </tr>
+      `;
+      const retryBtn = document.getElementById('btn-retry-fetch');
+      if (retryBtn) retryBtn.addEventListener('click', fetchAndRenderCases);
+    }
+    renderEmptyCaseDetails();
+  }
+}
+
+// ─── Table Rendering ──────────────────────────────────────────────────────────
+function renderCasesTable(cases) {
+  const tbody = document.getElementById('cases-table-body');
+  const countLabel = document.getElementById('cases-count-label');
+
+  if (countLabel) {
+    const start = state.total === 0 ? 0 : (state.page - 1) * state.limit + 1;
+    const end = Math.min(state.page * state.limit, state.total);
+    countLabel.textContent = `Showing ${start} to ${end} of ${state.total} cases`;
+  }
+
+  if (!tbody) return;
+
+  if (cases.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7">
+          <div class="neu-empty-row">
+            <span style="font-size:28px">📁</span>
+            <span style="font-weight:700;color:var(--neu-navy)">No investigation cases found</span>
+            <span style="font-size:11.5px;color:var(--neu-secondary)">Try adjusting your search criteria or register a new case.</span>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = cases.map(c => {
+    const caseId = c.caseNumber || c.id;
+    const isSelected = caseId === state.selectedCaseId;
+    const title = c.title || c.complainantName || 'Investigation Case';
+    const desc = c.description || c.incidentType?.replace(/_/g, ' ') || 'No summary registered';
+    const categoryInfo = getCategoryBadge(c.incidentType);
+    const statusInfo = getStatusPill(c.status);
+    const dateFormatted = c.updatedAt ? formatCaseDate(c.updatedAt) : '—';
+
+    return `
+      <tr class="neu-case-row ${isSelected ? 'selected' : ''}" data-case-id="${escapeHtml(caseId)}">
+        <td style="text-align:center" onclick="event.stopPropagation()">
+          <input type="checkbox" class="neu-row-checkbox" value="${escapeHtml(caseId)}" aria-label="Select case ${escapeHtml(caseId)}" />
+        </td>
+        <td class="neu-col-case-num">${escapeHtml(caseId)}</td>
+        <td>
+          <div class="neu-col-title-wrap">
+            <span class="neu-col-title">${escapeHtml(title)}</span>
+            <span class="neu-col-desc">${escapeHtml(desc)}</span>
+          </div>
+        </td>
+        <td>
+          <div class="neu-col-category-wrap">
+            <span class="neu-cat-icon-badge" style="background:${categoryInfo.bg};color:${categoryInfo.color}">${categoryInfo.icon}</span>
+            <span class="neu-cat-name">${escapeHtml(categoryInfo.label)}</span>
+          </div>
+        </td>
+        <td>
+          <span class="neu-status-pill ${statusInfo.className}">${statusInfo.label}</span>
+        </td>
+        <td class="neu-col-date">${dateFormatted}</td>
+        <td class="neu-col-arrow">&rsaquo;</td>
+      </tr>
+    `;
+  }).join('');
+
+  // Row click listeners
+  tbody.querySelectorAll('.neu-case-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.getAttribute('data-case-id');
+      if (id) {
+        tbody.querySelectorAll('.neu-case-row').forEach(r => r.classList.remove('selected'));
+        row.classList.add('selected');
+        selectCase(id);
+      }
+    });
+  });
+}
+
+// ─── Category & Status Helpers ────────────────────────────────────────────────
+function getCategoryBadge(type) {
+  const norm = (type || '').toLowerCase();
+  if (norm.includes('investment') || norm.includes('fraud') || norm.includes('financial')) {
+    return { label: 'Financial Crime', icon: '💼', bg: '#E1EDFC', color: 'var(--cat-blue)' };
+  }
+  if (norm.includes('digital') || norm.includes('cyber') || norm.includes('arrest')) {
+    return { label: 'Cyber Crime', icon: '🛡️', bg: '#F1EAFF', color: 'var(--cat-purple)' };
+  }
+  if (norm.includes('task') || norm.includes('organized') || norm.includes('theft')) {
+    return { label: 'Organized Crime', icon: '⭐', bg: '#FFF2E8', color: 'var(--cat-orange)' };
+  }
+  if (norm.includes('kyc') || norm.includes('identity')) {
+    return { label: 'Identity Fraud', icon: '🪪', bg: '#E0F2FE', color: 'var(--cat-teal)' };
+  }
+  if (norm.includes('romance') || norm.includes('person')) {
+    return { label: 'Person Related', icon: '👤', bg: '#FEE2E2', color: 'var(--cat-red)' };
+  }
+  return { label: type?.replace(/_/g, ' ') || 'General Investigation', icon: '📁', bg: '#E2E8F2', color: 'var(--neu-secondary)' };
+}
+
+function getStatusPill(status) {
+  const norm = (status || '').toUpperCase();
+  if (norm === 'OPEN' || norm === 'ACTIVE') {
+    return { label: 'Active', className: 'active' };
+  }
+  if (norm === 'UNDER_INQUIRY' || norm === 'IN_PROGRESS' || norm === 'UNDER_INVESTIGATION') {
+    return { label: 'Under Review', className: 'review' };
+  }
+  if (norm === 'CHARGESHEETED') {
+    return { label: 'Chargesheeted', className: 'review' };
+  }
+  return { label: 'Closed', className: 'closed' };
+}
+
+function formatCaseDate(iso) {
+  try {
+    const d = new Date(iso);
+    const day = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    const time = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    return `${day}<br/><span style="font-size:9.5px;color:#8495AB">${time}</span>`;
+  } catch (_) {
+    return iso;
+  }
+}
+
+// ─── Pagination Controls ──────────────────────────────────────────────────────
+function renderPagination() {
+  const container = document.getElementById('cases-pagination');
+  if (!container) return;
+
+  if (state.totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = `
+    <button class="neu-page-btn" id="pg-prev" ${state.page <= 1 ? 'disabled' : ''} aria-label="Previous page">&lsaquo;</button>
+  `;
+
+  for (let i = 1; i <= state.totalPages; i++) {
+    html += `
+      <button class="neu-page-btn ${i === state.page ? 'active' : ''}" data-page="${i}">${i}</button>
+    `;
+  }
+
+  html += `
+    <button class="neu-page-btn" id="pg-next" ${state.page >= state.totalPages ? 'disabled' : ''} aria-label="Next page">&rsaquo;</button>
+  `;
+
+  container.innerHTML = html;
+
+  const prev = document.getElementById('pg-prev');
+  const next = document.getElementById('pg-next');
+  if (prev) {
+    prev.addEventListener('click', () => {
       if (state.page > 1) {
         state.page--;
         fetchAndRenderCases();
       }
     });
   }
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
+  if (next) {
+    next.addEventListener('click', () => {
       if (state.page < state.totalPages) {
         state.page++;
         fetchAndRenderCases();
@@ -144,402 +495,408 @@ function bindEvents() {
     });
   }
 
-  // Table row click Delegation (View / Edit)
-  const tbody = document.getElementById('cases-tbody');
-  if (tbody) {
-    tbody.addEventListener('click', (e) => {
-      const viewBtn = e.target.closest('.btn-view-case');
-      if (viewBtn) {
-        const caseId = viewBtn.dataset.id;
-        setActiveCaseId(caseId);
-        window.location.href = `/frontend/pages/case-detail.html?id=${encodeURIComponent(caseId)}`;
-        return;
-      }
-
-      const editBtn = e.target.closest('.btn-edit-case');
-      if (editBtn) {
-        const caseId = editBtn.dataset.id;
-        openEditCaseModal(caseId);
-        return;
+  container.querySelectorAll('.neu-page-btn[data-page]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = parseInt(btn.getAttribute('data-page'), 10);
+      if (p && p !== state.page) {
+        state.page = p;
+        fetchAndRenderCases();
       }
     });
-  }
+  });
 }
 
-// ─── Data Fetching ────────────────────────────────────────────────────────────
-async function fetchAndRenderCases() {
-  const tbody = document.getElementById('cases-tbody');
-  if (tbody) {
-    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-muted"><span class="spinner"></span> Fetching case dossiers…</td></tr>`;
-  }
+// ─── Case Selection & Detail Inspection ───────────────────────────────────────
+async function selectCase(caseId) {
+  state.selectedCaseId = caseId;
+  setActiveCaseId(caseId);
 
-  try {
-    const data = await getCases({
-      q: state.search,
-      status: state.statusFilter,
-      type: state.typeFilter,
-      sortBy: state.sortBy,
-      sortOrder: state.sortOrder,
-      page: state.page,
-      limit: state.limit,
-    });
-
-    state.cases = data.cases || [];
-    state.total = data.total || 0;
-    state.page = data.page || 1;
-    state.totalPages = data.totalPages || 1;
-
-    renderStats();
-    renderTable();
-    renderPagination();
-  } catch (err) {
-    console.error('Failed to fetch cases:', err);
-    if (tbody) {
-      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger py-6">⚠️ Failed to load cases: ${escapeHtml(err.message)}</td></tr>`;
-    }
-  }
-}
-
-// ─── Stats Rendering ──────────────────────────────────────────────────────────
-function renderStats() {
-  const totalEl = document.getElementById('stat-total-cases');
-  const activeEl = document.getElementById('stat-active-cases');
-  const closedEl = document.getElementById('stat-closed-cases');
-  const lossEl = document.getElementById('stat-total-loss');
-
-  if (!totalEl) return;
-
-  const activeCount = state.cases.filter(c => c.status === 'OPEN' || c.status === 'UNDER_INVESTIGATION').length;
-  const closedCount = state.cases.filter(c => c.status === 'CLOSED' || c.status === 'CHARGESHEET_FILED').length;
-  const totalLoss = state.cases.reduce((sum, c) => sum + (c.totalLossINR || c.fraudAmountINR || 0), 0);
-
-  totalEl.textContent = state.total;
-  if (activeEl) activeEl.textContent = activeCount;
-  if (closedEl) closedEl.textContent = closedCount;
-  if (lossEl) lossEl.textContent = formatINR(totalLoss);
-}
-
-// ─── Table Rendering ──────────────────────────────────────────────────────────
-function renderTable() {
-  const tbody = document.getElementById('cases-tbody');
-  if (!tbody) return;
-
-  if (state.cases.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="8" class="empty-state py-8 text-center">
-          <div class="empty-state-icon" style="font-size:2rem;margin-bottom:8px">📋</div>
-          <p class="font-medium text-main">No case files match the selected criteria.</p>
-          <p class="text-xs text-muted" style="margin-top:4px">Try clearing filters or register a new cybercrime case dossier.</p>
-        </td>
-      </tr>
-    `;
-    return;
-  }
-
-  tbody.innerHTML = state.cases.map(c => {
-    const statusBadgeClass = getStatusBadgeClass(c.status);
-    const statusLabel = formatStatusLabel(c.status);
-    const formattedAmount = formatINR(c.totalLossINR || c.fraudAmountINR || 0);
-    const dateStr = formatIST(c.createdAt || c.incidentDate);
-
-    return `
-      <tr class="table-row-hover">
-        <td class="font-mono text-primary font-bold">
-          <a href="/frontend/pages/case-detail.html?id=${encodeURIComponent(c.caseNumber)}" class="hover-underline">
-            ${escapeHtml(c.caseNumber)}
-          </a>
-        </td>
-        <td>
-          <div class="font-medium text-main">${escapeHtml(c.complainantName || 'Anonymous')}</div>
-          ${c.firNumber ? `<div class="text-xs text-muted">FIR: ${escapeHtml(c.firNumber)}</div>` : ''}
-        </td>
-        <td>
-          <span class="badge badge-subtle text-xs">${escapeHtml(c.incidentType || 'General Fraud')}</span>
-        </td>
-        <td class="text-secondary text-sm">
-          ${escapeHtml(c.jurisdiction || c.policeStation || 'HQ Cyber Cell')}
-        </td>
-        <td class="text-secondary text-sm">
-          ${escapeHtml(c.investigatingOfficer || 'Unassigned')}
-        </td>
-        <td class="font-mono text-warning font-medium">
-          ${formattedAmount}
-        </td>
-        <td>
-          <span class="badge ${statusBadgeClass}">${escapeHtml(statusLabel)}</span>
-        </td>
-        <td class="text-xs text-muted">
-          ${dateStr}
-        </td>
-        <td class="text-right">
-          <div class="btn-group">
-            <button class="btn btn-xs btn-outline btn-view-case" data-id="${escapeHtml(c.caseNumber)}" title="Open Case Dossier">
-              📂 View
-            </button>
-            <button class="btn btn-xs btn-ghost btn-edit-case" data-id="${escapeHtml(c.caseNumber)}" title="Edit Case Details">
-              ✏️
-            </button>
-          </div>
-        </td>
-      </tr>
-    `;
-  }).join('');
-}
-
-function getStatusBadgeClass(status) {
-  switch (status) {
-    case 'OPEN': return 'badge-info';
-    case 'UNDER_INVESTIGATION': return 'badge-warning';
-    case 'CHARGESHEET_FILED': return 'badge-purple';
-    case 'CLOSED': return 'badge-success';
-    default: return 'badge-neutral';
-  }
-}
-
-function formatStatusLabel(status) {
-  switch (status) {
-    case 'OPEN': return 'Open';
-    case 'UNDER_INVESTIGATION': return 'Under Investigation';
-    case 'CHARGESHEET_FILED': return 'Chargesheet Filed';
-    case 'CLOSED': return 'Closed';
-    default: return status || 'Unknown';
-  }
-}
-
-// ─── Pagination ───────────────────────────────────────────────────────────────
-function renderPagination() {
-  const paginationContainer = document.getElementById('pagination-container');
-  const pageInfo = document.getElementById('page-info');
-  const prevBtn = document.getElementById('btn-prev');
-  const nextBtn = document.getElementById('btn-next');
-
-  if (!paginationContainer) return;
-
-  if (state.totalPages <= 1) {
-    paginationContainer.style.display = 'none';
-    return;
-  }
-
-  paginationContainer.style.display = 'flex';
-  if (pageInfo) {
-    const startItem = (state.page - 1) * state.limit + 1;
-    const endItem = Math.min(state.page * state.limit, state.total);
-    pageInfo.textContent = `Showing ${startItem}–${endItem} of ${state.total} cases (Page ${state.page} of ${state.totalPages})`;
-  }
-
-  if (prevBtn) prevBtn.disabled = state.page <= 1;
-  if (nextBtn) nextBtn.disabled = state.page >= state.totalPages;
-}
-
-// ─── New Case Submission ──────────────────────────────────────────────────────
-function resetNewCaseForm() {
-  const form = document.getElementById('new-case-form');
-  if (form) form.reset();
-  const errorEl = document.getElementById('form-server-error');
-  if (errorEl) {
-    errorEl.style.display = 'none';
-    errorEl.textContent = '';
-  }
-}
-
-async function handleNewCaseSubmit() {
-  const submitBtn = document.getElementById('modal-submit');
-  const errorEl = document.getElementById('form-server-error');
-
-  const incidentType = document.getElementById('field-incident-type')?.value?.trim();
-  const complainantName = document.getElementById('field-complainant-name')?.value?.trim();
-  const complainantPhone = document.getElementById('field-complainant-phone')?.value?.trim();
-  const complainantEmail = document.getElementById('field-complainant-email')?.value?.trim();
-  const jurisdiction = document.getElementById('field-jurisdiction')?.value?.trim();
-  const investigatingOfficer = document.getElementById('field-officer')?.value?.trim();
-  const firNumber = document.getElementById('field-fir')?.value?.trim();
-  const fraudAmountINR = parseFloat(document.getElementById('field-fraud-amount')?.value) || 0;
-  const priority = document.getElementById('field-priority')?.value || 'MEDIUM';
-  const description = document.getElementById('field-description')?.value?.trim();
-
-  // Basic client validation
-  if (!incidentType) {
-    showFormError(errorEl, 'Please specify an incident type.');
-    return;
-  }
-  if (!complainantName) {
-    showFormError(errorEl, 'Complainant name is required.');
-    return;
-  }
-
-  try {
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span class="spinner"></span> Registering…`;
-    }
-    if (errorEl) errorEl.style.display = 'none';
-
-    const newCase = await createCase({
-      incidentType,
-      complainantName,
-      complainantPhone: complainantPhone || null,
-      complainantEmail: complainantEmail || null,
-      jurisdiction: jurisdiction || null,
-      investigatingOfficer: investigatingOfficer || null,
-      firNumber: firNumber || null,
-      totalLossINR: fraudAmountINR,
-      priority,
-      description: description || null,
-      status: 'OPEN',
-    });
-
-    showNotification(`Case ${newCase.caseNumber} registered successfully!`, 'success');
-    document.getElementById('new-case-modal').style.display = 'none';
-    state.page = 1;
-    await fetchAndRenderCases();
-  } catch (err) {
-    console.error('Failed to create case:', err);
-    showFormError(errorEl, err.message || 'Failed to register case. Check server logs.');
-  } finally {
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = `Register Case`;
-    }
-  }
-}
-
-function showFormError(el, msg) {
-  if (!el) return;
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-// ─── Edit Case Modal ──────────────────────────────────────────────────────────
-async function openEditCaseModal(caseId) {
-  const editModal = document.getElementById('edit-case-modal');
-  const editBody = document.getElementById('edit-modal-body');
-  if (!editModal || !editBody) return;
-
-  state.editingCaseId = caseId;
-  editModal.style.display = 'flex';
-  editBody.innerHTML = `<div class="loading-row py-8 text-center"><span class="spinner"></span> Loading case dossier details…</div>`;
+  // Update browser URL query without reload
+  const url = new URL(window.location.href);
+  url.searchParams.set('caseId', caseId);
+  window.history.replaceState({}, '', url.toString());
 
   try {
     const res = await getCase(caseId);
-    const c = res.case;
-
-    editBody.innerHTML = `
-      <form id="edit-case-form" class="form-grid">
-        <div class="form-group col-span-2">
-          <label class="form-label">Case Identifier</label>
-          <input type="text" class="input font-mono" value="${escapeHtml(c.caseNumber)}" disabled />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Status</label>
-          <select id="edit-status" class="input">
-            <option value="OPEN" ${c.status === 'OPEN' ? 'selected' : ''}>Open</option>
-            <option value="UNDER_INVESTIGATION" ${c.status === 'UNDER_INVESTIGATION' ? 'selected' : ''}>Under Investigation</option>
-            <option value="CHARGESHEET_FILED" ${c.status === 'CHARGESHEET_FILED' ? 'selected' : ''}>Chargesheet Filed</option>
-            <option value="CLOSED" ${c.status === 'CLOSED' ? 'selected' : ''}>Closed</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Priority</label>
-          <select id="edit-priority" class="input">
-            <option value="LOW" ${c.priority === 'LOW' ? 'selected' : ''}>Low</option>
-            <option value="MEDIUM" ${c.priority === 'MEDIUM' ? 'selected' : ''}>Medium</option>
-            <option value="HIGH" ${c.priority === 'HIGH' ? 'selected' : ''}>High</option>
-            <option value="CRITICAL" ${c.priority === 'CRITICAL' ? 'selected' : ''}>Critical</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Incident Type</label>
-          <input type="text" id="edit-incident-type" class="input" value="${escapeHtml(c.incidentType || '')}" required />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">FIR Number</label>
-          <input type="text" id="edit-fir" class="input" value="${escapeHtml(c.firNumber || '')}" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Complainant Name</label>
-          <input type="text" id="edit-complainant" class="input" value="${escapeHtml(c.complainantName || '')}" required />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Jurisdiction / Police Station</label>
-          <input type="text" id="edit-jurisdiction" class="input" value="${escapeHtml(c.jurisdiction || '')}" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Investigating Officer</label>
-          <input type="text" id="edit-officer" class="input" value="${escapeHtml(c.investigatingOfficer || '')}" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Fraud Amount (₹)</label>
-          <input type="number" id="edit-fraud-amount" class="input" value="${c.totalLossINR || c.fraudAmountINR || 0}" step="100" />
-        </div>
-
-        <div class="form-group col-span-2">
-          <label class="form-label">Description / Modus Operandi Notes</label>
-          <textarea id="edit-description" class="input" rows="3">${escapeHtml(c.description || '')}</textarea>
-        </div>
-
-        <div class="form-server-error col-span-2" id="edit-form-error" style="display:none"></div>
-      </form>
-    `;
+    const kase = res.case;
+    state.selectedCaseData = kase;
+    populateCaseDetails(kase);
+    loadRecentCaseActivity(caseId);
   } catch (err) {
-    console.error('Failed to load case for edit:', err);
-    editBody.innerHTML = `<div class="text-danger py-4 text-center">Failed to load case data: ${escapeHtml(err.message)}</div>`;
+    console.error(`[Cases] Failed to fetch case details for ${caseId}:`, err);
+    showToast(err.message || 'Unable to inspect selected case.', 'error');
   }
 }
 
-async function handleEditCaseSubmit() {
-  if (!state.editingCaseId) return;
+function populateCaseDetails(kase) {
+  const caseNumber = kase.caseNumber || kase.id;
+  const statusInfo = getStatusPill(kase.status);
+  const categoryInfo = getCategoryBadge(kase.incidentType);
+  const title = kase.title || kase.complainantName || 'Investigation Case';
+  const desc = kase.description || 'No case summary provided.';
 
-  const submitBtn = document.getElementById('edit-modal-submit');
-  const errorEl = document.getElementById('edit-form-error');
+  // Header
+  const numEl = document.getElementById('d-case-num');
+  const statusPill = document.getElementById('d-status-pill');
+  const titleEl = document.getElementById('d-case-title');
+  const descEl = document.getElementById('d-case-desc');
 
-  const status = document.getElementById('edit-status')?.value;
-  const priority = document.getElementById('edit-priority')?.value;
-  const incidentType = document.getElementById('edit-incident-type')?.value?.trim();
-  const firNumber = document.getElementById('edit-fir')?.value?.trim();
-  const complainantName = document.getElementById('edit-complainant')?.value?.trim();
-  const jurisdiction = document.getElementById('edit-jurisdiction')?.value?.trim();
-  const investigatingOfficer = document.getElementById('edit-officer')?.value?.trim();
-  const totalLossINR = parseFloat(document.getElementById('edit-fraud-amount')?.value) || 0;
-  const description = document.getElementById('edit-description')?.value?.trim();
+  if (numEl) numEl.textContent = caseNumber;
+  if (statusPill) {
+    statusPill.className = `neu-status-pill ${statusInfo.className}`;
+    statusPill.textContent = statusInfo.label;
+  }
+  if (titleEl) titleEl.textContent = title;
+  if (descEl) descEl.textContent = desc;
 
-  try {
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span class="spinner"></span> Saving…`;
-    }
+  // Metadata Grid
+  const cellNum = document.getElementById('cell-case-num');
+  const cellStatus = document.getElementById('cell-status');
+  const cellCat = document.getElementById('cell-category');
+  const cellPriority = document.getElementById('cell-priority');
+  const cellReg = document.getElementById('cell-registered');
+  const cellUpd = document.getElementById('cell-updated');
+  const cellOff = document.getElementById('cell-officer');
+  const cellDept = document.getElementById('cell-department');
 
-    await patchCase(state.editingCaseId, {
-      status,
-      priority,
-      incidentType,
-      firNumber: firNumber || null,
-      complainantName,
-      jurisdiction: jurisdiction || null,
-      investigatingOfficer: investigatingOfficer || null,
-      totalLossINR,
-      description: description || null,
-    });
-
-    showNotification(`Case ${state.editingCaseId} updated successfully`, 'success');
-    document.getElementById('edit-case-modal').style.display = 'none';
-    state.editingCaseId = null;
-    await fetchAndRenderCases();
-  } catch (err) {
-    console.error('Failed to update case:', err);
-    showFormError(errorEl, err.message || 'Failed to update case.');
-  } finally {
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = `Save Changes`;
+  if (cellNum) cellNum.textContent = caseNumber;
+  if (cellStatus) {
+    cellStatus.className = `neu-status-pill ${statusInfo.className}`;
+    cellStatus.textContent = statusInfo.label;
+  }
+  if (cellCat) cellCat.textContent = categoryInfo.label;
+  if (cellPriority) {
+    const amt = kase.amountDefrauded ?? kase.totalLossINR ?? 0;
+    if (amt >= 500000) {
+      cellPriority.className = 'neu-priority-badge neu-priority-high';
+      cellPriority.textContent = 'High';
+    } else if (amt > 0) {
+      cellPriority.className = 'neu-priority-badge neu-priority-med';
+      cellPriority.textContent = 'Medium';
+    } else {
+      cellPriority.className = 'neu-priority-badge neu-priority-low';
+      cellPriority.textContent = 'Standard';
     }
   }
+
+  if (cellReg) cellReg.textContent = kase.createdAt ? new Date(kase.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+  if (cellUpd) cellUpd.textContent = kase.updatedAt ? new Date(kase.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+  if (cellOff) cellOff.textContent = kase.investigatingOfficer || kase.officerName || 'Inspector Sharma';
+  if (cellDept) cellDept.textContent = kase.jurisdiction || 'Crime Branch (DEL)';
+
+  // Summary Text
+  const summaryEl = document.getElementById('summary-text');
+  if (summaryEl) summaryEl.textContent = desc;
+
+  // Edit button permission
+  const editBtn = document.getElementById('btn-edit-case');
+  if (editBtn) {
+    editBtn.onclick = () => openEditCaseModal(kase);
+  }
+}
+
+async function loadRecentCaseActivity(caseId) {
+  const container = document.getElementById('activity-list');
+  const linkTimeline = document.getElementById('link-view-timeline');
+  if (linkTimeline) {
+    linkTimeline.href = `/frontend/pages/timeline.html?caseId=${encodeURIComponent(caseId)}`;
+  }
+
+  if (!container) return;
+
+  try {
+    const [timelineRes, evidenceRes] = await Promise.allSettled([
+      getCaseTimeline(caseId),
+      getCaseEvidence(caseId),
+    ]);
+
+    const events = timelineRes.status === 'fulfilled' ? (timelineRes.value?.events || []) : [];
+    const evidence = evidenceRes.status === 'fulfilled' ? (evidenceRes.value?.evidence || []) : [];
+
+    const activities = [];
+
+    // Map evidence additions
+    evidence.slice(0, 2).forEach(ev => {
+      activities.push({
+        title: 'Evidence Uploaded',
+        sub: ev.fileName || 'Digital File',
+        icon: '📄',
+        bg: '#E1EDFC',
+        color: 'var(--neu-blue)',
+        date: ev.uploadedAt ? new Date(ev.uploadedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Recent',
+      });
+    });
+
+    // Map timeline events
+    events.slice(0, 2).forEach(t => {
+      activities.push({
+        title: t.title || 'Case Milestone',
+        sub: t.description || 'Timeline event recorded',
+        icon: '⏱️',
+        bg: '#F1EAFF',
+        color: 'var(--cat-purple)',
+        date: t.eventTimestamp ? new Date(t.eventTimestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Recent',
+      });
+    });
+
+    if (activities.length === 0) {
+      container.innerHTML = `
+        <div style="font-size:11.5px;color:var(--neu-secondary);padding:6px 0;">
+          No recent forensic activities recorded for this case.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = activities.map(act => `
+      <div class="neu-activity-row">
+        <div class="neu-act-left">
+          <div class="neu-act-icon-badge" style="background:${act.bg};color:${act.color}">
+            <span>${act.icon}</span>
+          </div>
+          <div class="neu-act-info">
+            <span class="neu-act-title">${escapeHtml(act.title)}</span>
+            <span class="neu-act-sub">${escapeHtml(act.sub)}</span>
+          </div>
+        </div>
+        <span class="neu-act-date">${act.date}</span>
+      </div>
+    `).join('');
+
+  } catch (_) {
+    container.innerHTML = `
+      <div style="font-size:11.5px;color:var(--neu-muted);padding:6px 0;">
+        Activity trail ready for ingestion.
+      </div>
+    `;
+  }
+}
+
+function renderEmptyCaseDetails() {
+  const numEl = document.getElementById('d-case-num');
+  const titleEl = document.getElementById('d-case-title');
+  const descEl = document.getElementById('d-case-desc');
+  const summaryEl = document.getElementById('summary-text');
+  const activityList = document.getElementById('activity-list');
+
+  if (numEl) numEl.textContent = '—';
+  if (titleEl) titleEl.textContent = 'No Case Selected';
+  if (descEl) descEl.textContent = 'Select an investigation case from the table to inspect details.';
+  if (summaryEl) summaryEl.textContent = 'No case data available.';
+  if (activityList) activityList.innerHTML = '<div style="font-size:11.5px;color:var(--neu-secondary);padding:6px 0;">No activities to display.</div>';
+}
+
+// ─── Detail Tabs Navigation ───────────────────────────────────────────────────
+function bindDetailTabEvents() {
+  const tabs = {
+    'tab-overview': 'tab-content-overview',
+  };
+
+  const overviewTab = document.getElementById('tab-overview');
+  const evidenceTab = document.getElementById('tab-evidence');
+  const personsTab = document.getElementById('tab-persons');
+  const timelineTab = document.getElementById('tab-timeline');
+  const reportsTab = document.getElementById('tab-reports');
+
+  if (evidenceTab) {
+    evidenceTab.addEventListener('click', () => {
+      const id = state.selectedCaseId || '';
+      window.location.href = `/frontend/pages/index.html?caseId=${encodeURIComponent(id)}`;
+    });
+  }
+
+  if (personsTab) {
+    personsTab.addEventListener('click', () => {
+      const id = state.selectedCaseId || '';
+      window.location.href = `/frontend/pages/entities.html?caseId=${encodeURIComponent(id)}`;
+    });
+  }
+
+  if (timelineTab) {
+    timelineTab.addEventListener('click', () => {
+      const id = state.selectedCaseId || '';
+      window.location.href = `/frontend/pages/timeline.html?caseId=${encodeURIComponent(id)}`;
+    });
+  }
+
+  if (reportsTab) {
+    reportsTab.addEventListener('click', () => {
+      const id = state.selectedCaseId || '';
+      window.location.href = `/frontend/pages/reports.html?caseId=${encodeURIComponent(id)}`;
+    });
+  }
+}
+
+// ─── Modals: Create & Edit Case ───────────────────────────────────────────────
+function bindModalEvents() {
+  const btnNewCase = document.getElementById('btn-new-case');
+  const modalClose = document.getElementById('modal-close');
+  const modalCancel = document.getElementById('modal-cancel');
+  const newCaseForm = document.getElementById('new-case-form');
+
+  if (btnNewCase) {
+    btnNewCase.addEventListener('click', openCreateCaseModal);
+  }
+
+  const closeCreateModal = () => {
+    const modal = document.getElementById('new-case-modal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  if (modalClose) modalClose.addEventListener('click', closeCreateModal);
+  if (modalCancel) modalCancel.addEventListener('click', closeCreateModal);
+
+  if (newCaseForm) {
+    newCaseForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = document.getElementById('modal-error-msg');
+      if (errBox) errBox.style.display = 'none';
+
+      const complainant = document.getElementById('f-complainant')?.value.trim();
+      const incidentType = document.getElementById('f-type')?.value;
+      const jurisdiction = document.getElementById('f-jurisdiction')?.value.trim();
+      const firNumber = document.getElementById('f-fir')?.value.trim();
+      const officerName = document.getElementById('f-officer')?.value.trim();
+      const amountDefrauded = parseFloat(document.getElementById('f-amount')?.value) || 0;
+      const status = document.getElementById('f-status')?.value || 'OPEN';
+      const description = document.getElementById('f-description')?.value.trim();
+
+      if (!complainant) {
+        if (errBox) {
+          errBox.textContent = 'Complainant Name is required.';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+      if (!incidentType) {
+        if (errBox) {
+          errBox.textContent = 'Incident Type / Category is required.';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      const submitBtn = document.getElementById('modal-submit-btn');
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        const payload = {
+          complainantName: complainant,
+          incidentType,
+          jurisdiction: jurisdiction || currentOfficer?.jurisdiction || 'Delhi Police',
+          firNumber,
+          officerName: officerName || currentOfficer?.name || 'Inspector Sharma',
+          amountDefrauded,
+          status,
+          description,
+        };
+
+        const res = await createCase(payload);
+        closeCreateModal();
+        showToast('Investigation case registered successfully.', 'success');
+
+        // Refresh table and select new case
+        await fetchAndRenderCases();
+        if (res && (res.caseNumber || res.id)) {
+          selectCase(res.caseNumber || res.id);
+        }
+
+      } catch (err) {
+        console.error('[Cases] Error creating case:', err);
+        if (errBox) {
+          errBox.textContent = err.message || 'Failed to register case.';
+          errBox.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
+  // Edit Case Modal bindings
+  const editModal = document.getElementById('edit-case-modal');
+  const editClose = document.getElementById('edit-modal-close');
+  const editCancel = document.getElementById('edit-modal-cancel');
+  const editForm = document.getElementById('edit-case-form');
+
+  const closeEditModal = () => {
+    if (editModal) editModal.style.display = 'none';
+  };
+
+  if (editClose) editClose.addEventListener('click', closeEditModal);
+  if (editCancel) editCancel.addEventListener('click', closeEditModal);
+
+  if (editForm) {
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = document.getElementById('edit-error-msg');
+      if (errBox) errBox.style.display = 'none';
+
+      if (!state.selectedCaseId) return;
+
+      const submitBtn = document.getElementById('edit-modal-submit-btn');
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        const updates = {
+          status: document.getElementById('ef-status')?.value,
+          incidentType: document.getElementById('ef-type')?.value,
+          officerName: document.getElementById('ef-officer')?.value.trim(),
+          amountDefrauded: parseFloat(document.getElementById('ef-amount')?.value) || 0,
+          firNumber: document.getElementById('ef-fir')?.value.trim(),
+          jurisdiction: document.getElementById('ef-jurisdiction')?.value.trim(),
+          description: document.getElementById('ef-description')?.value.trim(),
+        };
+
+        await patchCase(state.selectedCaseId, updates);
+        closeEditModal();
+        showToast('Case details updated successfully.', 'success');
+
+        await fetchAndRenderCases();
+        await selectCase(state.selectedCaseId);
+
+      } catch (err) {
+        console.error('[Cases] Error updating case:', err);
+        if (errBox) {
+          errBox.textContent = err.message || 'Failed to update case.';
+          errBox.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+}
+
+function openCreateCaseModal() {
+  const modal = document.getElementById('new-case-modal');
+  if (!modal) return;
+  const jurInput = document.getElementById('f-jurisdiction');
+  const offInput = document.getElementById('f-officer');
+  if (jurInput && currentOfficer) jurInput.value = currentOfficer.jurisdiction || '';
+  if (offInput && currentOfficer) offInput.value = currentOfficer.name || '';
+  modal.style.display = 'flex';
+}
+
+function openEditCaseModal(kase) {
+  const modal = document.getElementById('edit-case-modal');
+  if (!modal || !kase) return;
+
+  const efStatus = document.getElementById('ef-status');
+  const efType = document.getElementById('ef-type');
+  const efOfficer = document.getElementById('ef-officer');
+  const efAmount = document.getElementById('ef-amount');
+  const efFir = document.getElementById('ef-fir');
+  const efJur = document.getElementById('ef-jurisdiction');
+  const efDesc = document.getElementById('ef-description');
+
+  if (efStatus) efStatus.value = kase.status || 'OPEN';
+  if (efType) efType.value = kase.incidentType || 'Task_Scam';
+  if (efOfficer) efOfficer.value = kase.officerName || kase.investigatingOfficer || '';
+  if (efAmount) efAmount.value = kase.amountDefrauded ?? kase.totalLossINR ?? 0;
+  if (efFir) efFir.value = kase.firNumber || '';
+  if (efJur) efJur.value = kase.jurisdiction || '';
+  if (efDesc) efDesc.value = kase.description || '';
+
+  modal.style.display = 'flex';
 }

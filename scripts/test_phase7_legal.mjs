@@ -22,9 +22,18 @@ async function runTests() {
   }
 
   try {
+    // Authenticate test session
+    const loginRes = await fetch(`${BASE_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ badgeNumber: 'DL-002', password: 'Rakshak@2026' }),
+    });
+    const sessionCookie = loginRes.headers.get('set-cookie');
+    const authHeaders = sessionCookie ? { Cookie: sessionCookie } : {};
+
     // Test 1: Fetch Legal Intelligence
     console.log('[1] Testing GET /api/cases/:caseId/legal...');
-    const resLegal = await fetch(`${BASE_URL}/api/cases/${CASE_ID}/legal`);
+    const resLegal = await fetch(`${BASE_URL}/api/cases/${CASE_ID}/legal`, { headers: authHeaders });
     assert(resLegal.status === 200, 'GET /api/cases/:caseId/legal returns 200');
     const legalData = await resLegal.json();
     assert(legalData.caseNumber === CASE_ID, 'Case number matches requested case');
@@ -105,7 +114,7 @@ async function runTests() {
     console.log('\n[7] Testing POST /api/cases/:caseId/dossier/export (JSON)...');
     const resExportJson = await fetch(`${BASE_URL}/api/cases/${CASE_ID}/dossier/export`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
       body: JSON.stringify({ format: 'JSON' }),
     });
     assert(resExportJson.status === 200, 'POST /api/cases/:caseId/dossier/export (JSON) returns 200');
@@ -117,7 +126,7 @@ async function runTests() {
     console.log('\n[8] Testing POST /api/cases/:caseId/dossier/export (ZIP)...');
     const resExportZip = await fetch(`${BASE_URL}/api/cases/${CASE_ID}/dossier/export`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
       body: JSON.stringify({ format: 'ZIP' }),
     });
     assert(resExportZip.status === 200, 'POST /api/cases/:caseId/dossier/export (ZIP) returns 200');
@@ -128,6 +137,7 @@ async function runTests() {
     console.log('\n[9] Testing DELETE /api/cases/:caseId/legal...');
     const resDel = await fetch(`${BASE_URL}/api/cases/${CASE_ID}/legal?sectionCode=BNS___351_2_`, {
       method: 'DELETE',
+      headers: authHeaders,
     });
     assert(resDel.status === 200, 'DELETE /api/cases/:caseId/legal returns 200');
 

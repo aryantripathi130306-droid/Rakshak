@@ -1,0 +1,392 @@
+
+// ─────────────────────────────────────────────────────────────────────────────
+// prisma/schema.postgresql.prisma
+// Rakshak v3.0 — Production PostgreSQL Schema Definition
+// Compatible with Prisma Client v5.22.0
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client-pg"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Case {
+  id              String          @id @default(uuid())
+  caseNumber      String          @unique
+  incidentType    String          // "Task_Scam" | "Digital_Arrest" | "Investment_Fraud" | "KYC_Freeze" | "Romance_Scam"
+  complainantName String
+  jurisdiction    String?
+  status          String          @default("OPEN") // "OPEN" | "UNDER_INQUIRY" | "CHARGESHEETED" | "CLOSED"
+  amountDefrauded Int?            // in INR
+  description     String?         // case description / narrative
+  firNumber       String?         // FIR or reference number
+  officerName     String?         // assigned officer display name
+  officerBadge    String?         // assigned officer badge / service number
+  departmentId    String?
+  department      Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  evidence           Evidence[]
+  timeline           TimelineEvent[]
+  entities           CaseEntity[]
+  clusterMemberships ClusterMembership[]
+  legalMappings      CaseLegalMapping[]
+  dossierAudits      DossierExportAudit[]
+}
+
+model Evidence {
+  id               String          @id @default(uuid())
+  caseId           String
+  case             Case            @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  fileName         String
+  fileType         String          // "PNG" | "TXT" | "PDF" | "MP3" ...
+  mimeType         String
+  fileSize         Int             // bytes
+  sha256Hash       String          // server-computed, canonical truth
+  clientHash       String          // client-supplied, verified against sha256Hash
+  storagePath      String          // /uploads/raw/<sha256>.bin — immutable
+  evidenceCategory String          @default("OTHER")
+  metadata         String?         // JSON blob for category-specific metadata
+  uploadedAt       DateTime        @default(now())
+
+  facts            ExtractedFact[]
+  timelineRefs     TimelineEvent[]
+  transcriptions   Transcription[]
+  chatTranslations ChatTranslation[]
+  custodyEvents    CustodyEvent[]
+}
+
+model ExtractedFact {
+  id                 String   @id @default(uuid())
+  evidenceId         String
+  evidence           Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  caseId             String
+
+  factAssertion      String   // Human-readable summary of what was found
+  entityType         String   // "UPI" | "PHONE" | "ACCOUNT" | "IFSC" | "DOMAIN" | "UTR" | "TELEGRAM" | "EMAIL" | "NAME" | "ADDRESS" | "IP" | "GPS_COORD"
+  rawValue           String   // Original extracted string
+  normalizedValue    String   // Canonical form (E.164 phone, lowercase UPI, etc.)
+  confidence         Float    // 0.0–1.0
+  sourceHash         String   // SHA-256 of source evidence (for chain of custody)
+  verificationStatus String   @default("UNVERIFIED") // "UNVERIFIED" | "VERIFIED" | "DISPUTED"
+  verifiedBy         String?
+
+  boundingBox        String?  @default("{}")
+  extractedAt        DateTime @default(now())
+}
+
+model TimelineEvent {
+  id          String   @id @default(uuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  evidenceId  String
+  evidence    Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+
+  timestamp   DateTime // UTC — canonical forensic timestamp
+  description String
+  sourceType  String   // "WHATSAPP" | "BANK_SMS" | "RECEIPT" | "CALL_LOG" | "SCREENSHOT"
+  phase       String   @default("UNKNOWN") // "CONTACT" | "TRUST" | "PAYMENT" | "SEVERED" | "UNKNOWN"
+
+  createdAt   DateTime @default(now())
+}
+
+model CaseEntity {
+  id              String   @id @default(uuid())
+  caseId          String
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  entityType      String
+  normalizedValue String
+  rawValue        String
+  firstSeenAt     DateTime @default(now())
+
+  @@unique([caseId, entityType, normalizedValue])
+  @@index([normalizedValue])
+  @@index([entityType, normalizedValue])
+}
+
+model Transcription {
+  id                  String   @id @default(uuid())
+  evidenceId          String
+  evidence            Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  originalLanguage    String   @default("hi")
+  originalText        String
+  translatedText      String?
+  targetLanguage      String?  @default("en")
+  speakerCount        Int      @default(2)
+  segments            String
+  transcriptionMethod String   @default("WHISPER_AI")
+  confidence          Float    @default(0.92)
+  createdAt           DateTime @default(now())
+}
+
+model ChatTranslation {
+  id                String   @id @default(uuid())
+  evidenceId        String
+  evidence          Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  originalLanguage  String   @default("hinglish")
+  messages          String
+  translationMethod String   @default("INDIC_TRANS_AI")
+  createdAt         DateTime @default(now())
+}
+
+model CaseCluster {
+  id          String              @id @default(uuid())
+  name        String
+  theme       String?
+  status      String              @default("ACTIVE")
+  confidence  String              @default("POTENTIAL")
+  notes       String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  memberships ClusterMembership[]
+}
+
+model ClusterMembership {
+  id        String      @id @default(uuid())
+  clusterId String
+  cluster   CaseCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  caseId    String
+  case      Case        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  addedAt   DateTime    @default(now())
+  reason    String?
+
+  @@unique([clusterId, caseId])
+}
+
+model CustodyEvent {
+  id         String   @id @default(uuid())
+  evidenceId String
+  evidence   Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  eventType  String
+  actor      String
+  action     String
+  result     String
+  details    String?
+  timestamp  DateTime @default(now())
+
+  @@index([evidenceId])
+  @@index([timestamp])
+}
+
+model LegalProvision {
+  id               String   @id @default(uuid())
+  act              String
+  actCode          String
+  section          String
+  title            String
+  description      String
+  offenceCategory  String?
+  cognizable       Boolean  @default(true)
+  bailable         Boolean  @default(false)
+  sourceUrl        String?
+  statutoryVersion String   @default("2023_OFFICIAL")
+  verifiedDate     String?
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model CaseLegalMapping {
+  id            String    @id @default(uuid())
+  caseId        String
+  case          Case      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  sectionCode   String
+  act           String
+  section       String
+  description   String
+  relevance     String    @default("PRIMARY")
+  status        String    @default("SUGGESTED")
+  rationale     String?
+  reviewerName  String?
+  reviewedAt    DateTime?
+  reviewerNotes String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([caseId, sectionCode])
+  @@index([caseId])
+}
+
+model EvidenceLegalMapping {
+  id         String   @id @default(uuid())
+  caseId     String
+  evidenceId String
+  section    String
+  relevance  String   @default("HIGH")
+  rationale  String?
+  status     String   @default("MAPPED")
+  mappedBy   String?  @default("Inspector Rajesh Kumar (Badge #DL-CY-042)")
+  createdAt  DateTime @default(now())
+
+  @@unique([evidenceId, section])
+  @@index([caseId])
+  @@index([evidenceId])
+}
+
+model DossierExportAudit {
+  id               String   @id @default(uuid())
+  dossierNumber    String   @unique
+  caseId           String
+  case             Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  exportFormat     String
+  officerName      String
+  officerBadge     String?
+  templateVersion  String   @default("BSA_SEC63_V3")
+  validationStatus String
+  missingFields    String?
+  evidenceCount    Int
+  manifestHash     String?
+  generatedAt      DateTime @default(now())
+
+  @@index([caseId])
+  @@index([generatedAt])
+}
+
+model Officer {
+  id           String    @id @default(uuid())
+  badgeNumber  String    @unique
+  name         String
+  email        String    @unique
+  passwordHash String
+  designation  String
+  role         String    @default("INVESTIGATOR")
+  jurisdiction String
+  unit         String?   @default("Cyber Crime Cell")
+  status       String    @default("ACTIVE")
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions     OfficerSession[]
+  auditLogs    AuditLog[]
+  reports      GeneratedReport[]
+
+  @@index([badgeNumber])
+  @@index([role])
+}
+
+model OfficerSession {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  officerId String
+  officer   Officer  @relation(fields: [officerId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([officerId])
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  timestamp    DateTime @default(now())
+  officerId    String?
+  officer      Officer? @relation(fields: [officerId], references: [id], onDelete: SetNull)
+  officerName  String
+  officerBadge String?
+  action       String
+  module       String
+  targetType   String?
+  targetId     String?
+  details      String
+  result       String   @default("SUCCESS")
+  ipAddress    String?  @default("103.45.67.89")
+  metadata     String?
+
+  @@index([timestamp])
+  @@index([officerId])
+  @@index([action])
+  @@index([module])
+}
+
+model GeneratedReport {
+  id               String   @id @default(uuid())
+  reportNumber     String   @unique
+  reportType       String
+  caseId           String?
+  title            String
+  generatedBy      String
+  officerId        String?
+  officer          Officer? @relation(fields: [officerId], references: [id], onDelete: SetNull)
+  status           String   @default("COMPLETED")
+  outputFormat     String
+  sectionsIncluded String
+  fileSizeBytes    Int?     @default(1048576)
+  filePath         String?
+  metadata         String?
+  createdAt        DateTime @default(now())
+
+  @@index([caseId])
+  @@index([createdAt])
+  @@index([reportType])
+}
+
+model ScheduledReport {
+  id         String   @id @default(uuid())
+  name       String
+  reportType String
+  frequency  String
+  nextRun    DateTime
+  status     String   @default("ACTIVE")
+  recipients String?
+  createdAt  DateTime @default(now())
+}
+
+// ─── Phase 13: Pilot Feedback & Defect Tracking ──────────────────────────────
+
+model PilotFeedback {
+  id               String   @id @default(uuid())
+  feedbackNumber   String   @unique
+  title            String
+  module           String
+  description      String
+  stepsToReproduce String?
+  expectedBehavior String?
+  actualBehavior   String?
+  severity         String   @default("MEDIUM")
+  environment      String   @default("Staging Sandbox v3.0")
+  status           String   @default("OPEN")
+  reporterBadge    String
+  reporterName     String
+  assignedReviewer String?  @default("To be assigned")
+  resolutionNotes  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([status])
+  @@index([module])
+  @@index([severity])
+  @@index([createdAt])
+}
+
+// ─── Phase 22: Department Tenancy Model ──────────────────────────────────────
+
+model Department {
+  id           String    @id @default(uuid())
+  code         String    @unique // e.g. "CCB-CHD-01", "DEL-CYBER-01", "MUM-CYBER-01"
+  name         String    // e.g. "Cyber Crime Branch, Sector 17, Chandigarh"
+  state        String    // e.g. "Chandigarh", "Delhi", "Maharashtra"
+  jurisdiction String    // e.g. "Chandigarh UT", "Delhi NCR", "Mumbai"
+  status       String    @default("ACTIVE") // "ACTIVE" | "INACTIVE"
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  officers     Officer[]
+  cases        Case[]
+
+  @@index([code])
+  @@index([status])
+}
+

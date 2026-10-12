@@ -32,6 +32,11 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# forensic backups & test recovery sandboxes
+/backups/
+/temp_restore_verify/
 
 # vercel
 .vercel
@@ -39,3 +44,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# uploads & evidence cold storage (never push binary exhibits to GitHub)
+uploads/raw/*
+!uploads/raw/.gitkeep
+
+# ephemeral test databases & sqlite journals
+prisma/*.db
+!prisma/dev.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite-journal
+
+# temporary test fixtures & sandboxes
+/temp_*

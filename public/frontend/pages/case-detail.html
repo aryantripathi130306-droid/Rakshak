@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Rakshak — Case Detail. Full case workspace with evidence, entities, timeline, and legal matrix." />
   <title>Case Detail — Rakshak v3.0</title>
+  <script>
+    const p = new URLSearchParams(window.location.search);
+    const c = p.get('caseId') || p.get('id');
+    window.location.replace('/frontend/pages/cases.html' + (c ? '?caseId=' + encodeURIComponent(c) : ''));
+  </script>
   <link rel="stylesheet" href="../css/global.css" />
   <link rel="stylesheet" href="../css/components.css" />
   <link rel="stylesheet" href="../css/pages.css" />

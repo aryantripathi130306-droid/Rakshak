@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak v3.0 — Cross-Department Collaboration & Access Requests. Securely share information, request access, and collaborate across departments." />
+  <title>Cross-Department Collaboration — Rakshak v3.0</title>
+
+  <!-- Google Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Isolated Page 09 Neumorphic Stylesheet -->
+  <link rel="stylesheet" href="../css/cross-dept-neumorphic.css" />
+</head>
+<body class="neu-crossdept-body">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="neu-toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="neu-shell">
+    
+    <!-- ══════════════════════════════════════════════════════════
+         TOPBAR NAVIGATION
+         ══════════════════════════════════════════════════════════ -->
+    <header class="neu-topbar" role="banner" aria-label="Rakshak Platform Header">
+      
+      <!-- Brand Logo & Platform Title -->
+      <a href="/frontend/pages/dashboard.html" class="neu-topbar-brand" aria-label="Rakshak Forensic Platform Home">
+        <div class="neu-topbar-shield" aria-hidden="true">
+          <svg viewBox="0 0 44 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3988F5"/>
+                <stop offset="100%" stop-color="#1E66CF"/>
+              </linearGradient>
+            </defs>
+            <path d="M22 2L4 9.5V23C4 34.5 11.5 44 22 47C32.5 44 40 34.5 40 23V9.5L22 2Z" fill="url(#shieldGrad)"/>
+            <path d="M22 6L7.5 12V23C7.5 32.5 13.8 40.5 22 43.2C30.2 40.5 36.5 32.5 36.5 23V12L22 6Z" fill="#F5F8FC" fill-opacity="0.22"/>
+            <rect x="14" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="20.5" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="27" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <path d="M12 17H32V15L22 11L12 15V17Z" fill="#FFFFFF"/>
+            <rect x="11" y="33" width="22" height="3" rx="1.5" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="neu-topbar-brand-text">
+          <span class="neu-topbar-title">RAKSHAK <span class="neu-topbar-version">v3.0</span></span>
+          <span class="neu-topbar-subtitle">Digital Forensics Platform</span>
+        </div>
+      </a>
+
+      <!-- Global Search Field -->
+      <div class="neu-topbar-search-wrap" role="search">
+        <span class="neu-topbar-search-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input 
+          type="text" 
+          id="global-search-input" 
+          class="neu-topbar-search-input" 
+          placeholder="Search cases, entities, evidence, departments..." 
+          aria-label="Search cases, entities, evidence, departments"
+        />
+      </div>
+
+      <!-- Action Icons & Authenticated Officer Pill -->
+      <div class="neu-topbar-actions">
+        <!-- Notifications Bell -->
+        <button class="neu-topbar-icon-btn" id="btn-notifications" aria-label="Notifications, 5 unread">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="neu-badge-count" id="notif-count">5</span>
+        </button>
+
+        <!-- Settings Cog -->
+        <button class="neu-topbar-icon-btn" id="btn-settings" aria-label="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+
+        <!-- Officer Profile Pill -->
+        <div class="neu-profile-pill" id="officer-profile-pill" role="button" tabindex="0" aria-label="Officer Profile menu">
+          <div class="neu-profile-avatar" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="neu-profile-info">
+            <span class="neu-profile-name" id="officer-name">Inspector Rajesh Kumar</span>
+            <span class="neu-profile-role" id="officer-dept">Cyber Crime Department</span>
+          </div>
+          <span class="neu-profile-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BODY LAYOUT: SIDEBAR + MAIN WORKSPACE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="neu-body-layout">
+      
+      <!-- PERSISTENT SIDEBAR NAVIGATION -->
+      <aside class="neu-sidebar" role="navigation" aria-label="Primary Navigation">
+        <nav class="neu-sidebar-nav neu-nav-group" aria-label="Platform Modules">
+          <!-- 1: Dashboard -->
+          <a href="/frontend/pages/dashboard.html" class="neu-nav-item" id="nav-dashboard">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7"></rect>
+      <rect x="14" y="3" width="7" height="7"></rect>
+      <rect x="14" y="14" width="7" height="7"></rect>
+      <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+            </span>
+            <span>Dashboard</span>
+          </a>
+
+          <!-- 2: Cases -->
+          <a href="/frontend/pages/cases.html" class="neu-nav-item" id="nav-cases">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+    </svg>
+            </span>
+            <span>Cases</span>
+          </a>
+
+          <!-- 3: Evidence -->
+          <a href="/frontend/pages/evidence.html" class="neu-nav-item" id="nav-evidence">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+            </span>
+            <span>Evidence</span>
+          </a>
+
+          <!-- 4: Reports -->
+          <a href="/frontend/pages/reports.html" class="neu-nav-item" id="nav-reports">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="12" y1="18" x2="12" y2="12"></line>
+      <line x1="9" y1="15" x2="15" y2="15"></line>
+    </svg>
+            </span>
+            <span>Reports</span>
+          </a>
+
+          <!-- 5: Intelligence -->
+          <a href="/frontend/pages/graph.html" class="neu-nav-item" id="nav-graph">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+            </span>
+            <span>Intelligence</span>
+          </a>
+
+          <!-- 6: Entities -->
+          <a href="/frontend/pages/entities.html" class="neu-nav-item" id="nav-entities">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+            </span>
+            <span>Entities</span>
+          </a>
+
+          <!-- 7: Timeline -->
+          <a href="/frontend/pages/timeline.html" class="neu-nav-item" id="nav-timeline">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+            </span>
+            <span>Timeline</span>
+          </a>
+
+          <!-- 8: Cross-Department (Active) -->
+          <a href="/frontend/pages/cross-dept.html" class="neu-nav-item active" id="nav-cross-dept" aria-current="page">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"></path>
+      <path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"></path>
+      <circle cx="8" cy="12" r="2"></circle>
+    </svg>
+            </span>
+            <span>Cross-Department</span>
+          </a>
+
+          <!-- 9: Administration -->
+          <a href="/frontend/pages/admin.html" class="neu-nav-item" id="nav-admin">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+            </span>
+            <span>Administration</span>
+          </a>
+
+          <!-- 10: Audit Logs -->
+          <a href="/frontend/pages/audit.html" class="neu-nav-item" id="nav-audit">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <path d="M16 13H8"></path>
+      <path d="M16 17H8"></path>
+      <path d="M10 9H8"></path>
+    </svg>
+            </span>
+            <span>Audit Logs</span>
+          </a>
+        </nav>
+
+        <!-- Sidebar Footer: Cyber Crime Department Badge -->
+        <div class="neu-sidebar-footer">
+          <div class="neu-dept-badge">
+            <div class="neu-dept-emblem" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="M16 2L4 7V15C4 22.5 9 28.5 16 30.5C23 28.5 28 22.5 28 15V7L16 2Z" fill="#3988F5" fill-opacity="0.15" stroke="#3988F5" stroke-width="1.8"/>
+                <path d="M16 8L8 12V16C8 20.5 11.5 24.5 16 26C20.5 24.5 24 20.5 24 16V12L16 8Z" fill="#3988F5"/>
+              </svg>
+            </div>
+            <div class="neu-dept-text">
+              <span class="neu-dept-title">Cyber Crime Department</span>
+              <span class="neu-dept-sub">Government of India</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ══════════════════════════════════════════════════════════
+           MAIN WORKSPACE CONTENT
+           ══════════════════════════════════════════════════════════ -->
+      <main class="neu-main-content" role="main" aria-label="Cross-Department Collaboration Workspace">
+        
+        <!-- PAGE HEADER & PRIMARY ACTIONS -->
+        <div class="neu-page-header">
+          <div class="neu-page-heading-group">
+            <h1 class="neu-page-title">Cross-Department Collaboration</h1>
+            <p class="neu-page-subtitle">Securely share information, request access, and collaborate across departments</p>
+          </div>
+
+          <div class="neu-page-header-actions">
+            <!-- Request Access -->
+            <button class="neu-btn-primary" id="btn-request-access" aria-label="Request Cross-Department Access">
+              <span>+</span>
+              <span>Request Access</span>
+            </button>
+
+            <!-- Share Case -->
+            <button class="neu-btn-neu" id="btn-share-case" aria-label="Share Case with Another Department">
+              <span>⤴️</span>
+              <span>Share Case</span>
+            </button>
+
+            <!-- Department Directory -->
+            <button class="neu-btn-neu" id="btn-dept-dir" aria-label="View Department Directory">
+              <span>🏢</span>
+              <span>Department Directory</span>
+            </button>
+
+            <!-- Onboard Department -->
+            <button class="neu-btn-neu" id="btn-onboard-dept" aria-label="Onboard New Department">
+              <span>🏛️</span>
+              <span>Onboard Dept</span>
+            </button>
+
+            <!-- Contextual Menu -->
+            <button class="neu-btn-icon-neu" id="btn-context-menu" aria-label="More Options">
+              <span>⋮</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             5-COLUMN HORIZONTAL METRIC CARDS STRIP
+             Connected Departments, Pending Requests, Approved Requests, Shared Cases, Active Collaborations
+             ══════════════════════════════════════════════════════════ -->
+        <section class="neu-metric-strip-5" aria-label="Collaboration Summary Metrics">
+          
+          <!-- Metric 1: Connected Departments -->
+          <div class="neu-metric-card" id="card-metric-connected">
+            <div class="neu-metric-icon-wrap neu-metric-icon-blue" aria-hidden="true">👥</div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">Connected Departments</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-connected-depts">12</span>
+                <span class="neu-metric-badge green" id="metric-connected-badge">+2</span>
+              </div>
+              <span class="neu-metric-subtext">Active collaboration links</span>
+            </div>
+          </div>
+
+          <!-- Metric 2: Pending Requests -->
+          <div class="neu-metric-card" id="card-metric-pending">
+            <div class="neu-metric-icon-wrap neu-metric-icon-amber" aria-hidden="true">📄</div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">Pending Requests</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-pending-requests">8</span>
+                <span class="neu-metric-badge amber" id="metric-pending-badge">↓ 25%</span>
+              </div>
+              <span class="neu-metric-subtext">Awaiting approval</span>
+            </div>
+          </div>
+
+          <!-- Metric 3: Approved Requests -->
+          <div class="neu-metric-card" id="card-metric-approved">
+            <div class="neu-metric-icon-wrap neu-metric-icon-green" aria-hidden="true">✓</div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">Approved Requests</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-approved-requests">156</span>
+                <span class="neu-metric-badge green" id="metric-approved-badge">+18%</span>
+              </div>
+              <span class="neu-metric-subtext">This year</span>
+            </div>
+          </div>
+
+          <!-- Metric 4: Shared Cases -->
+          <div class="neu-metric-card" id="card-metric-shared">
+            <div class="neu-metric-icon-wrap neu-metric-icon-purple" aria-hidden="true">👥</div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">Shared Cases</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-shared-cases">42</span>
+                <span class="neu-metric-badge green" id="metric-shared-badge">+12%</span>
+              </div>
+              <span class="neu-metric-subtext">Cross-department cases</span>
+            </div>
+          </div>
+
+          <!-- Metric 5: Active Collaborations -->
+          <div class="neu-metric-card" id="card-metric-collabs">
+            <div class="neu-metric-icon-wrap neu-metric-icon-blue" aria-hidden="true">🛡️</div>
+            <div class="neu-metric-data">
+              <span class="neu-metric-label">Active Collaborations</span>
+              <div class="neu-metric-val-row">
+                <span class="neu-metric-number" id="metric-active-collabs">28</span>
+                <span class="neu-metric-badge green" id="metric-collabs-badge">+7%</span>
+              </div>
+              <span class="neu-metric-subtext">Joint investigations</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             WORKSPACE TABS
+             Access Requests | Shared Cases | Collaboration Network | Department Directory
+             ══════════════════════════════════════════════════════════ -->
+        <nav class="cd-workspace-tabs" role="tablist" aria-label="Collaboration Workspace Views">
+          <button class="cd-tab-item active" role="tab" aria-selected="true" data-view="requests">Access Requests</button>
+          <button class="cd-tab-item" role="tab" aria-selected="false" data-view="shared-cases">Shared Cases</button>
+          <button class="cd-tab-item" role="tab" aria-selected="false" data-view="network">Collaboration Network</button>
+          <button class="cd-tab-item" role="tab" aria-selected="false" data-view="directory">Department Directory</button>
+        </nav>
+
+        <!-- ══════════════════════════════════════════════════════════
+             MIDDLE WORKSTATION GRID
+             Left: Access Requests Table (~60%)
+             Right: Selected Request Details (~40%)
+             ══════════════════════════════════════════════════════════ -->
+        <div class="cd-main-grid" id="cd-workspace-container">
+          
+          <!-- ─── LEFT PANEL: ACCESS REQUESTS TABLE ─────────────────── -->
+          <section class="cd-panel" id="panel-access-requests" aria-label="Access Requests Directory">
+            <div class="cd-panel-header">
+              <div class="cd-panel-title-wrap">
+                <span class="cd-panel-icon">👥</span>
+                <h2 class="cd-panel-title">Access Requests</h2>
+              </div>
+              
+              <!-- Status Filter Pills -->
+              <div class="cd-status-pill-filter">
+                <button class="cd-status-pill-btn active" data-status-filter="ALL">All (24)</button>
+                <button class="cd-status-pill-btn" data-status-filter="Pending">Pending (8)</button>
+                <button class="cd-status-pill-btn" data-status-filter="Approved">Approved (156)</button>
+                <button class="cd-status-pill-btn" data-status-filter="Rejected">Rejected (12)</button>
+              </div>
+            </div>
+
+            <!-- Search Field -->
+            <div class="cd-search-wrap">
+              <span class="cd-search-icon" aria-hidden="true">🔍</span>
+              <input 
+                type="text" 
+                id="search-requests-input" 
+                class="cd-search-input" 
+                placeholder="Search by department, case ID, request ID, purpose..." 
+                aria-label="Search access requests"
+              />
+            </div>
+
+            <!-- Compact Neumorphic Filter Controls -->
+            <div class="cd-filter-controls-row">
+              <select id="filter-status-select" class="cd-filter-select-btn" aria-label="Filter by Status">
+                <option value="ALL">Status ▾</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+
+              <select id="filter-type-select" class="cd-filter-select-btn" aria-label="Filter by Request Type">
+                <option value="ALL">Request Type ▾</option>
+                <option value="Case Access">Case Access</option>
+                <option value="Evidence Access">Evidence Access</option>
+                <option value="Information Share">Information Share</option>
+                <option value="Joint Investigation">Joint Investigation</option>
+                <option value="Entity Access">Entity Access</option>
+              </select>
+
+              <select id="filter-dept-select" class="cd-filter-select-btn" aria-label="Filter by Department">
+                <option value="ALL">Department ▾</option>
+                <option value="Cyber Crime">Cyber Crime</option>
+                <option value="Economic Offences">Economic Offences</option>
+                <option value="Narcotics Control">Narcotics Control</option>
+                <option value="Intelligence Bureau">Intelligence Bureau</option>
+                <option value="CBI">CBI</option>
+                <option value="NIA">NIA</option>
+              </select>
+
+              <select id="filter-case-select" class="cd-filter-select-btn" aria-label="Filter by Related Case">
+                <option value="ALL">Case ▾</option>
+                <option value="CC/2024/001">CC/2024/001</option>
+                <option value="CC/2024/045">CC/2024/045</option>
+                <option value="CC/2024/078">CC/2024/078</option>
+                <option value="CC/2024/012">CC/2024/012</option>
+                <option value="CC/2024/091">CC/2024/091</option>
+                <option value="CC/2024/063">CC/2024/063</option>
+                <option value="CC/2024/102">CC/2024/102</option>
+                <option value="CC/2024/118">CC/2024/118</option>
+              </select>
+
+              <select id="filter-date-select" class="cd-filter-select-btn" aria-label="Filter by Date Range">
+                <option value="ALL">Date Range ▾</option>
+                <option value="LAST_7_DAYS">Last 7 Days</option>
+                <option value="LAST_30_DAYS">Last 30 Days</option>
+                <option value="YEAR_2024">Year 2024</option>
+              </select>
+
+              <button class="cd-clear-filters-btn" id="btn-clear-filters">Clear Filters</button>
+            </div>
+
+            <!-- Main Directory Table -->
+            <div class="cd-table-container">
+              <table class="cd-table" id="access-requests-table">
+                <thead>
+                  <tr>
+                    <th style="width: 28px;"><input type="checkbox" id="check-all-requests" aria-label="Select all requests" /></th>
+                    <th>Request ID</th>
+                    <th>Request Type</th>
+                    <th>From Department</th>
+                    <th>To Department</th>
+                    <th>Related Case</th>
+                    <th>Purpose</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th style="text-align: center;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="requests-table-body">
+                  <!-- Rendered dynamically by cross-dept.js matching canonical dataset -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="cd-pagination-bar">
+              <span class="cd-pagination-summary" id="cd-pagination-summary">Showing 1–8 of 24 requests</span>
+              <div class="cd-pagination-pages">
+                <button class="cd-page-btn" aria-label="Previous page">‹</button>
+                <button class="cd-page-btn active" aria-label="Page 1">1</button>
+                <button class="cd-page-btn" aria-label="Page 2">2</button>
+                <button class="cd-page-btn" aria-label="Page 3">3</button>
+                <button class="cd-page-btn" aria-label="Next page">›</button>
+              </div>
+              <select class="cd-per-page-select" id="cd-select-per-page" aria-label="Items per page">
+                <option value="8" selected>8 / page</option>
+                <option value="16">16 / page</option>
+                <option value="24">24 / page</option>
+              </select>
+            </div>
+          </section>
+
+          <!-- ─── RIGHT PANEL: SELECTED REQUEST DETAILS ─────────────── -->
+          <aside class="cd-panel cd-details-panel" id="panel-request-details" aria-label="Selected Request Details">
+            <div class="cd-panel-header">
+              <div class="cd-panel-title-wrap">
+                <span class="cd-panel-icon">📋</span>
+                <h2 class="cd-panel-title">Request Details</h2>
+              </div>
+              
+              <div class="cd-details-actions">
+                <button class="cd-btn-approve" id="btn-approve-request" aria-label="Approve Request">
+                  <span>✓</span>
+                  <span>Approve</span>
+                </button>
+                <button class="cd-btn-reject" id="btn-reject-request" aria-label="Reject Request">
+                  <span>✕</span>
+                  <span>Reject</span>
+                </button>
+                <button class="neu-btn-icon-neu" id="btn-details-more" style="width: 32px; height: 32px;" aria-label="More options">
+                  <span>⋮</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Hero Banner of Selected Request -->
+            <div class="cd-details-hero">
+              <div class="cd-details-avatar" id="details-hero-avatar" aria-hidden="true">👤</div>
+              <div class="cd-details-hero-text">
+                <div class="cd-details-title-row">
+                  <h3 class="cd-details-hero-title" id="details-hero-id">REQ-2024-001</h3>
+                  <span class="cd-badge-status cd-status-pending" id="details-hero-status">Pending</span>
+                </div>
+                <span class="cd-details-hero-sub" id="details-hero-subtitle">Case Access Request • 15 Jan 2024, 10:30 AM</span>
+              </div>
+            </div>
+
+            <!-- Details Tabs Strip -->
+            <nav class="cd-details-tabs" role="tablist" aria-label="Request details sub-views">
+              <button class="cd-detail-tab-btn active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+              <button class="cd-detail-tab-btn" role="tab" aria-selected="false" data-tab="related-case">Related Case</button>
+              <button class="cd-detail-tab-btn" role="tab" aria-selected="false" data-tab="request-files">Request Files</button>
+              <button class="cd-detail-tab-btn" role="tab" aria-selected="false" data-tab="communication">Communication</button>
+              <button class="cd-detail-tab-btn" role="tab" aria-selected="false" data-tab="audit-log">Audit Log</button>
+            </nav>
+
+            <!-- Details Content: Overview Tab -->
+            <div class="cd-details-content" id="details-tab-overview">
+              <div class="cd-details-grid">
+                
+                <!-- Left Subcolumn: Request Information -->
+                <div class="cd-details-block">
+                  <h4 class="cd-block-heading">Request Information</h4>
+                  <div class="cd-meta-table">
+                    <div class="cd-meta-row">
+                      <span class="cd-meta-key">Request ID</span>
+                      <span class="cd-meta-val" id="det-req-id">REQ-2024-001</span>
+                    </div>
+                    <div class="cd-meta-row">
+                      <span class="cd-meta-key">Request Type</span>
+                      <span class="cd-meta-val" id="det-req-type">Case Access</span>
+                    </div>
+                    <div class="cd-meta-row">
+                      <span class="cd-meta-key">Status</span>
+                      <span class="cd-badge-status cd-status-pending" id="det-req-status">Pending</span>
+                    </div>
+                    <div class="cd-meta-row">
+                      <span class="cd-meta-key">Priority</span>
+                      <span class="cd-badge-status cd-status-pending" id="det-req-priority">Medium</span>
+                    </div>
+                    <div class="cd-meta-row">
+                      <span class="cd-meta-key">Created On</span>
+                      <span class="cd-meta-val" id="det-req-date">15 Jan 2024, 10:30 AM</span>
+                    </div>
+                    <div class="cd-meta-row">
+                      <span class="cd-meta-key">Requested By</span>
+                      <span class="cd-meta-val" id="det-req-by">Inspector Rajesh Kumar<br/><small style="color: var(--neu-secondary);">Cyber Crime Department</small></span>
+                    </div>
+                    <div class="cd-meta-row">
+                      <span class="cd-meta-key">Target Department</span>
+                      <span class="cd-meta-val" id="det-req-target">Economic Offences Wing</span>
+                    </div>
+                    <div class="cd-meta-row">
+                      <span class="cd-meta-key">Related Case</span>
+                      <span class="cd-meta-val">
+                        <a href="/frontend/pages/cases.html?case=CC/2024/001" class="cd-case-link" id="det-req-case-link">CC/2024/001</a>
+                        <br/>
+                        <a href="/frontend/pages/cases.html?case=CC/2024/001" class="cd-case-link" style="font-size: 11px;">View Case →</a>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Subcolumn: Purpose & Requested Access -->
+                <div class="cd-details-block">
+                  <h4 class="cd-block-heading">Purpose</h4>
+                  <p class="cd-purpose-text" id="det-req-purpose">
+                    Requesting access to financial transaction data and related documents for cross-investigation of money laundering suspects.
+                  </p>
+
+                  <h4 class="cd-block-heading" style="margin-top: 8px;">Requested Access</h4>
+                  <div class="cd-access-items-list" id="det-req-access-list">
+                    
+                    <div class="cd-access-item">
+                      <div class="cd-access-icon neu-metric-icon-blue" aria-hidden="true">📄</div>
+                      <div class="cd-access-item-text">
+                        <span class="cd-access-name">Case Details</span>
+                        <span class="cd-access-scope">Read Access</span>
+                      </div>
+                    </div>
+
+                    <div class="cd-access-item">
+                      <div class="cd-access-icon neu-metric-icon-green" aria-hidden="true">📄</div>
+                      <div class="cd-access-item-text">
+                        <span class="cd-access-name">Evidence Metadata</span>
+                        <span class="cd-access-scope">Read Access</span>
+                      </div>
+                    </div>
+
+                    <div class="cd-access-item">
+                      <div class="cd-access-icon neu-metric-icon-blue" aria-hidden="true">💳</div>
+                      <div class="cd-access-item-text">
+                        <span class="cd-access-name">Financial Records</span>
+                        <span class="cd-access-scope">Read Access</span>
+                      </div>
+                    </div>
+
+                    <div class="cd-access-item">
+                      <div class="cd-access-icon neu-metric-icon-amber" aria-hidden="true">📝</div>
+                      <div class="cd-access-item-text">
+                        <span class="cd-access-name">Investigation Notes</span>
+                        <span class="cd-access-scope">Read Access</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </aside>
+
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             THREE LOWER PANELS
+             1. Recently Approved Requests
+             2. Active Collaborations
+             3. Department Directory
+             ══════════════════════════════════════════════════════════ -->
+        <section class="cd-lower-grid" aria-label="Cross-Department Intelligence Feeds">
+          
+          <!-- Lower Panel 1: Recently Approved Requests -->
+          <div class="cd-lower-card" id="panel-recent-approved">
+            <div class="cd-lower-header">
+              <div class="cd-lower-title-wrap">
+                <span style="color: var(--neu-green); font-size: 16px;">✓</span>
+                <h3 class="cd-lower-title">Recently Approved Requests</h3>
+              </div>
+              <a href="#" class="cd-view-all-link" id="link-view-all-approved">View All</a>
+            </div>
+
+            <div class="cd-lower-list">
+              <!-- Item 1 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-green">✓</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">REQ-2024-002</span>
+                    <span class="cd-lower-sub">Evidence Access • Economic Offences → Cyber Crime</span>
+                  </div>
+                </div>
+                <span class="cd-lower-right-text">14 Jan 2024</span>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-green">✓</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">REQ-2024-004</span>
+                    <span class="cd-lower-sub">Joint Investigation • Cyber Crime → Intelligence Bureau</span>
+                  </div>
+                </div>
+                <span class="cd-lower-right-text">12 Jan 2024</span>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-green">✓</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">REQ-2024-006</span>
+                    <span class="cd-lower-sub">Case Access • State Police (Delhi) → Cyber Crime</span>
+                  </div>
+                </div>
+                <span class="cd-lower-right-text">10 Jan 2024</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lower Panel 2: Active Collaborations -->
+          <div class="cd-lower-card" id="panel-active-collabs">
+            <div class="cd-lower-header">
+              <div class="cd-lower-title-wrap">
+                <span style="color: var(--neu-blue); font-size: 16px;">👥</span>
+                <h3 class="cd-lower-title">Active Collaborations</h3>
+              </div>
+              <a href="#" class="cd-view-all-link" id="link-view-all-collabs">View All</a>
+            </div>
+
+            <div class="cd-lower-list">
+              <!-- Item 1 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-blue">🛡️</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">Cyber Crime Department</span>
+                    <span class="cd-lower-sub">5 shared cases • 12 active requests</span>
+                  </div>
+                </div>
+                <span class="cd-badge-status cd-status-approved">Active</span>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-blue">🛡️</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">Economic Offences Wing</span>
+                    <span class="cd-lower-sub">3 shared cases • 8 active requests</span>
+                  </div>
+                </div>
+                <span class="cd-badge-status cd-status-approved">Active</span>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-blue">⚖️</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">Narcotics Control Bureau</span>
+                    <span class="cd-lower-sub">2 shared cases • 6 active requests</span>
+                  </div>
+                </div>
+                <span class="cd-badge-status cd-status-approved">Active</span>
+              </div>
+
+              <!-- Item 4 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-blue">🦅</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">Intelligence Bureau</span>
+                    <span class="cd-lower-sub">4 shared cases • 10 active requests</span>
+                  </div>
+                </div>
+                <span class="cd-badge-status cd-status-approved">Active</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lower Panel 3: Department Directory -->
+          <div class="cd-lower-card" id="panel-dept-dir">
+            <div class="cd-lower-header">
+              <div class="cd-lower-title-wrap">
+                <span style="color: var(--neu-navy); font-size: 16px;">🏢</span>
+                <h3 class="cd-lower-title">Department Directory</h3>
+              </div>
+              <a href="#" class="cd-view-all-link" id="link-view-all-dir">View All</a>
+            </div>
+
+            <div class="cd-lower-list">
+              <!-- Item 1 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-blue">🏛️</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">Cyber Crime Department</span>
+                    <span class="cd-lower-sub">Ministry of Home Affairs</span>
+                  </div>
+                </div>
+                <button class="cd-btn-collab" data-dept="Cyber Crime Department">Collaborate</button>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-blue">🏛️</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">Economic Offences Wing</span>
+                    <span class="cd-lower-sub">Ministry of Home Affairs</span>
+                  </div>
+                </div>
+                <button class="cd-btn-collab" data-dept="Economic Offences Wing">Collaborate</button>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-blue">🏛️</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">Narcotics Control Bureau</span>
+                    <span class="cd-lower-sub">Ministry of Home Affairs</span>
+                  </div>
+                </div>
+                <button class="cd-btn-collab" data-dept="Narcotics Control Bureau">Collaborate</button>
+              </div>
+
+              <!-- Item 4 -->
+              <div class="cd-lower-row-item">
+                <div class="cd-lower-item-left">
+                  <div class="cd-lower-avatar neu-metric-icon-blue">🏛️</div>
+                  <div class="cd-lower-info">
+                    <span class="cd-lower-main-title">Central Bureau of Investigation</span>
+                    <span class="cd-lower-sub">Ministry of Home Affairs</span>
+                  </div>
+                </div>
+                <button class="cd-btn-collab" data-dept="Central Bureau of Investigation">Collaborate</button>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       REQUEST ACCESS MODAL
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-overlay" id="modal-request-access" role="dialog" aria-modal="true" aria-labelledby="modal-req-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h3 class="neu-modal-title" id="modal-req-title">Request Cross-Department Access</h3>
+        <button class="neu-modal-close" id="btn-close-req-modal" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="form-request-access" class="neu-modal-body">
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="req-target-dept">Target Department *</label>
+          <select id="req-target-dept" class="neu-form-select" required>
+            <option value="Economic Offences Wing">Economic Offences Wing</option>
+            <option value="Narcotics Control Bureau">Narcotics Control Bureau</option>
+            <option value="Intelligence Bureau">Intelligence Bureau</option>
+            <option value="Central Bureau of Investigation">Central Bureau of Investigation</option>
+            <option value="National Investigation Agency">National Investigation Agency</option>
+            <option value="State Police (Punjab)">State Police (Punjab)</option>
+            <option value="State Police (Delhi)">State Police (Delhi)</option>
+          </select>
+        </div>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="req-case-id">Related Case Number *</label>
+          <select id="req-case-id" class="neu-form-select" required>
+            <option value="CC/2024/001">CC/2024/001 — Financial Fraud Investigation</option>
+            <option value="CC/2024/045">CC/2024/045 — Cyber Extortion Case</option>
+            <option value="CC/2024/078">CC/2024/078 — Money Laundering</option>
+            <option value="CC/2024/012">CC/2024/012 — Cross-Border Investment Scam</option>
+          </select>
+        </div>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="req-type">Access Request Type *</label>
+          <select id="req-type" class="neu-form-select" required>
+            <option value="Case Access">Case Access</option>
+            <option value="Evidence Access">Evidence Access</option>
+            <option value="Information Share">Information Share</option>
+            <option value="Joint Investigation">Joint Investigation</option>
+            <option value="Entity Access">Entity Access</option>
+          </select>
+        </div>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="req-purpose">Investigative Justification / Purpose *</label>
+          <textarea id="req-purpose" class="neu-form-textarea" placeholder="State legal and investigative grounds for requesting cross-department access..." required></textarea>
+        </div>
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn-secondary" id="btn-cancel-req-modal">Cancel</button>
+          <button type="submit" class="neu-btn-primary">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CONFIRM APPROVE MODAL
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-overlay" id="modal-approve-confirm" role="dialog" aria-modal="true" aria-labelledby="modal-appr-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h3 class="neu-modal-title" id="modal-appr-title">Approve Inter-Agency Access</h3>
+        <button class="neu-modal-close" id="btn-close-appr-modal" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="neu-modal-body">
+        <p style="font-size: 13px; color: var(--neu-navy); line-height: 1.5; margin: 0;">
+          You are authorizing cross-department read access for request <strong id="appr-confirm-req-id">REQ-2024-001</strong>. This will grant authorized officers from the requesting department limited read access to case dossiers in accordance with inter-agency MOU guidelines.
+        </p>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="appr-notes">Approval Remarks / Supervisory Authority</label>
+          <input type="text" id="appr-notes" class="neu-form-input" value="Approved by Inspector Rajesh Kumar under Section 91 CrPC / BNSS guidelines" />
+        </div>
+      </div>
+      <div class="neu-modal-footer">
+        <button type="button" class="neu-btn-secondary" id="btn-cancel-appr-modal">Cancel</button>
+        <button type="button" class="neu-btn-primary" id="btn-confirm-approve">Confirm Approval</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CONFIRM REJECT MODAL
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-overlay" id="modal-reject-confirm" role="dialog" aria-modal="true" aria-labelledby="modal-rej-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h3 class="neu-modal-title" id="modal-rej-title">Reject Access Request</h3>
+        <button class="neu-modal-close" id="btn-close-rej-modal" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="neu-modal-body">
+        <p style="font-size: 13px; color: var(--neu-navy); line-height: 1.5; margin: 0;">
+          Please specify the legal or jurisdictional reason for declining access request <strong id="rej-confirm-req-id">REQ-2024-001</strong>.
+        </p>
+        <div class="neu-form-field">
+          <label class="neu-form-label" for="rej-reason">Rejection Reason *</label>
+          <input type="text" id="rej-reason" class="neu-form-input" placeholder="e.g. Insufficient jurisdictional nexus / Out of scope" required />
+        </div>
+      </div>
+      <div class="neu-modal-footer">
+        <button type="button" class="neu-btn-secondary" id="btn-cancel-rej-modal">Cancel</button>
+        <button type="button" class="cd-btn-reject" id="btn-confirm-reject">Confirm Rejection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       INSTITUTIONAL DEPARTMENT ONBOARDING MODAL
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-overlay" id="modal-dept-onboard" role="dialog" aria-modal="true" aria-labelledby="modal-onboard-title">
+    <div class="neu-modal-card" style="max-width: 620px;">
+      <div class="neu-modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">🏛️</span>
+          <div>
+            <h3 class="neu-modal-title" id="modal-onboard-title" style="margin: 0;">Institutional Department Onboarding</h3>
+            <span style="font-size: 11.5px; color: var(--neu-secondary);">Enroll police, cyber crime, or intelligence unit into Rakshak</span>
+          </div>
+        </div>
+        <button class="neu-modal-close" id="btn-close-onboard-modal" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div class="neu-modal-body" style="max-height: 75vh; overflow-y: auto;">
+        <!-- Statutory Notice -->
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: #92400e; display: flex; gap: 10px; align-items: flex-start;">
+          <span style="font-size: 16px;">⚠️</span>
+          <span><strong>STRICT VERIFICATION GATE:</strong> Submitting creates a pending review record. Platform Administrators verify official credentials before provisioning case access.</span>
+        </div>
+
+        <form id="form-dept-onboard" class="neu-modal-form">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="neu-form-field">
+              <label class="neu-form-label" for="onboard-dept-name">Department / Unit Name *</label>
+              <input type="text" id="onboard-dept-name" class="neu-form-input" placeholder="e.g. Cyber Crime Unit, Zone 4" required />
+            </div>
+            <div class="neu-form-field">
+              <label class="neu-form-label" for="onboard-dept-jurisdiction">State / Jurisdiction Scope *</label>
+              <input type="text" id="onboard-dept-jurisdiction" class="neu-form-input" placeholder="e.g. Maharashtra CID, Delhi NCR" required />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px;">
+            <div class="neu-form-field">
+              <label class="neu-form-label" for="onboard-nodal-name">Designated Nodal Officer *</label>
+              <input type="text" id="onboard-nodal-name" class="neu-form-input" placeholder="Full name & Rank (e.g. SP R. Sharma)" required />
+            </div>
+            <div class="neu-form-field">
+              <label class="neu-form-label" for="onboard-nodal-badge">Service / Badge ID *</label>
+              <input type="text" id="onboard-nodal-badge" class="neu-form-input" placeholder="e.g. IPS-2019-4821" required />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px;">
+            <div class="neu-form-field">
+              <label class="neu-form-label" for="onboard-nodal-email">Official Government Email *</label>
+              <input type="email" id="onboard-nodal-email" class="neu-form-input" placeholder="officer@police.gov.in" required />
+            </div>
+            <div class="neu-form-field">
+              <label class="neu-form-label" for="onboard-dept-phone">Department Telephone *</label>
+              <input type="tel" id="onboard-dept-phone" class="neu-form-input" placeholder="+91 22 22620111" required />
+            </div>
+          </div>
+
+          <div class="neu-form-field" style="margin-top: 12px;">
+            <label class="neu-form-label" for="onboard-auth-ref">Statutory Authorization Memo / Dispatch Ref *</label>
+            <input type="text" id="onboard-auth-ref" class="neu-form-input" placeholder="Official Directive / Standing Order Reference Number" required />
+          </div>
+
+          <div id="onboard-success-alert" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 12px 14px; margin-top: 14px; font-size: 12.5px; color: #065f46;">
+            <strong>✅ Request Transmitted:</strong> Registered under tracking reference <code id="onboard-success-ref" style="font-weight: 700; color: #047857;">REQ-PENDING</code>.
+          </div>
+
+          <div class="neu-modal-footer" style="margin-top: 18px;">
+            <button type="button" class="neu-btn-secondary" id="btn-cancel-onboard-modal">Cancel</button>
+            <button type="submit" class="neu-btn-primary" id="btn-submit-onboard">
+              <span id="onboard-btn-text">Submit Onboarding Application</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Controller -->
+  <script type="module" src="../js/cross-dept.js"></script>
+</body>
+</html>

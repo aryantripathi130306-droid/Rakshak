@@ -7,6 +7,7 @@ import path from "path";
 import fs from "fs/promises";
 import prisma from "@/lib/prisma";
 import JSZip from "jszip";
+import { authenticateOfficer, logAuditEvent } from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -15,10 +16,18 @@ export async function POST(
   { params }: { params: Promise<{ caseId: string }> }
 ) {
   try {
+    const auth = await authenticateOfficer(request);
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to export case dossier." },
+        { status: 401 }
+      );
+    }
+
     const { caseId } = await params;
     const body = await request.json().catch(() => ({}));
     const format = (body.format || "JSON").toUpperCase(); // "JSON" | "ZIP" | "PDF"
-    const officerName = body.officerName || "ACP Vikram Singh (Badge #DL-002)";
+    const officerName = body.officerName || `${auth.officer.name} (Badge #${auth.officer.badgeNumber})`;
 
     const p = prisma as any;
     const caseRecord = await p.case.findFirst({

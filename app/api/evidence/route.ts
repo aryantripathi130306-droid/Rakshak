@@ -7,11 +7,26 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import { authenticateOfficer, hasPermission } from "@/services/authService";
 
 export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
   try {
+    const auth = await authenticateOfficer(request);
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to access Evidence Vault." },
+        { status: 401 }
+      );
+    }
+    if (!hasPermission(auth.officer.role, "evidence:view")) {
+      return Response.json(
+        { error: "Access denied: requires evidence:view permission." },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const q = searchParams.get("q")?.trim() || "";
     const caseIdParam = searchParams.get("caseId")?.trim() || "";
@@ -25,6 +40,13 @@ export async function GET(request: NextRequest) {
 
     // Build Prisma filter conditions
     const whereConditions: any = {};
+
+    // Department isolation: Non-admin officers are scoped to their department's cases
+    if (auth.officer.role !== "ADMIN" && auth.officer.jurisdiction) {
+      whereConditions.case = {
+        jurisdiction: { contains: auth.officer.jurisdiction },
+      };
+    }
 
     // 1. Case filter (supports case UUID or caseNumber)
     if (caseIdParam && caseIdParam !== "ALL") {

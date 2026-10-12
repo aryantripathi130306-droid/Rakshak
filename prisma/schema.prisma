@@ -22,6 +22,8 @@ model Case {
   firNumber       String?         // FIR or reference number
   officerName     String?         // assigned officer display name
   officerBadge    String?         // assigned officer badge / service number
+  departmentId    String?
+  department      Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
@@ -258,7 +260,8 @@ model Officer {
   jurisdiction String    // "Delhi" | "Mumbai" | "Bengaluru" | "Jaipur" | "Pune"
   unit         String?   @default("Cyber Crime Cell")
   status       String    @default("ACTIVE") // "ACTIVE" | "INACTIVE" | "SUSPENDED"
-  lastLogin    DateTime?
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -343,4 +346,51 @@ model ScheduledReport {
   recipients String?  // JSON string
   createdAt  DateTime @default(now())
 }
+
+// ─── Phase 13: Pilot Feedback & Defect Tracking ──────────────────────────────
+
+model PilotFeedback {
+  id               String   @id @default(uuid())
+  feedbackNumber   String   @unique // e.g. "FDB-2026-001"
+  title            String
+  module           String   // "EVIDENCE_VAULT" | "OCR_EXTRACTION" | "TIMELINE" | "SYNDICATE_GRAPH" | "LEGAL_DOSSIER" | "REPORTS" | "RBAC_AUTH" | "INFRASTRUCTURE"
+  description      String
+  stepsToReproduce String?
+  expectedBehavior String?
+  actualBehavior   String?
+  severity         String   @default("MEDIUM") // "CRITICAL" | "HIGH" | "MEDIUM" | "LOW"
+  environment      String   @default("Staging Sandbox v3.0")
+  status           String   @default("OPEN") // "OPEN" | "TRIAGED" | "IN_PROGRESS" | "RESOLVED" | "CLOSED"
+  reporterBadge    String
+  reporterName     String
+  assignedReviewer String?  @default("To be assigned")
+  resolutionNotes  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([status])
+  @@index([module])
+  @@index([severity])
+  @@index([createdAt])
+}
+
+// ─── Phase 22: Department Tenancy Model ──────────────────────────────────────
+
+model Department {
+  id           String    @id @default(uuid())
+  code         String    @unique // e.g. "CCB-CHD-01", "DEL-CYBER-01", "MUM-CYBER-01"
+  name         String    // e.g. "Cyber Crime Branch, Sector 17, Chandigarh"
+  state        String    // e.g. "Chandigarh", "Delhi", "Maharashtra"
+  jurisdiction String    // e.g. "Chandigarh UT", "Delhi NCR", "Mumbai"
+  status       String    @default("ACTIVE") // "ACTIVE" | "INACTIVE"
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  officers     Officer[]
+  cases        Case[]
+
+  @@index([code])
+  @@index([status])
+}
+
 

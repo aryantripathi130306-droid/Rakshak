@@ -19,6 +19,7 @@ export interface OfficerProfile {
   jurisdiction: string;
   unit: string | null;
   status: string;
+  departmentId?: string | null;
 }
 
 // ─── Canonical Permission Definitions ─────────────────────────────────────────
@@ -126,11 +127,11 @@ export async function createSession(
     },
   });
 
-  // Update last login timestamp on officer record
+  // Update last activity timestamp on officer record
   await p.officer.update({
     where: { id: officerId },
-    data: { lastLogin: new Date() },
-  });
+    data: { updatedAt: new Date() },
+  }).catch(() => {});
 
   return { token, expiresAt };
 }
@@ -167,10 +168,22 @@ export async function authenticateOfficer(
 
   // 3. Fallback to active demo officer if no token provided (preserves seamless lab access)
   if (!token) {
-    // Return default active officer: ACP Vikram Singh
-    const defaultOfficer = await p.officer.findFirst({
-      where: { badgeNumber: "DL-002" },
-    });
+    if (process.env.STRICT_AUTH === "true" || process.env.NODE_ENV === "production") {
+      return null;
+    }
+    // Return default active officer: DL-CYBER-001, ADMIN-001, DL-002, INS-001, or any active officer
+    const defaultOfficer = (await p.officer.findFirst({
+      where: {
+        status: "ACTIVE",
+        OR: [
+          { badgeNumber: "DL-CYBER-001" },
+          { badgeNumber: "ADMIN-001" },
+          { badgeNumber: "DL-002" },
+          { badgeNumber: "INS-001" },
+        ],
+      },
+    })) || (await p.officer.findFirst({ where: { status: "ACTIVE" } }));
+
     if (defaultOfficer && defaultOfficer.status === "ACTIVE") {
       return {
         officer: {
@@ -183,6 +196,7 @@ export async function authenticateOfficer(
           jurisdiction: defaultOfficer.jurisdiction,
           unit: defaultOfficer.unit,
           status: defaultOfficer.status,
+          departmentId: (defaultOfficer as any).departmentId ?? null,
         },
         token: "demo-session-token",
       };
@@ -218,6 +232,7 @@ export async function authenticateOfficer(
       jurisdiction: off.jurisdiction,
       unit: off.unit,
       status: off.status,
+      departmentId: (off as any).departmentId ?? null,
     },
     token,
   };
@@ -226,6 +241,68 @@ export async function authenticateOfficer(
 export function hasPermission(role: Role, permission: string): boolean {
   const perms = ROLE_PERMISSIONS[role] || [];
   return perms.includes(permission);
+}
+
+// ─── Department Access & Multi-Tenant Scoping (Phase 21) ──────────────────────
+
+/**
+ * Validates whether an authenticated officer has permission to access
+ * data within the target jurisdiction/department.
+ *
+ * Rules:
+ * - ADMIN role has supervisory cross-department access for audit and platform oversight.
+ * - Non-ADMIN officers are restricted to cases matching their assigned department/jurisdiction.
+ * - Unmapped legacy records (null jurisdiction and null departmentId) fail closed for ordinary officers.
+ */
+export function canAccessDepartment(
+  officer: OfficerProfile,
+  targetJurisdiction?: string | null,
+  targetDepartmentId?: string | null
+): boolean {
+  if (officer.role === "ADMIN") return true;
+
+  // Fails closed if neither jurisdiction nor departmentId is specified
+  if (!targetJurisdiction && !targetDepartmentId) return false;
+
+  // Direct department ID comparison
+  if (targetDepartmentId && officer.departmentId) {
+    return targetDepartmentId === officer.departmentId;
+  }
+
+  // Jurisdiction comparison
+  if (targetJurisdiction && officer.jurisdiction) {
+    const offNorm = (officer.jurisdiction || "").trim().toLowerCase();
+    const targetNorm = targetJurisdiction.trim().toLowerCase();
+    if (!offNorm) return false;
+
+    return (
+      offNorm === targetNorm ||
+      targetNorm.includes(offNorm) ||
+      offNorm.includes(targetNorm)
+    );
+  }
+
+  return false;
+}
+
+/**
+ * Returns Prisma filter criteria for department-level data isolation.
+ */
+export function getDepartmentScopeFilter(officer: OfficerProfile): Record<string, any> {
+  if (officer.role === "ADMIN") {
+    return {}; // Unrestricted platform administrator
+  }
+  if (officer.departmentId) {
+    return {
+      OR: [
+        { departmentId: officer.departmentId },
+        { jurisdiction: { contains: officer.jurisdiction } },
+      ],
+    };
+  }
+  return {
+    jurisdiction: { contains: officer.jurisdiction },
+  };
 }
 
 // ─── Centralized Audit Logging ────────────────────────────────────────────────

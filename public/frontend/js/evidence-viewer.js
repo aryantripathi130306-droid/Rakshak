@@ -6,8 +6,8 @@
 
 import { initLayout } from './layout.js';
 import {
-  getEvidenceDetail, getEvidenceText, getEvidenceDownloadUrl,
-  reverifyEvidence, triggerExtraction, getEntityDetail, ACTIVE_CASE_ID
+  getEvidence, getEvidenceDetail, getEvidenceText, getEvidenceDownloadUrl,
+  reverifyEvidence, triggerExtraction, triggerOcr, getEntityDetail, ACTIVE_CASE_ID
 } from './api.js';
 import { escapeHtml, showToast } from './utils.js';
 
@@ -42,15 +42,32 @@ let textContent = null;
 let highlightTerm = '';
 
 // ─── Initialize ──────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  initLayout({ activePage: 'entities' });
+document.addEventListener('DOMContentLoaded', async () => {
+  initLayout({ activePage: 'vault' });
 
   const params = new URLSearchParams(window.location.search);
-  const evidenceId = params.get('id');
+  let evidenceId = params.get('id') || params.get('evidenceId');
   highlightTerm = params.get('highlight') || '';
 
   if (!evidenceId) {
-    showError('No evidence ID specified. Navigate from the Evidence Vault or Entity Analysis page.');
+    const sessionEv = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rakshak_active_evidence_id') : null;
+    if (sessionEv) {
+      evidenceId = sessionEv;
+    } else {
+      try {
+        const evList = await getEvidence({ limit: 1 });
+        if (evList && evList.evidence && evList.evidence.length > 0) {
+          evidenceId = evList.evidence[0].id;
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.set('id', evidenceId);
+          window.history.replaceState({}, '', newUrl.toString());
+        }
+      } catch (_) {}
+    }
+  }
+
+  if (!evidenceId) {
+    showError('No evidence files found in the vault. Ingest an evidence file from the Evidence Vault first.');
     return;
   }
 
@@ -181,8 +198,38 @@ function renderActions() {
 }
 
 function bindActions() {
+  document.getElementById('btn-run-ocr')?.addEventListener('click', handleRunOcr);
   document.getElementById('btn-re-extract')?.addEventListener('click', handleReExtract);
   document.getElementById('btn-verify')?.addEventListener('click', handleReVerify);
+}
+
+async function handleRunOcr() {
+  if (!evidenceData) return;
+  const btn = document.getElementById('btn-run-ocr');
+  const origText = btn ? btn.textContent : '';
+  if (btn) {
+    btn.textContent = '⏳ Running OCR…';
+    btn.disabled = true;
+  }
+
+  try {
+    const result = await triggerOcr(evidenceData.id);
+    if (result.success) {
+      showToast('success', `OCR complete (${result.ocr.engine}): ${result.entitiesCount} entities discovered.`);
+    } else {
+      showToast('info', `OCR status: ${result.ocr.status} (${result.ocr.charCount} chars)`);
+    }
+    // Reload evidence to refresh preview and entities
+    await loadEvidence(evidenceData.id);
+  } catch (err) {
+    showToast('error', 'OCR execution failed: ' + (err.message || ''));
+    console.error('[Viewer] OCR error:', err);
+  } finally {
+    if (btn) {
+      btn.textContent = origText;
+      btn.disabled = false;
+    }
+  }
 }
 
 async function handleReExtract() {
@@ -410,25 +457,80 @@ function highlightTextContent(term) {
 
 function renderImagePreview(data) {
   const area = document.getElementById('content-preview-area');
+  const hasText = data.text && data.text.trim().length > 0;
+
   area.innerHTML = `
-    <div class="image-preview-container">
-      <img src="${escapeHtml(data.previewUrl)}" alt="Evidence image preview" class="evidence-image-preview"
-        onerror="this.parentElement.innerHTML='<div class=\\'content-unavailable\\'><div class=\\'empty-icon\\'>🖼</div><div class=\\'empty-title\\'>Image Load Failed</div></div>'" />
-      ${data.ocrNote ? `<div class="ocr-notice">ℹ ${escapeHtml(data.ocrNote)}</div>` : ''}
+    <div class="ocr-split-view">
+      <div class="image-preview-container">
+        <img src="${escapeHtml(data.previewUrl)}" alt="Evidence image preview" class="evidence-image-preview"
+          onerror="this.parentElement.innerHTML='<div class=\\'content-unavailable\\'><div class=\\'empty-icon\\'>🖼</div><div class=\\'empty-title\\'>Image Load Failed</div></div>'" />
+      </div>
+      <div class="ocr-text-pane">
+        <div class="text-preview-toolbar">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="badge-status ${data.ocrConfidence > 0 ? 'ready' : 'inactive'}">${escapeHtml(data.ocrEngine || 'TESSERACT_OCR')}</span>
+            <span class="text-line-count">${data.ocrConfidence != null ? `Confidence: ${data.ocrConfidence}%` : ''} · ${data.lineCount || 0} lines</span>
+          </div>
+          ${!hasText ? `<button class="btn btn-primary btn-sm" id="btn-inline-run-ocr">⚡ Run Forensic OCR</button>` : ''}
+        </div>
+        ${data.ocrNote ? `<div class="ocr-notice">ℹ ${escapeHtml(data.ocrNote)}</div>` : ''}
+        ${hasText ? `
+          <div class="text-content-area" id="ocr-text-content-area">
+            ${(data.text || '').split(/\r?\n/).map((line, idx) => `
+              <div class="text-line">
+                <span class="line-number">${idx + 1}</span>
+                <span class="line-content">${escapeHtml(line) || '&nbsp;'}</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : `
+          <div class="empty-state-card" style="margin:20px 0;padding:20px;text-align:center">
+            <div style="font-size:24px;margin-bottom:8px">🔍</div>
+            <div style="font-size:13px;font-weight:600;color:#f1f5f9">No Extracted Text Displayed</div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:4px">Click "Run Forensic OCR" to process this image on-premises.</div>
+          </div>
+        `}
+      </div>
     </div>
   `;
+
+  document.getElementById('btn-inline-run-ocr')?.addEventListener('click', handleRunOcr);
 }
 
 function renderPDFPreview(data) {
   const area = document.getElementById('content-preview-area');
-  // Use iframe for PDF viewing with sandbox restrictions
+  const hasText = data.text && data.text.trim().length > 0;
+
   area.innerHTML = `
-    <div class="pdf-preview-container">
-      <iframe src="${escapeHtml(data.previewUrl)}" class="evidence-pdf-preview"
-        sandbox="allow-same-origin" title="PDF Evidence Preview"></iframe>
-      ${data.ocrNote ? `<div class="ocr-notice">ℹ ${escapeHtml(data.ocrNote)}</div>` : ''}
+    <div class="ocr-split-view">
+      <div class="pdf-preview-container">
+        <iframe src="${escapeHtml(data.previewUrl)}" class="evidence-pdf-preview"
+          sandbox="allow-same-origin" title="PDF Evidence Preview"></iframe>
+      </div>
+      <div class="ocr-text-pane">
+        <div class="text-preview-toolbar">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="badge-status ready">${escapeHtml(data.ocrEngine || 'PDF_PARSE')}</span>
+            <span class="text-line-count">${data.lineCount || 0} lines · ${(data.totalCharacters || 0).toLocaleString()} chars</span>
+          </div>
+          ${!hasText ? `<button class="btn btn-primary btn-sm" id="btn-inline-run-pdf-ocr">⚡ Extract Text</button>` : ''}
+        </div>
+        ${data.ocrNote ? `<div class="ocr-notice">ℹ ${escapeHtml(data.ocrNote)}</div>` : ''}
+        ${hasText ? `
+          <div class="text-content-area" id="ocr-pdf-text-content-area">
+            ${(data.text || '').split(/\r?\n/).map((line, idx) => `
+              <div class="text-line">
+                <span class="line-number">${idx + 1}</span>
+                <span class="line-content">${escapeHtml(line) || '&nbsp;'}</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
     </div>
   `;
+
+  document.getElementById('btn-inline-run-pdf-ocr')?.addEventListener('click', handleRunOcr);
 }
 
 function renderAudioPreview(data) {

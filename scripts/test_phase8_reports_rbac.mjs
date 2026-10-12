@@ -9,22 +9,8 @@ async function testPhase8() {
   console.log('--- Starting Phase 8 Verification Tests ---');
   let cookieHeader = '';
 
-  // 1. Check Analytics API
-  console.log('\n[1] Testing GET /api/reports/analytics...');
-  const resAnalytics = await fetch(`${BASE_URL}/api/reports/analytics`);
-  if (!resAnalytics.ok) throw new Error(`Analytics failed: ${resAnalytics.status}`);
-  const analytics = await resAnalytics.json();
-  console.log('✓ Counts:', analytics.counts);
-  console.log('✓ Cases by Status items:', analytics.casesByStatus?.length);
-  console.log('✓ Evidence by Category items:', analytics.evidenceByCategory?.length);
-  console.log('✓ Entities by Type items:', analytics.entitiesByType?.length);
-  console.log('✓ 7-Day Activity dates:', analytics.sevenDayActivity?.dates);
-  if (!analytics.counts || analytics.counts.totalCases < 1) {
-    throw new Error('Analytics counts missing or empty');
-  }
-
-  // 2. Authentication: Login as Admin
-  console.log('\n[2] Testing POST /api/auth/login (Admin DL-002)...');
+  // 1. Authentication: Login as Admin
+  console.log('\n[1] Testing POST /api/auth/login (Admin DL-002)...');
   const resLogin = await fetch(`${BASE_URL}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -39,6 +25,22 @@ async function testPhase8() {
   if (setCookie) {
     cookieHeader = setCookie.split(';')[0];
     console.log('✓ Session Cookie acquired');
+  }
+
+  // 2. Check Analytics API
+  console.log('\n[2] Testing GET /api/reports/analytics...');
+  const resAnalytics = await fetch(`${BASE_URL}/api/reports/analytics`, {
+    headers: cookieHeader ? { Cookie: cookieHeader } : {},
+  });
+  if (!resAnalytics.ok) throw new Error(`Analytics failed: ${resAnalytics.status}`);
+  const analytics = await resAnalytics.json();
+  console.log('✓ Counts:', analytics.counts);
+  console.log('✓ Cases by Status items:', analytics.casesByStatus?.length);
+  console.log('✓ Evidence by Category items:', analytics.evidenceByCategory?.length);
+  console.log('✓ Entities by Type items:', analytics.entitiesByType?.length);
+  console.log('✓ 7-Day Activity dates:', analytics.sevenDayActivity?.dates);
+  if (!analytics.counts || analytics.counts.totalCases < 1) {
+    throw new Error('Analytics counts missing or empty');
   }
 
   // 3. Auth Me
@@ -65,7 +67,7 @@ async function testPhase8() {
 
   // 5. Create New Officer (Admin only)
   console.log('\n[5] Testing POST /api/officers (Provision new Officer)...');
-  const testBadge = `TS-${Date.now().toString().slice(-4)}`;
+  const testBadge = `TS-${Date.now().toString().slice(-6)}`;
   const resCreateOfficer = await fetch(`${BASE_URL}/api/officers`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Cookie: cookieHeader },

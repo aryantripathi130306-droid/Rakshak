@@ -1,0 +1,747 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Rakshak v3.0 — Neumorphic Officer Login Stylesheet
+   Authoritative light-neumorphic design tokens & isolated layout
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Brand Palette per Specification */
+  --neu-bg:                #E9EEF5;
+  --neu-surface:           #F5F8FC;
+  --neu-surface-light:     #FFFFFF;
+  --neu-surface-recessed:  #E2E8F2;
+  --neu-navy:              #172B4D;
+  --neu-navy-subtle:       #2D4367;
+  --neu-secondary:         #637692;
+  --neu-muted:             #8495AB;
+  --neu-blue:              #3988F5;
+  --neu-blue-hover:        #2977E5;
+  --neu-blue-active:       #1E66CF;
+  --neu-border:            #D6DFEB;
+  --neu-border-light:      rgba(255, 255, 255, 0.85);
+
+  /* Status Colors */
+  --neu-error:             #D9383A;
+  --neu-error-bg:          #FEEBEB;
+  --neu-error-border:      #FCA5A5;
+  --neu-info-bg:           #EBF4FF;
+  --neu-info-border:       #BFDBFE;
+
+  /* Realistic Dual Shadows */
+  --neu-shadow-raised-lg:  18px 24px 50px rgba(166, 180, 200, 0.45), -14px -14px 40px rgba(255, 255, 255, 0.95);
+  --neu-shadow-raised-md:  10px 14px 28px rgba(166, 180, 200, 0.38), -10px -10px 24px rgba(255, 255, 255, 0.9);
+  --neu-shadow-pill:       6px 8px 18px rgba(166, 180, 200, 0.35), -6px -6px 16px rgba(255, 255, 255, 0.9);
+  --neu-shadow-pill-hover: 8px 12px 24px rgba(166, 180, 200, 0.42), -8px -8px 20px rgba(255, 255, 255, 0.95);
+  --neu-shadow-badge:      4px 5px 12px rgba(166, 180, 200, 0.35), -4px -4px 10px rgba(255, 255, 255, 0.9);
+  --neu-shadow-btn:        6px 10px 22px rgba(57, 136, 245, 0.38), -4px -4px 12px rgba(255, 255, 255, 0.8);
+  --neu-shadow-btn-hover:  8px 14px 28px rgba(57, 136, 245, 0.48), -5px -5px 14px rgba(255, 255, 255, 0.9);
+
+  /* Realistic Inset Shadows for Inputs */
+  --neu-shadow-inset:      inset 3px 3px 6px rgba(166, 180, 200, 0.45), inset -3px -3px 6px rgba(255, 255, 255, 0.85);
+  --neu-shadow-inset-focus: inset 3px 3px 6px rgba(57, 136, 245, 0.22), inset -3px -3px 6px rgba(255, 255, 255, 0.95), 0 0 0 2.5px rgba(57, 136, 245, 0.4);
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ─── Global Reset for Login Page ───────────────────────────────────────────── */
+html, body.neu-auth-body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--neu-bg);
+  font-family: var(--font-sans);
+  color: var(--neu-navy);
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ─── Background Ambient Geometry ───────────────────────────────────────────── */
+.neu-bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Soft embossed circular reliefs in the background matching the reference */
+.neu-bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--neu-bg);
+  box-shadow: 20px 24px 55px rgba(166, 180, 200, 0.35), -18px -18px 45px rgba(255, 255, 255, 0.85);
+}
+
+.neu-circle-1 {
+  width: 380px;
+  height: 380px;
+  top: -120px;
+  left: -80px;
+  opacity: 0.8;
+}
+
+.neu-circle-2 {
+  width: 340px;
+  height: 340px;
+  top: -90px;
+  left: 360px;
+  opacity: 0.65;
+}
+
+.neu-circle-3 {
+  width: 520px;
+  height: 520px;
+  bottom: -160px;
+  right: -140px;
+  opacity: 0.75;
+}
+
+.neu-circle-4 {
+  width: 240px;
+  height: 240px;
+  top: 140px;
+  right: -60px;
+  opacity: 0.6;
+}
+
+/* ─── Main Viewport Container ───────────────────────────────────────────────── */
+.neu-auth-viewport {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.neu-auth-layout {
+  display: grid;
+  grid-template-columns: minmax(360px, 440px) minmax(400px, 480px);
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LEFT BRANDING PANEL
+   ═══════════════════════════════════════════════════════════════════ */
+.neu-brand-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 0;
+}
+
+/* ─── Shield Emblem ─────────────────────────────────────────────────────────── */
+.neu-shield-container {
+  width: 110px;
+  height: 120px;
+  margin-bottom: 24px;
+  filter: drop-shadow(10px 14px 24px rgba(166, 180, 200, 0.45)) drop-shadow(-8px -8px 20px rgba(255, 255, 255, 0.95));
+}
+
+.neu-shield-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ─── Brand Heading ─────────────────────────────────────────────────────────── */
+.neu-brand-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.neu-brand-title {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--neu-navy);
+  margin: 0;
+  line-height: 1;
+}
+
+.neu-brand-version {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--neu-navy);
+  letter-spacing: -0.01em;
+}
+
+.neu-brand-subtitle {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--neu-secondary);
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.neu-accent-bar {
+  width: 28px;
+  height: 3px;
+  background-color: var(--neu-blue);
+  border-radius: 2px;
+  margin-bottom: 24px;
+}
+
+/* ─── Feature Pill List ─────────────────────────────────────────────────────── */
+.neu-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 26px;
+}
+
+.neu-feature-pill {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--neu-surface);
+  border: 1px solid var(--neu-border-light);
+  border-radius: 20px;
+  padding: 12px 18px;
+  box-shadow: var(--neu-shadow-pill);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.neu-feature-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--neu-shadow-pill-hover);
+}
+
+.neu-feature-icon-badge {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--neu-bg);
+  box-shadow: var(--neu-shadow-badge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neu-blue);
+}
+
+.neu-feature-icon-badge svg {
+  width: 19px;
+  height: 19px;
+  display: block;
+}
+
+.neu-feature-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.neu-feature-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--neu-navy);
+  line-height: 1.25;
+}
+
+.neu-feature-desc {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--neu-secondary);
+  line-height: 1.3;
+}
+
+/* ─── Brand Footer Tagline ──────────────────────────────────────────────────── */
+.neu-brand-footer {
+  margin-top: 4px;
+}
+
+.neu-brand-footer-bar {
+  width: 28px;
+  height: 3px;
+  background-color: var(--neu-blue);
+  border-radius: 2px;
+  margin-bottom: 12px;
+}
+
+.neu-brand-tagline {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--neu-muted);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RIGHT LOGIN CARD
+   ═══════════════════════════════════════════════════════════════════ */
+.neu-card-wrapper {
+  width: 100%;
+}
+
+.neu-login-card {
+  position: relative;
+  background: var(--neu-surface);
+  border-radius: 32px;
+  padding: 42px 44px;
+  border: 1.5px solid var(--neu-border-light);
+  box-shadow: var(--neu-shadow-raised-lg);
+  backdrop-filter: blur(8px);
+}
+
+/* ─── Card Header ───────────────────────────────────────────────────────────── */
+.neu-card-header {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.neu-card-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--neu-navy);
+  letter-spacing: -0.02em;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+}
+
+.neu-card-subtitle {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--neu-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.neu-mode-btn {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--neu-border-light);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-badge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neu-secondary);
+  cursor: default;
+  outline: none;
+}
+
+.neu-mode-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* ─── Alert Notice ──────────────────────────────────────────────────────────── */
+.neu-alert {
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.neu-alert.hidden {
+  display: none !important;
+}
+
+.neu-alert.error {
+  background-color: var(--neu-error-bg);
+  border: 1px solid var(--neu-error-border);
+  color: var(--neu-error);
+}
+
+.neu-alert.info {
+  background-color: var(--neu-info-bg);
+  border: 1px solid var(--neu-info-border);
+  color: var(--neu-blue);
+}
+
+.neu-alert.warning {
+  background-color: #FEF3C7;
+  border: 1px solid #FCD34D;
+  color: #B45309;
+}
+
+.neu-alert-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.neu-alert-msg {
+  font-weight: 500;
+}
+
+/* ─── Form Controls ─────────────────────────────────────────────────────────── */
+.neu-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.neu-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.neu-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--neu-navy);
+  letter-spacing: -0.01em;
+}
+
+/* Inset Neumorphic Input Wrapper */
+.neu-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--neu-surface-recessed);
+  border-radius: 16px;
+  box-shadow: var(--neu-shadow-inset);
+  border: 1px solid rgba(200, 212, 226, 0.4);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.neu-input-wrapper:focus-within {
+  box-shadow: var(--neu-shadow-inset-focus);
+  border-color: rgba(57, 136, 245, 0.5);
+}
+
+.neu-input-icon {
+  position: absolute;
+  left: 16px;
+  color: var(--neu-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.neu-input-icon svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+
+.neu-input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0 46px 0 48px;
+  font-size: 13.5px;
+  font-family: var(--font-sans);
+  color: var(--neu-navy);
+  font-weight: 500;
+}
+
+.neu-input::placeholder {
+  color: #8C9EB5;
+  font-weight: 400;
+}
+
+.neu-input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Show/Hide Password Suffix Button */
+.neu-password-toggle {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--neu-secondary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.neu-password-toggle:hover {
+  color: var(--neu-navy);
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.neu-password-toggle:focus-visible {
+  outline: 2px solid var(--neu-blue);
+  outline-offset: 1px;
+}
+
+.neu-password-toggle svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* ─── Submit Button ─────────────────────────────────────────────────────────── */
+.neu-submit-btn {
+  height: 50px;
+  margin-top: 6px;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, #4EA3F8 0%, #2979EA 100%);
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: var(--neu-shadow-btn);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  user-select: none;
+}
+
+.neu-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5AB0FF 0%, #3083F5 100%);
+  box-shadow: var(--neu-shadow-btn-hover);
+  transform: translateY(-1px);
+}
+
+.neu-submit-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 2px 3px 6px rgba(15, 60, 130, 0.4), 0 2px 6px rgba(57, 136, 245, 0.2);
+}
+
+.neu-submit-btn:focus-visible {
+  outline: 3px solid rgba(57, 136, 245, 0.5);
+  outline-offset: 2px;
+}
+
+.neu-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.neu-btn-arrow {
+  transition: transform 0.15s ease;
+}
+
+.neu-submit-btn:hover:not(:disabled) .neu-btn-arrow {
+  transform: translateX(3px);
+}
+
+/* Spinner */
+.neu-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: neu-spin 0.7s linear infinite;
+}
+
+.neu-spinner.hidden {
+  display: none;
+}
+
+@keyframes neu-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Secondary Form Row: Remember Me ───────────────────────────────────────── */
+.neu-form-options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -4px;
+}
+
+.neu-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--neu-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.neu-checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background-color: var(--neu-surface-recessed);
+  border: 1px solid rgba(200, 212, 226, 0.5);
+  box-shadow: inset 1.5px 1.5px 3px rgba(166, 180, 200, 0.4), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.neu-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.neu-checkbox-input:checked + .neu-checkbox-custom {
+  background: var(--neu-blue);
+  border-color: var(--neu-blue);
+  box-shadow: 0 2px 5px rgba(57, 136, 245, 0.4);
+}
+
+.neu-checkbox-input:checked + .neu-checkbox-custom svg {
+  display: block;
+}
+
+.neu-checkbox-custom svg {
+  display: none;
+  width: 11px;
+  height: 11px;
+  stroke: #FFFFFF;
+  stroke-width: 2.5;
+}
+
+.neu-checkbox-input:focus-visible + .neu-checkbox-custom {
+  outline: 2px solid var(--neu-blue);
+  outline-offset: 2px;
+}
+
+/* ─── Security Notice Card (Bottom) ─────────────────────────────────────────── */
+.neu-security-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(229, 237, 247, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 13px 18px;
+  margin-top: 10px;
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.neu-security-icon {
+  flex-shrink: 0;
+  color: var(--neu-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.neu-security-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.neu-security-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.neu-security-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--neu-navy);
+  line-height: 1.3;
+}
+
+.neu-security-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--neu-secondary);
+  line-height: 1.35;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  .neu-auth-layout {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+
+  .neu-login-card {
+    padding: 34px 30px;
+    border-radius: 28px;
+  }
+
+  .neu-brand-title {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  .neu-auth-viewport {
+    padding: 24px 16px;
+  }
+
+  .neu-auth-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .neu-brand-panel {
+    align-items: center;
+    text-align: center;
+  }
+
+  .neu-accent-bar, .neu-brand-footer-bar {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .neu-feature-pill {
+    text-align: left;
+  }
+
+  .neu-login-card {
+    padding: 30px 24px;
+    border-radius: 24px;
+  }
+
+  .neu-circle-1, .neu-circle-2, .neu-circle-3, .neu-circle-4 {
+    display: none; /* Reduce paint cost on smaller mobile viewports */
+  }
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

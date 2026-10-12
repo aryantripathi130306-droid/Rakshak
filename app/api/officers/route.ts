@@ -18,7 +18,10 @@ export const runtime = "nodejs";
 export async function GET(request: NextRequest) {
   try {
     const auth = await authenticateOfficer(request);
-    if (!auth || !hasPermission(auth.officer.role, "officer:view")) {
+    if (!auth) {
+      return Response.json({ error: "Authentication required to view officers" }, { status: 401 });
+    }
+    if (!hasPermission(auth.officer.role, "officer:view")) {
       return Response.json({ error: "Access denied: requires officer:view permission" }, { status: 403 });
     }
 
@@ -52,7 +55,15 @@ export async function GET(request: NextRequest) {
         jurisdiction: true,
         unit: true,
         status: true,
-        lastLogin: true,
+        departmentId: true,
+        department: {
+          select: {
+            id: true,
+            code: true,
+            name: true,
+          },
+        },
+        updatedAt: true,
         createdAt: true,
       },
       orderBy: [{ role: "asc" }, { name: "asc" }],
@@ -77,7 +88,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const auth = await authenticateOfficer(request);
-    if (!auth || !hasPermission(auth.officer.role, "officer:create")) {
+    if (!auth) {
+      return Response.json({ error: "Authentication required to provision officer accounts" }, { status: 401 });
+    }
+    if (!hasPermission(auth.officer.role, "officer:create")) {
       return Response.json(
         { error: "Access denied: Administrator role required to provision officer accounts" },
         { status: 403 }

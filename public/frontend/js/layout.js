@@ -4,7 +4,7 @@
  * Used by all pages via import.
  */
 
-import { ACTIVE_CASE_ID } from './api.js';
+import { ACTIVE_CASE_ID, getCurrentOfficerSession, logoutOfficer } from './api.js';
 import { escapeHtml, copyToClipboard, showToast } from './utils.js';
 
 // ─── Active Tab Detection ─────────────────────────────────────────────────────
@@ -17,13 +17,18 @@ function getActivePage(override) {
     'cases':            'cases',
     'case-detail':      'cases',
     'index':            'vault',
-    'entities':         'entities',
-    'evidence-viewer':  'entities',
-    'timeline':         'timeline',
+    'evidence':         'vault',
+    'evidence-viewer':  'vault',
+    'reports':          'reports',
     'graph':            'graph',
+    'entities':         'entities',
+    'timeline':         'timeline',
+    'cross-dept':       'cross-dept',
+    'admin':            'admin',
+    'audit':            'audit',
     'legal':            'legal',
     'comms':            'comms',
-    'reports':          'reports',
+    'pilot-readiness':  'pilot-readiness',
   };
   return map[page] || 'vault';
 }
@@ -58,15 +63,19 @@ function closeMobileSidebar() {
 
 // ─── NAV Items ────────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard',            icon: '◈',   href: '/frontend/pages/dashboard.html', badge: null },
-  { id: 'cases',     label: 'Cases',                icon: '📋',  href: '/frontend/pages/cases.html',     badge: null },
-  { id: 'vault',     label: 'Evidence Vault',       icon: '🛡',  href: '/frontend/pages/index.html',     badge: null },
-  { id: 'entities',  label: 'Entity Analysis',      icon: '🔬',  href: '/frontend/pages/entities.html',  badge: null },
-  { id: 'timeline',  label: 'Forensic Timeline',    icon: '📅',  href: '/frontend/pages/timeline.html',  badge: null },
-  { id: 'graph',     label: 'Syndicate & Clusters', icon: '🕸',  href: '/frontend/pages/graph.html',     badge: null, alert: true },
-  { id: 'legal',     label: 'Legal Matrix',         icon: '⚖',   href: '/frontend/pages/legal.html',    badge: null },
-  { id: 'comms',     label: 'Comm Intel',           icon: '📡',  href: '/frontend/pages/comms.html',    badge: null },
-  { id: 'reports',   label: 'Reports & RBAC',       icon: '📊',  href: '/frontend/pages/reports.html',  badge: null },
+  { id: 'dashboard',       label: 'Dashboard',            icon: '◈',   href: '/frontend/pages/dashboard.html', badge: null },
+  { id: 'cases',           label: 'Cases',                icon: '📋',  href: '/frontend/pages/cases.html',     badge: null },
+  { id: 'vault',           label: 'Evidence Vault',       icon: '🛡',  href: '/frontend/pages/evidence.html',  badge: null },
+  { id: 'reports',         label: 'Reports & Dossiers',   icon: '📊',  href: '/frontend/pages/reports.html',  badge: null },
+  { id: 'graph',           label: 'Intelligence Graph',   icon: '🕸',  href: '/frontend/pages/graph.html',     badge: null },
+  { id: 'entities',        label: 'Entity Management',    icon: '🔬',  href: '/frontend/pages/entities.html',  badge: null },
+  { id: 'timeline',        label: 'Forensic Timeline',    icon: '📅',  href: '/frontend/pages/timeline.html',  badge: null },
+  { id: 'cross-dept',      label: 'Cross-Department',     icon: '🏛',  href: '/frontend/pages/cross-dept.html', badge: null },
+  { id: 'admin',           label: 'Administration',       icon: '⚙',  href: '/frontend/pages/admin.html',     badge: null },
+  { id: 'audit',           label: 'Audit Logs',           icon: '📜',  href: '/frontend/pages/audit.html',     badge: null },
+  { id: 'legal',           label: 'Legal Matrix',         icon: '⚖',   href: '/frontend/pages/legal.html',    badge: null },
+  { id: 'comms',           label: 'Comm Intel',           icon: '📡',  href: '/frontend/pages/comms.html',    badge: null },
+  { id: 'pilot-readiness', label: 'Pilot Readiness',      icon: '☑',   href: '/frontend/pages/pilot-readiness.html', badge: 'GATE C' },
 ];
 
 const SECONDARY_NAV = [
@@ -74,7 +83,7 @@ const SECONDARY_NAV = [
 ];
 
 // ─── Sidebar HTML ─────────────────────────────────────────────────────────────
-function buildSidebarHTML(activeTab) {
+function buildSidebarHTML(activeTab, officer) {
   const navItems = NAV_ITEMS.map(item => {
     const isActive = item.id === activeTab;
     const badge = item.badge
@@ -103,6 +112,13 @@ function buildSidebarHTML(activeTab) {
     </button>
   `).join('');
 
+  const officerJurisdiction = officer?.jurisdiction
+    ? `${escapeHtml(officer.jurisdiction)} · ${escapeHtml(officer.unit || 'Cyber Crime Branch')}`
+    : 'Cyber Crime Branch · Chandigarh';
+  const officerDisplay = officer?.name
+    ? `${escapeHtml(officer.designation || 'Officer')} ${escapeHtml(officer.name)} (${escapeHtml(officer.badgeNumber)})`
+    : 'SI R.S. Meena (CCB-1147)';
+
   return `
     <!-- Logo -->
     <div class="sidebar-logo">
@@ -123,10 +139,10 @@ function buildSidebarHTML(activeTab) {
       </div>
       <div class="case-card-divider"></div>
       <div class="case-card-field-label">JURISDICTION</div>
-      <div class="case-card-field-value">Cyber Crime Branch · Chandigarh</div>
+      <div class="case-card-field-value">${officerJurisdiction}</div>
       <div style="margin-top:6px">
         <div class="case-card-field-label">OFFICER I/C</div>
-        <div class="case-card-field-value">SI R.S. Meena (CCB-1147)</div>
+        <div class="case-card-field-value">${officerDisplay}</div>
       </div>
     </div>
 
@@ -159,7 +175,16 @@ function buildSidebarHTML(activeTab) {
 }
 
 // ─── Header HTML ──────────────────────────────────────────────────────────────
-function buildHeaderHTML(activeCaseId) {
+function buildHeaderHTML(activeCaseId, officer) {
+  const jurisdictionLabel = officer?.jurisdiction
+    ? `${escapeHtml(officer.jurisdiction)} · ${escapeHtml(officer.unit || 'Cyber Crime Branch')}`
+    : 'Authorized Department Sandbox';
+  const officerDisplay = officer?.name
+    ? `${escapeHtml(officer.designation || 'Officer')} ${escapeHtml(officer.name)} (${escapeHtml(officer.badgeNumber)})`
+    : 'Authorized Session';
+
+  const hasActiveCase = Boolean(activeCaseId && activeCaseId !== 'null' && activeCaseId !== 'undefined');
+
   return `
     <!-- Mobile Menu Button -->
     <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open navigation">
@@ -170,12 +195,12 @@ function buildHeaderHTML(activeCaseId) {
       <!-- Case Number -->
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
         <button class="case-number-btn" id="case-number-copy" title="Click to copy case number">
-          <span>#${escapeHtml(activeCaseId)}</span>
+          <span>#${escapeHtml(activeCaseId || 'NO-CASE')}</span>
           <span id="case-copy-icon" style="font-size:11px;opacity:0.5">⧉</span>
         </button>
         <div class="case-status-badge">
           <span class="case-status-dot"></span>
-          ACTIVE INQUIRY
+          ${hasActiveCase ? 'ACTIVE INQUIRY' : 'STANDBY'}
         </div>
       </div>
 
@@ -184,11 +209,11 @@ function buildHeaderHTML(activeCaseId) {
       <!-- Incident Info -->
       <div class="incident-info">
         <div class="incident-title">
-          Part-Time Task Scam
-          <span style="color:var(--text-muted);font-weight:400"> · Multi-Jurisdiction Mule Syndicate</span>
+          ${hasActiveCase ? 'Forensic Intake Investigation' : 'Forensic Platform'}
+          <span style="color:var(--text-muted);font-weight:400"> · Department Scoped Intelligence</span>
         </div>
         <div class="incident-sub">
-          <span>Cyber Crime Branch — Sector 17, Chandigarh</span> · SI R.S. Meena (CCB-1147)
+          <span>${jurisdictionLabel}</span> · ${officerDisplay}
         </div>
       </div>
     </div>
@@ -233,6 +258,11 @@ function buildHeaderHTML(activeCaseId) {
       <button class="btn btn-secondary btn-sm" id="export-pdf-btn">
         ⬇ Export Dossier
       </button>
+
+      <div class="divider-vertical" style="height:28px;margin:0 4px" aria-hidden="true"></div>
+
+      <!-- Officer Profile & Logout Pill -->
+      <div id="header-officer-slot" style="display:flex;align-items:center;gap:6px"></div>
     </div>
   `;
 }
@@ -241,24 +271,48 @@ function buildHeaderHTML(activeCaseId) {
 /**
  * Inject the shared sidebar and header into the page.
  * Call this from each page script.
+ * Enforces server-side authentication verification on protected pages.
  *
- * @param {{ caseId?: string }} [options]
+ * @param {{ caseId?: string, activePage?: string }} [options]
  */
-export function initLayout(options = {}) {
+export async function initLayout(options = {}) {
   const caseId = options.caseId || ACTIVE_CASE_ID;
   const activeTab = getActivePage(options.activePage);
+
+  // ── Session Guard ──
+  const isAuthPage = window.location.pathname.includes('login.html') || window.location.pathname.includes('onboard-request.html');
+  let currentOfficer = null;
+
+  if (!isAuthPage) {
+    try {
+      const session = await getCurrentOfficerSession();
+      if (!session || !session.authenticated || !session.officer) {
+        const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.replace(`/frontend/pages/login.html?returnUrl=${returnUrl}`);
+        return;
+      }
+      currentOfficer = session.officer;
+    } catch (_) {
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.replace(`/frontend/pages/login.html?returnUrl=${returnUrl}`);
+      return;
+    }
+  }
 
   // ── Header ──
   const header = document.querySelector('.app-header');
   if (header) {
-    header.innerHTML = buildHeaderHTML(caseId);
+    header.innerHTML = buildHeaderHTML(caseId, currentOfficer);
     bindHeaderEvents(caseId);
+    if (currentOfficer) {
+      renderOfficerProfileHeader(currentOfficer);
+    }
   }
 
   // ── Sidebar ──
   const sidebar = document.querySelector('.sidebar');
   if (sidebar) {
-    sidebar.innerHTML = buildSidebarHTML(activeTab);
+    sidebar.innerHTML = buildSidebarHTML(activeTab, currentOfficer);
     bindSidebarEvents();
   }
 
@@ -273,6 +327,36 @@ export function initLayout(options = {}) {
 
   // ── Live Metric Load ──
   loadHeaderMetrics(caseId);
+}
+
+// ─── Officer Profile Header Rendering ─────────────────────────────────────────
+function renderOfficerProfileHeader(officer) {
+  const slot = document.getElementById('header-officer-slot');
+  if (!slot) return;
+
+  const roleClass = (officer.role || 'viewer').toLowerCase();
+  slot.innerHTML = `
+    <div class="officer-profile-pill" title="Active Session: ${escapeHtml(officer.name)} (${escapeHtml(officer.badgeNumber)})">
+      <span class="officer-profile-badge" aria-hidden="true">👮</span>
+      <div class="officer-profile-info">
+        <span class="officer-profile-name">${escapeHtml(officer.name)}</span>
+        <span class="officer-profile-meta">${escapeHtml(officer.badgeNumber)} · <span class="officer-role-tag ${roleClass}">${escapeHtml(officer.role)}</span></span>
+      </div>
+    </div>
+    <button id="btn-officer-logout" class="btn-officer-logout" title="Sign out and revoke session">
+      Sign Out ⎋
+    </button>
+  `;
+
+  const logoutBtn = document.getElementById('btn-officer-logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await logoutOfficer();
+      } catch (_) {}
+      window.location.href = '/frontend/pages/login.html?loggedOut=1';
+    });
+  }
 }
 
 // ─── Event Binding ────────────────────────────────────────────────────────────

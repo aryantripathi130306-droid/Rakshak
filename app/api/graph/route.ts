@@ -11,6 +11,9 @@ import { resolveGraphIntelligence } from "@/services/graphService";
 
 export const runtime = "nodejs";
 
+let cachedGlobalGraph: { data: any; timestamp: number } | null = null;
+const CACHE_TTL_MS = 60000;
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -22,6 +25,25 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get("startDate") || undefined;
     const endDate = searchParams.get("endDate") || undefined;
 
+    const isSimpleGlobal =
+      caseId === "ALL" &&
+      !entityType &&
+      !riskLevel &&
+      !jurisdiction &&
+      !search &&
+      !startDate &&
+      !endDate;
+
+    if (isSimpleGlobal && cachedGlobalGraph && Date.now() - cachedGlobalGraph.timestamp < CACHE_TTL_MS) {
+      return Response.json(cachedGlobalGraph.data, {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+          "X-Rakshak-Pipeline": "syndicate-intelligence-v3-cached",
+        },
+      });
+    }
+
     const graphPayload = await resolveGraphIntelligence(caseId, prisma, {
       entityType,
       riskLevel,
@@ -30,6 +52,10 @@ export async function GET(request: NextRequest) {
       startDate,
       endDate,
     });
+
+    if (isSimpleGlobal) {
+      cachedGlobalGraph = { data: graphPayload, timestamp: Date.now() };
+    }
 
     return Response.json(graphPayload, {
       status: 200,

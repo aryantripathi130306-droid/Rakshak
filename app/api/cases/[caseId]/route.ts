@@ -1,10 +1,6 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// app/api/cases/[caseId]/route.ts
-// GET  /api/cases/:caseId — get single case detail
-// PATCH /api/cases/:caseId — update case fields (partial update)
-// ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import { authenticateOfficer, hasPermission, canAccessDepartment, logAuditEvent } from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -25,7 +21,7 @@ async function resolveCase(caseId: string) {
 function normalizeStatus(s?: string): "OPEN" | "UNDER_INQUIRY" | "CHARGESHEETED" | "CLOSED" | undefined {
   if (!s) return undefined;
   const upper = s.toUpperCase().trim();
-  if (upper === "UNDER_INVESTIGATION" || upper === "UNDER_INQUIRY") return "UNDER_INQUIRY";
+  if (upper === "UNDER_INVESTIGATION" || upper === "UNDER_INQUIRY" || upper === "IN_PROGRESS") return "UNDER_INQUIRY";
   if (upper === "CHARGESHEET_FILED" || upper === "CHARGESHEETED") return "CHARGESHEETED";
   if (upper === "CLOSED") return "CLOSED";
   return "OPEN";
@@ -43,15 +39,37 @@ function normalizeType(t?: string): "Task_Scam" | "Digital_Arrest" | "Investment
 
 // ─── GET /api/cases/:caseId ───────────────────────────────────────────────────
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ caseId: string }> }
 ) {
   const { caseId } = await params;
 
   try {
+    const auth = await authenticateOfficer(request);
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to view case details." },
+        { status: 401 }
+      );
+    }
+    if (!hasPermission(auth.officer.role, "case:view")) {
+      return Response.json(
+        { error: "Access denied: requires case:view permission." },
+        { status: 403 }
+      );
+    }
+
     const kase = await resolveCase(caseId);
     if (!kase) {
       return Response.json({ error: "Case not found." }, { status: 404 });
+    }
+
+    // Enforce department / jurisdiction scope
+    if (!canAccessDepartment(auth.officer, kase.jurisdiction, (kase as any).departmentId)) {
+      return Response.json(
+        { error: "Access denied: Case belongs to another departmental jurisdiction." },
+        { status: 403 }
+      );
     }
 
     // Attach alias fields for UI compatibility
@@ -69,7 +87,7 @@ export async function GET(
   }
 }
 
-// ─── PATCH /api/cases/:caseId ─────────────────────────────────────────────────
+// ─── PATCH /api/cases/:caseId ──────────────────────────────────────────────────
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ caseId: string }> }
@@ -77,9 +95,31 @@ export async function PATCH(
   const { caseId } = await params;
 
   try {
+    const auth = await authenticateOfficer(request);
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to update a case." },
+        { status: 401 }
+      );
+    }
+    if (!hasPermission(auth.officer.role, "case:edit")) {
+      return Response.json(
+        { error: "Access denied: requires case:edit permission." },
+        { status: 403 }
+      );
+    }
+
     const existing = await resolveCase(caseId);
     if (!existing) {
       return Response.json({ error: "Case not found." }, { status: 404 });
+    }
+
+    // Enforce department / jurisdiction scope
+    if (!canAccessDepartment(auth.officer, existing.jurisdiction, (existing as any).departmentId)) {
+      return Response.json(
+        { error: "Access denied: Case belongs to another departmental jurisdiction." },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();

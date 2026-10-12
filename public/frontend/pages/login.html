@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak v3.0 — Secure Officer Authentication Portal. Unified Investigation & Evidence Management System." />
+  <title>Sign In — Rakshak v3.0</title>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Isolated Neumorphic Stylesheet -->
+  <link rel="stylesheet" href="../css/login-neumorphic.css" />
+</head>
+<body class="neu-auth-body">
+  <!-- Toast Notification Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Ambient Neumorphic Background Geometry -->
+  <div class="neu-bg-canvas" aria-hidden="true">
+    <div class="neu-bg-circle neu-circle-1"></div>
+    <div class="neu-bg-circle neu-circle-2"></div>
+    <div class="neu-bg-circle neu-circle-3"></div>
+    <div class="neu-bg-circle neu-circle-4"></div>
+  </div>
+
+  <!-- Main Viewport Layout -->
+  <main class="neu-auth-viewport">
+    <div class="neu-auth-layout">
+
+      <!-- ══════════════════════════════════════════════════════════
+           LEFT BRANDING PANEL
+           ══════════════════════════════════════════════════════════ -->
+      <section class="neu-brand-panel" aria-label="Brand Information">
+        <!-- 3D Neumorphic Shield Emblem with Classical Courthouse -->
+        <div class="neu-shield-container" aria-hidden="true">
+          <svg class="neu-shield-svg" viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="shieldBgGrad" x1="20" y1="10" x2="100" y2="120" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FFFFFF" />
+                <stop offset="50%" stop-color="#F2F7FC" />
+                <stop offset="100%" stop-color="#DCE6F2" />
+              </linearGradient>
+              <linearGradient id="shieldBorderGrad" x1="10" y1="10" x2="110" y2="120" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
+                <stop offset="60%" stop-color="#C8D8E9" stop-opacity="0.6" />
+                <stop offset="100%" stop-color="#A9C0DA" stop-opacity="0.8" />
+              </linearGradient>
+              <linearGradient id="innerShieldGrad" x1="30" y1="20" x2="90" y2="110" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#EEF5FD" />
+                <stop offset="100%" stop-color="#E1ECF7" />
+              </linearGradient>
+              <linearGradient id="emblemGrad" x1="40" y1="36" x2="80" y2="92" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#559CF8" />
+                <stop offset="100%" stop-color="#2873DE" />
+              </linearGradient>
+              <filter id="neuShieldGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="2.5" dy="4.5" stdDeviation="3.5" flood-color="#A6B4C8" flood-opacity="0.32" />
+                <feDropShadow dx="-2.5" dy="-2.5" stdDeviation="2.5" flood-color="#FFFFFF" flood-opacity="0.9" />
+              </filter>
+            </defs>
+
+            <!-- Outer Shield Shell -->
+            <path
+              d="M 60 14 C 84 14 104 22 104 38 C 104 76 84 104 60 118 C 36 104 16 76 16 38 C 16 22 36 14 60 14 Z"
+              fill="url(#shieldBgGrad)"
+              stroke="url(#shieldBorderGrad)"
+              stroke-width="3"
+            />
+
+            <!-- Inner Recessed Shield Contour -->
+            <path
+              d="M 60 22 C 80 22 96 29 96 42 C 96 73 80 97 60 109 C 40 97 24 73 24 42 C 24 29 40 22 60 22 Z"
+              fill="url(#innerShieldGrad)"
+              stroke="rgba(255,255,255,0.92)"
+              stroke-width="1.5"
+              filter="url(#neuShieldGlow)"
+            />
+
+            <!-- Classical Courthouse Columns & Pediment -->
+            <path d="M 60 38 L 86 52 L 34 52 Z" fill="url(#emblemGrad)" />
+            <rect x="36" y="54" width="48" height="4" rx="1.5" fill="url(#emblemGrad)" />
+            <rect x="40" y="60" width="5.5" height="22" rx="1" fill="url(#emblemGrad)" />
+            <rect x="49.5" y="60" width="5.5" height="22" rx="1" fill="url(#emblemGrad)" />
+            <rect x="65" y="60" width="5.5" height="22" rx="1" fill="url(#emblemGrad)" />
+            <rect x="74.5" y="60" width="5.5" height="22" rx="1" fill="url(#emblemGrad)" />
+            <rect x="37" y="83" width="46" height="4" rx="1.5" fill="url(#emblemGrad)" />
+            <rect x="33" y="88" width="54" height="4.5" rx="2" fill="url(#emblemGrad)" />
+          </svg>
+        </div>
+
+        <!-- Product Name & Version -->
+        <div class="neu-brand-title-wrap">
+          <h1 class="neu-brand-title">RAKSHAK</h1>
+          <span class="neu-brand-version">v3.0</span>
+        </div>
+
+        <!-- Subtitle -->
+        <p class="neu-brand-subtitle">
+          UNIFIED INVESTIGATION &amp; EVIDENCE MANAGEMENT SYSTEM
+        </p>
+
+        <!-- Blue Accent Line -->
+        <div class="neu-accent-bar" aria-hidden="true"></div>
+
+        <!-- 4 Compact Feature Rows -->
+        <div class="neu-features-list" role="list">
+          
+          <!-- Feature 1: Secure & Compliant -->
+          <div class="neu-feature-pill" role="listitem">
+            <div class="neu-feature-icon-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </div>
+            <div class="neu-feature-content">
+              <div class="neu-feature-title">Secure &amp; Compliant</div>
+              <div class="neu-feature-desc">Role-based access with RLS</div>
+            </div>
+          </div>
+
+          <!-- Feature 2: Digital Evidence Management -->
+          <div class="neu-feature-pill" role="listitem">
+            <div class="neu-feature-icon-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              </svg>
+            </div>
+            <div class="neu-feature-content">
+              <div class="neu-feature-title">Digital Evidence Management</div>
+              <div class="neu-feature-desc">Tamper-evident and auditable</div>
+            </div>
+          </div>
+
+          <!-- Feature 3: Multi-Department Collaboration -->
+          <div class="neu-feature-pill" role="listitem">
+            <div class="neu-feature-icon-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="neu-feature-content">
+              <div class="neu-feature-title">Multi-Department Collaboration</div>
+              <div class="neu-feature-desc">Police &bull; Crime Branch &bull; Cyber &bull; Finance</div>
+            </div>
+          </div>
+
+          <!-- Feature 4: End-to-End Audit Trail -->
+          <div class="neu-feature-pill" role="listitem">
+            <div class="neu-feature-icon-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div class="neu-feature-content">
+              <div class="neu-feature-title">End-to-End Audit Trail</div>
+              <div class="neu-feature-desc">Complete accountability</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer Tagline -->
+        <footer class="neu-brand-footer">
+          <div class="neu-brand-footer-bar" aria-hidden="true"></div>
+          <div class="neu-brand-tagline">
+            FASTER INVESTIGATIONS.<br />SAFER COMMUNITIES.
+          </div>
+        </footer>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════
+           RIGHT LOGIN CARD
+           ══════════════════════════════════════════════════════════ -->
+      <section class="neu-card-wrapper" aria-label="Officer Authentication">
+        <div class="neu-login-card" role="region" aria-labelledby="neu-login-heading">
+          
+          <!-- Card Header with Decorative Ambient Mode Indicator -->
+          <header class="neu-card-header">
+            <div class="neu-mode-btn" aria-hidden="true" title="Secure Environment Active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2"></path>
+                <path d="M12 20v2"></path>
+                <path d="m4.93 4.93 1.41 1.41"></path>
+                <path d="m17.66 17.66 1.41 1.41"></path>
+                <path d="M2 12h2"></path>
+                <path d="M20 12h2"></path>
+                <path d="m6.34 17.66-1.41 1.41"></path>
+                <path d="m19.07 4.93-1.41 1.41"></path>
+              </svg>
+            </div>
+            <h2 class="neu-card-title" id="neu-login-heading">Welcome to RAKSHAK</h2>
+            <p class="neu-card-subtitle">Sign in to continue to your secure workspace</p>
+          </header>
+
+          <!-- Status / Error Alert Notice -->
+          <div id="auth-alert" class="neu-alert hidden" role="alert" aria-live="assertive">
+            <span id="auth-alert-icon" class="neu-alert-icon" aria-hidden="true">⚠️</span>
+            <span id="auth-alert-msg" class="neu-alert-msg"></span>
+          </div>
+
+          <!-- Authentication Form -->
+          <form id="officer-login-form" class="neu-login-form" novalidate>
+            
+            <!-- Username Field -->
+            <div class="neu-form-group">
+              <label for="officer-identifier" class="neu-label">Username</label>
+              <div class="neu-input-wrapper">
+                <span class="neu-input-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  id="officer-identifier"
+                  name="identifier"
+                  class="neu-input"
+                  placeholder="Enter your username"
+                  autocomplete="username"
+                  required
+                  aria-required="true"
+                  spellcheck="false"
+                />
+              </div>
+            </div>
+
+            <!-- Password Field with Show/Hide -->
+            <div class="neu-form-group">
+              <label for="officer-password" class="neu-label">Password</label>
+              <div class="neu-input-wrapper">
+                <span class="neu-input-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input
+                  type="password"
+                  id="officer-password"
+                  name="password"
+                  class="neu-input"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  required
+                  aria-required="true"
+                />
+                <button
+                  type="button"
+                  id="toggle-password-btn"
+                  class="neu-password-toggle"
+                  aria-label="Show password"
+                  title="Show or hide password"
+                >
+                  <svg id="toggle-eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Primary Sign In Button -->
+            <button type="submit" id="login-submit-btn" class="neu-submit-btn">
+              <span id="login-btn-spinner" class="neu-spinner hidden" aria-hidden="true"></span>
+              <span id="login-btn-text">Sign In</span>
+              <span id="login-btn-arrow" class="neu-btn-arrow" aria-hidden="true">&rarr;</span>
+            </button>
+
+            <!-- Options Row: Remember Me -->
+            <div class="neu-form-options-row">
+              <label class="neu-checkbox-label">
+                <input type="checkbox" id="remember-me" name="remember" class="neu-checkbox-input" />
+                <span class="neu-checkbox-custom" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span>Remember me</span>
+              </label>
+            </div>
+
+            <!-- Security Notice Box -->
+            <div class="neu-security-card" role="note">
+              <div class="neu-security-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="neu-security-content">
+                <span class="neu-security-title">Authorized personnel only</span>
+                <span class="neu-security-desc">All access is logged and monitored</span>
+              </div>
+            </div>
+
+            <!-- Developer / Test Officer Quick Fill Box -->
+            <div style="margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: rgba(57, 136, 245, 0.08); border: 1px dashed rgba(57, 136, 245, 0.3); font-size: 0.78rem; color: #172B4D; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div>
+                <strong>Chief Investigator:</strong> <code style="font-family: monospace; font-weight: 700; color:#1E66CF;">DL-CYBER-001</code> / <code style="font-family: monospace;">Rakshak@2026!</code>
+              </div>
+              <button type="button" id="btn-fill-demo-creds" style="background: #3988F5; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; white-space: nowrap;">Fill Credentials</button>
+            </div>
+
+          </form>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script type="module" src="../js/login.js"></script>
+</body>
+</html>

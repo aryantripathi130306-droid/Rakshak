@@ -10,10 +10,20 @@
 const API_BASE = '';
 
 /**
- * Default active case — used across the entire frontend.
- * This matches the hardcoded value used in the original React frontend.
+ * Active case ID — dynamically resolved from session storage or first active case.
  */
-export const ACTIVE_CASE_ID = 'CASE-2026-0891';
+export let ACTIVE_CASE_ID = (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rakshak_active_case_id') : '') || '';
+
+export function setActiveCaseId(id) {
+  ACTIVE_CASE_ID = id || '';
+  try {
+    if (id) {
+      sessionStorage.setItem('rakshak_active_case_id', id);
+    } else {
+      sessionStorage.removeItem('rakshak_active_case_id');
+    }
+  } catch (_) {}
+}
 
 // ─── Generic Fetch Wrapper ────────────────────────────────────────────────────
 /**
@@ -122,6 +132,26 @@ export async function getEvidenceDetail(id) {
 }
 
 /**
+ * GET /api/entities
+ * @param {Object} [params] - { q, entityType, caseId, evidenceId, verificationStatus, sortBy, sortOrder, page, limit }
+ */
+export async function getEntities(params = {}) {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => { if (v !== '' && v != null) qs.set(k, String(v)); });
+  const query = qs.toString() ? '?' + qs.toString() : '';
+  return apiFetch(`/api/entities${query}`);
+}
+
+/**
+ * GET /api/entities/:id
+ * @param {string} id
+ */
+export async function getEntityDetail(id) {
+  return apiFetch(`/api/entities/${encodeURIComponent(id)}`);
+}
+
+
+/**
  * POST /api/evidence/:id/verify
  * @param {string} id
  * @param {Object} [body]
@@ -164,6 +194,44 @@ export async function logCustodyEvent(id, body) {
  */
 export function getEvidenceDownloadUrl(id, preview = false) {
   return `${API_BASE}/api/evidence/${encodeURIComponent(id)}/download${preview ? '?preview=1' : ''}`;
+}
+
+/**
+ * GET /api/evidence/:id/text
+ * @param {string} id
+ */
+export async function getEvidenceText(id) {
+  return apiFetch(`/api/evidence/${encodeURIComponent(id)}/text`);
+}
+
+/**
+ * POST /api/evidence/:id/extract — Trigger re-extraction
+ * @param {string} id
+ */
+export async function triggerExtraction(id) {
+  return apiFetch(`/api/evidence/${encodeURIComponent(id)}/extract`, {
+    method: 'POST',
+    body: JSON.stringify({}),
+  });
+}
+
+/**
+ * POST /api/evidence/:id/ocr — Trigger on-demand forensic OCR
+ * @param {string} id
+ */
+export async function triggerOcr(id) {
+  return apiFetch(`/api/evidence/${encodeURIComponent(id)}/ocr`, {
+    method: 'POST',
+    body: JSON.stringify({}),
+  });
+}
+
+/**
+ * GET /api/evidence/:id/ocr — Fetch OCR processing status & telemetry
+ * @param {string} id
+ */
+export async function getEvidenceOcr(id) {
+  return apiFetch(`/api/evidence/${encodeURIComponent(id)}/ocr`);
 }
 
 /**
@@ -312,6 +380,79 @@ export async function getCaseDossier(caseId) {
   return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/dossier`);
 }
 
+// ─── Clusters API ─────────────────────────────────────────────────────────────
+/**
+ * GET /api/clusters
+ * Returns cross-case syndicate clusters
+ */
+export async function getClusters() {
+  return apiFetch('/api/clusters');
+}
+
+/**
+ * GET /api/entities?caseId=:caseId
+ * Fetch all extracted forensic entities associated with a specific case
+ */
+export async function getCaseEntities(caseId) {
+  return apiFetch(`/api/entities?caseId=${encodeURIComponent(caseId)}`);
+}
+
+// ─── Legal Matrix API ─────────────────────────────────────────────────────────
+/**
+ * GET /api/cases/:caseId/legal
+ */
+export async function getCaseLegal(caseId) {
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/legal`);
+}
+
+/**
+ * POST /api/cases/:caseId/legal
+ */
+export async function addCaseLegalSection(caseId, data) {
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/legal`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * DELETE /api/cases/:caseId/legal
+ */
+export async function deleteCaseLegalSection(caseId, params = {}) {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => { if (v !== '' && v != null) qs.set(k, String(v)); });
+  const query = qs.toString() ? '?' + qs.toString() : '';
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/legal${query}`, {
+    method: 'DELETE',
+  });
+}
+
+/**
+ * POST /api/cases/:caseId/legal/map-evidence
+ */
+export async function mapEvidenceToLegal(caseId, data) {
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/legal/map-evidence`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * POST /api/cases/:caseId/legal/review
+ */
+export async function validateCaseDossier(caseId) {
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/legal/review`, {
+    method: 'POST',
+  });
+}
+
+/**
+ * GET /api/cases/:caseId/legal/review?format=:format
+ */
+export async function exportCaseDossier(caseId, format = 'json') {
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/legal/review?format=${encodeURIComponent(format)}`);
+}
+
 // ─── Phase 8: Reports, Auth, RBAC & Audit API ─────────────────────────────────
 
 /**
@@ -380,11 +521,43 @@ export async function getReportsAnalytics() {
 
 /**
  * GET /api/reports
- * @param {string} [caseId]
+ * @param {string|Object} [params]
  */
-export async function getReports(caseId) {
-  const query = caseId ? `?caseId=${encodeURIComponent(caseId)}` : '';
+export async function getReports(params) {
+  if (!params) {
+    return apiFetch('/api/reports');
+  }
+  if (typeof params === 'string') {
+    return apiFetch(`/api/reports?caseId=${encodeURIComponent(params)}`);
+  }
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== '' && v != null && v !== 'ALL') {
+      qs.set(k, String(v));
+    }
+  });
+  const query = qs.toString() ? '?' + qs.toString() : '';
   return apiFetch(`/api/reports${query}`);
+}
+
+/**
+ * GET /api/reports/:id
+ * @param {string} id
+ */
+export async function getReportDetail(id) {
+  return apiFetch(`/api/reports/${encodeURIComponent(id)}`);
+}
+
+/**
+ * PATCH /api/reports/:id
+ * @param {string} id
+ * @param {Object} data
+ */
+export async function updateReport(id, data) {
+  return apiFetch(`/api/reports/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
 }
 
 /**
@@ -461,4 +634,63 @@ export async function exportAuditLogs(params = {}, format = 'csv') {
   return res.blob();
 }
 
+/**
+ * GET /api/clusters/:id
+ */
+export async function getCluster(clusterId) {
+  return apiFetch(`/api/clusters/${encodeURIComponent(clusterId)}`);
+}
+
+// ─── Authentication & Session Management (Phase 21) ─────────────────────────
+
+/**
+ * POST /api/auth/login
+ * @param {string} identifier - Badge number or email
+ * @param {string} password - Officer password
+ * @returns {Promise<{ success: boolean, token: string, officer: Object, permissions: string[] }>}
+ */
+export async function loginOfficer(identifier, password) {
+  return apiFetch('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ identifier, password }),
+  });
+}
+
+/**
+ * POST /api/auth/logout
+ * Revokes current session and clears HTTP-only cookie
+ */
+export async function logoutOfficer() {
+  return apiFetch('/api/auth/logout', {
+    method: 'POST',
+  });
+}
+
+/**
+ * GET /api/auth/me
+ * Retrieves currently active authenticated officer and role permissions
+ */
+export async function getCurrentOfficerSession() {
+  return apiFetch('/api/auth/me');
+}
+
+/**
+ * POST /api/auth/onboard-request
+ * Submit a pending department onboarding request (Non-privileged, creates pending queue item only)
+ * @param {Object} data
+ */
+export async function submitDepartmentOnboardingRequest(data) {
+  return apiFetch('/api/auth/onboard-request', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * GET /api/auth/onboard-requests
+ * Retrieve pending department onboarding requests (Requires ADMIN)
+ */
+export async function getDepartmentOnboardingRequests() {
+  return apiFetch('/api/auth/onboard-requests');
+}
 

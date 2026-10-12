@@ -6,7 +6,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { MOCK_TRANSCRIPTION, MOCK_CHAT_TRANSLATION } from "@/lib/mock-data";
 
 export const runtime = "nodejs";
 
@@ -96,49 +95,10 @@ export async function GET(
       }
     }
 
-    // If no records in DB yet, fallback to mock data
-    const finalTranscriptions = transcriptions.length > 0 ? transcriptions : [
-      {
-        id: "trans-104-01",
-        evidenceId: "EV-104",
-        fileName: "Call_Recording_Intercept.wav",
-        fileType: "WAV",
-        sha256Hash: "e1f4a8b2c5d9e3f7a0b4c8d1e5f2a6b0c3d7e1f4a9b3c7d0e4f8a2b6c1d5e9f",
-        originalLanguage: MOCK_TRANSCRIPTION.originalLanguage,
-        targetLanguage: MOCK_TRANSCRIPTION.targetLanguage,
-        speakerCount: MOCK_TRANSCRIPTION.speakerCount,
-        transcriptionMethod: "WHISPER_AI (Indic Speech)",
-        confidence: MOCK_TRANSCRIPTION.confidence,
-        segments: MOCK_TRANSCRIPTION.segments,
-        extractedEntities: [
-          { type: "PHONE", value: "+919811122233", confidence: 0.999, evidenceId: "EV-104" },
-          { type: "PHONE", value: "+918800912244", confidence: 0.985, evidenceId: "EV-104" },
-        ],
-      },
-    ];
-
-    const finalChatTranslations = chatTranslations.length > 0 ? chatTranslations : [
-      {
-        id: "chat-trans-102-01",
-        evidenceId: "EV-102",
-        fileName: "WhatsApp_Chat_Export.txt",
-        fileType: "TXT",
-        sha256Hash: "a3f2c819e4d72b06a1c0f5d8e9b3417c28e0f5a1b6c2d9e7f4a8b3c1d0e2f6a9",
-        originalLanguage: MOCK_CHAT_TRANSLATION.originalLanguage,
-        translationMethod: "INDIC_TRANS_AI (Forensic Corpus)",
-        messages: MOCK_CHAT_TRANSLATION.messages,
-        extractedEntities: [
-          { type: "PHONE", value: "+919811122233", confidence: 0.999, evidenceId: "EV-102" },
-          { type: "TELEGRAM", value: "@task_rewards_official", confidence: 0.981, evidenceId: "EV-102" },
-          { type: "UPI", value: "mule88@oksbi", confidence: 0.994, evidenceId: "EV-102" },
-        ],
-      },
-    ];
-
     return Response.json({
       caseId: caseRecord.caseNumber,
-      transcriptions: finalTranscriptions,
-      chatTranslations: finalChatTranslations,
+      transcriptions,
+      chatTranslations,
     });
   } catch (err) {
     console.error("[GET /api/cases/[caseId]/communications] Error:", err);

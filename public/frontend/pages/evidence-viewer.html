@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Rakshak — Evidence Viewer. Forensic analysis view with metadata, content preview, and extracted entities." />
   <title>Evidence Viewer — Rakshak v3.0</title>
+  <script>
+    const p = new URLSearchParams(window.location.search);
+    const id = p.get('id');
+    const c = p.get('caseId');
+    let q = [];
+    if (id) q.push('id=' + encodeURIComponent(id));
+    if (c) q.push('caseId=' + encodeURIComponent(c));
+    window.location.replace('/frontend/pages/evidence.html' + (q.length ? '?' + q.join('&') : ''));
+  </script>
   <link rel="stylesheet" href="../css/global.css" />
   <link rel="stylesheet" href="../css/components.css" />
   <link rel="stylesheet" href="../css/pages.css" />
@@ -55,6 +64,9 @@
               <span class="breadcrumb-current" id="viewer-breadcrumb-name">—</span>
             </div>
             <div class="viewer-topbar-actions">
+              <button class="btn btn-secondary btn-sm" id="btn-run-ocr" title="Execute on-premises forensic OCR">
+                ⚡ Run OCR
+              </button>
               <button class="btn btn-secondary btn-sm" id="btn-re-extract" title="Re-run entity extraction">
                 🔄 Re-Extract
               </button>

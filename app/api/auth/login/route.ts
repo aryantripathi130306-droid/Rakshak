@@ -128,10 +128,12 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
-    // Set secure HTTP-only cookie
+    // Set secure HTTP-only cookie with production Secure flag
+    const isSecure = process.env.NODE_ENV === "production" || request.headers.get("x-forwarded-proto") === "https";
+    const secureFlag = isSecure ? "; Secure" : "";
     response.headers.set(
       "Set-Cookie",
-      `rakshak_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`
+      `rakshak_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400${secureFlag}`
     );
 
     return response;

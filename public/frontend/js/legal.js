@@ -11,10 +11,25 @@ import {
   mapEvidenceToLegal,
   validateCaseDossier,
   exportCaseDossier,
+  getCases,
   ACTIVE_CASE_ID,
 } from './api.js';
 import { escapeHtml, showToast } from './utils.js';
 import { initLayout } from './layout.js';
+
+// ─── Officer Session Helper ──────────────────────────────────────────────────
+function getActiveOfficer() {
+  const name = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('rakshak_officer_name')) || 'Aryan Tripathi';
+  const badge = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('rakshak_officer_badge')) || 'DL-CYBER-001';
+  const designation = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('rakshak_officer_designation')) || 'Investigating Officer';
+  return {
+    name,
+    badge,
+    designation,
+    label: `${designation} ${name} (ID: ${badge})`,
+    display: `${name} (Badge #${badge})`,
+  };
+}
 
 // ─── State Management ────────────────────────────────────────────────────────
 let currentCaseId = ACTIVE_CASE_ID;
@@ -24,11 +39,88 @@ let currentZoom = 100;
 let activeDossierTab = 'preview';
 let activeAnalysisTab = 'analysis';
 
+// ─── Empty State Renderer ───────────────────────────────────────────────────
+function renderEmptyLegalState() {
+  const bc = document.getElementById('breadcrumb-case-no');
+  if (bc) bc.textContent = 'No Case Selected';
+
+  const kpiSec = document.getElementById('kpi-applicable-sections');
+  const kpiEv = document.getElementById('kpi-evidence-mapped');
+  const kpiCases = document.getElementById('kpi-linked-cases');
+  const kpiSev = document.getElementById('kpi-legal-severity');
+
+  if (kpiSec) kpiSec.textContent = '0';
+  if (kpiEv) kpiEv.textContent = '0';
+  if (kpiCases) kpiCases.textContent = '0';
+  if (kpiSev) {
+    kpiSev.textContent = 'None';
+    kpiSev.className = 'legal-kpi-severity-badge low';
+  }
+
+  const elCaseId = document.getElementById('ia-case-id');
+  const elTitle = document.getElementById('ia-case-title');
+  const elType = document.getElementById('ia-incident-type');
+  const elJurisdiction = document.getElementById('ia-jurisdiction');
+  const elSummary = document.getElementById('ia-case-summary');
+  const elFactors = document.getElementById('ia-factors-list');
+
+  if (elCaseId) elCaseId.textContent = '—';
+  if (elTitle) elTitle.textContent = 'No cases registered';
+  if (elType) elType.textContent = '—';
+  if (elJurisdiction) elJurisdiction.textContent = '—';
+  if (elSummary) elSummary.textContent = 'Register a case to view automated legal classification and statutory evidence mapping.';
+  if (elFactors) elFactors.innerHTML = '<li style="color:var(--text-muted)">No case data available.</li>';
+
+  const secBody = document.getElementById('sections-table-body');
+  if (secBody) {
+    secBody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:28px;">No cases registered. Create an investigation case first to map statutory provisions.</td></tr>`;
+  }
+
+  const evBody = document.getElementById('evidence-mappings-body');
+  if (evBody) {
+    evBody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:28px;">No evidence mappings available.</td></tr>`;
+  }
+
+  renderCertificatePreview({
+    caseNumber: '—',
+    caseTitle: 'No Active Case',
+    jurisdiction: '—',
+    evidenceMappings: [],
+    mappingTags: [],
+  });
+}
+
 // ─── Initialization ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   initLayout();
   setupEventListeners();
-  await loadCaseLegalData(currentCaseId);
+
+  try {
+    const casesRes = await getCases({ limit: 100 });
+    const cases = casesRes?.cases || [];
+    const caseSelect = document.getElementById('case-select-dropdown');
+
+    if (cases.length > 0) {
+      if (caseSelect) {
+        caseSelect.innerHTML = cases.map(c => `
+          <option value="${escapeHtml(c.caseNumber)}">#${escapeHtml(c.caseNumber)} ${escapeHtml(c.complainantName)} (${escapeHtml(c.incidentType || 'Case')})</option>
+        `).join('');
+      }
+      currentCaseId = currentCaseId && cases.some(c => c.caseNumber === currentCaseId)
+        ? currentCaseId
+        : cases[0].caseNumber;
+      if (caseSelect) caseSelect.value = currentCaseId;
+      await loadCaseLegalData(currentCaseId);
+    } else {
+      if (caseSelect) {
+        caseSelect.innerHTML = `<option value="">No cases registered</option>`;
+      }
+      renderEmptyLegalState();
+    }
+  } catch (err) {
+    console.error('Failed to load registered cases for Legal Matrix:', err);
+    renderEmptyLegalState();
+  }
 });
 
 function setupEventListeners() {
@@ -218,6 +310,10 @@ function setupEventListeners() {
 
 // ─── Data Loading & Rendering ────────────────────────────────────────────────
 async function loadCaseLegalData(caseId) {
+  if (!caseId) {
+    renderEmptyLegalState();
+    return;
+  }
   try {
     showToast(`Loading statutory intelligence for ${caseId}...`, 'info');
     legalData = await getCaseLegal(caseId);
@@ -258,12 +354,12 @@ function renderKPICards(data) {
   const kpiCases = document.getElementById('kpi-linked-cases');
   const kpiSev = document.getElementById('kpi-legal-severity');
 
-  if (kpiSec) kpiSec.textContent = data.summaryMetrics?.applicableSectionsCount ?? data.applicableSections.length;
-  if (kpiEv) kpiEv.textContent = data.summaryMetrics?.evidenceMappedCount ?? data.evidenceMappings.length;
-  if (kpiCases) kpiCases.textContent = data.summaryMetrics?.linkedCasesCount ?? 6;
+  if (kpiSec) kpiSec.textContent = data.summaryMetrics?.applicableSectionsCount ?? data.applicableSections?.length ?? 0;
+  if (kpiEv) kpiEv.textContent = data.summaryMetrics?.evidenceMappedCount ?? data.evidenceMappings?.length ?? 0;
+  if (kpiCases) kpiCases.textContent = data.summaryMetrics?.linkedCasesCount ?? 0;
   if (kpiSev) {
     kpiSev.textContent = data.legalSeverity || 'High';
-    kpiSev.className = `legal-kpi-severity-badge ${data.legalSeverity.toLowerCase()}`;
+    kpiSev.className = `legal-kpi-severity-badge ${(data.legalSeverity || 'low').toLowerCase()}`;
   }
 }
 
@@ -520,15 +616,16 @@ function renderCertificatePreview(data) {
 
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-GB');
+  const officer = getActiveOfficer();
 
-  if (cId) cId.textContent = `#${data.caseNumber}`;
-  if (cTitle) cTitle.textContent = data.caseTitle;
+  if (cId) cId.textContent = data.caseNumber !== '—' ? `#${data.caseNumber}` : '—';
+  if (cTitle) cTitle.textContent = data.caseTitle || '—';
   if (cAgency) cAgency.textContent = data.jurisdiction || 'Delhi Cyber Crime';
   if (cJur) cJur.textContent = data.jurisdiction?.split('—')[0].trim() || 'Delhi';
   if (cGenOn) cGenOn.textContent = `${now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}, ${now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} IST`;
-  if (cTotEv) cTotEv.textContent = data.evidenceMappings?.length || 28;
-  if (cSecs) cSecs.textContent = data.mappingTags?.slice(0, 5).join(' | ') || 'BNS §318(4), §319(2), §111 | IT Act §66C, §66D';
-  if (cGenBy) cGenBy.textContent = 'ACP Vikram Singh (ID: 002)';
+  if (cTotEv) cTotEv.textContent = data.evidenceMappings?.length ?? 0;
+  if (cSecs) cSecs.textContent = data.mappingTags?.length ? data.mappingTags.slice(0, 5).join(' | ') : '—';
+  if (cGenBy) cGenBy.textContent = officer.label;
   if (cDate) cDate.textContent = dateStr;
 }
 
@@ -575,9 +672,9 @@ function switchDossierTab(tab) {
             <tr><th>Case Title</th><td>${escapeHtml(legalData.caseTitle)}</td></tr>
             <tr><th>Investigating Agency</th><td>${escapeHtml(legalData.jurisdiction)}</td></tr>
             <tr><th>Jurisdiction</th><td>Delhi Cyber Crime</td></tr>
-            <tr><th>Total Evidence Items</th><td>${legalData.evidenceMappings.length}</td></tr>
-            <tr><th>Applicable Legal Sections</th><td>${escapeHtml(legalData.mappingTags.join(', '))}</td></tr>
-            <tr><th>Generated By</th><td>ACP Vikram Singh (ID: 002)</td></tr>
+            <tr><th>Total Evidence Items</th><td>${legalData.evidenceMappings?.length ?? 0}</td></tr>
+            <tr><th>Applicable Legal Sections</th><td>${escapeHtml((legalData.mappingTags || []).join(', ') || 'None')}</td></tr>
+            <tr><th>Generated By</th><td>${escapeHtml(getActiveOfficer().label)}</td></tr>
           </tbody>
         </table>
         <div style="font-size:7.5px;color:#334155;margin-top:8px;line-height:1.35">
@@ -596,8 +693,8 @@ function switchDossierTab(tab) {
           </div>
           <div style="text-align:right">
             <div style="height:20px;border-bottom:1px solid #94a3b8;width:120px;margin-bottom:2px"></div>
-            <div style="font-weight:700">ACP Vikram Singh</div>
-            <div>Badge #DL-002</div>
+            <div style="font-weight:700">${escapeHtml(getActiveOfficer().name)}</div>
+            <div>Badge #${escapeHtml(getActiveOfficer().badge)}</div>
           </div>
         </div>
       </div>`;
@@ -709,13 +806,14 @@ async function handleSaveNewSection() {
   }
 
   try {
+    const officer = getActiveOfficer();
     await addCaseLegalSection(currentCaseId, {
       act,
       section,
       description: description || 'Statutory provision',
       relevance,
       rationale,
-      reviewerName: 'ACP Vikram Singh (Badge #DL-002)',
+      reviewerName: officer.display,
       reviewerNotes: rationale,
     });
 
@@ -757,12 +855,13 @@ async function handleSaveEvidenceMapping() {
   }
 
   try {
+    const officer = getActiveOfficer();
     await mapEvidenceToLegal(currentCaseId, {
       evidenceId: activeEditEvidenceId,
       section,
       relevance,
       rationale,
-      mappedBy: 'ACP Vikram Singh (Badge #DL-002)',
+      mappedBy: officer.display,
     });
 
     document.getElementById('modal-evidence-map').style.display = 'none';
@@ -893,17 +992,17 @@ async function exportDossierPDF() {
       '3. Ingested files are stored in immutable cold storage and SHA-256 hashes remain authentic and unaltered.';
     doc.text(declText, 20, 146);
 
-    // Signature Block
     doc.line(20, 195, 190, 195);
     doc.text('Place: New Delhi', 20, 203);
     doc.text(`Date: ${new Date().toLocaleDateString('en-GB')}`, 20, 208);
     doc.text('Statutory Status: GENERATED DRAFT', 20, 213);
 
+    const officer = getActiveOfficer();
     doc.setFont('helvetica', 'bold');
-    doc.text('ACP Vikram Singh', 140, 203);
+    doc.text(officer.name, 140, 203);
     doc.setFont('helvetica', 'normal');
-    doc.text('Badge #DL-002', 140, 208);
-    doc.text('Investigating Officer, Cyber Crime', 140, 213);
+    doc.text(`Badge #${officer.badge}`, 140, 208);
+    doc.text(`${officer.designation}, Cyber Crime`, 140, 213);
 
     // Page 2: Evidence Manifest
     doc.addPage();

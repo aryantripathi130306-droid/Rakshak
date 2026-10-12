@@ -1,30 +1,35 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// app/api/cases/route.ts
-// GET /api/cases — list all cases (with search, filter, sort, pagination)
-// POST /api/cases — create a new case
-// ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
+import { authenticateOfficer, hasPermission, canAccessDepartment, logAuditEvent } from "@/services/authService";
 
 export const runtime = "nodejs";
 
 // ─── Auto-generate next case number ──────────────────────────────────────────
 async function generateCaseNumber(): Promise<string> {
   const year = new Date().getFullYear();
-  const latest = await prisma.case.findFirst({
+  const allCases = await prisma.case.findMany({
     where: { caseNumber: { startsWith: `CASE-${year}-` } },
-    orderBy: { caseNumber: "desc" },
+    select: { caseNumber: true },
   });
 
-  let seq = 1;
-  if (latest) {
-    const parts = latest.caseNumber.split("-");
-    const lastSeq = parseInt(parts[parts.length - 1], 10);
-    if (!isNaN(lastSeq)) seq = lastSeq + 1;
+  let maxSeq = 0;
+  for (const c of allCases) {
+    const match = c.caseNumber.match(new RegExp(`^CASE-${year}-(\\d+)$`));
+    if (match) {
+      const num = parseInt(match[1], 10);
+      if (num > maxSeq) maxSeq = num;
+    }
   }
 
-  return `CASE-${year}-${String(seq).padStart(4, "0")}`;
+  let nextSeq = maxSeq + 1;
+  let candidate = `CASE-${year}-${String(nextSeq).padStart(4, "0")}`;
+  while (await prisma.case.findUnique({ where: { caseNumber: candidate } })) {
+    nextSeq++;
+    candidate = `CASE-${year}-${String(nextSeq).padStart(4, "0")}`;
+  }
+
+  return candidate;
 }
 
 // Map frontend/flexible values to DB Enum / schema values
@@ -50,6 +55,20 @@ function normalizeType(t?: string): "Task_Scam" | "Digital_Arrest" | "Investment
 // ─── GET /api/cases ────────────────────────────────────────────────────────────
 export async function GET(request: NextRequest) {
   try {
+    const auth = await authenticateOfficer(request);
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to access cases." },
+        { status: 401 }
+      );
+    }
+    if (!hasPermission(auth.officer.role, "case:view")) {
+      return Response.json(
+        { error: "Access denied: requires case:view permission." },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const q         = searchParams.get("q")?.trim()          || "";
     const status    = searchParams.get("status")?.trim()     || "";
@@ -60,6 +79,14 @@ export async function GET(request: NextRequest) {
     const page      = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     const limit     = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "50", 10)));
     const skip      = (page - 1) * limit;
+
+    // Department authorization check
+    if (jur && !canAccessDepartment(auth.officer, jur)) {
+      return Response.json(
+        { error: "Access denied: Unauthorized cross-department query." },
+        { status: 403 }
+      );
+    }
 
     // Build where clause
     const where: any = {};
@@ -76,7 +103,13 @@ export async function GET(request: NextRequest) {
     }
     if (status)  where.status       = normalizeStatus(status);
     if (type)    where.incidentType = normalizeType(type);
-    if (jur)     where.jurisdiction = { contains: jur };
+
+    if (jur) {
+      where.jurisdiction = { contains: jur };
+    } else if (auth.officer.role !== "ADMIN" && auth.officer.jurisdiction) {
+      // Automatic department scoping for non-admin officers
+      where.jurisdiction = { contains: auth.officer.jurisdiction };
+    }
 
     // Build sort
     const validSortFields = ["caseNumber", "createdAt", "updatedAt", "status", "complainantName"];
@@ -111,6 +144,20 @@ export async function GET(request: NextRequest) {
 // ─── POST /api/cases ──────────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
+    const auth = await authenticateOfficer(request);
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to create a case." },
+        { status: 401 }
+      );
+    }
+    if (!hasPermission(auth.officer.role, "case:create")) {
+      return Response.json(
+        { error: "Access denied: requires case:create permission." },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
 
     const caseNumberSupplied = body.caseNumber;

@@ -21,7 +21,13 @@ export async function PATCH(
     const { id } = await params;
     const auth = await authenticateOfficer(request);
 
-    if (!auth || !hasPermission(auth.officer.role, "officer:edit")) {
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to edit officer accounts" },
+        { status: 401 }
+      );
+    }
+    if (!hasPermission(auth.officer.role, "officer:edit")) {
       return Response.json(
         { error: "Access denied: Administrator role required to edit officer accounts" },
         { status: 403 }

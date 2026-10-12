@@ -19,9 +19,12 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
+    const q = searchParams.get("q")?.toLowerCase();
     const moduleFilter = searchParams.get("module");
     const actionFilter = searchParams.get("action");
     const userFilter = searchParams.get("user");
+    const statusFilter = searchParams.get("status");
+    const resourceFilter = searchParams.get("resource") || searchParams.get("resourceType");
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
@@ -35,10 +38,27 @@ export async function GET(request: NextRequest) {
     if (actionFilter && actionFilter !== "All Actions") {
       where.action = actionFilter;
     }
+    if (statusFilter && statusFilter !== "All") {
+      where.result = statusFilter.toUpperCase();
+    }
+    if (resourceFilter && resourceFilter !== "All") {
+      where.targetType = resourceFilter;
+    }
     if (userFilter && userFilter !== "All Users") {
       where.OR = [
         { officerName: { contains: userFilter } },
         { officerBadge: { contains: userFilter } },
+      ];
+    }
+    if (q) {
+      where.OR = [
+        { details: { contains: q } },
+        { officerName: { contains: q } },
+        { officerBadge: { contains: q } },
+        { targetId: { contains: q } },
+        { ipAddress: { contains: q } },
+        { action: { contains: q } },
+        { module: { contains: q } },
       ];
     }
     if (startDate || endDate) {

@@ -3,809 +3,1072 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Rakshak — Reports, Officer Access Control (RBAC) & Cryptographic Audit Logs. Law-enforcement intelligence reporting and compliance logging." />
-  <title>Reports & RBAC — Rakshak v3.0</title>
-  <link rel="stylesheet" href="../css/global.css" />
-  <link rel="stylesheet" href="../css/components.css" />
-  <link rel="stylesheet" href="../css/pages.css" />
+  <meta name="description" content="Rakshak v3.0 — Reports & Forensic Dossiers. Generate, track, and manage forensic investigation reports, evidence manifests, and Section 63 BSA compliance." />
+  <title>Reports &amp; Dossiers — Rakshak v3.0</title>
+
+  <!-- Google Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Isolated Page 05 Neumorphic Stylesheet -->
+  <link rel="stylesheet" href="../css/reports-neumorphic.css" />
+
   <!-- Offline vendor libraries -->
   <script src="../vendor/jspdf.umd.min.js"></script>
   <script src="../vendor/jszip.min.js"></script>
 </head>
-<body>
-  <div id="toast-container" aria-live="polite"></div>
-  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+<body class="neu-reports-body">
 
-  <div class="app-shell">
-    <header class="app-header" role="banner"></header>
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="neu-toast-container" aria-live="polite" aria-atomic="true"></div>
 
-    <div class="app-body">
-      <aside class="sidebar" id="sidebar" aria-label="Investigation navigation"></aside>
+  <div class="neu-shell">
+    
+    <!-- ══════════════════════════════════════════════════════════
+         TOPBAR NAVIGATION
+         ══════════════════════════════════════════════════════════ -->
+    <header class="neu-topbar" role="banner" aria-label="Rakshak Platform Header">
+      
+      <!-- Brand Logo & Platform Title -->
+      <a href="/frontend/pages/dashboard.html" class="neu-topbar-brand" aria-label="Rakshak Forensic Platform Home">
+        <div class="neu-topbar-shield" aria-hidden="true">
+          <svg viewBox="0 0 44 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3988F5"/>
+                <stop offset="100%" stop-color="#1E66CF"/>
+              </linearGradient>
+            </defs>
+            <path d="M22 2L4 9.5V23C4 34.5 11.5 44 22 47C32.5 44 40 34.5 40 23V9.5L22 2Z" fill="url(#shieldGrad)"/>
+            <path d="M22 6L7.5 12V23C7.5 32.5 13.8 40.5 22 43.2C30.2 40.5 36.5 32.5 36.5 23V12L22 6Z" fill="#F5F8FC" fill-opacity="0.22"/>
+            <!-- Pillars Emblem -->
+            <rect x="14" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="20.5" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="27" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <path d="M12 17H32V15L22 11L12 15V17Z" fill="#FFFFFF"/>
+            <rect x="11" y="33" width="22" height="3" rx="1.5" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="neu-topbar-brand-text">
+          <span class="neu-topbar-title">RAKSHAK <span class="neu-topbar-version">v3.0</span></span>
+          <span class="neu-topbar-subtitle">Investigation &amp; Evidence Management</span>
+        </div>
+      </a>
 
-      <main class="app-main" role="main" aria-label="Reports, Officer Access Control & Audit Logs">
-        <div class="reports-workspace">
+      <!-- Global Search Input -->
+      <div class="neu-topbar-center">
+        <form id="global-search-form" class="neu-search-wrapper" role="search" onsubmit="return false;">
+          <span class="neu-search-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
+          <input 
+            type="search" 
+            id="global-search-input" 
+            class="neu-search-input" 
+            placeholder="Search reports, case number, keywords, officer, date..." 
+            aria-label="Global search across investigation reports" 
+            autocomplete="off"
+          />
+        </form>
+      </div>
+
+      <!-- Controls & Officer Profile -->
+      <div class="neu-topbar-right">
+        
+        <!-- Notifications -->
+        <button class="neu-icon-btn" id="btn-notifications" aria-label="Notifications (3 unread)" title="System Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="neu-notif-badge" id="notif-badge">3</span>
+        </button>
+
+        <!-- Settings -->
+        <a href="/frontend/pages/admin.html" class="neu-icon-btn" id="btn-settings" aria-label="System Settings" title="Settings &amp; Audit Logs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </a>
+
+        <!-- Officer Profile Pill -->
+        <div class="neu-officer-pill" id="officer-profile-pill" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" aria-label="Officer Profile Menu">
+          <div class="neu-officer-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="neu-officer-details">
+            <span class="neu-officer-name" id="officer-display-name">Inspector Sharma</span>
+            <span class="neu-officer-dept" id="officer-display-dept">Crime Branch (DEL)</span>
+          </div>
+          <span class="neu-chevron" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+
+          <!-- Popover Dropdown -->
+          <div class="neu-profile-dropdown" id="profile-dropdown" role="menu">
+            <div class="neu-dropdown-user-info">
+              <span id="profile-full-name" style="font-weight:700;color:var(--neu-navy)">Inspector Sharma</span>
+              <span id="profile-badge-num" class="neu-dropdown-badge-num">Badge: DEL-001</span>
+              <span id="profile-role-tag" class="neu-dropdown-role">Role: INVESTIGATOR</span>
+              <span id="profile-jurisdiction" style="font-size:10.5px;color:var(--neu-secondary);margin-top:2px">Crime Branch Delhi</span>
+            </div>
+            <button id="btn-officer-logout" class="neu-dropdown-logout-btn" role="menuitem">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Sign Out &amp; End Session</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BODY WRAPPER: SIDEBAR + REPORTS WORKSPACE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="neu-body-wrapper">
+      
+      <!-- Left Sidebar Navigation -->
+      <aside class="neu-sidebar" aria-label="Investigation Navigation">
+        
+        <nav class="neu-sidebar-nav neu-nav-group" aria-label="Platform Modules">
+          <!-- 1: Dashboard -->
+          <a href="/frontend/pages/dashboard.html" class="neu-nav-item" id="nav-dashboard">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7"></rect>
+      <rect x="14" y="3" width="7" height="7"></rect>
+      <rect x="14" y="14" width="7" height="7"></rect>
+      <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+            </span>
+            <span>Dashboard</span>
+          </a>
+
+          <!-- 2: Cases -->
+          <a href="/frontend/pages/cases.html" class="neu-nav-item" id="nav-cases">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+    </svg>
+            </span>
+            <span>Cases</span>
+          </a>
+
+          <!-- 3: Evidence -->
+          <a href="/frontend/pages/evidence.html" class="neu-nav-item" id="nav-evidence">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+            </span>
+            <span>Evidence</span>
+          </a>
+
+          <!-- 4: Reports (Active) -->
+          <a href="/frontend/pages/reports.html" class="neu-nav-item active" id="nav-reports" aria-current="page">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="12" y1="18" x2="12" y2="12"></line>
+      <line x1="9" y1="15" x2="15" y2="15"></line>
+    </svg>
+            </span>
+            <span>Reports</span>
+          </a>
+
+          <!-- 5: Intelligence -->
+          <a href="/frontend/pages/graph.html" class="neu-nav-item" id="nav-graph">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+            </span>
+            <span>Intelligence</span>
+          </a>
+
+          <!-- 6: Entities -->
+          <a href="/frontend/pages/entities.html" class="neu-nav-item" id="nav-entities">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+            </span>
+            <span>Entities</span>
+          </a>
+
+          <!-- 7: Timeline -->
+          <a href="/frontend/pages/timeline.html" class="neu-nav-item" id="nav-timeline">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+            </span>
+            <span>Timeline</span>
+          </a>
+
+          <!-- 8: Cross-Department -->
+          <a href="/frontend/pages/cross-dept.html" class="neu-nav-item" id="nav-cross-dept">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"></path>
+      <path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"></path>
+      <circle cx="8" cy="12" r="2"></circle>
+    </svg>
+            </span>
+            <span>Cross-Department</span>
+          </a>
+
+          <!-- 9: Administration -->
+          <a href="/frontend/pages/admin.html" class="neu-nav-item" id="nav-admin">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+            </span>
+            <span>Administration</span>
+          </a>
+
+          <!-- 10: Audit Logs -->
+          <a href="/frontend/pages/audit.html" class="neu-nav-item" id="nav-audit">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <path d="M16 13H8"></path>
+      <path d="M16 17H8"></path>
+      <path d="M10 9H8"></path>
+    </svg>
+            </span>
+            <span>Audit Logs</span>
+          </a>
+        </nav>
+
+        <!-- Department Connectivity Card -->
+        <div class="neu-dept-card" role="status" aria-label="Department Connection Status">
+          <div class="neu-dept-badge-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <div class="neu-dept-info">
+            <span class="neu-dept-title" id="sidebar-dept-title">Crime Branch</span>
+            <span class="neu-dept-sub" id="sidebar-dept-sub">Delhi Police</span>
+            <div class="neu-dept-status-row">
+              <span class="neu-status-dot"></span>
+              <span>Connected</span>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- Main Workspace -->
+      <main class="neu-main-workspace" role="main" aria-label="Reports & Dossiers Workspace">
+        
+        <!-- Page Header Bar -->
+        <div class="neu-page-header">
+          <div class="neu-page-title-block">
+            <h1>Reports &amp; Dossiers</h1>
+            <p>Generate, track and manage investigation reports</p>
+          </div>
+          <div class="neu-header-actions">
+            <!-- Generate New Report -->
+            <button type="button" class="neu-btn neu-btn-primary" id="btn-generate-report" title="Generate New Forensic Report">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Generate New Report</span>
+            </button>
+
+            <!-- Report Templates -->
+            <button type="button" class="neu-btn neu-btn-surface" id="btn-report-templates" title="Standard Report Templates">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <span>Report Templates</span>
+            </button>
+
+            <!-- Export / Download -->
+            <button type="button" class="neu-btn neu-btn-surface" id="btn-export-dossiers" title="Export / Download Selected Dossier">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Export / Download</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Metric Cards (5 Cards) -->
+        <div class="neu-kpi-grid">
           
-          <!-- Top Header Bar -->
-          <div class="reports-header-bar">
-            <div class="reports-title-block">
-              <h1>Intelligence Reports, Access Control & Audit Trail</h1>
-              <p>Comprehensive forensic case reporting, granular law-enforcement RBAC, and tamper-evident audit logs.</p>
+          <!-- Total Reports -->
+          <div class="neu-kpi-card" tabindex="0" role="button" aria-label="Filter by all reports" id="card-kpi-total">
+            <div class="neu-kpi-icon-box neu-kpi-icon-purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
             </div>
-            <div class="reports-header-right">
-              <!-- Active Officer Status Badge & Switch Session -->
-              <div class="officer-session-badge" id="officer-session-badge">
-                <span class="officer-avatar" id="current-officer-avatar">👮</span>
-                <div class="officer-session-info">
-                  <div class="officer-session-name" id="current-officer-name">Loading...</div>
-                  <div class="officer-session-role" id="current-officer-role">VERIFYING SESSION</div>
-                </div>
-                <button class="btn btn-secondary btn-sm" id="btn-switch-officer" title="Switch or Login Officer">
-                  🔑 Switch Officer
-                </button>
+            <div class="neu-kpi-content">
+              <span class="neu-kpi-label">Total Reports</span>
+              <div class="neu-kpi-num-row">
+                <span class="neu-kpi-num" id="kpi-total-reports">--</span>
+                <span class="neu-kpi-trend positive" id="kpi-trend-total">↑ +15%</span>
               </div>
+              <span class="neu-kpi-subtext">All investigation reports</span>
             </div>
           </div>
 
-          <!-- Top KPI Strip (6 Cards) -->
-          <div class="reports-kpi-grid">
-            <div class="reports-kpi-card">
-              <div class="reports-kpi-left">
-                <div class="reports-kpi-icon icon-cases">📋</div>
-                <div>
-                  <div class="reports-kpi-val" id="kpi-total-cases">24</div>
-                  <div class="reports-kpi-label">Total Cases</div>
-                </div>
-              </div>
-              <div class="reports-kpi-trend up">+3 this week</div>
+          <!-- Completed -->
+          <div class="neu-kpi-card" tabindex="0" role="button" aria-label="Filter by completed reports" id="card-kpi-completed">
+            <div class="neu-kpi-icon-box neu-kpi-icon-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
             </div>
-
-            <div class="reports-kpi-card">
-              <div class="reports-kpi-left">
-                <div class="reports-kpi-icon icon-evidence">🛡</div>
-                <div>
-                  <div class="reports-kpi-val" id="kpi-total-evidence">137</div>
-                  <div class="reports-kpi-label">Evidence Items</div>
-                </div>
+            <div class="neu-kpi-content">
+              <span class="neu-kpi-label">Completed</span>
+              <div class="neu-kpi-num-row">
+                <span class="neu-kpi-num" id="kpi-completed-reports">--</span>
+                <span class="neu-kpi-trend positive">↑ +20%</span>
               </div>
-              <div class="reports-kpi-trend up">+18 ingested</div>
-            </div>
-
-            <div class="reports-kpi-card">
-              <div class="reports-kpi-left">
-                <div class="reports-kpi-icon icon-entities">🔬</div>
-                <div>
-                  <div class="reports-kpi-val" id="kpi-total-entities">684</div>
-                  <div class="reports-kpi-label">Extracted Entities</div>
-                </div>
-              </div>
-              <div class="reports-kpi-trend up">99.4% resolved</div>
-            </div>
-
-            <div class="reports-kpi-card">
-              <div class="reports-kpi-left">
-                <div class="reports-kpi-icon icon-risk">⚠</div>
-                <div>
-                  <div class="reports-kpi-val" id="kpi-high-risk">12</div>
-                  <div class="reports-kpi-label">High-Risk Entities</div>
-                </div>
-              </div>
-              <div class="reports-kpi-trend alert">Critical Watch</div>
-            </div>
-
-            <div class="reports-kpi-card">
-              <div class="reports-kpi-left">
-                <div class="reports-kpi-icon icon-reports">📄</div>
-                <div>
-                  <div class="reports-kpi-val" id="kpi-total-reports">8</div>
-                  <div class="reports-kpi-label">Reports Generated</div>
-                </div>
-              </div>
-              <div class="reports-kpi-trend neutral">All SHA-256 Valid</div>
-            </div>
-
-            <div class="reports-kpi-card">
-              <div class="reports-kpi-left">
-                <div class="reports-kpi-icon icon-audit">🔒</div>
-                <div>
-                  <div class="reports-kpi-val" id="kpi-total-activities">56</div>
-                  <div class="reports-kpi-label">Total Activities</div>
-                </div>
-              </div>
-              <div class="reports-kpi-trend up">Live Audit Active</div>
+              <span class="neu-kpi-subtext">Finalized and approved</span>
             </div>
           </div>
 
-          <!-- Main Grid Row 1: Panel 1 (Report Generation) & Panel 2 (Analytics & Statistics) -->
-          <div class="reports-grid-row-2col">
+          <!-- In Draft -->
+          <div class="neu-kpi-card" tabindex="0" role="button" aria-label="Filter by draft reports" id="card-kpi-draft">
+            <div class="neu-kpi-icon-box neu-kpi-icon-amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="neu-kpi-content">
+              <span class="neu-kpi-label">In Draft</span>
+              <div class="neu-kpi-num-row">
+                <span class="neu-kpi-num" id="kpi-draft-reports">--</span>
+                <span class="neu-kpi-trend neutral">↑ +0%</span>
+              </div>
+              <span class="neu-kpi-subtext">Pending completion</span>
+            </div>
+          </div>
+
+          <!-- Under Review -->
+          <div class="neu-kpi-card" tabindex="0" role="button" aria-label="Filter by under review reports" id="card-kpi-review">
+            <div class="neu-kpi-icon-box neu-kpi-icon-pink">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="neu-kpi-content">
+              <span class="neu-kpi-label">Under Review</span>
+              <div class="neu-kpi-num-row">
+                <span class="neu-kpi-num" id="kpi-review-reports">--</span>
+                <span class="neu-kpi-trend positive">↑ +50%</span>
+              </div>
+              <span class="neu-kpi-subtext">Review and verification</span>
+            </div>
+          </div>
+
+          <!-- Templates -->
+          <div class="neu-kpi-card" tabindex="0" role="button" aria-label="View report templates" id="card-kpi-templates">
+            <div class="neu-kpi-icon-box neu-kpi-icon-green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div class="neu-kpi-content">
+              <span class="neu-kpi-label">Templates</span>
+              <div class="neu-kpi-num-row">
+                <span class="neu-kpi-num" id="kpi-templates-count">5</span>
+              </div>
+              <span class="neu-kpi-subtext">Standard report formats</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Main Split Layout (Table & Detail Panel) -->
+        <div class="neu-split-layout">
+          
+          <!-- ─── LEFT PANE: REPORTS LIST ───────────────────────── -->
+          <section class="neu-left-pane" aria-labelledby="heading-reports-list">
             
-            <!-- PANEL 1: Report Generation -->
-            <div class="reports-panel panel-gen" id="panel-report-gen">
-              <div class="panel-header">
-                <div class="panel-header-title">
-                  <span class="panel-icon">⚡</span>
-                  <h2>Report Generation</h2>
-                </div>
-                <div class="panel-header-subtitle">Assemble verified forensic dossier packages</div>
-              </div>
-
-              <!-- Report Type Pills -->
-              <div class="report-type-pills" id="report-type-pills">
-                <button type="button" class="type-pill active" data-type="CASE_REPORT">Case Report</button>
-                <button type="button" class="type-pill" data-type="INVESTIGATION_SUMMARY">Investigation Summary</button>
-                <button type="button" class="type-pill" data-type="EVIDENCE_REPORT">Evidence Report</button>
-                <button type="button" class="type-pill" data-type="ENTITY_REPORT">Entity Report</button>
-                <button type="button" class="type-pill" data-type="SYNDICATE_REPORT">Syndicate Report</button>
-              </div>
-
-              <form id="form-generate-report" class="report-form" onsubmit="return false;">
-                <div class="form-row-grid">
-                  <div class="form-group flex-2">
-                    <label for="select-report-case">Select Case</label>
-                    <div class="case-select-wrapper">
-                      <select id="select-report-case" class="form-select" required>
-                        <option value="CASE-2026-0891">#CASE-2026-0891 Part-Time Task Scam Mule Ring</option>
-                        <option value="CASE-2026-0104">#CASE-2026-0104 Digital Arrest CBI Impersonation</option>
-                        <option value="CASE-2026-0219">#CASE-2026-0219 Crypto Investment Fraud Ring</option>
-                        <option value="CASE-2026-0331">#CASE-2026-0331 Loan App Extortion Syndicate</option>
-                      </select>
-                      <button type="button" class="btn btn-secondary btn-sm" id="btn-view-case" title="View Case Details">
-                        👁 View Case
-                      </button>
-                    </div>
-                  </div>
-
-                  <div class="form-group flex-1">
-                    <label for="select-report-type-dropdown">Report Type</label>
-                    <select id="select-report-type-dropdown" class="form-select">
-                      <option value="CASE_REPORT">Comprehensive Case Report</option>
-                      <option value="INVESTIGATION_SUMMARY">Executive Summary</option>
-                      <option value="EVIDENCE_REPORT">Evidence Manifest & Chain of Custody</option>
-                      <option value="ENTITY_REPORT">Extracted Intelligence & Entities</option>
-                      <option value="SYNDICATE_REPORT">Cross-Case Syndicate Dossier</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Date Range -->
-                <div class="form-row-grid">
-                  <div class="form-group flex-1">
-                    <label for="input-report-start">Start Date (Optional)</label>
-                    <input type="date" id="input-report-start" class="form-input" />
-                  </div>
-                  <div class="form-group flex-1">
-                    <label for="input-report-end">End Date (Optional)</label>
-                    <input type="date" id="input-report-end" class="form-input" />
-                  </div>
-                </div>
-
-                <!-- Section Inclusions (8 Checkboxes) -->
-                <div class="form-group">
-                  <label class="section-legend">Include Sections in Dossier</label>
-                  <div class="sections-checkbox-grid">
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="sections" value="EXECUTIVE_SUMMARY" checked />
-                      <span>1. Executive Summary</span>
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="sections" value="EVIDENCE_INVENTORY" checked />
-                      <span>2. Evidence Inventory</span>
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="sections" value="ENTITY_EXTRACTION" checked />
-                      <span>3. Entity Extraction & Analysis</span>
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="sections" value="MODUS_OPERANDI_TIMELINE" checked />
-                      <span>4. Modus Operandi & Timeline</span>
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="sections" value="SYNDICATE_LINKS" checked />
-                      <span>5. Syndicate & Cross-Case Links</span>
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="sections" value="COMMUNICATION_INTEL" checked />
-                      <span>6. Communication Intelligence</span>
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="sections" value="STATUTORY_COMPLIANCE" checked />
-                      <span>7. Statutory Compliance (BSA §63)</span>
-                    </label>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="sections" value="CHAIN_OF_CUSTODY" checked />
-                      <span>8. Chain of Custody & Hash Log</span>
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Format Selection & Generate Button -->
-                <div class="form-actions-bar">
-                  <div class="format-radio-group">
-                    <label class="radio-label">
-                      <input type="radio" name="reportFormat" value="PDF" checked />
-                      <span>📄 PDF Dossier</span>
-                    </label>
-                    <label class="radio-label">
-                      <input type="radio" name="reportFormat" value="JSON" />
-                      <span>📦 JSON Manifest</span>
-                    </label>
-                  </div>
-
-                  <button type="button" class="btn btn-primary" id="btn-generate-report">
-                    <span id="btn-generate-icon">📄</span>
-                    <span id="btn-generate-label">Generate Report</span>
-                  </button>
-                </div>
-              </form>
+            <div class="neu-pane-header">
+              <h2 class="neu-pane-title" id="heading-reports-list">
+                Reports List (<span id="table-total-count">0</span>)
+              </h2>
             </div>
 
-            <!-- PANEL 2: Case Statistics & Analytics -->
-            <div class="reports-panel panel-analytics" id="panel-analytics">
-              <div class="panel-header">
-                <div class="panel-header-title">
-                  <span class="panel-icon">📊</span>
-                  <h2>Case Statistics & Analytics</h2>
-                </div>
-                <div class="panel-header-subtitle">Real-time aggregate breakdowns across cases & entities</div>
+            <!-- Filter Strip -->
+            <div class="neu-filter-bar">
+              <!-- Search Input -->
+              <div class="neu-table-search-wrap">
+                <span class="neu-search-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  id="filter-search-input" 
+                  class="neu-table-search-input" 
+                  placeholder="Search reports..." 
+                  aria-label="Filter reports by keyword or ID"
+                />
               </div>
 
-              <div class="donuts-container">
-                <!-- Donut 1: Cases by Status -->
-                <div class="donut-card">
-                  <div class="donut-title">Cases by Status</div>
-                  <div class="donut-svg-wrapper" id="donut-cases-wrapper">
-                    <!-- SVG rendered dynamically -->
-                  </div>
-                  <div class="donut-legend" id="legend-cases"></div>
-                </div>
-
-                <!-- Donut 2: Evidence by Category -->
-                <div class="donut-card">
-                  <div class="donut-title">Evidence by Category</div>
-                  <div class="donut-svg-wrapper" id="donut-evidence-wrapper">
-                    <!-- SVG rendered dynamically -->
-                  </div>
-                  <div class="donut-legend" id="legend-evidence"></div>
-                </div>
-
-                <!-- Donut 3: Entities by Type -->
-                <div class="donut-card">
-                  <div class="donut-title">Entities by Type</div>
-                  <div class="donut-svg-wrapper" id="donut-entities-wrapper">
-                    <!-- SVG rendered dynamically -->
-                  </div>
-                  <div class="donut-legend" id="legend-entities"></div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Main Grid Row 2: Panel 3 (Recent Reports) & Panel 8 (Quick Actions & Scheduled Reports) -->
-          <div class="reports-grid-row-2col">
-            
-            <!-- PANEL 3: Recent Reports -->
-            <div class="reports-panel" id="panel-recent-reports">
-              <div class="panel-header">
-                <div class="panel-header-title">
-                  <span class="panel-icon">📁</span>
-                  <h2>Recent Reports</h2>
-                </div>
-                <div class="panel-header-actions">
-                  <input type="text" id="filter-reports-search" placeholder="Search reports..." class="table-search-input" />
-                  <button class="btn btn-secondary btn-sm" id="btn-refresh-reports" title="Refresh Reports">🔄</button>
-                </div>
-              </div>
-
-              <div class="table-container">
-                <table class="reports-table" id="table-recent-reports">
-                  <thead>
-                    <tr>
-                      <th>Report ID</th>
-                      <th>Case ID</th>
-                      <th>Type</th>
-                      <th>Format</th>
-                      <th>Generated On</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-recent-reports">
-                    <tr><td colspan="7" class="table-loading">Loading reports...</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- PANEL 8: Quick Actions & Scheduled Reports -->
-            <div class="reports-panel" id="panel-scheduled-reports">
-              <div class="panel-header">
-                <div class="panel-header-title">
-                  <span class="panel-icon">⏱</span>
-                  <h2>Quick Actions & Scheduled Reports</h2>
-                </div>
-                <div class="panel-header-actions">
-                  <button class="btn btn-primary btn-sm" id="btn-add-schedule">➕ Add Schedule</button>
-                </div>
-              </div>
-
-              <!-- Quick Action Buttons Strip -->
-              <div class="quick-actions-strip">
-                <button class="quick-action-btn" id="qa-case-summary">
-                  <span class="qa-icon">📋</span>
-                  <div class="qa-text">
-                    <span class="qa-title">Quick Case Summary</span>
-                    <span class="qa-sub">Instant 1-page high-level snapshot</span>
-                  </div>
-                </button>
-                <button class="quick-action-btn" id="qa-evidence-audit">
-                  <span class="qa-icon">🛡</span>
-                  <div class="qa-text">
-                    <span class="qa-title">Evidence Audit Dump</span>
-                    <span class="qa-sub">Cryptographic SHA-256 integrity log</span>
-                  </div>
-                </button>
-                <button class="quick-action-btn" id="qa-weekly-archive">
-                  <span class="qa-icon">📦</span>
-                  <div class="qa-text">
-                    <span class="qa-title">Weekly Archive</span>
-                    <span class="qa-sub">Export weekly syndicate intelligence</span>
-                  </div>
-                </button>
-              </div>
-
-              <!-- Scheduled Reports Table -->
-              <div class="table-container scheduled-table-wrapper">
-                <table class="reports-table" id="table-scheduled-reports">
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Frequency</th>
-                      <th>Format</th>
-                      <th>Recipients</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-scheduled-reports">
-                    <tr><td colspan="6" class="table-loading">Loading schedules...</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Main Grid Row 3: Panel 6 (System Activity Overview 7-day trend) & Panel 7 (Top Entities & Risk Alerts) -->
-          <div class="reports-grid-row-2col">
-            
-            <!-- PANEL 6: System Activity Overview -->
-            <div class="reports-panel" id="panel-activity-trend">
-              <div class="panel-header">
-                <div class="panel-header-title">
-                  <span class="panel-icon">📈</span>
-                  <h2>System Activity Overview (7 Days)</h2>
-                </div>
-                <div class="panel-activity-legend">
-                  <span class="trend-legend-item"><span class="legend-color-dot" style="background:#06b6d4"></span> Evidence Uploads</span>
-                  <span class="trend-legend-item"><span class="legend-color-dot" style="background:#10b981"></span> Entity Extractions</span>
-                  <span class="trend-legend-item"><span class="legend-color-dot" style="background:#f59e0b"></span> Reports Generated</span>
-                  <span class="trend-legend-item"><span class="legend-color-dot" style="background:#8b5cf6"></span> User Actions</span>
-                </div>
-              </div>
-
-              <div class="trend-chart-wrapper" id="activity-chart-container">
-                <!-- SVG Multi-line trend chart rendered dynamically -->
-              </div>
-            </div>
-
-            <!-- PANEL 7: Top Entities & Risk Alerts -->
-            <div class="reports-panel" id="panel-top-entities">
-              <div class="panel-header">
-                <div class="panel-header-title">
-                  <span class="panel-icon">🚨</span>
-                  <h2>Top Entities & Risk Alerts</h2>
-                </div>
-                <div class="panel-tabs-strip" id="entity-risk-tabs">
-                  <button type="button" class="panel-tab-btn active" data-tab="ALL">All Alerts</button>
-                  <button type="button" class="panel-tab-btn" data-tab="HIGH">High-Risk</button>
-                  <button type="button" class="panel-tab-btn" data-tab="UPI">UPI IDs</button>
-                  <button type="button" class="panel-tab-btn" data-tab="BANK_ACCOUNT">Bank A/Cs</button>
-                </div>
-              </div>
-
-              <div class="table-container">
-                <table class="reports-table" id="table-top-entities">
-                  <thead>
-                    <tr>
-                      <th>Entity Value</th>
-                      <th>Type</th>
-                      <th>Linked Cases</th>
-                      <th>Occurrences</th>
-                      <th>Risk Level</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-top-entities">
-                    <tr><td colspan="5" class="table-loading">Loading entity alerts...</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Main Grid Row 4: Panel 4 (Officer Access Control RBAC) -->
-          <div class="reports-panel panel-rbac" id="panel-rbac">
-            <div class="panel-header">
-              <div class="panel-header-title">
-                <span class="panel-icon">🛡</span>
-                <h2>Officer Access Control & RBAC</h2>
-              </div>
-              <div class="rbac-header-actions">
-                <div class="rbac-tabs-strip" id="rbac-tabs">
-                  <button type="button" class="panel-tab-btn active" data-tab="OFFICERS">Officers (5)</button>
-                  <button type="button" class="panel-tab-btn" data-tab="PERMISSIONS">Roles & Permissions</button>
-                  <button type="button" class="panel-tab-btn" data-tab="REQUESTS">Access Requests (0)</button>
-                </div>
-                <button class="btn btn-primary btn-sm" id="btn-add-officer">➕ Add Officer</button>
-              </div>
-            </div>
-
-            <!-- Tab Content: Officers Table -->
-            <div class="rbac-tab-content active" id="tab-content-officers">
-              <div class="table-container">
-                <table class="reports-table" id="table-officers">
-                  <thead>
-                    <tr>
-                      <th>Badge No</th>
-                      <th>Officer Name</th>
-                      <th>Rank / Designation</th>
-                      <th>Role</th>
-                      <th>Jurisdiction</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-officers">
-                    <tr><td colspan="7" class="table-loading">Loading officers...</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Tab Content: Roles & Permissions Matrix -->
-            <div class="rbac-tab-content" id="tab-content-permissions" style="display:none;">
-              <div class="permissions-matrix-wrapper">
-                <table class="reports-table permissions-table">
-                  <thead>
-                    <tr>
-                      <th>System Capability</th>
-                      <th>ADMIN</th>
-                      <th>INVESTIGATOR</th>
-                      <th>ANALYST</th>
-                      <th>VIEWER</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Case Ingestion & Metadata Editing</td>
-                      <td><span class="perm-check">✓</span> Full</td>
-                      <td><span class="perm-check">✓</span> Assigned Cases</td>
-                      <td><span class="perm-cross">✕</span> Read Only</td>
-                      <td><span class="perm-cross">✕</span> Read Only</td>
-                    </tr>
-                    <tr>
-                      <td>Evidence Upload & Chain of Custody Ingestion</td>
-                      <td><span class="perm-check">✓</span> Yes</td>
-                      <td><span class="perm-check">✓</span> Yes</td>
-                      <td><span class="perm-cross">✕</span> Read Only</td>
-                      <td><span class="perm-cross">✕</span> Restricted</td>
-                    </tr>
-                    <tr>
-                      <td>Forensic Entity Extraction & Resolution</td>
-                      <td><span class="perm-check">✓</span> Yes</td>
-                      <td><span class="perm-check">✓</span> Yes</td>
-                      <td><span class="perm-check">✓</span> Yes</td>
-                      <td><span class="perm-cross">✕</span> View Only</td>
-                    </tr>
-                    <tr>
-                      <td>Cross-Case Syndicate Graph Analysis</td>
-                      <td><span class="perm-check">✓</span> Full Access</td>
-                      <td><span class="perm-check">✓</span> Full Access</td>
-                      <td><span class="perm-check">✓</span> Full Access</td>
-                      <td><span class="perm-cross">✕</span> Redacted</td>
-                    </tr>
-                    <tr>
-                      <td>Legal Matrix & BSA Section 63 Certification</td>
-                      <td><span class="perm-check">✓</span> Certify & Sign</td>
-                      <td><span class="perm-check">✓</span> Draft & Review</td>
-                      <td><span class="perm-cross">✕</span> View Only</td>
-                      <td><span class="perm-cross">✕</span> View Only</td>
-                    </tr>
-                    <tr>
-                      <td>Officer Provisioning & Role Modification</td>
-                      <td><span class="perm-check">✓</span> Full Admin</td>
-                      <td><span class="perm-cross">✕</span> Denied</td>
-                      <td><span class="perm-cross">✕</span> Denied</td>
-                      <td><span class="perm-cross">✕</span> Denied</td>
-                    </tr>
-                    <tr>
-                      <td>Audit Log Inspection & Cryptographic Export</td>
-                      <td><span class="perm-check">✓</span> Full Audit</td>
-                      <td><span class="perm-check">✓</span> Self & Cases</td>
-                      <td><span class="perm-cross">✕</span> Denied</td>
-                      <td><span class="perm-cross">✕</span> Denied</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Tab Content: Access Requests -->
-            <div class="rbac-tab-content" id="tab-content-requests" style="display:none;">
-              <div class="empty-state-card">
-                <span class="empty-icon">🛡</span>
-                <div class="empty-title">No Pending Access Requests</div>
-                <div class="empty-sub">All officer role clearance and jurisdiction privileges are up to date.</div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Main Grid Row 5: Panel 5 (Audit Logs) -->
-          <div class="reports-panel panel-audit" id="panel-audit">
-            <div class="panel-header">
-              <div class="panel-header-title">
-                <span class="panel-icon">🔒</span>
-                <h2>Audit Logs & Forensic Integrity Trail</h2>
-              </div>
-              <div class="audit-header-actions">
-                <button class="btn btn-secondary btn-sm" id="btn-export-audit-csv">⬇ Export CSV</button>
-                <button class="btn btn-secondary btn-sm" id="btn-export-audit-json">⬇ Export JSON</button>
-              </div>
-            </div>
-
-            <!-- Audit Filter Bar -->
-            <div class="audit-filters-bar">
-              <div class="audit-filter-item">
-                <label for="filter-audit-user">Officer / User</label>
-                <select id="filter-audit-user" class="form-select select-sm">
-                  <option value="">All Users</option>
-                  <option value="DL-002">ACP Vikram Singh (DL-002)</option>
-                  <option value="MH-104">Insp Priya Sharma (MH-104)</option>
-                  <option value="KA-042">SI Amit Kumar (KA-042)</option>
-                  <option value="RJ-018">Analyst Neha Verma (RJ-018)</option>
-                  <option value="MH-088">HC Rahul Mehta (MH-088)</option>
+              <!-- Status Dropdown -->
+              <div class="neu-select-wrap">
+                <select id="filter-status-select" class="neu-select" aria-label="Filter by report status">
+                  <option value="ALL">All Status</option>
+                  <option value="COMPLETED">Completed</option>
+                  <option value="UNDER_REVIEW">Under Review</option>
+                  <option value="IN_DRAFT">In Draft</option>
                 </select>
+                <span class="neu-select-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
               </div>
 
-              <div class="audit-filter-item">
-                <label for="filter-audit-module">Module</label>
-                <select id="filter-audit-module" class="form-select select-sm">
-                  <option value="">All Modules</option>
-                  <option value="AUTH">AUTH</option>
-                  <option value="REPORTS">REPORTS</option>
-                  <option value="RBAC">RBAC</option>
-                  <option value="EVIDENCE">EVIDENCE</option>
-                  <option value="DOSSIER">DOSSIER</option>
-                  <option value="ENTITY">ENTITY</option>
-                  <option value="SYSTEM">SYSTEM</option>
+              <!-- Category Dropdown -->
+              <div class="neu-select-wrap">
+                <select id="filter-category-select" class="neu-select" aria-label="Filter by crime category">
+                  <option value="ALL">All Categories</option>
+                  <option value="Financial Crime">Financial Crime</option>
+                  <option value="Cyber Crime">Cyber Crime</option>
+                  <option value="Organized Crime">Organized Crime</option>
+                  <option value="Narcotics">Narcotics</option>
+                  <option value="Person Related">Person Related</option>
+                  <option value="Identity Fraud">Identity Fraud</option>
+                  <option value="Arms & Weapons">Arms &amp; Weapons</option>
+                  <option value="Human Trafficking">Human Trafficking</option>
+                  <option value="Homicide">Homicide</option>
                 </select>
+                <span class="neu-select-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
               </div>
 
-              <div class="audit-filter-item">
-                <label for="filter-audit-action">Action</label>
-                <select id="filter-audit-action" class="form-select select-sm">
-                  <option value="">All Actions</option>
-                  <option value="LOGIN">LOGIN</option>
-                  <option value="LOGOUT">LOGOUT</option>
-                  <option value="GENERATE_REPORT">GENERATE_REPORT</option>
-                  <option value="DOWNLOAD_REPORT">DOWNLOAD_REPORT</option>
-                  <option value="UPDATE_OFFICER_ROLE">UPDATE_OFFICER_ROLE</option>
-                  <option value="DEACTIVATE_OFFICER">DEACTIVATE_OFFICER</option>
-                  <option value="CREATE_OFFICER">CREATE_OFFICER</option>
-                  <option value="EXPORT_AUDIT_LOGS">EXPORT_AUDIT_LOGS</option>
+              <!-- Date Range Dropdown -->
+              <div class="neu-select-wrap">
+                <select id="filter-date-select" class="neu-select" aria-label="Filter by date range">
+                  <option value="30">Last 30 Days</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="90">Last 90 Days</option>
+                  <option value="ALL">All Time</option>
                 </select>
+                <span class="neu-select-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
               </div>
 
-              <div class="audit-filter-item flex-btn">
-                <button class="btn btn-secondary btn-sm" id="btn-reset-audit-filters">Reset Filters</button>
-              </div>
+              <!-- More Filters Button -->
+              <button type="button" class="neu-filter-btn" id="btn-more-filters" title="Additional filter parameters">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+                <span>More Filters</span>
+              </button>
             </div>
 
-            <!-- Audit Table -->
-            <div class="table-container">
-              <table class="reports-table" id="table-audit-logs">
+            <!-- Table Container -->
+            <div class="neu-table-container">
+              <table class="neu-table" id="reports-table" aria-label="Investigation Reports Directory">
                 <thead>
                   <tr>
-                    <th>Date & Time</th>
-                    <th>Officer / User</th>
-                    <th>Action</th>
-                    <th>Details</th>
-                    <th>Module</th>
-                    <th>IP Address</th>
+                    <th style="width: 38px;">
+                      <input type="checkbox" class="neu-checkbox" id="th-checkbox-all" aria-label="Select all reports" />
+                    </th>
+                    <th class="neu-th-sortable" data-sort="reportNumber">
+                      Report ID <span class="neu-sort-arrows">▲▼</span>
+                    </th>
+                    <th class="neu-th-sortable" data-sort="title">
+                      Title <span class="neu-sort-arrows">▲▼</span>
+                    </th>
+                    <th class="neu-th-sortable" data-sort="category">
+                      Category <span class="neu-sort-arrows">▲▼</span>
+                    </th>
+                    <th class="neu-th-sortable" data-sort="status">
+                      Status <span class="neu-sort-arrows">▲▼</span>
+                    </th>
+                    <th class="neu-th-sortable" data-sort="createdAt">
+                      Generated On <span class="neu-sort-arrows">▲▼</span>
+                    </th>
+                    <th style="width: 44px; text-align: center;"></th>
                   </tr>
                 </thead>
-                <tbody id="tbody-audit-logs">
-                  <tr><td colspan="6" class="table-loading">Loading audit records...</td></tr>
+                <tbody id="reports-tbody">
+                  <!-- Dynamic rows rendered via reports.js -->
+                  <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--neu-secondary);">
+                      Loading authentic reports...
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
 
-            <!-- Pagination Bar -->
-            <div class="table-pagination-bar">
-              <div class="pagination-info" id="audit-pagination-info">Showing records 1–10 of 56</div>
-              <div class="pagination-controls">
-                <button class="btn btn-secondary btn-sm" id="btn-audit-prev" disabled>‹ Previous</button>
-                <span class="pagination-page-label" id="audit-page-label">Page 1</span>
-                <button class="btn btn-secondary btn-sm" id="btn-audit-next">Next ›</button>
+            <!-- Pagination Footer -->
+            <div class="neu-pagination-footer">
+              <div class="neu-pagination-info" id="pagination-info">
+                Showing 0 to 0 of 0 reports
+              </div>
+              <div class="neu-pagination-controls" id="pagination-controls">
+                <!-- Dynamic pagination buttons -->
               </div>
             </div>
 
-          </div>
+          </section>
+
+          <!-- ─── RIGHT PANE: SELECTED REPORT DETAIL ────────────── -->
+          <aside class="neu-right-pane" id="detail-panel" aria-label="Selected Report Detailed Dossier">
+            
+            <!-- Detail Header -->
+            <div class="neu-detail-header">
+              <div class="neu-detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
+              <div class="neu-detail-header-meta">
+                <div class="neu-detail-id-row">
+                  <span class="neu-detail-id" id="detail-report-id">RPT-2025-0047</span>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span class="neu-status-pill neu-status-completed" id="detail-status-pill">Completed</span>
+                    <button class="neu-row-action-btn" id="btn-detail-menu" aria-label="Report menu">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="12" cy="5" r="1"></circle>
+                        <circle cx="12" cy="19" r="1"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <h3 class="neu-detail-title" id="detail-report-title">Financial Fraud Analysis</h3>
+                <span class="neu-detail-subtitle" id="detail-report-sub">CB-2025-1042 • Financial Crime</span>
+              </div>
+            </div>
+
+            <!-- Tab Navigation Strip -->
+            <nav class="neu-tabs-nav" aria-label="Report Views Navigation">
+              <button type="button" class="neu-tab-btn active" data-tab="overview" id="tab-btn-overview">Overview</button>
+              <button type="button" class="neu-tab-btn" data-tab="evidence" id="tab-btn-evidence">Evidence (12)</button>
+              <button type="button" class="neu-tab-btn" data-tab="findings" id="tab-btn-findings">Findings (8)</button>
+              <button type="button" class="neu-tab-btn" data-tab="timeline" id="tab-btn-timeline">Timeline</button>
+              <button type="button" class="neu-tab-btn" data-tab="approval" id="tab-btn-approval">Approval</button>
+              <button type="button" class="neu-tab-btn" data-tab="export" id="tab-btn-export">Export</button>
+            </nav>
+
+            <!-- ─── TAB 1: OVERVIEW ──────────────────────────────── -->
+            <div class="neu-tab-pane active" id="pane-overview">
+              
+              <!-- Report Information -->
+              <div class="neu-card-section">
+                <div class="neu-section-header">
+                  <h4 class="neu-section-title">Report Information</h4>
+                  <button type="button" class="neu-section-edit-btn" id="btn-edit-report-info" title="Edit Report Parameters">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    <span>Edit</span>
+                  </button>
+                </div>
+                
+                <div class="neu-info-grid">
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Report ID</span>
+                    <span class="neu-info-value" id="info-report-id">RPT-2025-0047</span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Status</span>
+                    <span class="neu-info-value">
+                      <span class="neu-status-pill neu-status-completed" id="info-status">Completed</span>
+                    </span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Related Case</span>
+                    <span class="neu-info-value">
+                      <a href="/frontend/pages/cases.html" class="neu-info-link" id="info-related-case">CB-2025-1042</a>
+                    </span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Report Type</span>
+                    <span class="neu-info-value" id="info-report-type">Investigation Report</span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Category</span>
+                    <span class="neu-info-value" id="info-category">📁 Financial Crime</span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Priority</span>
+                    <span class="neu-info-value">
+                      <span class="neu-priority-pill neu-priority-high" id="info-priority">High</span>
+                    </span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Generated On</span>
+                    <span class="neu-info-value" id="info-generated-on">16 Oct 2025 11:24 AM</span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Last Updated</span>
+                    <span class="neu-info-value" id="info-last-updated">16 Oct 2025 11:24 AM</span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Generated By</span>
+                    <span class="neu-info-value" id="info-generated-by">Inspector Sharma (DEL-001)</span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Approved By</span>
+                    <span class="neu-info-value" id="info-approved-by">ACP Rajeev Kumar</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Summary -->
+              <div class="neu-card-section">
+                <div class="neu-section-header">
+                  <h4 class="neu-section-title">Summary</h4>
+                  <button type="button" class="neu-section-edit-btn" id="btn-edit-summary" title="Edit Report Summary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    <span>Edit</span>
+                  </button>
+                </div>
+                <div class="neu-summary-box" id="detail-summary-text">
+                  Comprehensive analysis of financial transactions, digital evidence and communication records related to money laundering activities. The report identifies key entities, transaction patterns and cross-case links with supporting evidence.
+                </div>
+              </div>
+
+              <!-- Key Metrics (4 Pills) -->
+              <div class="neu-card-section">
+                <div class="neu-section-header">
+                  <h4 class="neu-section-title">Key Metrics</h4>
+                </div>
+                <div class="neu-metrics-strip">
+                  
+                  <div class="neu-metric-pill-box">
+                    <div class="neu-metric-icon neu-icon-purple-bg">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      </svg>
+                    </div>
+                    <div class="neu-metric-text-wrap">
+                      <span class="neu-metric-num" id="metric-evidence-files">12</span>
+                      <span class="neu-metric-label">Evidence Files</span>
+                    </div>
+                  </div>
+
+                  <div class="neu-metric-pill-box">
+                    <div class="neu-metric-icon neu-icon-green-bg">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                    <div class="neu-metric-text-wrap">
+                      <span class="neu-metric-num" id="metric-persons">5</span>
+                      <span class="neu-metric-label">Persons Identified</span>
+                    </div>
+                  </div>
+
+                  <div class="neu-metric-pill-box">
+                    <div class="neu-metric-icon neu-icon-orange-bg">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                      </svg>
+                    </div>
+                    <div class="neu-metric-text-wrap">
+                      <span class="neu-metric-num" id="metric-linked-cases">3</span>
+                      <span class="neu-metric-label">Linked Cases</span>
+                    </div>
+                  </div>
+
+                  <div class="neu-metric-pill-box">
+                    <div class="neu-metric-icon neu-icon-red-bg">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                      </svg>
+                    </div>
+                    <div class="neu-metric-text-wrap">
+                      <span class="neu-metric-num" id="metric-findings">8</span>
+                      <span class="neu-metric-label">Key Findings</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Actions Strip (4 Buttons) -->
+              <div class="neu-card-section">
+                <div class="neu-section-header">
+                  <h4 class="neu-section-title">Actions</h4>
+                </div>
+                <div class="neu-detail-actions-grid">
+                  <!-- View / Download -->
+                  <button type="button" class="neu-btn neu-btn-primary" id="btn-action-download">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>View / Download</span>
+                  </button>
+
+                  <!-- Generate PDF -->
+                  <button type="button" class="neu-btn neu-btn-surface" id="btn-action-pdf">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span>Generate PDF</span>
+                  </button>
+
+                  <!-- Share (Authorized) -->
+                  <button type="button" class="neu-btn neu-btn-surface" id="btn-action-share">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="18" cy="5" r="3"></circle>
+                      <circle cx="6" cy="12" r="3"></circle>
+                      <circle cx="18" cy="19" r="3"></circle>
+                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                    <span>Share (Authorized)</span>
+                  </button>
+
+                  <!-- Add to Case File -->
+                  <button type="button" class="neu-btn neu-btn-surface" id="btn-action-add-case">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                      <line x1="12" y1="11" x2="12" y2="17"></line>
+                      <line x1="9" y1="14" x2="15" y2="14"></line>
+                    </svg>
+                    <span>Add to Case File</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ─── TAB 2: EVIDENCE REFERENCES ────────────────────── -->
+            <div class="neu-tab-pane" id="pane-evidence">
+              <div class="neu-card-section">
+                <div class="neu-section-header">
+                  <h4 class="neu-section-title">Referenced Evidence Files (<span id="evidence-tab-count">12</span>)</h4>
+                  <span style="font-size:11px;color:var(--neu-secondary)">SHA-256 Dual-Hash Manifest</span>
+                </div>
+                <div class="neu-list-group" id="evidence-list-container">
+                  <!-- Dynamically populated from backend -->
+                </div>
+              </div>
+            </div>
+
+            <!-- ─── TAB 3: FINDINGS ──────────────────────────────── -->
+            <div class="neu-tab-pane" id="pane-findings">
+              <div class="neu-card-section">
+                <div class="neu-section-header">
+                  <h4 class="neu-section-title">Forensic Findings (<span id="findings-tab-count">8</span>)</h4>
+                  <span style="font-size:11px;color:var(--neu-secondary)">Provenance-Ranked Statements</span>
+                </div>
+                <div class="neu-list-group" id="findings-list-container">
+                  <!-- Dynamically populated from backend -->
+                </div>
+              </div>
+            </div>
+
+            <!-- ─── TAB 4: TIMELINE ──────────────────────────────── -->
+            <div class="neu-tab-pane" id="pane-timeline">
+              <div class="neu-card-section">
+                <div class="neu-section-header">
+                  <h4 class="neu-section-title">Chronological Case Timeline</h4>
+                </div>
+                <div class="neu-list-group" id="timeline-list-container">
+                  <!-- Dynamically populated from backend -->
+                </div>
+              </div>
+            </div>
+
+            <!-- ─── TAB 5: APPROVAL ──────────────────────────────── -->
+            <div class="neu-tab-pane" id="pane-approval">
+              <div class="neu-card-section">
+                <div class="neu-section-header">
+                  <h4 class="neu-section-title">Authorisation &amp; Chain of Custody</h4>
+                </div>
+                <div class="neu-info-grid">
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Generating Officer</span>
+                    <span class="neu-info-value" id="approval-officer">Inspector Sharma (DEL-001)</span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Reviewing Authority</span>
+                    <span class="neu-info-value" id="approval-supervisor">ACP Rajeev Kumar</span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Statutory Compliance</span>
+                    <span class="neu-info-value">Section 63 BSA Hash Manifest Validated</span>
+                  </div>
+                  <div class="neu-info-item">
+                    <span class="neu-info-label">Department Scope</span>
+                    <span class="neu-info-value">Delhi Police Special Cyber Cell</span>
+                  </div>
+                  <div class="neu-info-item" style="grid-column: 1 / -1;">
+                    <span class="neu-info-label">Audit Log Reference</span>
+                    <span class="neu-hash-tag" id="approval-audit-ref">AUDIT-REPORT-COMPLIANCE-VERIFIED</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ─── TAB 6: EXPORT ────────────────────────────────── -->
+            <div class="neu-tab-pane" id="pane-export">
+              <div class="neu-card-section">
+                <div class="neu-section-header">
+                  <h4 class="neu-section-title">Export Forensic Dossier</h4>
+                </div>
+                <p style="font-size:12px;color:var(--neu-secondary);margin:0 0 10px 0;">
+                  Export authenticated investigation dossiers strictly compliant with law enforcement evidentiary safeguards.
+                </p>
+                <div class="neu-detail-actions-grid">
+                  <button type="button" class="neu-btn neu-btn-surface" id="btn-export-txt">
+                    <span>📄 BSA §63 Dossier (.txt)</span>
+                  </button>
+                  <button type="button" class="neu-btn neu-btn-surface" id="btn-export-json">
+                    <span>🔬 Forensic Manifest (.json)</span>
+                  </button>
+                  <button type="button" class="neu-btn neu-btn-primary" id="btn-export-pdf-pane" style="grid-column: 1 / -1;">
+                    <span>📥 Download Full Investigation PDF</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </aside>
 
         </div>
+
       </main>
+
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL 1: GENERATE NEW REPORT
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="modal-generate-report" role="dialog" aria-modal="true" aria-labelledby="modal-gen-title">
+    <div class="neu-modal-window">
+      <div class="neu-modal-header">
+        <h3 class="neu-modal-title" id="modal-gen-title">Generate Investigation Report</h3>
+        <button type="button" class="neu-modal-close-btn" id="btn-close-modal-gen" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="form-generate-report" onsubmit="return false;">
+        <div class="neu-modal-body">
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="select-gen-case">Target Case *</label>
+            <select id="select-gen-case" class="neu-form-select" required>
+              <option value="">Loading active cases...</option>
+            </select>
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="select-gen-type">Report Type *</label>
+            <select id="select-gen-type" class="neu-form-select" required>
+              <option value="INVESTIGATION_COMPLETE">Investigation Complete Dossier</option>
+              <option value="INVESTIGATION_SUMMARY">Investigation Summary Brief</option>
+              <option value="EVIDENCE_INTEGRITY">Evidence Integrity &amp; Hash Manifest</option>
+              <option value="ENTITY_ANALYSIS">Entity &amp; Suspect Analysis</option>
+              <option value="SYNDICATE_INTELLIGENCE">Syndicate Linkage Graph Analysis</option>
+            </select>
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label">Sections to Include</label>
+            <div class="neu-checkbox-group">
+              <label class="neu-checkbox-label">
+                <input type="checkbox" class="neu-checkbox" name="gen-section" value="Case Details" checked />
+                <span>Case Details</span>
+              </label>
+              <label class="neu-checkbox-label">
+                <input type="checkbox" class="neu-checkbox" name="gen-section" value="Legal Matrix" checked />
+                <span>Legal Matrix</span>
+              </label>
+              <label class="neu-checkbox-label">
+                <input type="checkbox" class="neu-checkbox" name="gen-section" value="Timeline Events" checked />
+                <span>Timeline Events</span>
+              </label>
+              <label class="neu-checkbox-label">
+                <input type="checkbox" class="neu-checkbox" name="gen-section" value="Evidence Manifest" checked />
+                <span>Evidence Manifest</span>
+              </label>
+              <label class="neu-checkbox-label">
+                <input type="checkbox" class="neu-checkbox" name="gen-section" value="Syndicate Links" checked />
+                <span>Syndicate Links</span>
+              </label>
+              <label class="neu-checkbox-label">
+                <input type="checkbox" class="neu-checkbox" name="gen-section" value="Entity Roster" checked />
+                <span>Entity Roster</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="select-gen-format">Output Format</label>
+            <select id="select-gen-format" class="neu-form-select">
+              <option value="PDF">PDF (Forensic Format)</option>
+              <option value="JSON">JSON (Machine Readable)</option>
+            </select>
+          </div>
+        </div>
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn neu-btn-surface" id="btn-cancel-gen">Cancel</button>
+          <button type="submit" class="neu-btn neu-btn-primary" id="btn-submit-gen">Generate Report</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- MODAL: Login / Switch Officer -->
-  <div class="modal-overlay" id="modal-switch-officer" style="display:none;">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <div class="modal-title">
-          <span>🔑</span>
-          <h3>Officer Authentication & Session Switch</h3>
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL 2: REPORT TEMPLATES
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="modal-templates" role="dialog" aria-modal="true" aria-labelledby="modal-tpl-title">
+    <div class="neu-modal-window">
+      <div class="neu-modal-header">
+        <h3 class="neu-modal-title" id="modal-tpl-title">Standard Report Templates</h3>
+        <button type="button" class="neu-modal-close-btn" id="btn-close-modal-tpl" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="neu-modal-body">
+        <div class="neu-list-group" id="templates-list-container">
+          <!-- Populated from backend -->
         </div>
-        <button class="modal-close-btn" id="btn-close-login-modal">✕</button>
       </div>
-      <div class="modal-body">
-        <p class="modal-desc">Login with officer badge credentials to access RBAC-controlled features.</p>
-        <div class="quick-officer-picker">
-          <div class="quick-picker-title">Quick Select Demo Credentials:</div>
-          <div class="quick-officer-btns">
-            <button type="button" class="btn-officer-quick" data-badge="DL-002" data-pass="Rakshak@2026">
-              ACP Vikram Singh <span class="badge-role admin">ADMIN</span>
-            </button>
-            <button type="button" class="btn-officer-quick" data-badge="MH-104" data-pass="Rakshak@2026">
-              Insp Priya Sharma <span class="badge-role investigator">INVESTIGATOR</span>
-            </button>
-            <button type="button" class="btn-officer-quick" data-badge="KA-042" data-pass="Rakshak@2026">
-              SI Amit Kumar <span class="badge-role analyst">ANALYST</span>
-            </button>
-            <button type="button" class="btn-officer-quick" data-badge="MH-088" data-pass="Rakshak@2026">
-              HC Rahul Mehta <span class="badge-role viewer">VIEWER</span>
-            </button>
-          </div>
-        </div>
-
-        <form id="form-login" onsubmit="return false;">
-          <div class="form-group">
-            <label for="input-login-badge">Badge Number</label>
-            <input type="text" id="input-login-badge" class="form-input" placeholder="e.g. DL-002" required />
-          </div>
-          <div class="form-group">
-            <label for="input-login-password">Password</label>
-            <input type="password" id="input-login-password" class="form-input" placeholder="Enter password" required />
-          </div>
-          <div id="login-error-msg" class="form-error-msg" style="display:none;"></div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="btn-cancel-login">Cancel</button>
-        <button type="button" class="btn btn-primary" id="btn-submit-login">Authenticate</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: Add Officer -->
-  <div class="modal-overlay" id="modal-add-officer" style="display:none;">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <div class="modal-title">
-          <span>👮</span>
-          <h3>Provision New Officer Account</h3>
-        </div>
-        <button class="modal-close-btn" id="btn-close-add-officer-modal">✕</button>
-      </div>
-      <div class="modal-body">
-        <form id="form-add-officer" onsubmit="return false;">
-          <div class="form-row-grid">
-            <div class="form-group flex-1">
-              <label for="input-officer-badge">Badge Number</label>
-              <input type="text" id="input-officer-badge" class="form-input" placeholder="e.g. WB-055" required />
-            </div>
-            <div class="form-group flex-2">
-              <label for="input-officer-name">Full Name</label>
-              <input type="text" id="input-officer-name" class="form-input" placeholder="e.g. Sub-Inspector Rohit Sen" required />
-            </div>
-          </div>
-
-          <div class="form-row-grid">
-            <div class="form-group flex-1">
-              <label for="input-officer-rank">Rank / Designation</label>
-              <input type="text" id="input-officer-rank" class="form-input" placeholder="e.g. Sub-Inspector" required />
-            </div>
-            <div class="form-group flex-1">
-              <label for="select-officer-role">Access Role</label>
-              <select id="select-officer-role" class="form-select" required>
-                <option value="INVESTIGATOR">INVESTIGATOR</option>
-                <option value="ANALYST">ANALYST</option>
-                <option value="VIEWER">VIEWER</option>
-                <option value="ADMIN">ADMIN</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="input-officer-jurisdiction">Jurisdiction / Unit</label>
-            <input type="text" id="input-officer-jurisdiction" class="form-input" placeholder="e.g. Kolkata Cyber Cell" required />
-          </div>
-
-          <div class="form-group">
-            <label for="input-officer-password">Initial Password</label>
-            <input type="password" id="input-officer-password" class="form-input" placeholder="Minimum 6 characters" required />
-          </div>
-          <div id="add-officer-error-msg" class="form-error-msg" style="display:none;"></div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="btn-cancel-add-officer">Cancel</button>
-        <button type="button" class="btn btn-primary" id="btn-submit-add-officer">Provision Account</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: Add Scheduled Report -->
-  <div class="modal-overlay" id="modal-add-schedule" style="display:none;">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <div class="modal-title">
-          <span>⏱</span>
-          <h3>Schedule Automated Intelligence Report</h3>
-        </div>
-        <button class="modal-close-btn" id="btn-close-schedule-modal">✕</button>
-      </div>
-      <div class="modal-body">
-        <form id="form-add-schedule" onsubmit="return false;">
-          <div class="form-group">
-            <label for="input-schedule-title">Report Schedule Title</label>
-            <input type="text" id="input-schedule-title" class="form-input" placeholder="e.g. Bi-Weekly Mule Syndicate Digest" required />
-          </div>
-
-          <div class="form-row-grid">
-            <div class="form-group flex-1">
-              <label for="select-schedule-freq">Frequency</label>
-              <select id="select-schedule-freq" class="form-select" required>
-                <option value="DAILY">Daily (08:00 IST)</option>
-                <option value="WEEKLY">Weekly (Monday 09:00 IST)</option>
-                <option value="MONTHLY">Monthly (1st of month)</option>
-              </select>
-            </div>
-            <div class="form-group flex-1">
-              <label for="select-schedule-type">Report Type</label>
-              <select id="select-schedule-type" class="form-select" required>
-                <option value="SYNDICATE_REPORT">Syndicate Intelligence</option>
-                <option value="CASE_REPORT">Case Summary Digest</option>
-                <option value="ENTITY_REPORT">High-Risk Entities</option>
-                <option value="EVIDENCE_REPORT">Evidence Manifest</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="input-schedule-recipients">Recipients (Email / Police Unit ID)</label>
-            <input type="text" id="input-schedule-recipients" class="form-input" placeholder="cybercell.lead@police.gov.in, acp.hq@police.gov.in" required />
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="btn-cancel-schedule">Cancel</button>
-        <button type="button" class="btn btn-primary" id="btn-submit-schedule">Create Schedule</button>
+      <div class="neu-modal-footer">
+        <button type="button" class="neu-btn neu-btn-surface" id="btn-close-templates">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- Page Logic -->
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL 3: EDIT REPORT SUMMARY
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="modal-edit-summary" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
+    <div class="neu-modal-window">
+      <div class="neu-modal-header">
+        <h3 class="neu-modal-title" id="modal-edit-title">Edit Report Summary</h3>
+        <button type="button" class="neu-modal-close-btn" id="btn-close-modal-edit" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="form-edit-summary" onsubmit="return false;">
+        <div class="neu-modal-body">
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="input-edit-title">Report Title</label>
+            <input type="text" id="input-edit-title" class="neu-form-input" required />
+          </div>
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="textarea-edit-summary">Executive Summary</label>
+            <textarea id="textarea-edit-summary" class="neu-form-textarea" rows="5" required></textarea>
+          </div>
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="select-edit-status">Status</label>
+            <select id="select-edit-status" class="neu-form-select">
+              <option value="COMPLETED">Completed</option>
+              <option value="UNDER_REVIEW">Under Review</option>
+              <option value="IN_DRAFT">In Draft</option>
+            </select>
+          </div>
+        </div>
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn neu-btn-surface" id="btn-cancel-edit">Cancel</button>
+          <button type="submit" class="neu-btn neu-btn-primary" id="btn-save-edit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Controller Script -->
   <script type="module" src="../js/reports.js"></script>
 </body>
 </html>

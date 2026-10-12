@@ -29,9 +29,11 @@ export async function POST(request: NextRequest) {
     }
 
     const response = Response.json({ success: true, message: "Logged out successfully" }, { status: 200 });
+    const isSecure = process.env.NODE_ENV === "production" || request.headers.get("x-forwarded-proto") === "https";
+    const secureFlag = isSecure ? "; Secure" : "";
     response.headers.set(
       "Set-Cookie",
-      "rakshak_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"
+      `rakshak_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureFlag}`
     );
     return response;
   } catch (err) {

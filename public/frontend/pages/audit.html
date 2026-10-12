@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rakshak v3.0 — Audit Logs & Security Activity. Track system activities, user actions and security events for a complete audit trail." />
+  <title>Audit Logs & Security Activity — Rakshak v3.0</title>
+
+  <!-- Google Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Isolated Page 11 Neumorphic Stylesheet -->
+  <link rel="stylesheet" href="../css/audit-neumorphic.css" />
+</head>
+<body class="neu-audit-body">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="neu-toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="neu-shell">
+    
+    <!-- ══════════════════════════════════════════════════════════
+         TOPBAR NAVIGATION
+         ══════════════════════════════════════════════════════════ -->
+    <header class="neu-topbar" role="banner" aria-label="Rakshak Platform Header">
+      
+      <!-- Brand Logo & Platform Title -->
+      <a href="/frontend/pages/dashboard.html" class="neu-topbar-brand" aria-label="Rakshak Forensic Platform Home">
+        <div class="neu-topbar-shield" aria-hidden="true">
+          <svg viewBox="0 0 44 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3988F5"/>
+                <stop offset="100%" stop-color="#1E66CF"/>
+              </linearGradient>
+            </defs>
+            <path d="M22 2L4 9.5V23C4 34.5 11.5 44 22 47C32.5 44 40 34.5 40 23V9.5L22 2Z" fill="url(#shieldGrad)"/>
+            <path d="M22 6L7.5 12V23C7.5 32.5 13.8 40.5 22 43.2C30.2 40.5 36.5 32.5 36.5 23V12L22 6Z" fill="#F5F8FC" fill-opacity="0.22"/>
+            <rect x="14" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="20.5" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <rect x="27" y="19" width="3" height="13" rx="1.5" fill="#FFFFFF"/>
+            <path d="M12 17H32V15L22 11L12 15V17Z" fill="#FFFFFF"/>
+            <rect x="11" y="33" width="22" height="3" rx="1.5" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="neu-topbar-brand-text">
+          <span class="neu-topbar-title">RAKSHAK <span class="neu-topbar-version">v3.0</span></span>
+          <span class="neu-topbar-subtitle">Digital Forensics Platform</span>
+        </div>
+      </a>
+
+      <!-- Global Search Field -->
+      <div class="neu-topbar-search-wrap" role="search">
+        <span class="neu-topbar-search-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input 
+          type="text" 
+          id="global-search-input" 
+          class="neu-topbar-search-input" 
+          placeholder="Search logs, users, actions, cases, IP addresses..." 
+          aria-label="Search logs, users, actions, cases, IP addresses"
+        />
+      </div>
+
+      <!-- Action Icons & Authenticated Officer Pill -->
+      <div class="neu-topbar-actions">
+        <!-- Notifications Bell -->
+        <button class="neu-topbar-icon-btn" id="btn-notifications" aria-label="Notifications, 5 unread">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="neu-badge-count" id="notif-count">5</span>
+        </button>
+
+        <!-- Settings Cog -->
+        <button class="neu-topbar-icon-btn" id="btn-settings" aria-label="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+
+        <!-- Officer Profile Pill -->
+        <div class="neu-profile-pill" id="officer-profile-pill" role="button" tabindex="0" aria-label="Officer Profile menu">
+          <div class="neu-profile-avatar" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="neu-profile-info">
+            <span class="neu-profile-name" id="officer-name">Inspector Rajesh Kumar</span>
+            <span class="neu-profile-role" id="officer-dept">Cyber Crime Department</span>
+          </div>
+          <span class="neu-profile-chevron" aria-hidden="true">▾</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BODY LAYOUT: SIDEBAR + MAIN WORKSPACE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="neu-body-layout">
+      
+      <!-- PERSISTENT SIDEBAR NAVIGATION -->
+      <aside class="neu-sidebar" role="navigation" aria-label="Primary Navigation">
+        <nav class="neu-sidebar-nav neu-nav-group" aria-label="Platform Modules">
+          <!-- 1: Dashboard -->
+          <a href="/frontend/pages/dashboard.html" class="neu-nav-item" id="nav-dashboard">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7"></rect>
+      <rect x="14" y="3" width="7" height="7"></rect>
+      <rect x="14" y="14" width="7" height="7"></rect>
+      <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+            </span>
+            <span>Dashboard</span>
+          </a>
+
+          <!-- 2: Cases -->
+          <a href="/frontend/pages/cases.html" class="neu-nav-item" id="nav-cases">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+    </svg>
+            </span>
+            <span>Cases</span>
+          </a>
+
+          <!-- 3: Evidence -->
+          <a href="/frontend/pages/evidence.html" class="neu-nav-item" id="nav-evidence">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+            </span>
+            <span>Evidence</span>
+          </a>
+
+          <!-- 4: Reports -->
+          <a href="/frontend/pages/reports.html" class="neu-nav-item" id="nav-reports">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="12" y1="18" x2="12" y2="12"></line>
+      <line x1="9" y1="15" x2="15" y2="15"></line>
+    </svg>
+            </span>
+            <span>Reports</span>
+          </a>
+
+          <!-- 5: Intelligence -->
+          <a href="/frontend/pages/graph.html" class="neu-nav-item" id="nav-graph">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+            </span>
+            <span>Intelligence</span>
+          </a>
+
+          <!-- 6: Entities -->
+          <a href="/frontend/pages/entities.html" class="neu-nav-item" id="nav-entities">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+            </span>
+            <span>Entities</span>
+          </a>
+
+          <!-- 7: Timeline -->
+          <a href="/frontend/pages/timeline.html" class="neu-nav-item" id="nav-timeline">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+            </span>
+            <span>Timeline</span>
+          </a>
+
+          <!-- 8: Cross-Department -->
+          <a href="/frontend/pages/cross-dept.html" class="neu-nav-item" id="nav-cross-dept">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"></path>
+      <path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"></path>
+      <circle cx="8" cy="12" r="2"></circle>
+    </svg>
+            </span>
+            <span>Cross-Department</span>
+          </a>
+
+          <!-- 9: Administration -->
+          <a href="/frontend/pages/admin.html" class="neu-nav-item" id="nav-admin">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+            </span>
+            <span>Administration</span>
+          </a>
+
+          <!-- 10: Audit Logs (Active) -->
+          <a href="/frontend/pages/audit.html" class="neu-nav-item active" id="nav-audit" aria-current="page">
+            <span class="neu-nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <path d="M16 13H8"></path>
+      <path d="M16 17H8"></path>
+      <path d="M10 9H8"></path>
+    </svg>
+            </span>
+            <span>Audit Logs</span>
+          </a>
+        </nav>
+
+        <!-- Sidebar Footer: Cyber Crime Department Badge -->
+        <div class="neu-sidebar-footer">
+          <div class="neu-dept-badge">
+            <div class="neu-dept-emblem" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="M16 2L4 7V15C4 22.5 9 28.5 16 30.5C23 28.5 28 22.5 28 15V7L16 2Z" fill="#3988F5" fill-opacity="0.15" stroke="#3988F5" stroke-width="1.8"/>
+                <path d="M16 8L8 12V16C8 20.5 11.5 24.5 16 26C20.5 24.5 24 20.5 24 16V12L16 8Z" fill="#3988F5"/>
+              </svg>
+            </div>
+            <div class="neu-dept-text">
+              <span class="neu-dept-name">Cyber Crime Department</span>
+              <span class="neu-dept-gov">Government of India</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ══════════════════════════════════════════════════════════
+           MAIN WORKSPACE
+           ══════════════════════════════════════════════════════════ -->
+      <main class="neu-main-content" role="main">
+        
+        <!-- Page Header & Action Controls -->
+        <div class="neu-page-header">
+          <div class="neu-header-titles">
+            <h1 class="neu-page-title">Audit Logs & Security Activity</h1>
+            <p class="neu-page-subtitle">Track system activities, user actions and security events for complete audit trail</p>
+          </div>
+
+          <div class="neu-header-actions">
+            <!-- Date Range Selector Pill -->
+            <button class="neu-date-range-pill" id="btn-date-range" aria-label="Select Date Range">
+              <span aria-hidden="true">📅</span>
+              <span id="date-range-label">01 Jan 2024 - 31 Dec 2024</span>
+              <span style="font-size: 0.75rem; color: var(--neu-secondary);">▾</span>
+            </button>
+
+            <!-- Export Logs Action -->
+            <button class="neu-btn-export" id="btn-export-logs">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Export Logs</span>
+            </button>
+
+            <!-- Contextual Menu Button -->
+            <button class="neu-btn-icon-square" id="btn-header-more" aria-label="More options">
+              <span>⋮</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             FIVE SUMMARY CARDS STRIP
+             ══════════════════════════════════════════════════════════ -->
+        <section class="neu-stats-strip" aria-label="Audit and security metrics summary">
+          
+          <!-- Card 1: Total Log Events -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap blue" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">Total Log Events</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-total-events">12,486</span>
+                <span class="neu-stat-trend positive">↑ 18%</span>
+              </div>
+              <span class="neu-stat-desc">All system activities</span>
+            </div>
+          </div>
+
+          <!-- Card 2: User Activities -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap blue" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">User Activities</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-user-activities">4,782</span>
+                <span class="neu-stat-trend positive">↑ 12%</span>
+              </div>
+              <span class="neu-stat-desc">Logins, data access, changes</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Security Events -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap purple" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">Security Events</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-security-events">1,245</span>
+                <span class="neu-stat-trend warning">↑ 5%</span>
+              </div>
+              <span class="neu-stat-desc">Failed logins, suspicious activity</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Data Access Events -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap green" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">Data Access Events</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-data-access-events">3,621</span>
+                <span class="neu-stat-trend positive">↑ 22%</span>
+              </div>
+              <span class="neu-stat-desc">Evidence and case access</span>
+            </div>
+          </div>
+
+          <!-- Card 5: System Events -->
+          <div class="neu-stat-card">
+            <div class="neu-stat-icon-wrap cyan" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+            <div class="neu-stat-content">
+              <span class="neu-stat-label">System Events</span>
+              <div class="neu-stat-value-row">
+                <span class="neu-stat-value" id="stat-system-events">2,838</span>
+                <span class="neu-stat-trend positive">↑ 8%</span>
+              </div>
+              <span class="neu-stat-desc">System changes, configuration</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             MAIN TWO-COLUMN WORKSPACE: AUDIT TABLE & LOG DETAILS PANEL
+             ══════════════════════════════════════════════════════════ -->
+        <div class="neu-audit-main-grid">
+          
+          <!-- LEFT COLUMN: AUDIT LOGS TABLE -->
+          <section class="neu-card neu-audit-table-card" aria-label="Audit Logs Table">
+            
+            <!-- Table Header: Title -->
+            <div class="neu-dir-header">
+              <div class="neu-dir-title-wrap">
+                <span class="neu-dir-title-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="neu-dir-title">Audit Logs</span>
+              </div>
+            </div>
+
+            <!-- Search Input Field -->
+            <div class="neu-audit-search-wrap">
+              <span class="neu-audit-search-icon" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                id="audit-search-input" 
+                class="neu-audit-search-input" 
+                placeholder="Search by action, user, case ID, entity, IP address..." 
+                aria-label="Search audit logs"
+              />
+            </div>
+
+            <!-- Filters Row: Event Type, User, Department, Resource Type, Status, Clear Filters -->
+            <div class="neu-filters-row">
+              
+              <!-- Event Type Filter -->
+              <div class="neu-filter-select-wrap">
+                <select id="filter-event-type" class="neu-filter-select" aria-label="Filter by Event Type">
+                  <option value="">Event Type</option>
+                  <option value="Data Access">Data Access</option>
+                  <option value="User Action">User Action</option>
+                  <option value="Security">Security</option>
+                  <option value="System">System</option>
+                </select>
+                <span class="neu-select-arrow" aria-hidden="true">▾</span>
+              </div>
+
+              <!-- User Filter -->
+              <div class="neu-filter-select-wrap">
+                <select id="filter-user" class="neu-filter-select" aria-label="Filter by User">
+                  <option value="">User</option>
+                  <option value="Rajesh Kumar">Rajesh Kumar (INS-001)</option>
+                  <option value="Priya Singh">Priya Singh (SI-027)</option>
+                  <option value="Amit Sharma">Amit Sharma (HC-105)</option>
+                  <option value="Neha Verma">Neha Verma (SI-043)</option>
+                  <option value="Vikram Patel">Vikram Patel (INS-012)</option>
+                  <option value="System">System</option>
+                </select>
+                <span class="neu-select-arrow" aria-hidden="true">▾</span>
+              </div>
+
+              <!-- Department Filter -->
+              <div class="neu-filter-select-wrap">
+                <select id="filter-department" class="neu-filter-select" aria-label="Filter by Department">
+                  <option value="">Department</option>
+                  <option value="Cyber Crime">Cyber Crime</option>
+                  <option value="State Police (Delhi)">State Police (Delhi)</option>
+                  <option value="Economic Offences">Economic Offences</option>
+                  <option value="Narcotics Control">Narcotics Control</option>
+                  <option value="Intelligence Bureau">Intelligence Bureau</option>
+                </select>
+                <span class="neu-select-arrow" aria-hidden="true">▾</span>
+              </div>
+
+              <!-- Resource Type Filter -->
+              <div class="neu-filter-select-wrap">
+                <select id="filter-resource" class="neu-filter-select" aria-label="Filter by Resource Type">
+                  <option value="">Resource Type</option>
+                  <option value="Evidence">Evidence</option>
+                  <option value="Case">Case</option>
+                  <option value="Report">Report</option>
+                  <option value="Officer">Officer</option>
+                  <option value="Entity">Entity</option>
+                </select>
+                <span class="neu-select-arrow" aria-hidden="true">▾</span>
+              </div>
+
+              <!-- Status Filter -->
+              <div class="neu-filter-select-wrap">
+                <select id="filter-status" class="neu-filter-select" aria-label="Filter by Status">
+                  <option value="">Status</option>
+                  <option value="SUCCESS">Success</option>
+                  <option value="FAILED">Failed</option>
+                  <option value="BLOCKED">Blocked</option>
+                </select>
+                <span class="neu-select-arrow" aria-hidden="true">▾</span>
+              </div>
+
+              <!-- Clear Filters Button -->
+              <button class="neu-btn-clear-filters" id="btn-clear-filters">
+                Clear Filters
+              </button>
+            </div>
+
+            <!-- Table Responsive Container -->
+            <div class="neu-table-responsive">
+              <table class="neu-table" id="audit-table" aria-label="Audit log events table">
+                <thead>
+                  <tr>
+                    <th style="width: 28px;"><input type="checkbox" id="check-all-logs" aria-label="Select all log rows" /></th>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Resource</th>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                    <th>Event Type</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-table-body">
+                  <!-- Canonical 8 Rows from image (rendered initially & managed by audit.js) -->
+                  <tr class="audit-row selected" data-id="LOG-2024-00012345">
+                    <td><input type="checkbox" checked /></td>
+                    <td>
+                      <div class="neu-cell-timestamp">
+                        <span class="neu-icon-pill-small orange">📄</span>
+                        <span>15 Jan 2024, 10:30:45 AM</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="neu-cell-user">
+                        <span class="neu-user-name">Rajesh Kumar</span>
+                        <span class="neu-user-sub">(INS-001)</span>
+                      </div>
+                    </td>
+                    <td><span class="neu-cell-action">Viewed Evidence</span></td>
+                    <td><span class="neu-badge-code">EVT-2024-001245</span></td>
+                    <td><span class="neu-ip-code">192.168.1.45</span></td>
+                    <td><span class="neu-badge-status success">Success</span></td>
+                    <td><span class="neu-badge-event-type data-access">Data Access</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
+                  </tr>
+
+                  <tr class="audit-row" data-id="LOG-2024-00012344">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-timestamp">
+                        <span class="neu-icon-pill-small blue">📄</span>
+                        <span>15 Jan 2024, 10:25:12 AM</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="neu-cell-user">
+                        <span class="neu-user-name">Priya Singh</span>
+                        <span class="neu-user-sub">(SI-027)</span>
+                      </div>
+                    </td>
+                    <td><span class="neu-cell-action">Updated Case</span></td>
+                    <td><span class="neu-badge-code">CC/2024/001</span></td>
+                    <td><span class="neu-ip-code">192.168.1.32</span></td>
+                    <td><span class="neu-badge-status success">Success</span></td>
+                    <td><span class="neu-badge-event-type user-action">User Action</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
+                  </tr>
+
+                  <tr class="audit-row" data-id="LOG-2024-00012343">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-timestamp">
+                        <span class="neu-icon-pill-small red">🛡️</span>
+                        <span>15 Jan 2024, 10:20:08 AM</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="neu-cell-user">
+                        <span class="neu-user-name">System</span>
+                      </div>
+                    </td>
+                    <td><span class="neu-cell-action failed">Failed Login</span></td>
+                    <td><span class="neu-badge-code">N/A</span></td>
+                    <td><span class="neu-ip-code">203.0.113.45</span></td>
+                    <td><span class="neu-badge-status failed">Failed</span></td>
+                    <td><span class="neu-badge-event-type security">Security</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
+                  </tr>
+
+                  <tr class="audit-row" data-id="LOG-2024-00012342">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-timestamp">
+                        <span class="neu-icon-pill-small blue">📄</span>
+                        <span>15 Jan 2024, 10:18:33 AM</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="neu-cell-user">
+                        <span class="neu-user-name">Amit Sharma</span>
+                        <span class="neu-user-sub">(HC-105)</span>
+                      </div>
+                    </td>
+                    <td><span class="neu-cell-action">Created Report</span></td>
+                    <td><span class="neu-badge-code">RPT-2024-0032</span></td>
+                    <td><span class="neu-ip-code">192.168.1.78</span></td>
+                    <td><span class="neu-badge-status success">Success</span></td>
+                    <td><span class="neu-badge-event-type user-action">User Action</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
+                  </tr>
+
+                  <tr class="audit-row" data-id="LOG-2024-00012341">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-timestamp">
+                        <span class="neu-icon-pill-small gear">⚙️</span>
+                        <span>15 Jan 2024, 10:15:27 AM</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="neu-cell-user">
+                        <span class="neu-user-name">System</span>
+                      </div>
+                    </td>
+                    <td><span class="neu-cell-action">Password Change</span></td>
+                    <td><span class="neu-badge-code">User: SI-043</span></td>
+                    <td><span class="neu-ip-code">192.168.1.56</span></td>
+                    <td><span class="neu-badge-status success">Success</span></td>
+                    <td><span class="neu-badge-event-type system">System</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
+                  </tr>
+
+                  <tr class="audit-row" data-id="LOG-2024-00012340">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-timestamp">
+                        <span class="neu-icon-pill-small blue">📄</span>
+                        <span>15 Jan 2024, 10:12:14 AM</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="neu-cell-user">
+                        <span class="neu-user-name">Neha Verma</span>
+                        <span class="neu-user-sub">(SI-043)</span>
+                      </div>
+                    </td>
+                    <td><span class="neu-cell-action">Downloaded Evidence</span></td>
+                    <td><span class="neu-badge-code">EVT-2024-000987</span></td>
+                    <td><span class="neu-ip-code">192.168.1.33</span></td>
+                    <td><span class="neu-badge-status success">Success</span></td>
+                    <td><span class="neu-badge-event-type data-access">Data Access</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
+                  </tr>
+
+                  <tr class="audit-row" data-id="LOG-2024-00012339">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-timestamp">
+                        <span class="neu-icon-pill-small blue">📄</span>
+                        <span>15 Jan 2024, 10:08:55 AM</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="neu-cell-user">
+                        <span class="neu-user-name">Vikram Patel</span>
+                        <span class="neu-user-sub">(INS-012)</span>
+                      </div>
+                    </td>
+                    <td><span class="neu-cell-action">Deleted Entity (Soft)</span></td>
+                    <td><span class="neu-badge-code">ENT-2024-0067</span></td>
+                    <td><span class="neu-ip-code">192.168.1.90</span></td>
+                    <td><span class="neu-badge-status success">Success</span></td>
+                    <td><span class="neu-badge-event-type user-action">User Action</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
+                  </tr>
+
+                  <tr class="audit-row" data-id="LOG-2024-00012338">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div class="neu-cell-timestamp">
+                        <span class="neu-icon-pill-small gear">⚙️</span>
+                        <span>15 Jan 2024, 10:05:21 AM</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="neu-cell-user">
+                        <span class="neu-user-name">System</span>
+                      </div>
+                    </td>
+                    <td><span class="neu-cell-action">Role Updated</span></td>
+                    <td><span class="neu-badge-code">User: ANL-015</span></td>
+                    <td><span class="neu-ip-code">192.168.1.10</span></td>
+                    <td><span class="neu-badge-status success">Success</span></td>
+                    <td><span class="neu-badge-event-type system">System</span></td>
+                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="neu-pagination-footer">
+              <span id="pagination-summary">Showing 1-8 of 12,486 logs</span>
+
+              <div class="neu-pagination-controls" aria-label="Logs pagination">
+                <button class="neu-page-btn" aria-label="Previous page">&lt;</button>
+                <button class="neu-page-btn active">1</button>
+                <button class="neu-page-btn">2</button>
+                <button class="neu-page-btn">3</button>
+                <button class="neu-page-btn">4</button>
+                <button class="neu-page-btn">5</button>
+                <span style="padding: 0 4px;">...</span>
+                <button class="neu-page-btn">1561</button>
+                <button class="neu-page-btn" aria-label="Next page">&gt;</button>
+              </div>
+
+              <select id="select-page-size" class="neu-page-size-select" aria-label="Page size">
+                <option value="8">8 / page</option>
+                <option value="16">16 / page</option>
+                <option value="24">24 / page</option>
+              </select>
+            </div>
+          </section>
+
+          <!-- RIGHT COLUMN: EVENT DETAIL PANEL -->
+          <section class="neu-card neu-detail-card" id="log-details-panel" aria-label="Log Event Details Panel">
+            
+            <!-- Panel Header -->
+            <div class="neu-detail-header-bar">
+              <div class="neu-detail-title-wrap">
+                <span style="color: var(--neu-blue);">📄</span>
+                <span class="neu-detail-title">Log Details</span>
+              </div>
+              <div class="neu-detail-header-actions">
+                <button class="neu-btn-icon-square" id="btn-detail-more" style="width: 30px; height: 30px;" aria-label="More log options">⋮</button>
+                <button class="neu-btn-icon-square" id="btn-close-details" style="width: 30px; height: 30px;" aria-label="Close details panel">✕</button>
+              </div>
+            </div>
+
+            <!-- Hero Event Banner -->
+            <div class="neu-detail-hero">
+              <div class="neu-detail-hero-left">
+                <div class="neu-hero-icon-box" id="detail-hero-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                </div>
+                <div class="neu-hero-hero-info">
+                  <span class="neu-hero-action-title" id="detail-hero-action">Viewed Evidence</span>
+                  <span class="neu-hero-timestamp" id="detail-hero-time">15 Jan 2024, 10:30:45 AM</span>
+                </div>
+              </div>
+
+              <div>
+                <span class="neu-badge-status success" id="detail-hero-status">Success</span>
+              </div>
+            </div>
+
+            <!-- Detail Sub-navigation Tabs -->
+            <div class="neu-detail-subtabs" role="tablist">
+              <button class="neu-subtab-btn active" data-tab="overview" role="tab" aria-selected="true">Overview</button>
+              <button class="neu-subtab-btn" data-tab="user" role="tab" aria-selected="false">User Details</button>
+              <button class="neu-subtab-btn" data-tab="resource" role="tab" aria-selected="false">Resource Details</button>
+              <button class="neu-subtab-btn" data-tab="additional" role="tab" aria-selected="false">Additional Info</button>
+              <button class="neu-subtab-btn" data-tab="related" role="tab" aria-selected="false">Related Events</button>
+            </div>
+
+            <!-- Detail Content Area (Overview Tab) -->
+            <div class="neu-detail-content-area" id="detail-content-area" style="display: flex; flex-direction: column; gap: 14px;">
+              
+              <!-- Event Information List -->
+              <div class="neu-info-block">
+                <span class="neu-block-title">Event Information</span>
+                
+                <div class="neu-info-grid-row">
+                  <span class="label">Event ID</span>
+                  <span class="value mono" id="info-event-id">LOG-2024-00012345</span>
+                </div>
+                <div class="neu-info-grid-row">
+                  <span class="label">Event Type</span>
+                  <span class="value" id="info-event-type">Data Access</span>
+                </div>
+                <div class="neu-info-grid-row">
+                  <span class="label">Action</span>
+                  <span class="value" id="info-action">Viewed Evidence</span>
+                </div>
+                <div class="neu-info-grid-row">
+                  <span class="label">Description</span>
+                  <span class="value" id="info-desc" style="max-width: 60%; font-weight: 500;">User viewed evidence file details in the system</span>
+                </div>
+                <div class="neu-info-grid-row">
+                  <span class="label">Timestamp</span>
+                  <span class="value mono" id="info-time">15 Jan 2024, 10:30:45 AM</span>
+                </div>
+                <div class="neu-info-grid-row">
+                  <span class="label">Status</span>
+                  <span class="neu-badge-status success" id="info-status">Success</span>
+                </div>
+                <div class="neu-info-grid-row">
+                  <span class="label">IP Address</span>
+                  <span class="value mono" id="info-ip">192.168.1.45</span>
+                </div>
+                <div class="neu-info-grid-row">
+                  <span class="label">Session ID</span>
+                  <span class="value mono" id="info-session">sess_7f3a9c2d1e6b</span>
+                </div>
+                <div class="neu-info-grid-row">
+                  <span class="label">User Agent</span>
+                  <span class="value" id="info-ua" style="font-size: 0.7rem; max-width: 65%;">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36</span>
+                </div>
+                <div class="neu-info-grid-row">
+                  <span class="label">Source</span>
+                  <span class="value" id="info-source">Web Application</span>
+                </div>
+              </div>
+
+              <!-- Linked User Information Card -->
+              <div class="neu-info-block">
+                <span class="neu-block-title">User Information</span>
+                <div class="neu-linked-card">
+                  <div class="neu-linked-left">
+                    <div class="neu-linked-icon blue" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                    <div class="neu-linked-text">
+                      <span class="neu-linked-name" id="link-user-name">Rajesh Kumar (INS-001)</span>
+                      <span class="neu-linked-sub" id="link-user-dept">Inspector • Cyber Crime Department</span>
+                    </div>
+                  </div>
+                  <a href="/frontend/pages/admin.html" class="neu-linked-action" id="btn-view-user-profile">
+                    View User Profile →
+                  </a>
+                </div>
+              </div>
+
+              <!-- Linked Resource Information Card -->
+              <div class="neu-info-block">
+                <span class="neu-block-title">Resource Information</span>
+                <div class="neu-linked-card">
+                  <div class="neu-linked-left">
+                    <div class="neu-linked-icon yellow" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                      </svg>
+                    </div>
+                    <div class="neu-linked-text">
+                      <span class="neu-linked-name" id="link-resource-id">EVT-2024-001245</span>
+                      <span class="neu-linked-sub" id="link-resource-name">Evidence File • mobile_001.jpg</span>
+                    </div>
+                  </div>
+                  <a href="/frontend/pages/evidence.html" class="neu-linked-action" id="btn-view-evidence">
+                    View Evidence →
+                  </a>
+                </div>
+              </div>
+
+              <!-- Linked Case Information Card -->
+              <div class="neu-info-block">
+                <span class="neu-block-title">Case Information</span>
+                <div class="neu-linked-card">
+                  <div class="neu-linked-left">
+                    <div class="neu-linked-icon purple" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                      </svg>
+                    </div>
+                    <div class="neu-linked-text">
+                      <span class="neu-linked-name" id="link-case-id">CC/2024/001</span>
+                      <span class="neu-linked-sub" id="link-case-title">Financial Fraud Investigation</span>
+                    </div>
+                  </div>
+                  <a href="/frontend/pages/cases.html" class="neu-linked-action" id="btn-view-case">
+                    View Case →
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             THREE LOWER PANELS: TREND, TOP USERS, SECURITY ALERTS
+             ══════════════════════════════════════════════════════════ -->
+        <div class="neu-audit-bottom-grid">
+          
+          <!-- Panel 1: Activity Trend (Lower-Left) -->
+          <section class="neu-panel-card" aria-label="Activity Trend Visualization">
+            <div class="neu-panel-header">
+              <div class="neu-panel-title-wrap">
+                <span class="neu-panel-title-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                  </svg>
+                </span>
+                <span class="neu-panel-title">Activity Trend</span>
+              </div>
+
+              <!-- Date Filter -->
+              <select id="select-trend-range" class="neu-page-size-select" style="font-size: 0.74rem;">
+                <option value="30">Last 30 Days</option>
+                <option value="14">Last 14 Days</option>
+                <option value="7">Last 7 Days</option>
+              </select>
+            </div>
+
+            <!-- Chart Legend -->
+            <div class="neu-chart-legend">
+              <div class="neu-legend-item">
+                <span class="neu-legend-dot blue"></span>
+                <span>User Actions</span>
+              </div>
+              <div class="neu-legend-item">
+                <span class="neu-legend-dot red"></span>
+                <span>Security Events</span>
+              </div>
+              <div class="neu-legend-item">
+                <span class="neu-legend-dot purple"></span>
+                <span>System Events</span>
+              </div>
+            </div>
+
+            <!-- Neumorphic Area/Line Chart -->
+            <div class="neu-chart-container" id="trend-chart-container">
+              <svg class="neu-trend-svg" viewBox="0 0 400 160" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="blueAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#3988F5" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="#3988F5" stop-opacity="0.0"/>
+                  </linearGradient>
+                  <linearGradient id="purpleAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#9461F5" stop-opacity="0.18"/>
+                    <stop offset="100%" stop-color="#9461F5" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Horizontal Grid Lines -->
+                <line x1="30" y1="20" x2="390" y2="20" stroke="#E2E8F2" stroke-dasharray="3 3"/>
+                <line x1="30" y1="60" x2="390" y2="60" stroke="#E2E8F2" stroke-dasharray="3 3"/>
+                <line x1="30" y1="100" x2="390" y2="100" stroke="#E2E8F2" stroke-dasharray="3 3"/>
+                <line x1="30" y1="140" x2="390" y2="140" stroke="#D6DFEB"/>
+
+                <!-- Y-Axis Labels -->
+                <text x="5" y="24" font-size="9" fill="#8898AA" font-family="Inter">2,000</text>
+                <text x="5" y="64" font-size="9" fill="#8898AA" font-family="Inter">1,500</text>
+                <text x="5" y="104" font-size="9" fill="#8898AA" font-family="Inter">1,000</text>
+                <text x="14" y="142" font-size="9" fill="#8898AA" font-family="Inter">0</text>
+
+                <!-- User Actions Area & Line (Blue) -->
+                <path d="M 35 110 Q 75 75 115 90 T 195 95 T 275 60 T 355 45 L 390 55 L 390 140 L 35 140 Z" fill="url(#blueAreaGrad)"/>
+                <path d="M 35 110 Q 75 75 115 90 T 195 95 T 275 60 T 355 45 L 390 55" fill="none" stroke="#3988F5" stroke-width="2.5" stroke-linecap="round"/>
+
+                <!-- System Events Area & Line (Purple) -->
+                <path d="M 35 130 Q 80 120 125 125 T 215 118 T 305 115 T 390 120 L 390 140 L 35 140 Z" fill="url(#purpleAreaGrad)"/>
+                <path d="M 35 130 Q 80 120 125 125 T 215 118 T 305 115 T 390 120" fill="none" stroke="#9461F5" stroke-width="2" stroke-linecap="round"/>
+
+                <!-- Security Events Line (Red) -->
+                <path d="M 35 138 Q 80 135 125 136 T 215 132 T 305 130 T 390 135" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+
+              <!-- X-Axis Labels -->
+              <div style="display: flex; justify-content: space-between; padding-left: 28px; padding-right: 10px; font-size: 0.68rem; color: var(--neu-secondary); font-family: var(--font-sans); margin-top: 2px;">
+                <span>01 Jan</span>
+                <span>05 Jan</span>
+                <span>10 Jan</span>
+                <span>15 Jan</span>
+                <span>20 Jan</span>
+                <span>25 Jan</span>
+                <span>31 Jan</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Panel 2: Top Users by Activity (Lower-Center) -->
+          <section class="neu-panel-card" aria-label="Top Users by Activity">
+            <div class="neu-panel-header">
+              <div class="neu-panel-title-wrap">
+                <span class="neu-panel-title-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="neu-panel-title">Top Users by Activity</span>
+              </div>
+              <a href="/frontend/pages/admin.html" class="neu-panel-view-all">View All</a>
+            </div>
+
+            <!-- List of Top Users -->
+            <div class="neu-top-users-list" id="top-users-list">
+              <div class="neu-top-user-item">
+                <div class="neu-top-user-left">
+                  <div class="neu-user-circle rk">RK</div>
+                  <div class="neu-top-user-name-box">
+                    <span class="neu-top-user-name">Rajesh Kumar</span>
+                    <span class="neu-top-user-badge">INS-001</span>
+                  </div>
+                </div>
+                <span class="neu-top-user-dept">Cyber Crime</span>
+                <span class="neu-top-user-count">1,842</span>
+              </div>
+
+              <div class="neu-top-user-item">
+                <div class="neu-top-user-left">
+                  <div class="neu-user-circle ps">PS</div>
+                  <div class="neu-top-user-name-box">
+                    <span class="neu-top-user-name">Priya Singh</span>
+                    <span class="neu-top-user-badge">SI-027</span>
+                  </div>
+                </div>
+                <span class="neu-top-user-dept">Cyber Crime</span>
+                <span class="neu-top-user-count">1,256</span>
+              </div>
+
+              <div class="neu-top-user-item">
+                <div class="neu-top-user-left">
+                  <div class="neu-user-circle as">AS</div>
+                  <div class="neu-top-user-name-box">
+                    <span class="neu-top-user-name">Amit Sharma</span>
+                    <span class="neu-top-user-badge">HC-105</span>
+                  </div>
+                </div>
+                <span class="neu-top-user-dept">State Police (Delhi)</span>
+                <span class="neu-top-user-count">987</span>
+              </div>
+
+              <div class="neu-top-user-item">
+                <div class="neu-top-user-left">
+                  <div class="neu-user-circle nv">NV</div>
+                  <div class="neu-top-user-name-box">
+                    <span class="neu-top-user-name">Neha Verma</span>
+                    <span class="neu-top-user-badge">SI-043</span>
+                  </div>
+                </div>
+                <span class="neu-top-user-dept">Economic Offences</span>
+                <span class="neu-top-user-count">854</span>
+              </div>
+
+              <div class="neu-top-user-item">
+                <div class="neu-top-user-left">
+                  <div class="neu-user-circle vp">VP</div>
+                  <div class="neu-top-user-name-box">
+                    <span class="neu-top-user-name">Vikram Patel</span>
+                    <span class="neu-top-user-badge">INS-012</span>
+                  </div>
+                </div>
+                <span class="neu-top-user-dept">Narcotics Control</span>
+                <span class="neu-top-user-count">721</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Panel 3: Recent Security Alerts (Lower-Right) -->
+          <section class="neu-panel-card" aria-label="Recent Security Alerts">
+            <div class="neu-panel-header">
+              <div class="neu-panel-title-wrap">
+                <span class="neu-panel-title-icon" style="color: var(--neu-red);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="neu-panel-title">Recent Security Alerts</span>
+              </div>
+              <a href="#" class="neu-panel-view-all" id="btn-view-all-alerts">View All</a>
+            </div>
+
+            <!-- List of Security Alerts -->
+            <div class="neu-alerts-list" id="security-alerts-list">
+              <div class="neu-alert-item">
+                <span class="neu-alert-time">15 Jan, 09:45 AM</span>
+                <span class="neu-alert-text">Multiple failed login attempts</span>
+                <span class="neu-badge-severity high">High</span>
+                <span class="neu-badge-investigation investigating">Investigating</span>
+              </div>
+
+              <div class="neu-alert-item">
+                <span class="neu-alert-time">15 Jan, 08:22 AM</span>
+                <span class="neu-alert-text">Suspicious IP address</span>
+                <span class="neu-badge-severity medium">Medium</span>
+                <span class="neu-badge-investigation resolved">Resolved</span>
+              </div>
+
+              <div class="neu-alert-item">
+                <span class="neu-alert-time">14 Jan, 11:30 PM</span>
+                <span class="neu-alert-text">Unauthorized data access attempt</span>
+                <span class="neu-badge-severity high">High</span>
+                <span class="neu-badge-investigation resolved">Resolved</span>
+              </div>
+
+              <div class="neu-alert-item">
+                <span class="neu-alert-time">14 Jan, 06:15 PM</span>
+                <span class="neu-alert-text">Privilege escalation attempt</span>
+                <span class="neu-badge-severity high">High</span>
+                <span class="neu-badge-investigation investigating">Investigating</span>
+              </div>
+
+              <div class="neu-alert-item">
+                <span class="neu-alert-time">13 Jan, 04:20 PM</span>
+                <span class="neu-alert-text">Unusual download activity</span>
+                <span class="neu-badge-severity medium">Medium</span>
+                <span class="neu-badge-investigation resolved">Resolved</span>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL: EXPORT AUDIT LOGS
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="modal-export" role="dialog" aria-modal="true" aria-labelledby="modal-export-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h2 class="neu-modal-title" id="modal-export-title">Export Forensic Audit Records</h2>
+        <button class="neu-modal-close-btn" id="btn-close-export" aria-label="Close export dialog">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <p style="font-size: 0.82rem; color: var(--neu-secondary); margin: 0;">
+          Export cryptographically verified audit events. Formats include sanitization against spreadsheet formula injection.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--neu-navy);" for="export-format">Export Format</label>
+          <select id="export-format" class="neu-filter-select" style="width: 100%;">
+            <option value="CSV">CSV Spreadsheet (Sanitized against Formula Injection)</option>
+            <option value="JSON">Canonical JSON Array</option>
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--neu-navy);" for="export-scope">Module Scope</label>
+          <select id="export-scope" class="neu-filter-select" style="width: 100%;">
+            <option value="All Modules">All Modules</option>
+            <option value="Evidence">Evidence Vault</option>
+            <option value="Cases">Case Operations</option>
+            <option value="Auth">Authentication & Access</option>
+            <option value="Officers">Administrative IAM</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--neu-border); padding-top: 14px;">
+        <button type="button" class="neu-btn-clear-filters" id="btn-cancel-export">Cancel</button>
+        <button type="button" class="neu-btn-export" id="btn-confirm-export" style="background-color: var(--neu-blue); color: #fff;">
+          Download Export File
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Module Controller Script -->
+  <script type="module" src="../js/audit.js"></script>
+</body>
+</html>

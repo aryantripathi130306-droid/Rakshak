@@ -12,6 +12,7 @@ import path from "path";
 import fs from "fs/promises";
 import prisma from "@/lib/prisma";
 import { bufferToText } from "@/services/extractionService";
+import { performForensicTextExtraction } from "@/services/ocrService";
 
 export const runtime = "nodejs";
 
@@ -91,31 +92,42 @@ export async function GET(
       );
     }
 
-    if (isImage) {
-      return Response.json(
-        {
-          available: true,
-          contentType: "image",
-          previewUrl: `/api/evidence/${evidence.id}/download?preview=1`,
-          mimeType,
-          evidenceId: evidence.id,
-          ocrPerformed: false,
-          ocrNote: "Image OCR is not implemented. Text extraction from images is not available.",
-        },
-        { status: 200 }
+    if (isImage || isPDF) {
+      const ocrResult = await performForensicTextExtraction(
+        fileBuffer,
+        evidence.id,
+        evidence.sha256Hash,
+        evidence.mimeType,
+        evidence.fileName
       );
-    }
 
-    if (isPDF) {
+      const truncated = ocrResult.rawText.length > MAX_TEXT_LENGTH;
+      const displayText = truncated ? ocrResult.rawText.substring(0, MAX_TEXT_LENGTH) : ocrResult.rawText;
+      const lines = displayText.length > 0 ? displayText.split(/\r?\n/) : [];
+
       return Response.json(
         {
           available: true,
-          contentType: "pdf",
+          contentType: isImage ? "image" : "pdf",
           previewUrl: `/api/evidence/${evidence.id}/download?preview=1`,
           mimeType,
           evidenceId: evidence.id,
-          ocrPerformed: false,
-          ocrNote: "PDF text extraction and OCR are not implemented.",
+          text: displayText,
+          lineCount: lines.length,
+          totalCharacters: ocrResult.charCount,
+          truncated,
+          ocrPerformed: true,
+          ocrEngine: ocrResult.engine,
+          ocrConfidence: ocrResult.confidence,
+          ocrStatus: ocrResult.status,
+          ocrWords: ocrResult.words || [],
+          ocrProcessingTimeMs: ocrResult.processingTimeMs,
+          ocrNote:
+            ocrResult.status === "EMPTY"
+              ? "OCR processed: No readable text characters recognized."
+              : ocrResult.status === "FAILED"
+              ? `OCR failed: ${ocrResult.error}`
+              : `Extracted via ${ocrResult.engine} (${ocrResult.confidence}% confidence, ${ocrResult.processingTimeMs}ms)`,
         },
         { status: 200 }
       );

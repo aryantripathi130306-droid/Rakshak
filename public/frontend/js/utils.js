@@ -151,6 +151,8 @@ export function showToast(typeOrMsg, msgOrType = 'info', duration = 3000) {
   }, duration);
 }
 
+export const showNotification = showToast;
+
 // ─── XSS Safety ──────────────────────────────────────────────────────────────
 /**
  * Escape HTML special characters to prevent XSS.

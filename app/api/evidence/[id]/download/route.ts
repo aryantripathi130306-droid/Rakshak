@@ -11,6 +11,7 @@ import path from "path";
 import fs from "fs/promises";
 import prisma from "@/lib/prisma";
 import { isValidSha256 } from "@/lib/crypto";
+import { authenticateOfficer, hasPermission, canAccessDepartment, logAuditEvent } from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -23,9 +24,28 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const isPreview = searchParams.get("preview") === "1";
 
+    const auth = await authenticateOfficer(request);
+    if (!auth) {
+      return Response.json(
+        { error: "Authentication required to access evidence." },
+        { status: 401 }
+      );
+    }
+
+    const requiredPerm = isPreview ? "evidence:view" : "evidence:download";
+    if (!hasPermission(auth.officer.role, requiredPerm)) {
+      return Response.json(
+        { error: `Access denied: requires ${requiredPerm} permission.` },
+        { status: 403 }
+      );
+    }
+
     const evidence = await prisma.evidence.findFirst({
       where: {
         OR: [{ id }, { sha256Hash: id }],
+      },
+      include: {
+        case: true,
       },
     });
 
@@ -33,18 +53,26 @@ export async function GET(
       return Response.json({ error: `Evidence not found: ${id}` }, { status: 404 });
     }
 
+    // Phase 22: Enforce department scope on evidence access
+    if (evidence.case && !canAccessDepartment(auth.officer, evidence.case.jurisdiction, (evidence.case as any).departmentId)) {
+      return Response.json(
+        { error: "Access denied: Evidence belongs to a case in another departmental jurisdiction." },
+        { status: 403 }
+      );
+    }
+
     // Enforce strict path security: use only verified SHA-256 hex string
     if (!isValidSha256(evidence.sha256Hash)) {
       return Response.json({ error: "Invalid cryptographic reference in evidence record." }, { status: 500 });
     }
 
-    const storagePath = path.join(process.cwd(), "uploads", "raw", `${evidence.sha256Hash}.bin`);
-
     let fileBuffer: Buffer;
     try {
-      fileBuffer = await fs.readFile(storagePath);
+      const storageAdapter = (await import("@/services/storageAdapter")).getEvidenceStorageAdapter();
+      const readResult = await storageAdapter.retrieveEvidence(evidence.sha256Hash, true);
+      fileBuffer = readResult.buffer;
     } catch {
-      return Response.json({ error: "Original evidence file not found in cold storage." }, { status: 404 });
+      return Response.json({ error: "Original evidence file not found in cold storage or failed cryptographic verification." }, { status: 404 });
     }
 
     // Log an append-only custody event for evidence access/download
@@ -53,7 +81,7 @@ export async function GET(
         data: {
           evidenceId: evidence.id,
           eventType: isPreview ? "EVIDENCE_ACCESSED" : "EVIDENCE_DOWNLOADED",
-          actor: "Forensic Officer (Workstation Web Session)",
+          actor: `${auth.officer.name} (${auth.officer.badgeNumber})`,
           action: isPreview
             ? `Forensic preview loaded for ${evidence.fileName} (${formatBytes(evidence.fileSize)})`
             : `Original evidence file downloaded: ${evidence.fileName} [SHA-256: ${evidence.sha256Hash.substring(0, 12)}...]`,
@@ -64,6 +92,23 @@ export async function GET(
             preview: isPreview,
           }),
         },
+      });
+
+      // Also register in the centralized audit log
+      const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
+      await logAuditEvent({
+        officerId: auth.officer.id,
+        officerName: auth.officer.name,
+        officerBadge: auth.officer.badgeNumber,
+        action: isPreview ? "VIEW_EVIDENCE" : "DOWNLOAD_EVIDENCE",
+        module: "Evidence",
+        targetType: "Evidence",
+        targetId: evidence.id,
+        details: isPreview
+          ? `Previewed evidence ${evidence.fileName} (${formatBytes(evidence.fileSize)})`
+          : `Downloaded raw evidence ${evidence.fileName} [SHA-256: ${evidence.sha256Hash.substring(0, 16)}...]`,
+        result: "SUCCESS",
+        ipAddress: ip,
       });
     } catch (auditErr) {
       console.error("[CustodyAudit] Error logging download event:", auditErr);

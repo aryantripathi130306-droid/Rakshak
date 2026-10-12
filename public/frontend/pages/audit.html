@@ -96,7 +96,7 @@
             </svg>
           </div>
           <div class="neu-profile-info">
-            <span class="neu-profile-name" id="officer-name">Inspector Rajesh Kumar</span>
+            <span class="neu-profile-name" id="officer-name">Officer</span>
             <span class="neu-profile-role" id="officer-dept">Cyber Crime Department</span>
           </div>
           <span class="neu-profile-chevron" aria-hidden="true">▾</span>
@@ -448,12 +448,7 @@
               <!-- User Filter -->
               <div class="neu-filter-select-wrap">
                 <select id="filter-user" class="neu-filter-select" aria-label="Filter by User">
-                  <option value="">User</option>
-                  <option value="Rajesh Kumar">Rajesh Kumar (INS-001)</option>
-                  <option value="Priya Singh">Priya Singh (SI-027)</option>
-                  <option value="Amit Sharma">Amit Sharma (HC-105)</option>
-                  <option value="Neha Verma">Neha Verma (SI-043)</option>
-                  <option value="Vikram Patel">Vikram Patel (INS-012)</option>
+                  <option value="">All Users</option>
                   <option value="System">System</option>
                 </select>
                 <span class="neu-select-arrow" aria-hidden="true">▾</span>
@@ -519,178 +514,10 @@
                   </tr>
                 </thead>
                 <tbody id="audit-table-body">
-                  <!-- Canonical 8 Rows from image (rendered initially & managed by audit.js) -->
-                  <tr class="audit-row selected" data-id="LOG-2024-00012345">
-                    <td><input type="checkbox" checked /></td>
-                    <td>
-                      <div class="neu-cell-timestamp">
-                        <span class="neu-icon-pill-small orange">📄</span>
-                        <span>15 Jan 2024, 10:30:45 AM</span>
-                      </div>
+                  <tr>
+                    <td colspan="9" style="text-align: center; padding: 32px; color: var(--neu-secondary);">
+                      Loading cryptographic audit logs from server…
                     </td>
-                    <td>
-                      <div class="neu-cell-user">
-                        <span class="neu-user-name">Rajesh Kumar</span>
-                        <span class="neu-user-sub">(INS-001)</span>
-                      </div>
-                    </td>
-                    <td><span class="neu-cell-action">Viewed Evidence</span></td>
-                    <td><span class="neu-badge-code">EVT-2024-001245</span></td>
-                    <td><span class="neu-ip-code">192.168.1.45</span></td>
-                    <td><span class="neu-badge-status success">Success</span></td>
-                    <td><span class="neu-badge-event-type data-access">Data Access</span></td>
-                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
-                  </tr>
-
-                  <tr class="audit-row" data-id="LOG-2024-00012344">
-                    <td><input type="checkbox" /></td>
-                    <td>
-                      <div class="neu-cell-timestamp">
-                        <span class="neu-icon-pill-small blue">📄</span>
-                        <span>15 Jan 2024, 10:25:12 AM</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="neu-cell-user">
-                        <span class="neu-user-name">Priya Singh</span>
-                        <span class="neu-user-sub">(SI-027)</span>
-                      </div>
-                    </td>
-                    <td><span class="neu-cell-action">Updated Case</span></td>
-                    <td><span class="neu-badge-code">CC/2024/001</span></td>
-                    <td><span class="neu-ip-code">192.168.1.32</span></td>
-                    <td><span class="neu-badge-status success">Success</span></td>
-                    <td><span class="neu-badge-event-type user-action">User Action</span></td>
-                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
-                  </tr>
-
-                  <tr class="audit-row" data-id="LOG-2024-00012343">
-                    <td><input type="checkbox" /></td>
-                    <td>
-                      <div class="neu-cell-timestamp">
-                        <span class="neu-icon-pill-small red">🛡️</span>
-                        <span>15 Jan 2024, 10:20:08 AM</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="neu-cell-user">
-                        <span class="neu-user-name">System</span>
-                      </div>
-                    </td>
-                    <td><span class="neu-cell-action failed">Failed Login</span></td>
-                    <td><span class="neu-badge-code">N/A</span></td>
-                    <td><span class="neu-ip-code">203.0.113.45</span></td>
-                    <td><span class="neu-badge-status failed">Failed</span></td>
-                    <td><span class="neu-badge-event-type security">Security</span></td>
-                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
-                  </tr>
-
-                  <tr class="audit-row" data-id="LOG-2024-00012342">
-                    <td><input type="checkbox" /></td>
-                    <td>
-                      <div class="neu-cell-timestamp">
-                        <span class="neu-icon-pill-small blue">📄</span>
-                        <span>15 Jan 2024, 10:18:33 AM</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="neu-cell-user">
-                        <span class="neu-user-name">Amit Sharma</span>
-                        <span class="neu-user-sub">(HC-105)</span>
-                      </div>
-                    </td>
-                    <td><span class="neu-cell-action">Created Report</span></td>
-                    <td><span class="neu-badge-code">RPT-2024-0032</span></td>
-                    <td><span class="neu-ip-code">192.168.1.78</span></td>
-                    <td><span class="neu-badge-status success">Success</span></td>
-                    <td><span class="neu-badge-event-type user-action">User Action</span></td>
-                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
-                  </tr>
-
-                  <tr class="audit-row" data-id="LOG-2024-00012341">
-                    <td><input type="checkbox" /></td>
-                    <td>
-                      <div class="neu-cell-timestamp">
-                        <span class="neu-icon-pill-small gear">⚙️</span>
-                        <span>15 Jan 2024, 10:15:27 AM</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="neu-cell-user">
-                        <span class="neu-user-name">System</span>
-                      </div>
-                    </td>
-                    <td><span class="neu-cell-action">Password Change</span></td>
-                    <td><span class="neu-badge-code">User: SI-043</span></td>
-                    <td><span class="neu-ip-code">192.168.1.56</span></td>
-                    <td><span class="neu-badge-status success">Success</span></td>
-                    <td><span class="neu-badge-event-type system">System</span></td>
-                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
-                  </tr>
-
-                  <tr class="audit-row" data-id="LOG-2024-00012340">
-                    <td><input type="checkbox" /></td>
-                    <td>
-                      <div class="neu-cell-timestamp">
-                        <span class="neu-icon-pill-small blue">📄</span>
-                        <span>15 Jan 2024, 10:12:14 AM</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="neu-cell-user">
-                        <span class="neu-user-name">Neha Verma</span>
-                        <span class="neu-user-sub">(SI-043)</span>
-                      </div>
-                    </td>
-                    <td><span class="neu-cell-action">Downloaded Evidence</span></td>
-                    <td><span class="neu-badge-code">EVT-2024-000987</span></td>
-                    <td><span class="neu-ip-code">192.168.1.33</span></td>
-                    <td><span class="neu-badge-status success">Success</span></td>
-                    <td><span class="neu-badge-event-type data-access">Data Access</span></td>
-                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
-                  </tr>
-
-                  <tr class="audit-row" data-id="LOG-2024-00012339">
-                    <td><input type="checkbox" /></td>
-                    <td>
-                      <div class="neu-cell-timestamp">
-                        <span class="neu-icon-pill-small blue">📄</span>
-                        <span>15 Jan 2024, 10:08:55 AM</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="neu-cell-user">
-                        <span class="neu-user-name">Vikram Patel</span>
-                        <span class="neu-user-sub">(INS-012)</span>
-                      </div>
-                    </td>
-                    <td><span class="neu-cell-action">Deleted Entity (Soft)</span></td>
-                    <td><span class="neu-badge-code">ENT-2024-0067</span></td>
-                    <td><span class="neu-ip-code">192.168.1.90</span></td>
-                    <td><span class="neu-badge-status success">Success</span></td>
-                    <td><span class="neu-badge-event-type user-action">User Action</span></td>
-                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
-                  </tr>
-
-                  <tr class="audit-row" data-id="LOG-2024-00012338">
-                    <td><input type="checkbox" /></td>
-                    <td>
-                      <div class="neu-cell-timestamp">
-                        <span class="neu-icon-pill-small gear">⚙️</span>
-                        <span>15 Jan 2024, 10:05:21 AM</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="neu-cell-user">
-                        <span class="neu-user-name">System</span>
-                      </div>
-                    </td>
-                    <td><span class="neu-cell-action">Role Updated</span></td>
-                    <td><span class="neu-badge-code">User: ANL-015</span></td>
-                    <td><span class="neu-ip-code">192.168.1.10</span></td>
-                    <td><span class="neu-badge-status success">Success</span></td>
-                    <td><span class="neu-badge-event-type system">System</span></td>
-                    <td style="text-align: right;"><button class="neu-btn-action-more" aria-label="Row actions">•••</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -827,8 +654,8 @@
                       </svg>
                     </div>
                     <div class="neu-linked-text">
-                      <span class="neu-linked-name" id="link-user-name">Rajesh Kumar (INS-001)</span>
-                      <span class="neu-linked-sub" id="link-user-dept">Inspector • Cyber Crime Department</span>
+                      <span class="neu-linked-name" id="link-user-name">—</span>
+                      <span class="neu-linked-sub" id="link-user-dept">—</span>
                     </div>
                   </div>
                   <a href="/frontend/pages/admin.html" class="neu-linked-action" id="btn-view-user-profile">
@@ -849,8 +676,8 @@
                       </svg>
                     </div>
                     <div class="neu-linked-text">
-                      <span class="neu-linked-name" id="link-resource-id">EVT-2024-001245</span>
-                      <span class="neu-linked-sub" id="link-resource-name">Evidence File • mobile_001.jpg</span>
+                      <span class="neu-linked-name" id="link-resource-id">—</span>
+                      <span class="neu-linked-sub" id="link-resource-name">—</span>
                     </div>
                   </div>
                   <a href="/frontend/pages/evidence.html" class="neu-linked-action" id="btn-view-evidence">
@@ -871,8 +698,8 @@
                       </svg>
                     </div>
                     <div class="neu-linked-text">
-                      <span class="neu-linked-name" id="link-case-id">CC/2024/001</span>
-                      <span class="neu-linked-sub" id="link-case-title">Financial Fraud Investigation</span>
+                      <span class="neu-linked-name" id="link-case-id">—</span>
+                      <span class="neu-linked-sub" id="link-case-title">—</span>
                     </div>
                   </div>
                   <a href="/frontend/pages/cases.html" class="neu-linked-action" id="btn-view-case">
@@ -997,64 +824,8 @@
 
             <!-- List of Top Users -->
             <div class="neu-top-users-list" id="top-users-list">
-              <div class="neu-top-user-item">
-                <div class="neu-top-user-left">
-                  <div class="neu-user-circle rk">RK</div>
-                  <div class="neu-top-user-name-box">
-                    <span class="neu-top-user-name">Rajesh Kumar</span>
-                    <span class="neu-top-user-badge">INS-001</span>
-                  </div>
-                </div>
-                <span class="neu-top-user-dept">Cyber Crime</span>
-                <span class="neu-top-user-count">1,842</span>
-              </div>
-
-              <div class="neu-top-user-item">
-                <div class="neu-top-user-left">
-                  <div class="neu-user-circle ps">PS</div>
-                  <div class="neu-top-user-name-box">
-                    <span class="neu-top-user-name">Priya Singh</span>
-                    <span class="neu-top-user-badge">SI-027</span>
-                  </div>
-                </div>
-                <span class="neu-top-user-dept">Cyber Crime</span>
-                <span class="neu-top-user-count">1,256</span>
-              </div>
-
-              <div class="neu-top-user-item">
-                <div class="neu-top-user-left">
-                  <div class="neu-user-circle as">AS</div>
-                  <div class="neu-top-user-name-box">
-                    <span class="neu-top-user-name">Amit Sharma</span>
-                    <span class="neu-top-user-badge">HC-105</span>
-                  </div>
-                </div>
-                <span class="neu-top-user-dept">State Police (Delhi)</span>
-                <span class="neu-top-user-count">987</span>
-              </div>
-
-              <div class="neu-top-user-item">
-                <div class="neu-top-user-left">
-                  <div class="neu-user-circle nv">NV</div>
-                  <div class="neu-top-user-name-box">
-                    <span class="neu-top-user-name">Neha Verma</span>
-                    <span class="neu-top-user-badge">SI-043</span>
-                  </div>
-                </div>
-                <span class="neu-top-user-dept">Economic Offences</span>
-                <span class="neu-top-user-count">854</span>
-              </div>
-
-              <div class="neu-top-user-item">
-                <div class="neu-top-user-left">
-                  <div class="neu-user-circle vp">VP</div>
-                  <div class="neu-top-user-name-box">
-                    <span class="neu-top-user-name">Vikram Patel</span>
-                    <span class="neu-top-user-badge">INS-012</span>
-                  </div>
-                </div>
-                <span class="neu-top-user-dept">Narcotics Control</span>
-                <span class="neu-top-user-count">721</span>
+              <div style="text-align: center; padding: 24px; color: var(--neu-secondary); font-size: 12px;">
+                Aggregating active forensic operators from database…
               </div>
             </div>
           </section>

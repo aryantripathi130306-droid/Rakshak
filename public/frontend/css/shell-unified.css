@@ -1,0 +1,623 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Rakshak v3.0 — Unified Neumorphic Shell Design System
+   Provides consistent floating topbar, floating sidebar, options,
+   controls, and ambient background across all platform pages.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Brand Theme Colors */
+  --neu-bg:                #EBF1F8;
+  --neu-surface:           #F5F8FC;
+  --neu-surface-light:     #FFFFFF;
+  --neu-surface-recessed:  #E5ECF4;
+  --neu-navy:              #0F172A;
+  --neu-navy-subtle:       #334155;
+  --neu-secondary:         #64748B;
+  --neu-muted:             #94A3B8;
+  --neu-blue:              #2563EB;
+  --neu-blue-light:        #3B82F6;
+  --neu-blue-hover:        #1D4ED8;
+  --neu-border:            #E2E8F0;
+  --neu-border-light:      rgba(255, 255, 255, 0.90);
+
+  /* Status Colors */
+  --neu-success:           #16A34A;
+  --neu-success-bg:        #DCFCE7;
+  --neu-warning:           #D97706;
+  --neu-warning-bg:        #FEF3C7;
+  --neu-error:             #DC2626;
+  --neu-error-bg:          #FEE2E2;
+
+  /* Neumorphic Dual Shadows */
+  --neu-shadow-raised-lg:  10px 14px 30px rgba(166, 180, 200, 0.35), -8px -8px 24px rgba(255, 255, 255, 0.95);
+  --neu-shadow-raised-md:  6px 8px 20px rgba(166, 180, 200, 0.28), -6px -6px 18px rgba(255, 255, 255, 0.95);
+  --neu-shadow-raised-sm:  4px 6px 14px rgba(166, 180, 200, 0.24), -4px -4px 12px rgba(255, 255, 255, 0.95);
+  --neu-shadow-pill:       4px 5px 12px rgba(166, 180, 200, 0.22), -3px -3px 10px rgba(255, 255, 255, 0.95);
+  --neu-shadow-pill-hover: 6px 8px 18px rgba(166, 180, 200, 0.32), -5px -5px 14px rgba(255, 255, 255, 0.95);
+  --neu-shadow-btn-primary: 0 6px 18px rgba(37, 99, 235, 0.36), -2px -2px 8px rgba(255, 255, 255, 0.7);
+
+  /* Inset Shadows */
+  --neu-shadow-inset:      inset 2px 2px 5px rgba(166, 180, 200, 0.4), inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+  --neu-shadow-inset-focus: inset 2px 2px 5px rgba(37, 99, 235, 0.25), inset -2px -2px 5px #FFF, 0 0 0 2px rgba(37, 99, 235, 0.35);
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ─── Global Reset & Ambient Body Background ────────────────────────────────── */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--neu-bg) !important;
+  font-family: var(--font-sans);
+  color: var(--neu-navy);
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ─── Floating Shell Layout ─────────────────────────────────────────────────── */
+.neu-shell {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+  width: 100% !important;
+  padding: 16px 20px 24px 20px !important;
+  box-sizing: border-box !important;
+  gap: 16px !important;
+  background: transparent !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FLOATING TOPBAR
+   ═══════════════════════════════════════════════════════════════════ */
+.neu-topbar {
+  height: 68px !important;
+  background-color: var(--neu-surface) !important;
+  border: 1px solid var(--neu-border-light) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--neu-shadow-raised-md) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 24px !important;
+  position: sticky !important;
+  top: 16px !important;
+  z-index: 100 !important;
+}
+
+.neu-topbar-brand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  flex-shrink: 0 !important;
+}
+
+.neu-topbar-shield {
+  width: 38px !important;
+  height: 42px !important;
+  filter: drop-shadow(2px 3px 6px rgba(166, 180, 200, 0.4)) !important;
+}
+
+.neu-topbar-shield svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+.neu-topbar-brand-text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
+}
+
+.neu-topbar-title {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: var(--neu-navy) !important;
+  letter-spacing: -0.02em !important;
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 6px !important;
+  line-height: 1.1 !important;
+}
+
+.neu-topbar-version {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--neu-blue) !important;
+}
+
+.neu-topbar-sub, .neu-topbar-subtitle {
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  color: var(--neu-secondary) !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Center Recessed Global Search */
+.neu-topbar-center {
+  flex: 1 !important;
+  display: flex !important;
+  justify-content: center !important;
+  padding: 0 24px !important;
+}
+
+.neu-search-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 580px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.neu-search-icon {
+  position: absolute !important;
+  left: 16px !important;
+  color: var(--neu-secondary) !important;
+  pointer-events: none !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.neu-search-icon svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.neu-search-input {
+  width: 100% !important;
+  height: 42px !important;
+  border-radius: 21px !important;
+  background-color: var(--neu-surface-recessed) !important;
+  border: 1px solid rgba(200, 212, 226, 0.4) !important;
+  box-shadow: var(--neu-shadow-inset) !important;
+  padding: 0 16px 0 42px !important;
+  font-size: 13px !important;
+  font-family: var(--font-sans) !important;
+  color: var(--neu-navy) !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.neu-search-input:focus {
+  box-shadow: var(--neu-shadow-inset-focus) !important;
+}
+
+.neu-search-input::placeholder {
+  color: var(--neu-secondary) !important;
+  opacity: 0.8 !important;
+}
+
+/* Topbar Right Controls & Profile */
+.neu-topbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-shrink: 0 !important;
+}
+
+.neu-icon-btn {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  background-color: var(--neu-surface) !important;
+  border: 1px solid var(--neu-border-light) !important;
+  box-shadow: var(--neu-shadow-raised-sm) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--neu-secondary) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: all 0.15s ease !important;
+  text-decoration: none !important;
+}
+
+.neu-icon-btn:hover {
+  color: var(--neu-navy) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--neu-shadow-pill-hover) !important;
+}
+
+.neu-icon-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.neu-notif-badge {
+  position: absolute !important;
+  top: -3px !important;
+  right: -3px !important;
+  background-color: var(--neu-error) !important;
+  color: #FFFFFF !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 2px solid var(--neu-surface) !important;
+}
+
+/* Officer Profile Pill */
+.neu-officer-pill, .neu-profile-pill {
+  height: 44px !important;
+  padding: 0 14px 0 8px !important;
+  border-radius: 22px !important;
+  background-color: var(--neu-surface) !important;
+  border: 1px solid var(--neu-border-light) !important;
+  box-shadow: var(--neu-shadow-raised-sm) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  position: relative !important;
+  user-select: none !important;
+}
+
+.neu-officer-pill:hover, .neu-profile-pill:hover {
+  box-shadow: var(--neu-shadow-pill-hover) !important;
+}
+
+.neu-officer-avatar, .neu-profile-avatar {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #FFFFFF !important;
+  flex-shrink: 0 !important;
+}
+
+.neu-officer-avatar svg, .neu-profile-avatar svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.neu-officer-details, .neu-profile-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
+}
+
+.neu-officer-name, .neu-profile-name {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: var(--neu-navy) !important;
+  line-height: 1.2 !important;
+}
+
+.neu-officer-dept, .neu-profile-role {
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  color: var(--neu-secondary) !important;
+  line-height: 1.2 !important;
+}
+
+.neu-chevron svg, .neu-profile-chevron {
+  width: 14px !important;
+  height: 14px !important;
+  color: var(--neu-secondary) !important;
+}
+
+/* Profile Dropdown Popover */
+.neu-profile-dropdown {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  right: 0 !important;
+  width: 240px !important;
+  background-color: var(--neu-surface) !important;
+  border: 1px solid var(--neu-border-light) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--neu-shadow-raised-lg) !important;
+  padding: 14px !important;
+  display: none;
+  flex-direction: column !important;
+  gap: 10px !important;
+  z-index: 1000 !important;
+}
+
+.neu-profile-dropdown.open {
+  display: flex !important;
+  animation: neuDropdownFade 0.15s ease-out !important;
+}
+
+@keyframes neuDropdownFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.neu-dropdown-logout-btn {
+  width: 100% !important;
+  height: 36px !important;
+  border-radius: 18px !important;
+  background-color: var(--neu-surface) !important;
+  border: 1px solid var(--neu-border) !important;
+  box-shadow: var(--neu-shadow-raised-sm) !important;
+  color: var(--neu-error) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.neu-dropdown-logout-btn:hover {
+  background-color: var(--neu-error-bg) !important;
+  box-shadow: var(--neu-shadow-pill-hover) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FLOATING SIDEBAR NAVIGATION
+   ═══════════════════════════════════════════════════════════════════ */
+.neu-body-wrapper, .neu-body-layout, .neu-main-layout {
+  display: flex !important;
+  flex: 1 !important;
+  gap: 20px !important;
+  align-items: flex-start !important;
+  width: 100% !important;
+}
+
+.neu-sidebar {
+  width: 220px !important;
+  background-color: var(--neu-surface) !important;
+  border: 1px solid var(--neu-border-light) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--neu-shadow-raised-md) !important;
+  padding: 16px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  top: 100px !important;
+}
+
+.neu-sidebar-nav, .neu-nav-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.neu-nav-item {
+  height: 42px !important;
+  border-radius: 21px !important;
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  text-decoration: none !important;
+  color: var(--neu-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  transition: all 0.15s ease !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+}
+
+.neu-nav-item:hover:not(.active) {
+  color: var(--neu-navy) !important;
+  background-color: var(--neu-surface) !important;
+  border-color: var(--neu-border-light) !important;
+  box-shadow: var(--neu-shadow-pill) !important;
+  transform: translateX(2px) !important;
+}
+
+/* Active Nav Pill (Exact match to Reference Screenshot) */
+.neu-nav-item.active {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35) !important;
+  font-weight: 700 !important;
+}
+
+.neu-nav-item.active .neu-nav-icon,
+.neu-nav-item.active .neu-nav-icon svg {
+  color: #FFFFFF !important;
+}
+
+.neu-nav-icon {
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.neu-nav-icon svg {
+  width: 18px !important;
+  height: 18px !important;
+  color: inherit !important;
+}
+
+/* Department Connectivity Badge Card */
+.neu-dept-card {
+  margin-top: 8px !important;
+  padding: 12px 14px !important;
+  background-color: var(--neu-surface) !important;
+  border: 1px solid var(--neu-border-light) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--neu-shadow-raised-sm) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.neu-dept-badge-icon {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #E0EDFD !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--neu-blue) !important;
+  flex-shrink: 0 !important;
+}
+
+.neu-dept-badge-icon svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.neu-dept-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
+  min-width: 0 !important;
+}
+
+.neu-dept-title {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--neu-navy) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.neu-dept-sub {
+  font-size: 9.5px !important;
+  font-weight: 500 !important;
+  color: var(--neu-secondary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.neu-dept-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 9.5px !important;
+  font-weight: 600 !important;
+  color: var(--neu-success) !important;
+  margin-top: 2px !important;
+}
+
+.neu-pulse-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background-color: var(--neu-success) !important;
+  box-shadow: 0 0 6px rgba(22, 163, 74, 0.6) !important;
+  animation: neuPulse 2s infinite !important;
+}
+
+@keyframes neuPulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   UNIFIED BUTTONS & FORM CONTROLS (OPTIONS & FILTERS)
+   ═══════════════════════════════════════════════════════════════════ */
+.neu-btn-raised, .neu-filter-btn {
+  height: 38px !important;
+  padding: 0 16px !important;
+  border-radius: 19px !important;
+  background-color: var(--neu-surface) !important;
+  border: 1px solid var(--neu-border-light) !important;
+  box-shadow: var(--neu-shadow-raised-sm) !important;
+  color: var(--neu-navy) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  text-decoration: none !important;
+  user-select: none !important;
+}
+
+.neu-btn-raised:hover, .neu-filter-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: var(--neu-shadow-pill-hover) !important;
+}
+
+.neu-btn-primary {
+  height: 38px !important;
+  padding: 0 18px !important;
+  border-radius: 19px !important;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  box-shadow: var(--neu-shadow-btn-primary) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  text-decoration: none !important;
+  user-select: none !important;
+}
+
+.neu-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.48) !important;
+}
+
+/* Dropdown Pills */
+.neu-select-wrapper {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.neu-select-pill {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  height: 38px !important;
+  padding: 0 32px 0 16px !important;
+  border-radius: 19px !important;
+  background-color: var(--neu-surface) !important;
+  border: 1px solid var(--neu-border-light) !important;
+  box-shadow: var(--neu-shadow-raised-sm) !important;
+  color: var(--neu-navy) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  outline: none !important;
+  transition: all 0.15s ease !important;
+}
+
+.neu-select-pill:hover {
+  box-shadow: var(--neu-shadow-pill-hover) !important;
+}
+
+.neu-select-arrow {
+  position: absolute !important;
+  right: 12px !important;
+  color: var(--neu-secondary) !important;
+  pointer-events: none !important;
+  font-size: 10px !important;
+}

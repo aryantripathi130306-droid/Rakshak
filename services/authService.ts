@@ -170,41 +170,8 @@ export async function authenticateOfficer(
     }
   }
 
-  // 3. Fallback to active demo officer if no token provided (preserves seamless lab access)
+  // 3. Reject unauthenticated requests when no token provided
   if (!token) {
-    if (process.env.STRICT_AUTH === "true" || process.env.NODE_ENV === "production") {
-      return null;
-    }
-    // Return default active officer: DL-CYBER-001, ADMIN-001, DL-002, INS-001, or any active officer
-    const defaultOfficer = (await p.officer.findFirst({
-      where: {
-        status: "ACTIVE",
-        OR: [
-          { badgeNumber: "DL-CYBER-001" },
-          { badgeNumber: "ADMIN-001" },
-          { badgeNumber: "DL-002" },
-          { badgeNumber: "INS-001" },
-        ],
-      },
-    })) || (await p.officer.findFirst({ where: { status: "ACTIVE" } }));
-
-    if (defaultOfficer && defaultOfficer.status === "ACTIVE") {
-      return {
-        officer: {
-          id: defaultOfficer.id,
-          badgeNumber: defaultOfficer.badgeNumber,
-          name: defaultOfficer.name,
-          email: defaultOfficer.email,
-          designation: defaultOfficer.designation,
-          role: defaultOfficer.role as Role,
-          jurisdiction: defaultOfficer.jurisdiction,
-          unit: defaultOfficer.unit,
-          status: defaultOfficer.status,
-          departmentId: (defaultOfficer as any).departmentId ?? null,
-        },
-        token: "demo-session-token",
-      };
-    }
     return null;
   }
 

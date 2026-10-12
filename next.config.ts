@@ -6,9 +6,9 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        // Redirect root to the Rakshak Investigation Dashboard
+        // Redirect root to the Rakshak Officer Login Portal
         source: "/",
-        destination: "/frontend/pages/dashboard.html",
+        destination: "/frontend/pages/login.html",
         permanent: false,
       },
     ];

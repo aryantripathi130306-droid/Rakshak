@@ -512,9 +512,15 @@ export async function getAuthMe() {
 
 /**
  * GET /api/officers
+ * @param {Object} [params] - { q, role, status }
  */
-export async function getOfficers() {
-  return apiFetch('/api/officers');
+export async function getOfficers(params = {}) {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== '' && v != null && v !== 'ALL') qs.set(k, String(v));
+  });
+  const query = qs.toString() ? '?' + qs.toString() : '';
+  return apiFetch(`/api/officers${query}`);
 }
 
 /**
@@ -668,45 +674,6 @@ export async function exportAuditLogs(params = {}, format = 'csv') {
  */
 export async function getCluster(clusterId) {
   return apiFetch(`/api/clusters/${encodeURIComponent(clusterId)}`);
-}
-
-// ─── Entities API ────────────────────────────────────────────────────────────
-/**
- * GET /api/entities
- * @param {Object} [params] - { q, entityType, caseId, evidenceId, page, limit }
- */
-export async function getEntities(params = {}) {
-  const qs = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => {
-    if (v !== '' && v != null && v !== 'ALL') qs.set(k, String(v));
-  });
-  const query = qs.toString() ? '?' + qs.toString() : '';
-  return apiFetch(`/api/entities${query}`);
-}
-
-// ─── Administration & Officers API ───────────────────────────────────────────
-/**
- * GET /api/officers
- * @param {Object} [params] - { q, role, status }
- */
-export async function getOfficers(params = {}) {
-  const qs = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => {
-    if (v !== '' && v != null && v !== 'ALL') qs.set(k, String(v));
-  });
-  const query = qs.toString() ? '?' + qs.toString() : '';
-  return apiFetch(`/api/officers${query}`);
-}
-
-/**
- * POST /api/officers
- * Provision a new officer account
- */
-export async function createOfficer(data) {
-  return apiFetch('/api/officers', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
 }
 
 /**

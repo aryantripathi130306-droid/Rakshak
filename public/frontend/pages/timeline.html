@@ -96,7 +96,7 @@
             </svg>
           </div>
           <div class="neu-profile-info">
-            <span class="neu-profile-name" id="officer-name">Inspector Rajesh Kumar</span>
+            <span class="neu-profile-name" id="officer-name">Officer</span>
             <span class="neu-profile-role" id="officer-dept">Cyber Crime Department</span>
           </div>
           <span class="neu-profile-chevron" aria-hidden="true">▾</span>
@@ -486,10 +486,6 @@
               <label for="filter-select-evidence" class="tl-filter-label">Related Evidence</label>
               <select id="filter-select-evidence" class="tl-select-custom" aria-label="Filter by Related Evidence">
                 <option value="ALL" selected>All Evidence</option>
-                <option value="MOBILE_001.jpg">MOBILE_001.jpg (Image)</option>
-                <option value="BANK_STMT.pdf">BANK_STMT.pdf (Document)</option>
-                <option value="EMAIL_TRAIL.eml">EMAIL_TRAIL.eml (Email)</option>
-                <option value="DEVICE_DUMP.zip">DEVICE_DUMP.zip (Device Data)</option>
               </select>
             </div>
 
@@ -498,9 +494,6 @@
               <label for="filter-select-officer" class="tl-filter-label">User/Officer</label>
               <select id="filter-select-officer" class="tl-select-custom" aria-label="Filter by User or Officer">
                 <option value="ALL" selected>All Users</option>
-                <option value="Inspector Rajesh Kumar">Inspector Rajesh Kumar</option>
-                <option value="Inspector Priya Singh">Inspector Priya Singh</option>
-                <option value="ACP Rajeev Kumar">ACP Rajeev Kumar</option>
               </select>
             </div>
 
@@ -536,167 +529,9 @@
             <!-- Vertical Timeline Track with Event Nodes & Cards -->
             <div class="tl-stream-container">
               <div class="tl-timeline-track" id="timeline-events-track">
-                
-                <!-- Event 1: Case Created -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001001" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-case" aria-hidden="true">📁</div>
-                  <div class="tl-event-card">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">Case Created</h3>
-                      <p class="tl-event-desc">Case CC/2024/001 created by Inspector Rajesh Kumar</p>
-                      <span class="tl-event-tag-badge tl-tag-case">Case Event</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">15 Jan 2024</span>
-                      <span class="tl-event-time">10:30 AM</span>
-                    </div>
-                  </div>
+                <div style="text-align: center; padding: 48px; color: var(--neu-secondary); font-size: 13px;">
+                  Loading forensic timeline events from database…
                 </div>
-
-                <!-- Event 2: Evidence Collected (SELECTED in reference) -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001245" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-evidence" aria-hidden="true">📄</div>
-                  <div class="tl-event-card selected">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">Evidence Collected</h3>
-                      <p class="tl-event-desc">mobile_001.jpg accepted into evidence</p>
-                      <span class="tl-event-tag-badge tl-tag-evidence">Evidence Event</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">15 Jan 2024</span>
-                      <span class="tl-event-time">11:20 AM</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Event 3: Entity Identified -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001003" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-entity" aria-hidden="true">👤</div>
-                  <div class="tl-event-card">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">Entity Identified</h3>
-                      <p class="tl-event-desc">Phone number +91 98765 43210 linked to case</p>
-                      <span class="tl-event-tag-badge tl-tag-entity">Entity Event</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">15 Jan 2024</span>
-                      <span class="tl-event-time">12:15 PM</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Event 4: Analysis Completed -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001004" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-action" aria-hidden="true">🔍</div>
-                  <div class="tl-event-card">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">Analysis Completed</h3>
-                      <p class="tl-event-desc">Initial forensic analysis completed on mobile device</p>
-                      <span class="tl-event-tag-badge tl-tag-action">Investigation Action</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">16 Jan 2024</span>
-                      <span class="tl-event-time">09:45 AM</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Event 5: Case Status Updated -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001005" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-case" aria-hidden="true">📁</div>
-                  <div class="tl-event-card">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">Case Status Updated</h3>
-                      <p class="tl-event-desc">Status changed from Open to Under Investigation</p>
-                      <span class="tl-event-tag-badge tl-tag-case">Case Event</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">16 Jan 2024</span>
-                      <span class="tl-event-time">02:30 PM</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Event 6: Evidence Analysis -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001006" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-evidence" aria-hidden="true">📄</div>
-                  <div class="tl-event-card">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">Evidence Analysis</h3>
-                      <p class="tl-event-desc">Hash verification completed - No tampering detected</p>
-                      <span class="tl-event-tag-badge tl-tag-evidence">Evidence Event</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">17 Jan 2024</span>
-                      <span class="tl-event-time">11:10 AM</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Event 7: Entity Connection -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001007" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-entity" aria-hidden="true">👤</div>
-                  <div class="tl-event-card">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">Entity Connection</h3>
-                      <p class="tl-event-desc">Entity linked with CC/2024/045 (cross-case match)</p>
-                      <span class="tl-event-tag-badge tl-tag-entity">Entity Event</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">18 Jan 2024</span>
-                      <span class="tl-event-time">03:20 PM</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Event 8: Investigation Note -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001008" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-action" aria-hidden="true">📞</div>
-                  <div class="tl-event-card">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">Investigation Note</h3>
-                      <p class="tl-event-desc">Field investigation conducted at Sector 17</p>
-                      <span class="tl-event-tag-badge tl-tag-action">Investigation Action</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">19 Jan 2024</span>
-                      <span class="tl-event-time">10:00 AM</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Event 9: Case Milestone -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001009" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-case" aria-hidden="true">📁</div>
-                  <div class="tl-event-card">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">Case Milestone</h3>
-                      <p class="tl-event-desc">Chargesheet preparation initiated</p>
-                      <span class="tl-event-tag-badge tl-tag-case">Case Event</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">20 Jan 2024</span>
-                      <span class="tl-event-time">04:15 PM</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Event 10: User Activity -->
-                <div class="tl-event-row" data-event-id="EVT-2024-001010" tabindex="0" role="button">
-                  <div class="tl-event-node tl-node-system" aria-hidden="true">⚙️</div>
-                  <div class="tl-event-card">
-                    <div class="tl-event-content-left">
-                      <h3 class="tl-event-title">User Activity</h3>
-                      <p class="tl-event-desc">Report generated by Inspector Priya Singh</p>
-                      <span class="tl-event-tag-badge tl-tag-system">System Event</span>
-                    </div>
-                    <div class="tl-event-content-right">
-                      <span class="tl-event-date">21 Jan 2024</span>
-                      <span class="tl-event-time">09:30 AM</span>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </div>
 
@@ -776,7 +611,7 @@
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Title</span>
-                      <span class="tl-meta-val" id="detail-event-title">mobile_001.jpg accepted into evidence</span>
+                      <span class="tl-meta-val" id="detail-event-title">—</span>
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Description</span>
@@ -788,7 +623,7 @@
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Created By</span>
-                      <span class="tl-meta-val" id="detail-event-creator">Inspector Rajesh Kumar</span>
+                      <span class="tl-meta-val" id="detail-event-creator">—</span>
                     </div>
                     <div class="tl-meta-row">
                       <span class="tl-meta-key">Department</span>
@@ -813,7 +648,7 @@
                   <div class="tl-related-card" id="detail-related-case-card">
                     <div class="tl-related-icon tl-icon-case" aria-hidden="true">📁</div>
                     <div class="tl-related-body">
-                      <span class="tl-related-title" id="detail-rel-case-title">CC/2024/001</span>
+                      <span class="tl-related-title" id="detail-rel-case-title">—</span>
                       <span class="tl-related-subtitle" id="detail-rel-case-sub">Financial Fraud Investigation</span>
                       <a href="/frontend/pages/cases.html?case=CC/2024/001" class="tl-related-link" id="detail-rel-case-link">View Case →</a>
                     </div>
@@ -833,7 +668,7 @@
                   <div class="tl-related-card" id="detail-related-evidence-card">
                     <div class="tl-related-icon tl-icon-evidence" aria-hidden="true">📄</div>
                     <div class="tl-related-body">
-                      <span class="tl-related-title" id="detail-rel-ev-title">mobile_001.jpg</span>
+                      <span class="tl-related-title" id="detail-rel-ev-title">—</span>
                       <span class="tl-related-subtitle" id="detail-rel-ev-sub">Image (2.4 MB)</span>
                       <a href="/frontend/pages/evidence.html?id=ev-cc001-mobile" class="tl-related-link" id="detail-rel-ev-link">View Evidence →</a>
                     </div>
@@ -853,7 +688,7 @@
                   </div>
                   <div class="tl-meta-row">
                     <span class="tl-meta-key">File Name</span>
-                    <span class="tl-meta-val" id="detail-add-filename">mobile_001.jpg</span>
+                    <span class="tl-meta-val" id="detail-add-filename">—</span>
                   </div>
                   <div class="tl-meta-row">
                     <span class="tl-meta-key">File Size</span>

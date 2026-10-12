@@ -96,7 +96,7 @@
             </svg>
           </div>
           <div class="neu-profile-info">
-            <span class="neu-profile-name" id="officer-name">Inspector Rajesh Kumar</span>
+            <span class="neu-profile-name" id="officer-name">Officer</span>
             <span class="neu-profile-role" id="officer-dept">Cyber Crime Department</span>
           </div>
           <span class="neu-profile-chevron" aria-hidden="true">▾</span>
@@ -583,7 +583,7 @@
                     </div>
                     <div class="cd-meta-row">
                       <span class="cd-meta-key">Requested By</span>
-                      <span class="cd-meta-val" id="det-req-by">Inspector Rajesh Kumar<br/><small style="color: var(--neu-secondary);">Cyber Crime Department</small></span>
+                      <span class="cd-meta-val" id="det-req-by">—</span>
                     </div>
                     <div class="cd-meta-row">
                       <span class="cd-meta-key">Target Department</span>
@@ -592,7 +592,7 @@
                     <div class="cd-meta-row">
                       <span class="cd-meta-key">Related Case</span>
                       <span class="cd-meta-val">
-                        <a href="/frontend/pages/cases.html?case=CC/2024/001" class="cd-case-link" id="det-req-case-link">CC/2024/001</a>
+                        <span class="cd-meta-val" id="det-req-case-link">—</span>
                         <br/>
                         <a href="/frontend/pages/cases.html?case=CC/2024/001" class="cd-case-link" style="font-size: 11px;">View Case →</a>
                       </span>
@@ -861,11 +861,8 @@
         <div class="neu-form-field">
           <label class="neu-form-label" for="req-case-id">Related Case Number *</label>
           <select id="req-case-id" class="neu-form-select" required>
-            <option value="CC/2024/001">CC/2024/001 — Financial Fraud Investigation</option>
-            <option value="CC/2024/045">CC/2024/045 — Cyber Extortion Case</option>
-            <option value="CC/2024/078">CC/2024/078 — Money Laundering</option>
-            <option value="CC/2024/012">CC/2024/012 — Cross-Border Investment Scam</option>
-          </select>
+                <option value="">Select registered case…</option>
+              </select>
         </div>
         <div class="neu-form-field">
           <label class="neu-form-label" for="req-type">Access Request Type *</label>
@@ -904,7 +901,7 @@
         </p>
         <div class="neu-form-field">
           <label class="neu-form-label" for="appr-notes">Approval Remarks / Supervisory Authority</label>
-          <input type="text" id="appr-notes" class="neu-form-input" value="Approved by Inspector Rajesh Kumar under Section 91 CrPC / BNSS guidelines" />
+          <input type="text" id="appr-notes" class="neu-form-input" value="Approved under Section 91 CrPC / BNSS guidelines" />
         </div>
       </div>
       <div class="neu-modal-footer">

@@ -45,7 +45,9 @@ async function apiFetch(path, options = {}) {
     let errMsg = `Request failed: ${res.status} ${res.statusText}`;
     try {
       const errData = await res.json();
-      errMsg = errData.error || errData.message || errMsg;
+      errMsg = errData.details
+        ? `${errData.error || 'Error'}: ${errData.details}`
+        : (errData.error || errData.message || errMsg);
     } catch (_) {}
     const err = new Error(errMsg);
     err.status = res.status;

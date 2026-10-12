@@ -117,21 +117,25 @@ export async function createSession(
   const expiresAt = new Date(Date.now() + SESSION_TTL_HOURS * 60 * 60 * 1000);
 
   const p = prisma as any;
-  await p.officerSession.create({
-    data: {
-      token,
-      officerId,
-      expiresAt,
-      ipAddress: ipAddress || "103.45.67.89",
-      userAgent: userAgent || "Rakshak-Workstation",
-    },
-  });
+  try {
+    await p.officerSession.create({
+      data: {
+        token,
+        officerId,
+        expiresAt,
+        ipAddress: ipAddress || "103.45.67.89",
+        userAgent: userAgent || "Rakshak-Workstation",
+      },
+    });
 
-  // Update last activity timestamp on officer record
-  await p.officer.update({
-    where: { id: officerId },
-    data: { updatedAt: new Date() },
-  }).catch(() => {});
+    // Update last activity timestamp on officer record
+    await p.officer.update({
+      where: { id: officerId },
+      data: { updatedAt: new Date() },
+    }).catch(() => {});
+  } catch (sessionErr) {
+    console.warn("[authService] Warning: Could not persist session record to database:", sessionErr);
+  }
 
   return { token, expiresAt };
 }

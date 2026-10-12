@@ -46,6 +46,8 @@ jobs:
       - name: Validate Historical Regression Suites (Phases 6–15)
         run: |
           export DATABASE_URL="file:./dev.db"
+          node --experimental-strip-types prisma/seed.ts
+          node --experimental-strip-types prisma/seed_phase6.ts
 
           npm run start > /tmp/rakshak-next-start.log 2>&1 &
           NEXT_SERVER_PID=$!

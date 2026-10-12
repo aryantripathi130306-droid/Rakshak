@@ -29,6 +29,7 @@ jobs:
         run: |
           npm ci --ignore-scripts
           npx prisma generate
+          npx prisma generate --schema prisma/schema.postgresql.prisma
 
       - name: TypeScript Static Compilation
         run: npx tsc --noEmit

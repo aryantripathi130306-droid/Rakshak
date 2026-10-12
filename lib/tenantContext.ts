@@ -8,7 +8,7 @@
 // 3. Guarantees zero tenant context leakage upon COMMIT, ROLLBACK, or pool return.
 // 4. Enforces strict fail-closed exceptions for unauthorized department access.
 // ─────────────────────────────────────────────────────────────────────────────
-import type { PrismaClient as PrismaClientPg } from "@prisma/client-pg";
+import type { Prisma, PrismaClient as PrismaClientPg } from "@prisma/client-pg";
 
 export interface TenantContextOptions {
   officerId: string;
@@ -22,7 +22,7 @@ export interface TenantContextOptions {
 export async function withTenantContext<T>(
   client: PrismaClientPg,
   context: TenantContextOptions,
-  operation: (tx: any) => Promise<T>
+  operation: (tx: Prisma.TransactionClient) => Promise<T>
 ): Promise<T> {
   const { officerId, departmentId } = context;
 
@@ -31,7 +31,7 @@ export async function withTenantContext<T>(
   }
 
   // Interactive transaction ensures all operations occur on a single connection
-  return await client.$transaction(async (tx) => {
+  return await client.$transaction(async (tx: Prisma.TransactionClient) => {
     // 1. Establish validated tenant context (validates Officer table assignment)
     await tx.$executeRaw`SELECT set_authenticated_tenant_context(${officerId}, ${departmentId});`;
 
@@ -56,9 +56,9 @@ export async function withTenantContext<T>(
  */
 export async function withPlatformAdminContext<T>(
   client: PrismaClientPg,
-  operation: (tx: any) => Promise<T>
+  operation: (tx: Prisma.TransactionClient) => Promise<T>
 ): Promise<T> {
-  return await client.$transaction(async (tx) => {
+  return await client.$transaction(async (tx: Prisma.TransactionClient) => {
     // 1. Assert platform admin context (enforces membership in rakshak_admin_role)
     await tx.$executeRaw`SELECT set_platform_admin_context();`;
 

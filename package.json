@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run prisma:generate && next build",
     "start": "next start",
+    "prisma:generate": "prisma generate --schema=prisma/schema.prisma && prisma generate --schema=prisma/schema.postgresql.prisma",
     "db:seed": "node scripts/seed_dev_environment.mjs",
     "db:seed:dev": "node scripts/seed_dev_environment.mjs",
     "db:seed:test": "node scripts/seed_test_environment.mjs",
@@ -13,7 +14,7 @@
     "db:clean-init": "node scripts/create_clean_deployment.mjs",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset --force",
-    "postinstall": "prisma generate"
+    "postinstall": "npm run prisma:generate"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

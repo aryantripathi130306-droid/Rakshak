@@ -7,7 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { authenticateOfficer, hasPermission, canAccessDepartment } from "@/services/authService";
+import { authenticateOfficer, hasPermission, canAccessDepartmentAsync } from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -47,7 +47,7 @@ export async function GET(
       return Response.json({ error: `Case not found: ${caseId}` }, { status: 404 });
     }
 
-    if (!canAccessDepartment(auth.officer, caseRecord.jurisdiction, (caseRecord as any).departmentId)) {
+    if (!(await canAccessDepartmentAsync(auth.officer, caseRecord.jurisdiction, (caseRecord as any).departmentId))) {
       return Response.json(
         { error: "Access denied: Case belongs to another departmental jurisdiction." },
         { status: 403 }

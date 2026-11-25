@@ -1,0 +1,197 @@
+{
+  "phase": "PHASE 34",
+  "title": "Critical Security Patch, Access-Grant Consistency & PostgreSQL RLS Verification",
+  "timestamp": "2026-10-25T11:39:57.151Z",
+  "overallStatus": "FAILED",
+  "serverRuntime": {
+    "engine": "PostgreSQL 16.15",
+    "database": "rakshak_phase43_test",
+    "host": "127.0.0.1:5432",
+    "runtimeRole": "rakshak_app_user (NOBYPASSRLS)",
+    "adminRole": "rakshak_admin_user (IN rakshak_admin_role)"
+  },
+  "metrics": {
+    "total": 22,
+    "passed": 20,
+    "failed": 2,
+    "blocked": 0
+  },
+  "testCases": [
+    {
+      "id": "TC-A01",
+      "workstream": "Workstream A",
+      "name": "Next.js upgraded to patched release 16.4.3",
+      "status": "PASSED",
+      "details": "installed: 16.4.3",
+      "timestamp": "2026-10-25T11:39:57.153Z"
+    },
+    {
+      "id": "TC-A02",
+      "workstream": "Workstream A",
+      "name": "React 19.2.8 ecosystem compatibility verified",
+      "status": "PASSED",
+      "details": "installed: 19.2.8",
+      "timestamp": "2026-10-25T11:39:57.153Z"
+    },
+    {
+      "id": "TC-A03",
+      "workstream": "Workstream A",
+      "name": "Zod upgraded to patched release 4.6.7 (GHSA-mrhx-c7xc-m3w5 resolved)",
+      "status": "PASSED",
+      "details": "installed: 4.6.7",
+      "timestamp": "2026-10-25T11:39:57.154Z"
+    },
+    {
+      "id": "TC-A04",
+      "workstream": "Workstream A",
+      "name": "package-lock.json resolves next@16.4.3 securely",
+      "status": "PASSED",
+      "details": "lockfile resolved",
+      "timestamp": "2026-10-25T11:39:57.154Z"
+    },
+    {
+      "id": "TC-D01",
+      "workstream": "Workstream B/D",
+      "name": "Cross-process grant revocation observed immediately",
+      "status": "PASSED",
+      "details": "Active -> Revoked",
+      "timestamp": "2026-10-25T11:39:57.271Z"
+    },
+    {
+      "id": "TC-D02",
+      "workstream": "Workstream B/D",
+      "name": "Grant expiring between requests denied immediately",
+      "status": "PASSED",
+      "details": "Active -> Expired",
+      "timestamp": "2026-10-25T11:39:57.431Z"
+    },
+    {
+      "id": "TC-D03",
+      "workstream": "Workstream B/D",
+      "name": "Suspended officer grant check fails closed immediately",
+      "status": "PASSED",
+      "details": "Denied synchronously and asynchronously",
+      "timestamp": "2026-10-25T11:39:57.434Z"
+    },
+    {
+      "id": "TC-D04",
+      "workstream": "Workstream B/D",
+      "name": "Officer department reassignment invalidates previous department scope",
+      "status": "PASSED",
+      "details": "Denied immediately",
+      "timestamp": "2026-10-25T11:39:57.435Z"
+    },
+    {
+      "id": "TC-D05",
+      "workstream": "Workstream B/D",
+      "name": "Concurrent grant creation and revocation without lost updates",
+      "status": "PASSED",
+      "details": "5/5 concurrent operations atomic",
+      "timestamp": "2026-10-25T11:39:57.453Z"
+    },
+    {
+      "id": "TC-D06",
+      "workstream": "Workstream B/D",
+      "name": "Missing or unresolvable grant state fails closed",
+      "status": "PASSED",
+      "details": "Denied access",
+      "timestamp": "2026-10-25T11:39:57.453Z"
+    },
+    {
+      "id": "TC-D07",
+      "workstream": "Workstream B/D",
+      "name": "canAccessCaseAsync denies unauthorized cross-dept case inspection",
+      "status": "PASSED",
+      "details": "Cross-department access denied without an approved grant",
+      "timestamp": "2026-10-25T11:39:57.458Z"
+    },
+    {
+      "id": "TC-D08",
+      "workstream": "Workstream B/D",
+      "name": "canAccessEvidenceAsync denies unauthorized binary exhibit retrieval",
+      "status": "PASSED",
+      "details": "Cross-department access denied without an approved grant",
+      "timestamp": "2026-10-25T11:39:57.463Z"
+    },
+    {
+      "id": "TC-C01",
+      "workstream": "Workstream C",
+      "name": "Role rakshak_app_user verified with NOBYPASSRLS and non-superuser",
+      "status": "PASSED",
+      "details": "rolsuper=false, rolbypassrls=false",
+      "timestamp": "2026-10-25T11:39:57.639Z"
+    },
+    {
+      "id": "TC-C02",
+      "workstream": "Workstream C",
+      "name": "AccessGrant catalog has relrowsecurity=true and relforcerowsecurity=true",
+      "status": "PASSED",
+      "details": "RLS and FORCE RLS active",
+      "timestamp": "2026-10-25T11:39:57.826Z"
+    },
+    {
+      "id": "TC-C03",
+      "workstream": "Workstream C",
+      "name": "Authorized read of grant within permitted department scope",
+      "status": "FAILED",
+      "details": "Visible: ",
+      "timestamp": "2026-10-25T11:39:58.222Z"
+    },
+    {
+      "id": "TC-C04",
+      "workstream": "Workstream C",
+      "name": "Denied read of foreign department's unassociated grants",
+      "status": "PASSED",
+      "details": "MUM internal & DEL-to-MUM invisible to CHD",
+      "timestamp": "2026-10-25T11:39:58.222Z"
+    },
+    {
+      "id": "TC-C05",
+      "workstream": "Workstream C",
+      "name": "Missing tenant context denies all grant rows (fails closed)",
+      "status": "PASSED",
+      "details": "count=0",
+      "timestamp": "2026-10-25T11:39:58.409Z"
+    },
+    {
+      "id": "TC-C06",
+      "workstream": "Workstream C",
+      "name": "Denied unauthorized cross-department grant insertion via RLS WITH CHECK",
+      "status": "PASSED",
+      "details": "RLS check violation raised",
+      "timestamp": "2026-10-25T11:39:58.534Z"
+    },
+    {
+      "id": "TC-C07",
+      "workstream": "Workstream C",
+      "name": "Client-asserted app.is_platform_admin ignored for non-admin role",
+      "status": "FAILED",
+      "details": "Count=0 (expected 2)",
+      "timestamp": "2026-10-25T11:39:58.681Z"
+    },
+    {
+      "id": "TC-C08",
+      "workstream": "Workstream C",
+      "name": "Legitimate administrative role inspects full grant catalog",
+      "status": "PASSED",
+      "details": "count=4 (full catalog visible to admin)",
+      "timestamp": "2026-10-25T11:39:58.820Z"
+    },
+    {
+      "id": "TC-C09",
+      "workstream": "Workstream C",
+      "name": "Direct SQL access remains restricted independently of application layer",
+      "status": "PASSED",
+      "details": "RLS enforced in database kernel",
+      "timestamp": "2026-10-25T11:39:58.820Z"
+    },
+    {
+      "id": "TC-C10",
+      "workstream": "Workstream C",
+      "name": "Evidence binary cold storage verified 100% unaltered",
+      "status": "PASSED",
+      "details": "560 files preserved",
+      "timestamp": "2026-10-25T11:39:58.916Z"
+    }
+  ]
+}

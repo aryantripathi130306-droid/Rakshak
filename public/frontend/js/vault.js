@@ -681,6 +681,7 @@ function renderInspectorContent(ev) {
         <span class="custody-time">${formatUTC(c.timestamp)}</span>
       </div>
       <div class="custody-action">${escapeHtml(c.action)}</div>
+      ${c.eventHash ? `<div style="font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);margin:2px 0;">${c.sequenceNumber ? `#${c.sequenceNumber} · ` : ''}Digest: ${escapeHtml(c.eventHash.slice(0, 16))}…</div>` : ''}
       <span class="custody-badge ${escapeHtml(c.result || 'SUCCESS')}">${escapeHtml(c.eventType)} · ${escapeHtml(c.result)}</span>
     </div>
   `).join('') || '<div style="color:var(--text-muted);font-size:10px">No chain of custody records recorded yet.</div>';
@@ -719,6 +720,18 @@ function renderInspectorContent(ev) {
 
     <!-- Fields -->
     <div class="inspector-section-title">EVIDENCE METADATA</div>
+    <div class="inspector-field">
+      <div class="inspector-field-label">LIFECYCLE STATUS</div>
+      <div>
+        <span class="badge ${ev.status === 'QUARANTINED' || ev.status === 'REJECTED' ? 'badge-danger' : ev.status === 'SEALED' ? 'badge-amber' : 'badge-emerald'}" style="font-size:9px;font-weight:700;">
+          ${escapeHtml(ev.status || 'ACCEPTED')}
+        </span>
+      </div>
+    </div>
+    <div class="inspector-field">
+      <div class="inspector-field-label">CURRENT CUSTODIAN</div>
+      <div class="inspector-field-value">${escapeHtml(ev.currentCustodianId || 'Assigned Officer')}</div>
+    </div>
     <div class="inspector-field">
       <div class="inspector-field-label">CATEGORY</div>
       <div>${renderCategoryBadge(ev.evidenceCategory || 'OTHER')}</div>

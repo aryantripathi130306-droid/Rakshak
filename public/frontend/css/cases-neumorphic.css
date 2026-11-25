@@ -1526,3 +1526,172 @@ html, body.neu-cases-body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 35: CASE LIFECYCLE, TEAM ASSIGNMENTS & AUDIT HISTORY
+   ═══════════════════════════════════════════════════════════════════ */
+.neu-lifecycle-card,
+.neu-team-card {
+  background-color: var(--neu-surface);
+  border: 1px solid var(--neu-border-light);
+  border-radius: 20px;
+  box-shadow: var(--neu-shadow-raised-md);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.neu-card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.neu-transition-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.neu-action-btn-sm {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--neu-border-light);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-raised-sm);
+  color: var(--neu-navy);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.neu-action-btn-sm:hover:not(:disabled) {
+  box-shadow: var(--neu-shadow-raised-md);
+  color: var(--neu-blue);
+  transform: translateY(-1px);
+}
+
+.neu-action-btn-sm:active:not(:disabled) {
+  box-shadow: var(--neu-shadow-inset);
+  transform: translateY(0);
+}
+
+.neu-action-btn-sm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.neu-action-btn-primary {
+  background: var(--neu-blue);
+  color: #FFFFFF !important;
+  border: none;
+  box-shadow: var(--neu-shadow-btn-primary);
+}
+
+.neu-action-btn-primary:hover:not(:disabled) {
+  background: var(--neu-blue-hover);
+  color: #FFFFFF !important;
+}
+
+.neu-team-member-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background-color: var(--neu-surface-recessed);
+  box-shadow: var(--neu-shadow-inset);
+  margin-bottom: 6px;
+}
+
+.neu-team-member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.neu-team-member-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--neu-navy);
+}
+
+.neu-team-member-sub {
+  font-size: 10.5px;
+  color: var(--neu-secondary);
+}
+
+.neu-badge-role {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.neu-badge-primary {
+  background: #E1EDFC;
+  color: var(--neu-blue);
+}
+
+.neu-badge-collaborator {
+  background: #F1EAFF;
+  color: var(--cat-purple);
+}
+
+.neu-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.neu-history-item {
+  border-left: 3px solid var(--neu-blue);
+  padding: 6px 0 6px 14px;
+  position: relative;
+}
+
+.neu-history-item::before {
+  content: '';
+  position: absolute;
+  left: -6.5px;
+  top: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--neu-surface);
+  border: 2px solid var(--neu-blue);
+}
+
+.neu-history-meta {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--neu-navy);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.neu-history-desc {
+  font-size: 11.5px;
+  color: var(--neu-navy-subtle);
+  margin-top: 2px;
+}
+
+.neu-history-actor {
+  font-size: 10px;
+  color: var(--neu-secondary);
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}

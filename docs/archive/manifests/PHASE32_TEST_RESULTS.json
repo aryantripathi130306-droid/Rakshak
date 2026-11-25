@@ -1,0 +1,131 @@
+{
+  "suite": "Rakshak v3.0 Phase 32 Multi-User Authorization & Tenancy Suite",
+  "timestamp": "2026-10-25T11:39:49.766Z",
+  "totalScenarios": 20,
+  "passed": 20,
+  "failed": 0,
+  "passPercentage": "100.0%",
+  "activeDatabaseUntouched": true,
+  "scenarios": [
+    {
+      "scenarioNum": 1,
+      "name": "Investigator reads an assigned case",
+      "passed": true,
+      "details": "Authorized by assignment & department"
+    },
+    {
+      "scenarioNum": 2,
+      "name": "Investigator attempts to read unauthorized case",
+      "passed": true,
+      "details": "Cross-department access denied without an approved grant"
+    },
+    {
+      "scenarioNum": 3,
+      "name": "Supervisor reviews permitted unit case",
+      "passed": true,
+      "details": "Authorized by unit scope"
+    },
+    {
+      "scenarioNum": 4,
+      "name": "Supervisor cross-department access controlled strictly by approved grant",
+      "passed": true,
+      "details": "Denied without grant (Cross-department access denied without an approved grant); Permitted with approved grant"
+    },
+    {
+      "scenarioNum": 5,
+      "name": "Evidence examiner reads permitted evidence metadata",
+      "passed": true,
+      "details": "Metadata read permitted"
+    },
+    {
+      "scenarioNum": 6,
+      "name": "Evidence examiner downloads binary without permission is denied",
+      "passed": true,
+      "details": "Requires explicit evidence binary download permission"
+    },
+    {
+      "scenarioNum": 7,
+      "name": "Department administrator manages authorized department account",
+      "passed": true,
+      "details": "Within department boundary"
+    },
+    {
+      "scenarioNum": 8,
+      "name": "Department administrator platform-wide privilege escalation rejected",
+      "passed": true,
+      "details": "Cross-dept rejected: true; Role escalation rejected: true"
+    },
+    {
+      "scenarioNum": 9,
+      "name": "System administrator accesses case contents without grant: deny by default",
+      "passed": true,
+      "details": "System administrator denied case content access without an active case assignment or grant"
+    },
+    {
+      "scenarioNum": 10,
+      "name": "Auditor reads authorized audit records",
+      "passed": true,
+      "details": "audit:read permission verified"
+    },
+    {
+      "scenarioNum": 11,
+      "name": "Auditor attempts to modify or delete audit history is denied",
+      "passed": true,
+      "details": "Audit logs are strictly immutable"
+    },
+    {
+      "scenarioNum": 12,
+      "name": "Viewer attempts unsupported privileged action is denied",
+      "passed": true,
+      "details": "case:create, officer:create, and evidence:download rejected"
+    },
+    {
+      "scenarioNum": 13,
+      "name": "Suspended officer operation is denied",
+      "passed": true,
+      "details": "Account status is SUSPENDED"
+    },
+    {
+      "scenarioNum": 14,
+      "name": "Revoked session reuse is denied",
+      "passed": true,
+      "details": "Revocation flag invalidates session"
+    },
+    {
+      "scenarioNum": 15,
+      "name": "Client-submitted role substitution rejected",
+      "passed": true,
+      "details": "Resolved role: VIEWER"
+    },
+    {
+      "scenarioNum": 16,
+      "name": "Unauthorized cross-department access rejected",
+      "passed": true,
+      "details": "Cross-department rejected without active grant"
+    },
+    {
+      "scenarioNum": 17,
+      "name": "Revoked or expired access grants stop working",
+      "passed": true,
+      "details": "Expired active: false; Revoked active: false"
+    },
+    {
+      "scenarioNum": 18,
+      "name": "Missing tenant context fails closed",
+      "passed": true,
+      "details": "Returned false on missing target context"
+    },
+    {
+      "scenarioNum": 19,
+      "name": "Legacy roles retain intended, no-more-permissive behavior",
+      "passed": true,
+      "details": "Legacy ADMIN manages system: true; Case content bypass closed: true"
+    },
+    {
+      "scenarioNum": 20,
+      "name": "Role changes trigger session revocation and audit logging",
+      "passed": true,
+      "details": "Revocation & audit verified"
+    }
+  ]
+}

@@ -124,6 +124,10 @@ export async function GET(
     const isVerified = evidence.clientHash.toLowerCase() === evidence.sha256Hash.toLowerCase();
     const isLiveMatch = diskSha256 ? diskSha256.toLowerCase() === evidence.sha256Hash.toLowerCase() : null;
 
+    const { verifyCustodyChainEvents } = await import("@/lib/custodyChain");
+    const rawEvents = (evAny.custodyEvents || []) as any[];
+    const chainVerification = verifyCustodyChainEvents(rawEvents);
+
     return Response.json(
       {
         evidence: {
@@ -140,6 +144,14 @@ export async function GET(
           metadata: parsedMetadata,
           uploadedAt: evidence.uploadedAt.toISOString(),
           integrityStatus: isVerified ? "VERIFIED" : "TAMPERED",
+          status: evAny.status || "ACCEPTED",
+          currentCustodianId: evAny.currentCustodianId || null,
+          examinerId: evAny.examinerId || null,
+          quarantineReason: evAny.quarantineReason || null,
+          sealedAt: evAny.sealedAt ? new Date(evAny.sealedAt).toISOString() : null,
+          releasedAt: evAny.releasedAt ? new Date(evAny.releasedAt).toISOString() : null,
+          version: evAny.version || 1,
+          chainVerification,
           case: evAny.case,
           facts: factsList.map((f: any) => ({
             id: f.id,
@@ -176,13 +188,16 @@ export async function GET(
             originalLanguage: ct.originalLanguage,
             messages: parseJsonSafe(ct.messages),
           })),
-          custodyEvents: (evAny.custodyEvents || []).map((c: any) => ({
+          custodyEvents: rawEvents.map((c: any) => ({
             id: c.id,
             eventType: c.eventType,
             actor: c.actor,
             action: c.action,
             result: c.result,
             details: c.details ? parseJsonSafe(c.details) : null,
+            prevEventHash: c.prevEventHash || null,
+            eventHash: c.eventHash || null,
+            sequenceNumber: c.sequenceNumber || null,
             timestamp: c.timestamp ? new Date(c.timestamp).toISOString() : "",
           })),
           crossCaseMatches,

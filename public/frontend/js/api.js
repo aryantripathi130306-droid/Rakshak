@@ -136,7 +136,6 @@ export async function patchCase(caseId, updates) {
   });
 }
 
-
 // ─── Evidence API ─────────────────────────────────────────────────────────────
 
 /**
@@ -212,6 +211,46 @@ export async function logCustodyEvent(id, body) {
   return apiFetch(`/api/evidence/${encodeURIComponent(id)}/custody`, {
     method: 'POST',
     body: JSON.stringify(body),
+  });
+}
+
+/**
+ * POST /api/evidence/:id/transition
+ */
+export async function transitionEvidence(id, toStatus, reason, options = {}) {
+  return apiFetch(`/api/evidence/${encodeURIComponent(id)}/transition`, {
+    method: 'POST',
+    body: JSON.stringify({ toStatus, reason, options }),
+  });
+}
+
+/**
+ * POST /api/evidence/:id/transfer
+ */
+export async function transferEvidenceCustody(id, toOfficerId, reason) {
+  return apiFetch(`/api/evidence/${encodeURIComponent(id)}/transfer`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'initiate', toOfficerId, reason }),
+  });
+}
+
+/**
+ * POST /api/evidence/:id/transfer (accept)
+ */
+export async function acceptEvidenceCustody(id, notes) {
+  return apiFetch(`/api/evidence/${encodeURIComponent(id)}/transfer`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'accept', notes }),
+  });
+}
+
+/**
+ * POST /api/evidence/:id/examine
+ */
+export async function examineEvidence(id, action = 'start', options = {}) {
+  return apiFetch(`/api/evidence/${encodeURIComponent(id)}/examine`, {
+    method: 'POST',
+    body: JSON.stringify({ action, ...options }),
   });
 }
 
@@ -808,5 +847,56 @@ export async function submitDepartmentOnboardingRequest(data) {
  */
 export async function getDepartmentOnboardingRequests() {
   return apiFetch('/api/auth/onboard-requests');
+}
+
+// ─── Phase 35: Case Lifecycle & Officer Assignment API ────────────────────────
+
+/**
+ * POST /api/cases/:caseId/transition
+ * Perform validated state machine transition with reason & supervisor checks
+ * @param {string} caseId
+ * @param {{ toStatus: string, reason: string, approvedBy?: string }} data
+ */
+export async function transitionCaseStatus(caseId, data) {
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/transition`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * GET /api/cases/:caseId/assignment
+ * Retrieve active and historical officer assignments for a case
+ * @param {string} caseId
+ */
+export async function getCaseAssignments(caseId) {
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/assignment`);
+}
+
+/**
+ * POST /api/cases/:caseId/assignment
+ * Assign primary investigator or add collaborator
+ * @param {string} caseId
+ * @param {{ officerId: string, assignmentType?: 'PRIMARY'|'COLLABORATOR', reason?: string }} data
+ */
+export async function assignCaseOfficer(caseId, data) {
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/assignment`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * DELETE /api/cases/:caseId/assignment/:assignmentId
+ * Revoke or end a collaborator assignment
+ * @param {string} caseId
+ * @param {string} assignmentId
+ * @param {{ reason?: string }} [data]
+ */
+export async function revokeCaseAssignment(caseId, assignmentId, data = {}) {
+  return apiFetch(`/api/cases/${encodeURIComponent(caseId)}/assignment/${encodeURIComponent(assignmentId)}`, {
+    method: 'DELETE',
+    body: JSON.stringify(data),
+  });
 }
 

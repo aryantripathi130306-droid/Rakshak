@@ -1,0 +1,247 @@
+{
+  "phase": "PHASE 44",
+  "pipeline": "RAKSHAK OPERATIONAL RESILIENCE, BACKUP RECOVERY & SERVICE HEALTH",
+  "timestampStart": "2026-10-27T14:53:44.865Z",
+  "timestampEnd": "2026-10-27T14:54:01.391Z",
+  "overallStatus": "PASSED",
+  "operationalStatus": "READY FOR CONTROLLED SYNTHETIC-DATA TESTING — BACKUP, RESTORE & OPERATIONAL RECOVERY VERIFIED",
+  "metrics": {
+    "totalTests": 26,
+    "passedTests": 26,
+    "failedTests": 0,
+    "coldEvidenceBinaries": 560,
+    "devDbHash": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9"
+  },
+  "timings": {
+    "dumpDurationMs": 310,
+    "tocDurationMs": 37,
+    "restoreDurationMs": 659,
+    "baselineValidationDurationMs": 621,
+    "totalBackupAndRestoreCycleMs": 1590,
+    "rto": "NOT DEFINED (Laboratory measurement only; production RTO/RPO pending SLA specification)",
+    "rpo": "NOT DEFINED (Laboratory measurement only; production RTO/RPO pending SLA specification)"
+  },
+  "backupArtifact": {
+    "filename": "rakshak_synthetic_backup_2026-10-27T14-53-51-460Z.dump",
+    "sizeBytes": 153875,
+    "sha256Digest": "9b2dab3afa2b44c47ef72b121e478af4499018acf27f7ff135ae5110392fbd1b",
+    "sourceDatabase": "rakshak_phase44_backup_test",
+    "targetDatabase": "rakshak_phase44_restore_test",
+    "pgVersion": "16.15"
+  },
+  "tests": [
+    {
+      "id": "P44-SAFE-01",
+      "workstream": "Safety Invariants",
+      "name": "Cold evidence store (uploads/raw/) contains 560 files with unaltered manifest hash",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Count: 560, Manifest: bdc91bb78c603d21..."
+    },
+    {
+      "id": "P44-SAFE-02",
+      "workstream": "Safety Invariants",
+      "name": "Active dev.db exhibits verified historical digest",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Hash: dd24614b14f1b4cf..."
+    },
+    {
+      "id": "P44-SAFE-03",
+      "workstream": "Safety Invariants",
+      "name": "Protected historical databases blacklist enforced",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Blacklist entries: 17 protected databases"
+    },
+    {
+      "id": "P44-BAK-01",
+      "workstream": "Workstream B",
+      "name": "Authoritative source DB provisioned and seeded with deterministic synthetic fixtures",
+      "status": "PASSED",
+      "passed": true,
+      "details": "31 tables seeded: Cases=3, Evidence=3, Officers=5"
+    },
+    {
+      "id": "P44-BAK-02",
+      "workstream": "Workstream B",
+      "name": "pg_dump custom format (-F c) execution generates valid artifact with complete metadata",
+      "status": "PASSED",
+      "passed": true,
+      "details": "File: rakshak_synthetic_backup_2026-10-27T14-53-51-460Z.dump, Size: 150.3 KB, SHA-256: 9b2dab3afa2b44c4..., Time: 310ms",
+      "backupFile": "rakshak_synthetic_backup_2026-10-27T14-53-51-460Z.dump",
+      "backupSize": 153875,
+      "backupSha256": "9b2dab3afa2b44c47ef72b121e478af4499018acf27f7ff135ae5110392fbd1b",
+      "pgVersion": "16.15",
+      "dumpDurationMs": 310
+    },
+    {
+      "id": "P44-BAK-03",
+      "workstream": "Workstream B",
+      "name": "pg_restore -l successfully inspects backup TOC and confirms schema, data, and RLS definitions",
+      "status": "PASSED",
+      "passed": true,
+      "details": "TOC entries verified: Tables, Data, and Row Security present (37ms)"
+    },
+    {
+      "id": "P44-RST-01",
+      "workstream": "Workstream C",
+      "name": "Target database does not exist prior to restore initialization (isolation confirmed)",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Confirmed 'rakshak_phase44_restore_test' does not exist"
+    },
+    {
+      "id": "P44-RST-02",
+      "workstream": "Workstream C",
+      "name": "Restored database passes 100% security baseline catalog audit",
+      "status": "PASSED",
+      "passed": true,
+      "details": "31 tables, 20 RLS, 20 FORCE RLS, 21 policies, app_user unprivileged (Validation: 621ms)"
+    },
+    {
+      "id": "P44-RST-03",
+      "workstream": "Workstream C",
+      "name": "100% deterministic fixture parity between source and restored databases across all 31 tables",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Source total rows: 27 == Restored total rows: 27"
+    },
+    {
+      "id": "P44-RST-04",
+      "workstream": "Workstream C",
+      "name": "Integrity constraints, custody unique indexes, and authorization functions restored intact",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Unique index verified: CustodyEvent_evidence_seq_unique_idx; Distinct functions verified: 3"
+    },
+    {
+      "id": "P44-RST-05",
+      "workstream": "Workstream C",
+      "name": "Direct RLS enforcement and cross-department tenant isolation verified on restored database",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Dept 1 sees assigned case (count=1); Dept 2 ungranted query isolated (count=0)"
+    },
+    {
+      "id": "P44-FAIL-01",
+      "workstream": "Workstream D",
+      "name": "PostgreSQL unreachable: fails closed safely without credential leakage",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Trapped connection failure without credential leakage"
+    },
+    {
+      "id": "P44-FAIL-02",
+      "workstream": "Workstream D",
+      "name": "Invalid connection configuration: fails closed with safe error and secret redaction",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Trapped invalid connection configuration without credential leakage"
+    },
+    {
+      "id": "P44-FAIL-03",
+      "workstream": "Workstream D",
+      "name": "Missing DATABASE_URL: fails closed with informative security exception",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Captured fail-closed ConfigError"
+    },
+    {
+      "id": "P44-FAIL-04",
+      "workstream": "Workstream D",
+      "name": "Corrupted backup artifact: cryptographic digest mismatch trapped before restore",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Digest mismatch verified: Expected=9b2dab3a... Actual=4b5e704e..."
+    },
+    {
+      "id": "P44-FAIL-05",
+      "workstream": "Workstream D",
+      "name": "Existing restore target safety guard refuses destructive overwrite",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Refusal triggered: SAFETY REFUSAL: Target database 'rakshak_phase44_restore_test' already exists."
+    },
+    {
+      "id": "P44-FAIL-06",
+      "workstream": "Workstream D",
+      "name": "Partial restore detected and rejected via fixture verification",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Detected zero data rows in partial restore (Cases: 0)"
+    },
+    {
+      "id": "P44-FAIL-07",
+      "workstream": "Workstream D",
+      "name": "Security catalog audit catches dropped tenant isolation policy and fails closed",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Catalog failure trapped: Missing required RLS policies: Case|p_case_tenant_isolation"
+    },
+    {
+      "id": "P44-FAIL-08",
+      "workstream": "Workstream D",
+      "name": "Application role (rakshak_app_user) prevented from executing unauthorized DDL",
+      "status": "PASSED",
+      "passed": true,
+      "details": "PostgreSQL permission denied on DDL execution confirmed"
+    },
+    {
+      "id": "P44-FAIL-09",
+      "workstream": "Workstream D",
+      "name": "Forensic evidence tamper detection verifies checksum mismatch on disposable synthetic fixture",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Tamper detected on disposable fixture (uploads/raw/ was untouched)"
+    },
+    {
+      "id": "P44-FAIL-10",
+      "workstream": "Workstream D",
+      "name": "Unsupported or corrupt document input handled safely with graceful error trapping",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Corrupt binary input safely trapped without process crash"
+    },
+    {
+      "id": "P44-HLT-01",
+      "workstream": "Workstream E",
+      "name": "Health endpoint distinguishes liveness (process UP) via ?probe=liveness",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Liveness probe returned HTTP 200 ALIVE"
+    },
+    {
+      "id": "P44-HLT-02",
+      "workstream": "Workstream E",
+      "name": "Health endpoint evaluates overall readiness and dependency health (database & cold storage)",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Readiness probe returned HTTP 200 READY (DB Latency: 0ms)"
+    },
+    {
+      "id": "P44-LOG-01",
+      "workstream": "Workstream F",
+      "name": "Structured operational logging redacts database passwords and sensitive credentials",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Redaction verified: postgresql://rakshak_admin:********@127.0.0.1:5432/rakshak_db"
+    },
+    {
+      "id": "P44-SAFE-04",
+      "workstream": "Safety Invariants",
+      "name": "Post-execution audit: uploads/raw/ exhibits 100% byte-for-byte immutability (560 files)",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Exhibits count: 560, Manifest: bdc91bb78c603d21..."
+    },
+    {
+      "id": "P44-SAFE-05",
+      "workstream": "Safety Invariants",
+      "name": "Post-execution audit: active dev.db remains 100% untouched",
+      "status": "PASSED",
+      "passed": true,
+      "details": "Hash: dd24614b14f1b4cf..."
+    }
+  ]
+}

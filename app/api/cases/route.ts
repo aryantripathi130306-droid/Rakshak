@@ -1,7 +1,13 @@
 import { type NextRequest } from "next/server";
-import { z } from "zod";
 import prisma from "@/lib/prisma";
-import { authenticateOfficer, hasPermission, canAccessDepartment, logAuditEvent } from "@/services/authService";
+import {
+  authenticateOfficer,
+  hasPermission,
+  canAccessDepartment,
+  canAccessDepartmentAsync,
+  getDepartmentScopeFilter,
+  logAuditEvent,
+} from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -81,7 +87,7 @@ export async function GET(request: NextRequest) {
     const skip      = (page - 1) * limit;
 
     // Department authorization check
-    if (jur && !canAccessDepartment(auth.officer, jur)) {
+    if (jur && !(await canAccessDepartmentAsync(auth.officer, jur))) {
       return Response.json(
         { error: "Access denied: Unauthorized cross-department query." },
         { status: 403 }
@@ -106,9 +112,10 @@ export async function GET(request: NextRequest) {
 
     if (jur) {
       where.jurisdiction = { contains: jur };
-    } else if (auth.officer.role !== "ADMIN" && auth.officer.jurisdiction) {
-      // Automatic department scoping for non-admin officers
-      where.jurisdiction = { contains: auth.officer.jurisdiction };
+    } else {
+      // Automatic department and access grant scoping
+      const scopeFilter = getDepartmentScopeFilter(auth.officer);
+      Object.assign(where, scopeFilter);
     }
 
     // Build sort
@@ -158,24 +165,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    if (auth.officer.status !== "ACTIVE") {
+      return Response.json(
+        { error: `Account status is ${auth.officer.status}. Suspended officers cannot create cases.` },
+        { status: 403 }
+      );
+    }
 
-    const caseNumberSupplied = body.caseNumber;
+    const body = await request.json().catch(() => ({}));
+
+    if (!body.complainantName || typeof body.complainantName !== "string" || body.complainantName.trim() === "") {
+      return Response.json({ error: "Complainant name is required." }, { status: 400 });
+    }
+
+    if (!body.incidentType || typeof body.incidentType !== "string" || body.incidentType.trim() === "") {
+      return Response.json({ error: "Incident type is required." }, { status: 400 });
+    }
+
+    const caseNumberSupplied = body.caseNumber ? String(body.caseNumber).trim() : null;
     const incidentType = normalizeType(body.incidentType);
-    const complainantName = body.complainantName || "Anonymous";
-    const jurisdiction = body.jurisdiction || null;
-    const amountDefrauded = typeof body.amountDefrauded === 'number'
-      ? body.amountDefrauded
-      : (typeof body.totalLossINR === 'number' ? body.totalLossINR : (typeof body.fraudAmountINR === 'number' ? body.fraudAmountINR : 0));
+    const complainantName = body.complainantName.trim();
+    const jurisdiction = body.jurisdiction || auth.officer.jurisdiction || null;
+    const departmentId = body.departmentId || auth.officer.departmentId || null;
+    const rawAmt = body.amountDefrauded ?? body.totalLossINR ?? body.fraudAmountINR ?? 0;
+    const amountDefrauded = typeof rawAmt === 'number' ? Math.round(rawAmt) : 0;
+
+    if (amountDefrauded < 0) {
+      return Response.json({ error: "Amount defrauded cannot be negative." }, { status: 400 });
+    }
+
     const description = body.description || null;
     const firNumber = body.firNumber || null;
-    const officerName = body.officerName || body.investigatingOfficer || null;
-    const officerBadge = body.officerBadge || null;
-    const status = normalizeStatus(body.status);
-
-    if (!complainantName || complainantName.trim() === '') {
-      return Response.json({ error: "Complainant name is required" }, { status: 400 });
-    }
+    const officerName = body.officerName || body.investigatingOfficer || auth.officer.name;
+    const officerBadge = body.officerBadge || auth.officer.badgeNumber;
+    const status = normalizeStatus(body.status) || "OPEN";
 
     const caseNumber = caseNumberSupplied || (await generateCaseNumber());
 
@@ -187,19 +210,70 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const newCase = await prisma.case.create({
-      data: {
-        caseNumber,
-        incidentType,
-        complainantName,
-        jurisdiction,
-        amountDefrauded: Math.round(amountDefrauded),
-        description,
-        firNumber,
-        officerName,
-        officerBadge,
-        status,
-      },
+    const newCase = await prisma.$transaction(async (tx: any) => {
+      const created = await tx.case.create({
+        data: {
+          caseNumber,
+          incidentType,
+          complainantName,
+          jurisdiction,
+          departmentId,
+          amountDefrauded,
+          description,
+          firNumber,
+          officerName,
+          officerBadge,
+          status,
+        },
+      });
+
+      // Initialize status history
+      await tx.caseStatusHistory.create({
+        data: {
+          caseId: created.id,
+          fromStatus: "OPEN",
+          toStatus: status,
+          changedById: auth.officer.id,
+          changedByName: auth.officer.name,
+          changedByBadge: auth.officer.badgeNumber || null,
+          departmentId: created.departmentId,
+          reason: "Initial case intake registration",
+        },
+      });
+
+      // Initialize primary assignment history if assigned
+      if (officerName && officerBadge) {
+        await tx.caseAssignmentHistory.create({
+          data: {
+            caseId: created.id,
+            officerName,
+            officerBadge,
+            departmentId: created.departmentId,
+            assignedById: auth.officer.id,
+            assignedByName: auth.officer.name,
+            assignedByBadge: auth.officer.badgeNumber || null,
+            assignmentType: "PRIMARY",
+            status: "ACTIVE",
+            reason: "Initial case intake assignment",
+          },
+        });
+      }
+
+      return created;
+    });
+
+    const ipAddress = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "103.45.67.89";
+    await logAuditEvent({
+      officerId: auth.officer.id,
+      officerName: auth.officer.name,
+      officerBadge: auth.officer.badgeNumber,
+      action: "CREATE_CASE",
+      module: "Cases",
+      targetType: "Case",
+      targetId: newCase.id,
+      details: `Created investigation ${newCase.caseNumber} in jurisdiction ${newCase.jurisdiction}`,
+      result: "SUCCESS",
+      ipAddress,
     });
 
     return Response.json(newCase, { status: 201 });

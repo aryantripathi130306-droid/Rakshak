@@ -13,9 +13,28 @@ import { validateEnvironment } from "@/lib/env";
 
 export const runtime = "nodejs";
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const probe = searchParams.get("probe");
+
+  // Immediate Liveness Probe (process responding check)
+  if (probe === "liveness") {
+    return Response.json(
+      {
+        status: "ALIVE",
+        liveness: "UP",
+        timestamp: new Date().toISOString(),
+        uptimeSeconds: Math.floor(process.uptime()),
+      },
+      {
+        status: 200,
+        headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },
+      }
+    );
+  }
+
   const startTime = Date.now();
-  const checks: Record<string, { status: "UP" | "DOWN"; latencyMs?: number; details?: any }> = {};
+  const checks: Record<string, { status: "UP" | "DOWN"; latencyMs?: number; details?: Record<string, any> }> = {};
   let overallHealthy = true;
 
   // 1. Database Connectivity Check
@@ -32,17 +51,21 @@ export async function GET(_request: NextRequest) {
       },
     };
   } catch (err: any) {
+    // Sanitize any database errors to prevent leaking connection details or SQL fragments
+    const rawMsg = err?.message || "Database connection error";
+    const sanitizedMsg = rawMsg
+      .replace(/(password=)[^&; ]+/gi, "$1***")
+      .replace(/(:)[^:@/]+(@)/, "$1***$2");
     checks.database = {
       status: "DOWN",
-      details: { error: err.message || "Database unreachable" },
+      details: { error: sanitizedMsg.slice(0, 100) },
     };
     overallHealthy = false;
   }
 
-  // 2. Persistent Evidence Cold Storage Check
+  // 2. Persistent Evidence Cold Storage Check (read-only verification)
   try {
     const storagePath = path.join(process.cwd(), "uploads", "raw");
-    // Non-mutating access check on immutable evidence storage
     await fs.access(storagePath, fs.constants.R_OK);
 
     const files = await fs.readdir(storagePath);
@@ -51,23 +74,21 @@ export async function GET(_request: NextRequest) {
     checks.evidenceStorage = {
       status: "UP",
       details: {
-        path: "uploads/raw",
+        verifiedReadOnly: true,
         immutableBinaries: binCount,
-        writable: true,
       },
     };
-  } catch (err: any) {
+  } catch {
     checks.evidenceStorage = {
       status: "DOWN",
-      details: { error: err.message || "Cold storage inaccessible" },
+      details: { error: "Cold storage inaccessible or unreadable" },
     };
     overallHealthy = false;
   }
 
   // 3. Environment & Security Configuration Check
-  let envConfig;
   try {
-    envConfig = validateEnvironment();
+    const envConfig = validateEnvironment();
     checks.security = {
       status: "UP",
       details: {
@@ -76,9 +97,10 @@ export async function GET(_request: NextRequest) {
       },
     };
   } catch (err: any) {
+    const rawMsg = err?.message || "Configuration error";
     checks.security = {
       status: "DOWN",
-      details: { error: err.message },
+      details: { error: rawMsg.slice(0, 100) },
     };
     overallHealthy = false;
   }
@@ -88,11 +110,13 @@ export async function GET(_request: NextRequest) {
 
   const responsePayload = {
     status: overallHealthy ? "HEALTHY" : "DEGRADED",
+    liveness: "UP",
+    readiness: overallHealthy ? "READY" : "NOT_READY",
     timestamp: new Date().toISOString(),
     uptimeSeconds: Math.floor(process.uptime()),
     latencyMs: totalDurationMs,
     version: "3.0.0",
-    checks,
+    dependencyHealth: checks,
     system: {
       nodeVersion: process.version,
       platform: process.platform,
@@ -115,6 +139,7 @@ export async function GET(_request: NextRequest) {
     headers: {
       "Cache-Control": "no-store, no-cache, must-revalidate",
       "X-Rakshak-Health": overallHealthy ? "PASS" : "FAIL",
+      "X-Rakshak-Readiness": overallHealthy ? "READY" : "NOT_READY",
     },
   });
 }

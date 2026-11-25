@@ -1,0 +1,209 @@
+{
+  "phase": "36.2",
+  "title": "Cross-Process Custody-Chain Concurrency, Sequence Integrity & Trust-Anchor Readiness",
+  "timestamp": "2026-10-27T16:30:27.064Z",
+  "environment": {
+    "nodeVersion": "v24.15.0",
+    "database": "rakshak_phase46_test",
+    "appUserRole": "rakshak_app_user",
+    "manifestColdBinaries": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+    "coldBinaryCount": 560
+  },
+  "summary": {
+    "total": 27,
+    "passed": 27,
+    "failed": 0,
+    "passRate": "100.0%"
+  },
+  "testResults": [
+    {
+      "id": "TC-01",
+      "workstream": "Workstream A/C",
+      "name": "Two independent Node.js processes append to same evidence chain simultaneously (10 events, 0 forks)",
+      "status": "PASSED",
+      "details": "P1_exit=0, P2_exit=0, totalEvents=10, valid=true"
+    },
+    {
+      "id": "TC-02",
+      "workstream": "Workstream A/C",
+      "name": "Ten concurrent appends across independent clients complete without duplicate sequence numbers",
+      "status": "PASSED",
+      "details": "events=10, seqs=[1,2,3,4,5,6,7,8,9,10], valid=true"
+    },
+    {
+      "id": "TC-03",
+      "workstream": "Workstream A/C",
+      "name": "Every committed event strictly references authoritative predecessor digest",
+      "status": "PASSED",
+      "details": "verified=10 events"
+    },
+    {
+      "id": "TC-04",
+      "workstream": "Workstream A/C",
+      "name": "Two independent processes attempting concurrent custody transfers: 1 commits, 1 gets 409 conflict, 0 forks",
+      "status": "PASSED",
+      "details": "exitCodes=[0,2], eventsCount=1"
+    },
+    {
+      "id": "TC-05",
+      "workstream": "Workstream A/C",
+      "name": "Concurrent writes to different evidence items proceed independently with zero cross-exhibit lock contention",
+      "status": "PASSED",
+      "details": "durationMs=219"
+    },
+    {
+      "id": "TC-06",
+      "workstream": "Workstream B",
+      "name": "Duplicate sequence insertion rejected by CustodyEvent_evidence_seq_unique_idx constraint",
+      "status": "PASSED",
+      "details": "ERROR:  duplicate key value violates unique constraint \"CustodyEvent_eviden"
+    },
+    {
+      "id": "TC-07",
+      "workstream": "Workstream B",
+      "name": "Custody event with eventHash = NULL rejected by CustodyEvent_eventHash_check",
+      "status": "PASSED",
+      "details": "ERROR:  new row for relation \"CustodyEvent\" violates check constraint \"Cust"
+    },
+    {
+      "id": "TC-08",
+      "workstream": "Workstream B",
+      "name": "Malformed eventHash (non-64 hex) rejected by CustodyEvent_eventHash_check",
+      "status": "PASSED",
+      "details": "ERROR:  new row for relation \"CustodyEvent\" violates check constraint \"Cust"
+    },
+    {
+      "id": "TC-09",
+      "workstream": "Workstream B",
+      "name": "Unsupported canonicalization version (v99) fails closed before database persistence",
+      "status": "PASSED",
+      "details": "Unsupported canonicalization version: 'v99'"
+    },
+    {
+      "id": "TC-10",
+      "workstream": "Workstream B",
+      "name": "Malformed prevEventHash rejected by CustodyEvent_prevEventHash_check",
+      "status": "PASSED",
+      "details": "ERROR:  new row for relation \"CustodyEvent\" violates check constraint \"Cust"
+    },
+    {
+      "id": "TC-11",
+      "workstream": "Workstream B/C",
+      "name": "Sequential and contended appends handle transaction lifecycle safely",
+      "status": "PASSED",
+      "details": "seq1=1, seq2=2"
+    },
+    {
+      "id": "TC-12",
+      "workstream": "Workstream C",
+      "name": "Transaction error mid-lifecycle transition completely rolls back evidence and custody state",
+      "status": "PASSED",
+      "details": "status=IN_CUSTODY, version=1, eventsCount=0"
+    },
+    {
+      "id": "TC-13",
+      "workstream": "Workstream C",
+      "name": "Aborted transaction / connection loss leaves zero phantom sequences or chain corruption",
+      "status": "PASSED",
+      "details": "legitimateSeq=1"
+    },
+    {
+      "id": "TC-14",
+      "workstream": "Workstream B/C",
+      "name": "Historical V1 events and modern V2 events seamlessly verify in composite chain",
+      "status": "PASSED",
+      "details": "valid=true"
+    },
+    {
+      "id": "TC-15",
+      "workstream": "Workstream E",
+      "name": "Direct SQL UPDATE, DELETE, TRUNCATE on CustodyEvent denied to rakshak_app_user",
+      "status": "PASSED",
+      "details": "All mutations rejected with permission denied"
+    },
+    {
+      "id": "TC-16",
+      "workstream": "Workstream E",
+      "name": "Forged tenant context strictly denied from reading or writing unauthorized CustodyEvent rows via RLS",
+      "status": "PASSED",
+      "details": "readCount=0, insertDenied=true"
+    },
+    {
+      "id": "TC-17",
+      "workstream": "Workstream E",
+      "name": "DISCARD ALL cleanses session authorization variables to prevent cross-request leakage on pooled connections",
+      "status": "PASSED",
+      "details": "output='officer_secret_123 DISCARD ALL CLEARED'"
+    },
+    {
+      "id": "TC-18",
+      "workstream": "Workstream C",
+      "name": "Independent verifier reliably detects duplicate sequence numbers and sequence discontinuities",
+      "status": "PASSED",
+      "details": "Sequence discontinuity or reordering detected at index 1: expected #2, got #1"
+    },
+    {
+      "id": "TC-19",
+      "workstream": "Workstream D",
+      "name": "Custody checkpoint binds evidenceId, latestSequenceNumber, latestEventHash, and timestamp with HMAC-SHA256",
+      "status": "PASSED",
+      "details": "sig=66b4a383454220bb..."
+    },
+    {
+      "id": "TC-20",
+      "workstream": "Workstream D",
+      "name": "Forged checkpoint signature rejected with cryptographic signature invalid",
+      "status": "PASSED",
+      "details": "Checkpoint cryptographic signature invalid (signature mismatch)"
+    },
+    {
+      "id": "TC-21",
+      "workstream": "Workstream D",
+      "name": "Altered checkpoint payload rejected with signature mismatch",
+      "status": "PASSED",
+      "details": "Checkpoint cryptographic signature invalid (signature mismatch)"
+    },
+    {
+      "id": "TC-22",
+      "workstream": "Workstream D",
+      "name": "Checkpoint substitution between distinct exhibits rejected with evidenceId mismatch",
+      "status": "PASSED",
+      "details": "Trust anchor evidenceId mismatch: checkpoint=643597d1-2a3b-4b01-a51c-63ea516a33c4, chain=002c329f-3332-449e-a33f-3e6837caaf3d"
+    },
+    {
+      "id": "TC-23",
+      "workstream": "Workstream D",
+      "name": "Stale checkpoint from older sequence rejected when validating chain head integrity",
+      "status": "PASSED",
+      "details": "Trust anchor sequence mismatch: checkpoint certifies #2 but chain head is #3. Stale checkpoint cannot certify altered newer chain."
+    },
+    {
+      "id": "TC-24",
+      "workstream": "Workstream D",
+      "name": "createCustodyCheckpointFromDbAsync authoritatively generates verified head checkpoint from database",
+      "status": "PASSED",
+      "details": "headSeq=3, valid=true"
+    },
+    {
+      "id": "TC-25",
+      "workstream": "Safety",
+      "name": "rakshak_app_user verified unprivileged: rolsuper=f, rolcreaterole=f, rolcreatedb=f, rolbypassrls=f",
+      "status": "PASSED",
+      "details": "f|t|f|f|f"
+    },
+    {
+      "id": "TC-26",
+      "workstream": "Safety",
+      "name": "Cold storage uploads/raw/ 560 files remain 100% unaltered with byte-identical manifest hash",
+      "status": "PASSED",
+      "details": "count=560, hash=bdc91bb78c603d21..."
+    },
+    {
+      "id": "TC-27",
+      "workstream": "Safety",
+      "name": "Active dev.db database untouched and unaltered during tests",
+      "status": "PASSED",
+      "details": "hash=dd24614b14f1b4cf..."
+    }
+  ]
+}

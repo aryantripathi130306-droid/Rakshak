@@ -53,7 +53,8 @@ export async function GET(
     const isVideo = mimeType.startsWith("video/");
 
     // Read file from cold storage
-    const storagePath = path.join(process.cwd(), "uploads", "raw", `${evidence.sha256Hash}.bin`);
+    const baseStorageDir = process.env.EVIDENCE_STORAGE_PATH || path.join(process.cwd(), "uploads", "raw");
+    const storagePath = path.join(baseStorageDir, `${evidence.sha256Hash}.bin`);
     let fileBuffer: Buffer;
     try {
       fileBuffer = await fs.readFile(storagePath);

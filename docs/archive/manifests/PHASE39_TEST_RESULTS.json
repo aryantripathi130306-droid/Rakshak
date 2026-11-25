@@ -1,0 +1,259 @@
+{
+  "phase": "PHASE_39",
+  "title": "OCR Processing, Structured Fact Extraction & Provenance-Controlled Validation",
+  "timestamp": "2026-10-25T11:40:42.797Z",
+  "database": "rakshak_phase43_test",
+  "summary": {
+    "total": 35,
+    "passed": 35,
+    "failed": 0,
+    "successRate": "100.0%"
+  },
+  "results": [
+    {
+      "id": "TC-01",
+      "workstream": "Workstream A",
+      "name": "Authorized processing request succeeds",
+      "status": "PASSED",
+      "details": "Artifact: c34d8fef-2c5b-4ee8-a382-0fd2c65443e4, chars: 621"
+    },
+    {
+      "id": "TC-02",
+      "workstream": "Workstream A",
+      "name": "Unauthenticated request is denied",
+      "status": "PASSED",
+      "details": "Authentication required: Missing officer identity"
+    },
+    {
+      "id": "TC-03",
+      "workstream": "Workstream A",
+      "name": "Suspended officer is denied",
+      "status": "PASSED",
+      "details": "Access denied: Officer account is SUSPENDED. Active account required."
+    },
+    {
+      "id": "TC-04",
+      "workstream": "Workstream A",
+      "name": "Unauthorized department cannot retrieve extraction results",
+      "status": "PASSED",
+      "details": "Access denied: Case FIR-MUM-2026-391 belongs to departmental jurisdiction dept_p39_mumbai without an active access grant."
+    },
+    {
+      "id": "TC-05",
+      "workstream": "Workstream A",
+      "name": "Revoked grant blocks processing or review as appropriate",
+      "status": "PASSED",
+      "details": "Access denied: Case FIR-MUM-2026-391 belongs to departmental jurisdiction dept_p39_mumbai without an active access grant."
+    },
+    {
+      "id": "TC-06",
+      "workstream": "Workstream A",
+      "name": "Source hash mismatch prevents normal processing",
+      "status": "PASSED",
+      "details": "Trapped hash mismatch"
+    },
+    {
+      "id": "TC-07",
+      "workstream": "Workstream A",
+      "name": "Unsupported file types are rejected",
+      "status": "PASSED",
+      "details": "Unsupported MIME type 'application/zip' for OCR text extraction."
+    },
+    {
+      "id": "TC-08",
+      "workstream": "Workstream A",
+      "name": "Oversized documents are rejected safely",
+      "status": "PASSED",
+      "details": "File exceeds maximum OCR size limit of 25MB (26.00MB)"
+    },
+    {
+      "id": "TC-09",
+      "workstream": "Workstream A",
+      "name": "Malformed documents fail without corrupting records",
+      "status": "PASSED",
+      "details": "Artifact status: FAILED"
+    },
+    {
+      "id": "TC-10",
+      "workstream": "Workstream A",
+      "name": "Temporary filenames cannot escape the restricted workspace",
+      "status": "PASSED",
+      "details": "Safe path: E:\\Rakshak\\scratch\\ocr_temp\\rakshak_ocr_a2a12514-1c5c-4b3b-b9ad-0f53a86a9037.tmp"
+    },
+    {
+      "id": "TC-11",
+      "workstream": "Workstream B",
+      "name": "Extracted text retains its evidence reference",
+      "status": "PASSED",
+      "details": "Evidence: evi_p39_txt_doc, Hash: b09a718e72e61079..."
+    },
+    {
+      "id": "TC-12",
+      "workstream": "Workstream B",
+      "name": "Page references are preserved when supported",
+      "status": "PASSED",
+      "details": "Page count: 1"
+    },
+    {
+      "id": "TC-13",
+      "workstream": "Workstream A",
+      "name": "OCR service failure produces a real failure state",
+      "status": "PASSED",
+      "details": "Recorded error: Source binary integrity failure: Computed SHA..."
+    },
+    {
+      "id": "TC-14",
+      "workstream": "Workstream A",
+      "name": "Duplicate processing requests are handled idempotently where applicable",
+      "status": "PASSED",
+      "details": "Reused artifact ID: c34d8fef-2c5b-4ee8-a382-0fd2c65443e4"
+    },
+    {
+      "id": "TC-15",
+      "workstream": "Workstream A",
+      "name": "Concurrent jobs do not produce inconsistent result state",
+      "status": "PASSED",
+      "details": "Both resolved consistently: true"
+    },
+    {
+      "id": "TC-16",
+      "workstream": "Workstream C",
+      "name": "Candidate facts preserve their source text or location",
+      "status": "PASSED",
+      "details": "Extracted 18 candidate facts with byte offsets"
+    },
+    {
+      "id": "TC-17",
+      "workstream": "Workstream C",
+      "name": "Normalization is deterministic for supported identifier types",
+      "status": "PASSED",
+      "details": "Phone: +919876543210, UPI: mule.receiver@okhdfc, Date: 2026-10-15"
+    },
+    {
+      "id": "TC-18",
+      "workstream": "Workstream C",
+      "name": "Generic identifiers are not automatically treated as exact unique matches",
+      "status": "PASSED",
+      "details": "Flagged limitation: Private or loopback IP range: non-u..."
+    },
+    {
+      "id": "TC-19",
+      "workstream": "Workstream D",
+      "name": "Unreviewed facts cannot become confirmed links",
+      "status": "PASSED",
+      "details": "Fact review status is 'PENDING_REVIEW'. Only human-reviewed ACCEPTED or CORRECTED facts can feed confirmed intelligence."
+    },
+    {
+      "id": "TC-20",
+      "workstream": "Workstream D",
+      "name": "Unauthorized reviewers cannot accept extracted facts",
+      "status": "PASSED",
+      "details": "Access denied: Role 'VIEWER' lacks authority to validate or correct extracted facts. Only INVESTIGATOR, SUPERVISOR, or ADMIN authorized."
+    },
+    {
+      "id": "TC-21",
+      "workstream": "Workstream D",
+      "name": "A valid correction records reviewer and prior value",
+      "status": "PASSED",
+      "details": "Corrected to: +919876543299, Original: 6101599887"
+    },
+    {
+      "id": "TC-22",
+      "workstream": "Workstream D",
+      "name": "Rejected facts retain their historical review record",
+      "status": "PASSED",
+      "details": "Status: REJECTED, History count: 1"
+    },
+    {
+      "id": "TC-23",
+      "workstream": "Workstream D",
+      "name": "Concurrent review updates are safely handled",
+      "status": "PASSED",
+      "details": "Final status: SUPERSEDED, Serialized reviews: 2"
+    },
+    {
+      "id": "TC-24",
+      "workstream": "Workstream E",
+      "name": "Reprocessing does not silently overwrite previously reviewed facts",
+      "status": "PASSED",
+      "details": "Status: CORRECTED, Value: +919876543299"
+    },
+    {
+      "id": "TC-25",
+      "workstream": "Workstream E",
+      "name": "Evidence-integrity failure flags dependent outputs appropriately",
+      "status": "PASSED",
+      "details": "Associated source evidence has an active integrity alert or hash mismatch."
+    },
+    {
+      "id": "TC-26",
+      "workstream": "Workstream E",
+      "name": "Unauthorized downstream graph access is denied",
+      "status": "PASSED",
+      "details": "Cross-dept access granted: false"
+    },
+    {
+      "id": "TC-27",
+      "workstream": "Workstream E",
+      "name": "Candidate links retain candidate status",
+      "status": "PASSED",
+      "details": "Pending facts count: 15"
+    },
+    {
+      "id": "TC-28",
+      "workstream": "Workstream E",
+      "name": "Dossier claims reference actual source artifacts",
+      "status": "PASSED",
+      "details": "Bound to artifact: c34d8fef-2c5b-4ee8-a382-0fd2c65443e4"
+    },
+    {
+      "id": "TC-29",
+      "workstream": "Workstream G",
+      "name": "OCR output cannot inject instructions into the processing workflow",
+      "status": "PASSED",
+      "details": "Target case preserved, zero SQL injection executed"
+    },
+    {
+      "id": "TC-30",
+      "workstream": "Workstream G",
+      "name": "Malicious document content is treated as data and never executed",
+      "status": "PASSED",
+      "details": "Malicious content stored purely as passive UTF-8 text"
+    },
+    {
+      "id": "TC-31",
+      "workstream": "Workstream G",
+      "name": "Unauthorized direct SQL reads are blocked by RLS",
+      "status": "PASSED",
+      "details": "Visible ExtractedTextArtifact: 0, FactReviewHistory: 0"
+    },
+    {
+      "id": "TC-32",
+      "workstream": "Workstream G",
+      "name": "Forged tenant context cannot bypass RLS",
+      "status": "PASSED",
+      "details": "Rows returned with forged context: 0"
+    },
+    {
+      "id": "TC-33",
+      "workstream": "Workstream G",
+      "name": "Unauthorized modification/deletion of protected review history is rejected",
+      "status": "PASSED",
+      "details": "History delete denied: true, Artifact delete denied: true"
+    },
+    {
+      "id": "TC-34",
+      "workstream": "Workstream C",
+      "name": "Repeated processing does not create uncontrolled duplicate facts",
+      "status": "PASSED",
+      "details": "Initial count: 18, Inserted on re-run: 0, Final count: 18"
+    },
+    {
+      "id": "TC-35",
+      "workstream": "Safety Invariants",
+      "name": "Existing authorization, custody-chain, cross-case intelligence, dossier, and build regressions remain passing",
+      "status": "PASSED",
+      "details": "560 cold files intact: true, dev.db untouched: true"
+    }
+  ]
+}

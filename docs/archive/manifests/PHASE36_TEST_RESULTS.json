@@ -1,0 +1,286 @@
+{
+  "phase": "36.0",
+  "name": "Evidence Intake, Chain of Custody & Forensic Examination Workflow",
+  "executedAt": "2026-10-25T11:40:17.733Z",
+  "database": "rakshak_phase43_test",
+  "stats": {
+    "total": 38,
+    "passed": 38,
+    "failed": 0,
+    "passRate": "100.0%"
+  },
+  "coldStorage": {
+    "expectedCount": 560,
+    "actualCount": 560,
+    "manifestHash": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+    "integrityConfirmed": true
+  },
+  "tests": [
+    {
+      "id": "TC-01",
+      "workstream": "Workstream A/B",
+      "name": "Valid synthetic evidence intake sets ACCEPTED status and records canonical SHA-256",
+      "status": "PASSED",
+      "details": "Evidence ID: c38d7a7e-d3a3-4d55-98b0-50924d855da9"
+    },
+    {
+      "id": "TC-02",
+      "workstream": "Workstream A/B",
+      "name": "Intake detects dual SHA-256 mismatch between server digest and client claim",
+      "status": "PASSED",
+      "details": "Correctly identified transit discrepancy"
+    },
+    {
+      "id": "TC-03",
+      "workstream": "Workstream B",
+      "name": "Intake rejects path traversal and control character filename patterns",
+      "status": "PASSED",
+      "details": "Blocked directory escape attempts"
+    },
+    {
+      "id": "TC-04",
+      "workstream": "Workstream B",
+      "name": "Intake rejects unapproved executable and script file types",
+      "status": "PASSED",
+      "details": "Enforced whitelist policy"
+    },
+    {
+      "id": "TC-05",
+      "workstream": "Workstream B",
+      "name": "Intake rejects empty 0-byte upload attempts",
+      "status": "PASSED",
+      "details": "Fails closed on 0-byte input"
+    },
+    {
+      "id": "TC-06",
+      "workstream": "Workstream B",
+      "name": "Intake rejects unauthorized cross-department officer without active grant",
+      "status": "PASSED",
+      "details": "Cross-department access denied without an approved grant"
+    },
+    {
+      "id": "TC-07",
+      "workstream": "Workstream A",
+      "name": "Valid lifecycle transition from ACCEPTED to IN_CUSTODY succeeds",
+      "status": "PASSED",
+      "details": "Status: IN_CUSTODY"
+    },
+    {
+      "id": "TC-08",
+      "workstream": "Workstream A",
+      "name": "Arbitrary non-permitted state transition is rejected by state machine",
+      "status": "PASSED",
+      "details": "Invalid lifecycle transition from ACCEPTED to RELEASED. Permitted next states: [IN_CUSTODY, QUARANTINED]."
+    },
+    {
+      "id": "TC-09",
+      "workstream": "Workstream A",
+      "name": "Quarantine and rejection transitions require mandatory justification reason",
+      "status": "PASSED",
+      "details": "Enforced min 5 char reason"
+    },
+    {
+      "id": "TC-10",
+      "workstream": "Workstream A",
+      "name": "Optimistic concurrency locking rejects conflicting stale updates",
+      "status": "PASSED",
+      "details": "Prevented concurrent state race"
+    },
+    {
+      "id": "TC-11",
+      "workstream": "Workstream D",
+      "name": "Initial genesis custody event is anchored with 64 hex zeros",
+      "status": "PASSED",
+      "details": "Event Hash: dabe7ae8fb279132..."
+    },
+    {
+      "id": "TC-12",
+      "workstream": "Workstream D",
+      "name": "Sequential custody events cryptographically commit to previous event digest",
+      "status": "PASSED",
+      "details": "Chained events 1 -> 2 -> 3"
+    },
+    {
+      "id": "TC-13",
+      "workstream": "Workstream D",
+      "name": "Independent verifier verifies untampered cryptographic custody chain",
+      "status": "PASSED",
+      "details": "Verified 3 events"
+    },
+    {
+      "id": "TC-14",
+      "workstream": "Workstream D",
+      "name": "Independent verifier detects tampered event action/details and reports failure",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-15",
+      "workstream": "Workstream D",
+      "name": "Independent verifier detects deleted intermediate event and sequence discontinuity",
+      "status": "PASSED",
+      "details": "Sequence discontinuity or reordering detected at index 1: expected #2, got #3"
+    },
+    {
+      "id": "TC-16",
+      "workstream": "Workstream D",
+      "name": "Independent verifier detects reordered events in chain and fails closed",
+      "status": "PASSED",
+      "details": "Sequence discontinuity or reordering detected at index 0: expected #1, got #2"
+    },
+    {
+      "id": "TC-17",
+      "workstream": "Workstream D",
+      "name": "Custody logging derives authoritative actor identity from server-side session",
+      "status": "PASSED",
+      "details": "Derived: Inspector Ravi Shankar (CY-INV-001)"
+    },
+    {
+      "id": "TC-18",
+      "workstream": "Workstream D",
+      "name": "Custody route rejects unsupported mutation methods with HTTP 405 Method Not Allowed",
+      "status": "PASSED",
+      "details": "PUT, PATCH, DELETE blocked"
+    },
+    {
+      "id": "TC-19",
+      "workstream": "Workstream D/G",
+      "name": "Direct SQL UPDATE on CustodyEvent denied for runtime role (permission denied)",
+      "status": "PASSED",
+      "details": "ERROR:  permission denied for table CustodyEvent"
+    },
+    {
+      "id": "TC-20",
+      "workstream": "Workstream D/G",
+      "name": "Direct SQL DELETE on CustodyEvent denied for runtime role (permission denied)",
+      "status": "PASSED",
+      "details": "ERROR:  permission denied for table CustodyEvent"
+    },
+    {
+      "id": "TC-21",
+      "workstream": "Workstream E",
+      "name": "Custody transfer initiated by authorized custodian transitions status to TRANSFERRED",
+      "status": "PASSED",
+      "details": "Transfer status: TRANSFERRED"
+    },
+    {
+      "id": "TC-22",
+      "workstream": "Workstream E",
+      "name": "Custody transfer initiated by unauthorized officer without custody is denied",
+      "status": "PASSED",
+      "details": "Evidence is already in status TRANSFERRED."
+    },
+    {
+      "id": "TC-23",
+      "workstream": "Workstream E",
+      "name": "Custody transfer to inactive/suspended officer fails closed",
+      "status": "PASSED",
+      "details": "Recipient officer Suspended Officer is SUSPENDED. Custody cannot be transferred to inactive accounts."
+    },
+    {
+      "id": "TC-24",
+      "workstream": "Workstream E",
+      "name": "Custody transfer to different department without access grant is denied",
+      "status": "PASSED",
+      "details": "Recipient officer belongs to a different department and lacks an active cross-department access grant for case P36-CASE-1792928414905."
+    },
+    {
+      "id": "TC-25",
+      "workstream": "Workstream E",
+      "name": "Designated recipient acknowledges and accepts custody transfer",
+      "status": "PASSED",
+      "details": "Custodian: 14a2e3cb-595e-41ac-ae1e-d5144050b6d7"
+    },
+    {
+      "id": "TC-26",
+      "workstream": "Workstream E",
+      "name": "Non-recipient officer attempting to accept custody transfer is rejected",
+      "status": "PASSED",
+      "details": "You are not the designated recipient for this custody transfer."
+    },
+    {
+      "id": "TC-27",
+      "workstream": "Workstream E",
+      "name": "Forensic examination start by FORENSIC_EXAMINER transitions status to EXAMINATION_IN_PROGRESS",
+      "status": "PASSED",
+      "details": "Status: EXAMINATION_IN_PROGRESS"
+    },
+    {
+      "id": "TC-28",
+      "workstream": "Workstream E",
+      "name": "Ordinary investigator lacking FORENSIC_EXAMINER role is denied examination initiation",
+      "status": "PASSED",
+      "details": "Only authorized FORENSIC_EXAMINER or ADMIN officers can initiate forensic examination."
+    },
+    {
+      "id": "TC-29",
+      "workstream": "Workstream E",
+      "name": "Examination completion stores derived artifacts with sourceHash provenance",
+      "status": "PASSED",
+      "details": "Derived fact: Recovered UPI transaction ID: 412389102938"
+    },
+    {
+      "id": "TC-30",
+      "workstream": "Workstream C/E",
+      "name": "Quarantined evidence exhibit strictly denies ordinary binary download",
+      "status": "PASSED",
+      "details": "Blocked download of quarantined exhibit"
+    },
+    {
+      "id": "TC-31",
+      "workstream": "Workstream C/E",
+      "name": "Sealed evidence denies ordinary investigator and allows supervisor authorization",
+      "status": "PASSED",
+      "details": "Supervisor gating enforced"
+    },
+    {
+      "id": "TC-32",
+      "workstream": "Workstream G",
+      "name": "PostgreSQL RLS: Authorized investigator sees only department evidence",
+      "status": "PASSED",
+      "details": "evi_cyber_36|cyber_evidence.bin"
+    },
+    {
+      "id": "TC-33",
+      "workstream": "Workstream G",
+      "name": "PostgreSQL RLS: Unauthorized department returns 0 rows for foreign evidence exhibit",
+      "status": "PASSED",
+      "details": "Count: 0"
+    },
+    {
+      "id": "TC-34",
+      "workstream": "Workstream G",
+      "name": "PostgreSQL RLS: Cross-department investigator with active AccessGrant can read evidence",
+      "status": "PASSED",
+      "details": "Count: 1"
+    },
+    {
+      "id": "TC-35",
+      "workstream": "Workstream G",
+      "name": "PostgreSQL RLS: Revoked/expired AccessGrant immediately revokes evidence access",
+      "status": "PASSED",
+      "details": "Count: 0"
+    },
+    {
+      "id": "TC-36",
+      "workstream": "Workstream G",
+      "name": "PostgreSQL RLS: Forged unverified client-settable tenant context returns 0 rows",
+      "status": "PASSED",
+      "details": "Count: 0"
+    },
+    {
+      "id": "TC-37",
+      "workstream": "Workstream G",
+      "name": "PostgreSQL RLS: Connection pooling teardown (clear + DISCARD ALL) leaks 0 rows",
+      "status": "PASSED",
+      "details": "Pre: 1, Post: 0"
+    },
+    {
+      "id": "TC-38",
+      "workstream": "Safety Constraints",
+      "name": "Cold storage preservation: all 560 binaries in uploads/raw/ remain 100% unaltered",
+      "status": "PASSED",
+      "details": "Count: 560, Hash: bdc91bb78c603d21..."
+    }
+  ]
+}

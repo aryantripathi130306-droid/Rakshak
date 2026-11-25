@@ -32,12 +32,235 @@ export const REGEX_IP_V4 = /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g;
 /** 64-char hex SHA-256 */
 export const REGEX_SHA256 = /^[a-fA-F0-9]{64}$/;
 
-// ─── Normalisation helpers ────────────────────────────────────────────────────
+// ─── Forensic Normalisation Engine (Version 2) ────────────────────────────────
 
-/** Normalise Indian phone to E.164 format: +91XXXXXXXXXX */
+export const PHONE_NORMALIZATION_VERSION = "PHONE_NORM_V2";
+
+export interface PhoneNormalizationDetails {
+  isValid: boolean;
+  normalizedValue: string;
+  countryCode: string | null;
+  nationalNumber: string | null;
+  extension?: string;
+  isGeneric: boolean;
+  isAmbiguous: boolean;
+  ruleVersion: string;
+  limitations?: string;
+  error?: string;
+}
+
+// Common emergency & cybercrime helplines in India
+const INDIAN_HELPLINE_NUMBERS = new Set(["100", "112", "1930", "1090", "1091", "1073", "1098"]);
+
+// Recognized international calling codes (ITU-T E.164)
+const KNOWN_COUNTRY_CODES = [
+  "971", "972", "974", "966", "965", "968", "880", "977", "92", "93", "94", "95",
+  "91", "44", "61", "65", "81", "49", "33", "39", "86", "82", "84", "60", "62", "63",
+  "64", "66", "20", "27", "30", "31", "32", "34", "36", "40", "41", "43", "45", "46",
+  "47", "48", "51", "52", "53", "54", "55", "56", "57", "58", "1", "7"
+];
+
+/**
+ * Detailed versioned phone normalization adhering to ITU-T E.164 & Indian TRAI allocations.
+ */
+export function normalisePhoneDetailed(raw: string): PhoneNormalizationDetails {
+  if (!raw || typeof raw !== "string") {
+    return {
+      isValid: false,
+      normalizedValue: "",
+      countryCode: null,
+      nationalNumber: null,
+      isGeneric: false,
+      isAmbiguous: false,
+      ruleVersion: PHONE_NORMALIZATION_VERSION,
+      error: "Empty or non-string phone input",
+    };
+  }
+
+  const clean = raw.trim();
+
+  // 1. Check emergency / public helpline numbers
+  if (INDIAN_HELPLINE_NUMBERS.has(clean)) {
+    return {
+      isValid: true,
+      normalizedValue: clean,
+      countryCode: "+91",
+      nationalNumber: clean,
+      isGeneric: true,
+      isAmbiguous: false,
+      ruleVersion: PHONE_NORMALIZATION_VERSION,
+      limitations: `National emergency/cyber helpline number (${clean}). Shared public infrastructure; non-conclusive identity evidence.`,
+    };
+  }
+
+  // 2. Extract and isolate extensions (e.g. "ext 123", "x402", "#101")
+  let extension: string | undefined;
+  let core = clean;
+  const extMatch = clean.match(/(?:(?:\s+|^)(?:ext|extension|x|#)\s*([0-9]{1,6})\b)/i);
+  if (extMatch) {
+    extension = extMatch[1];
+    core = clean.slice(0, extMatch.index).trim();
+  }
+
+  // 3. Detect leading international direct dialing prefixes
+  let hasPlus = core.startsWith("+");
+  let working = core;
+  if (working.startsWith("00") && working.length > 4 && !/^0+$/.test(working)) {
+    hasPlus = true;
+    working = working.slice(2).trim();
+  } else if (hasPlus) {
+    working = working.slice(1).trim();
+  }
+
+  const digits = working.replace(/\D/g, "");
+
+  if (digits.length < 7 || digits.length > 15) {
+    return {
+      isValid: false,
+      normalizedValue: "",
+      countryCode: null,
+      nationalNumber: null,
+      isGeneric: /^0+$/.test(digits) || digits.length === 0,
+      isAmbiguous: false,
+      ruleVersion: PHONE_NORMALIZATION_VERSION,
+      error: `Invalid digit count (${digits.length}). E.164 phone numbers must be between 8 and 15 digits.`,
+    };
+  }
+
+  // 4. Resolve Country Code and National Number
+  let resolvedCountryCode: string | null = null;
+  let nationalNumber: string | null = null;
+  let isAmbiguous = false;
+
+  if (hasPlus) {
+    // Explicit international number: match longest valid country code
+    for (const cc of KNOWN_COUNTRY_CODES) {
+      if (digits.startsWith(cc) && digits.length > cc.length + 5) {
+        resolvedCountryCode = `+${cc}`;
+        nationalNumber = digits.slice(cc.length);
+        break;
+      }
+    }
+
+    if (!resolvedCountryCode) {
+      // Unknown country code: retain format but flag ambiguous
+      resolvedCountryCode = `+${digits.slice(0, 3)}`;
+      nationalNumber = digits.slice(3);
+      isAmbiguous = true;
+    }
+  } else {
+    // Domestic number without explicit '+' prefix
+    if (digits.length === 10 || (digits.length === 11 && (digits.startsWith("1800") || digits.startsWith("1860")))) {
+      if (/^[6-9]/.test(digits)) {
+        // Standard Indian Mobile (TRAI allocation)
+        resolvedCountryCode = "+91";
+        nationalNumber = digits;
+      } else if (/^[2-5]/.test(digits)) {
+        // Indian Landline with 2-4 digit STD code (total 10 digits)
+        resolvedCountryCode = "+91";
+        nationalNumber = digits;
+      } else if (digits.startsWith("1800") || digits.startsWith("1860")) {
+        // Indian Toll-Free / Shared-Cost Service (TRAI allocation)
+        resolvedCountryCode = "+91";
+        nationalNumber = digits;
+      } else {
+        // Starts with 0 or 1: cannot be assumed as valid Indian mobile
+        return {
+          isValid: false,
+          normalizedValue: "",
+          countryCode: null,
+          nationalNumber: digits,
+          isGeneric: /^0+$/.test(digits),
+          isAmbiguous: true,
+          ruleVersion: PHONE_NORMALIZATION_VERSION,
+          error: "Invalid domestic phone format: Indian mobile numbers must start with digits 6-9.",
+        };
+      }
+    } else if (digits.length === 11 && digits.startsWith("0") && /^[6-9]/.test(digits.slice(1))) {
+      // 0-prefixed Indian mobile
+      resolvedCountryCode = "+91";
+      nationalNumber = digits.slice(1);
+    } else if (digits.length === 12 && digits.startsWith("91") && /^[6-9]/.test(digits.slice(2))) {
+      // 91-prefixed Indian mobile without '+'
+      resolvedCountryCode = "+91";
+      nationalNumber = digits.slice(2);
+    } else {
+      // Non-standard length without country code: ambiguous
+      return {
+        isValid: false,
+        normalizedValue: "",
+        countryCode: null,
+        nationalNumber: digits,
+        isGeneric: /^0+$/.test(digits),
+        isAmbiguous: true,
+        ruleVersion: PHONE_NORMALIZATION_VERSION,
+        error: `Ambiguous phone format: ${digits.length} digits without country code.`,
+      };
+    }
+  }
+
+  if (!nationalNumber) {
+    return {
+      isValid: false,
+      normalizedValue: "",
+      countryCode: resolvedCountryCode,
+      nationalNumber: null,
+      isGeneric: false,
+      isAmbiguous: true,
+      ruleVersion: PHONE_NORMALIZATION_VERSION,
+      error: "Unable to resolve valid national significant number.",
+    };
+  }
+
+  // 5. Check for repeated/sequential dummy numbers
+  const isRepeated = /^(\d)\1{7,}$/.test(nationalNumber);
+  const isAllZero = /^0+$/.test(nationalNumber);
+  const isAscending = "0123456789".includes(nationalNumber);
+  const isTollFree = resolvedCountryCode === "+91" && nationalNumber.startsWith("1800");
+  const isGeneric = isRepeated || isAllZero || isAscending || isTollFree;
+
+  const limitationsList: string[] = [];
+  if (isTollFree) {
+    limitationsList.push("Toll-free commercial/shared helpline (1800). Non-conclusive identity evidence.");
+  } else if (isRepeated || isAllZero || isAscending) {
+    limitationsList.push("Repeated or sequential dummy digits detected. Non-conclusive identity evidence.");
+  }
+  if (extension) {
+    limitationsList.push(`Extension '${extension}' isolated from canonical E.164 number.`);
+  }
+
+  const limitations = limitationsList.length > 0 ? limitationsList.join(" ") : undefined;
+
+  const normalizedValue = `${resolvedCountryCode}${nationalNumber}`;
+
+  return {
+    isValid: true,
+    normalizedValue,
+    countryCode: resolvedCountryCode,
+    nationalNumber,
+    extension,
+    isGeneric,
+    isAmbiguous,
+    ruleVersion: PHONE_NORMALIZATION_VERSION,
+    limitations,
+  };
+}
+
+/**
+ * Normalises phone numbers to canonical E.164 format while preserving international country codes.
+ * Returns E.164 string (e.g. "+919876543210" or "+14155552671") if valid, or safe fallback.
+ */
 export function normalisePhone(raw: string): string {
-  const digits = raw.replace(/^\+91/, "").replace(/^0/, "");
-  return `+91${digits}`;
+  const details = normalisePhoneDetailed(raw);
+  if (details.isValid) {
+    return details.normalizedValue;
+  }
+  // Safe fallback: if raw has digits, format cleanly without corrupting country code
+  const cleanDigits = (raw || "").replace(/\D/g, "");
+  if (cleanDigits.length === 10 && /^[6-9]/.test(cleanDigits)) {
+    return `+91${cleanDigits}`;
+  }
+  return details.normalizedValue || raw;
 }
 
 /** Normalise UPI VPA to lowercase */

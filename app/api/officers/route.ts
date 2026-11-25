@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // app/api/officers/route.ts
-// GET /api/officers  — List officers with RBAC
-// POST /api/officers — Provision new officer account (Requires ADMIN role)
+// GET /api/officers  — List officers with RBAC & department scoping
+// POST /api/officers — Provision new officer account (Requires SYS_ADMIN, ADMIN, or DEPT_ADMIN)
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
@@ -10,6 +10,8 @@ import {
   hasPermission,
   hashPassword,
   logAuditEvent,
+  canManageOfficer,
+  ALL_ROLES,
   type Role,
 } from "@/services/authService";
 
@@ -32,6 +34,12 @@ export async function GET(request: NextRequest) {
 
     const p = prisma as any;
     const where: any = {};
+
+    // Department Administrator is strictly scoped to own department
+    if (auth.officer.role === "DEPT_ADMIN" && auth.officer.departmentId) {
+      where.departmentId = auth.officer.departmentId;
+    }
+
     if (role) where.role = role;
     if (status) where.status = status;
     if (q) {
@@ -91,9 +99,15 @@ export async function POST(request: NextRequest) {
     if (!auth) {
       return Response.json({ error: "Authentication required to provision officer accounts" }, { status: 401 });
     }
-    if (!hasPermission(auth.officer.role, "officer:create")) {
+
+    const isAuthorizedAdmin =
+      auth.officer.role === "SYS_ADMIN" ||
+      auth.officer.role === "ADMIN" ||
+      auth.officer.role === "DEPT_ADMIN";
+
+    if (!isAuthorizedAdmin) {
       return Response.json(
-        { error: "Access denied: Administrator role required to provision officer accounts" },
+        { error: "Access denied: Administrative privileges required to provision officer accounts" },
         { status: 403 }
       );
     }
@@ -102,22 +116,39 @@ export async function POST(request: NextRequest) {
     const name = body.name?.trim();
     const badgeNumber = body.badgeNumber?.trim();
     const designation = (body.designation || body.rank || "Sub-Inspector").trim();
-    const role = body.role;
-    const jurisdiction = body.jurisdiction?.trim();
+    const role = body.role as Role;
+    const jurisdiction = body.jurisdiction?.trim() || auth.officer.jurisdiction;
     const unit = body.unit?.trim() || "Cyber Crime Cell";
     const password = body.password || "Rakshak@2026";
     const email = (body.email || `${badgeNumber?.toLowerCase().replace(/[^a-z0-9]/g, '')}@police.gov.in`).trim();
+    let departmentId = body.departmentId || auth.officer.departmentId;
 
-    if (!name || !badgeNumber || !role || !jurisdiction) {
+    if (!name || !badgeNumber || !role) {
       return Response.json(
-        { error: "Missing required officer fields: name, badgeNumber, role, jurisdiction" },
+        { error: "Missing required officer fields: name, badgeNumber, role" },
         { status: 400 }
       );
     }
 
-    const validRoles: Role[] = ["ADMIN", "INVESTIGATOR", "ANALYST", "VIEWER"];
-    if (!validRoles.includes(role)) {
-      return Response.json({ error: `Invalid role. Must be one of: ${validRoles.join(", ")}` }, { status: 400 });
+    if (!ALL_ROLES.includes(role)) {
+      return Response.json({ error: `Invalid role. Must be one of: ${ALL_ROLES.join(", ")}` }, { status: 400 });
+    }
+
+    // Enforce administrative scope & privilege escalation defenses
+    const manageCheck = canManageOfficer(
+      auth.officer,
+      { id: "", departmentId, role },
+      role,
+      departmentId
+    );
+
+    if (!manageCheck.allowed) {
+      return Response.json({ error: manageCheck.reason || "Unauthorized administrative action" }, { status: 403 });
+    }
+
+    // Force Dept Admin to assign their own department
+    if (auth.officer.role === "DEPT_ADMIN") {
+      departmentId = auth.officer.departmentId;
     }
 
     const p = prisma as any;
@@ -148,6 +179,7 @@ export async function POST(request: NextRequest) {
         jurisdiction,
         unit: unit || "Cyber Crime Cell",
         status: "ACTIVE",
+        departmentId: departmentId || null,
       },
       select: {
         id: true,
@@ -159,6 +191,7 @@ export async function POST(request: NextRequest) {
         jurisdiction: true,
         unit: true,
         status: true,
+        departmentId: true,
         createdAt: true,
       },
     });

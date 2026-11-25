@@ -1,0 +1,264 @@
+{
+  "phase": "37",
+  "title": "Cross-Case Intelligence Graph, Explainable Entity Resolution & Investigative Lead Discovery",
+  "timestamp": "2026-10-25T11:40:33.446Z",
+  "environment": {
+    "database": "rakshak_phase43_test",
+    "appUserRole": "rakshak_app_user",
+    "manifestColdBinaries": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+    "coldBinaryCount": 560
+  },
+  "summary": {
+    "total": 35,
+    "passed": 35,
+    "failed": 0,
+    "passRate": "100.0%"
+  },
+  "testResults": [
+    {
+      "id": "TC-01",
+      "workstream": "Workstream B",
+      "name": "A normalized exact-identifier match creates a candidate link",
+      "status": "PASSED",
+      "details": "type=EXACT_IDENTIFIER_MATCH"
+    },
+    {
+      "id": "TC-02",
+      "workstream": "Workstream B",
+      "name": "Equivalent supported identifier formats normalize consistently",
+      "status": "PASSED",
+      "details": "phone=+919876543210, email=victim.alpha+test@domain.com"
+    },
+    {
+      "id": "TC-03",
+      "workstream": "Workstream B",
+      "name": "Unsupported entity types are rejected safely",
+      "status": "PASSED",
+      "details": "Unsupported entity type: 'UNKNOWN_BIOMETRIC_IRIS'"
+    },
+    {
+      "id": "TC-04",
+      "workstream": "Workstream B",
+      "name": "Shared generic identifier is not automatically classified as confirmed",
+      "status": "PASSED",
+      "details": "limitations=Private, loopback, or Carrier-Grade..."
+    },
+    {
+      "id": "TC-05",
+      "workstream": "Workstream B/C",
+      "name": "A candidate link stores source provenance",
+      "status": "PASSED",
+      "details": "linkId=47abecfc-defa-4512-9d94-9db9bd009ebf"
+    },
+    {
+      "id": "TC-06",
+      "workstream": "Workstream B",
+      "name": "Missing source provenance prevents a link from being treated as verified",
+      "status": "PASSED",
+      "details": "Evaluation failed: Missing source or target case identifier."
+    },
+    {
+      "id": "TC-07",
+      "workstream": "Workstream D",
+      "name": "A confirmed link requires an authorized reviewer",
+      "status": "PASSED",
+      "details": "Investigator role authorized"
+    },
+    {
+      "id": "TC-08",
+      "workstream": "Workstream D",
+      "name": "A reviewer must provide a required rationale",
+      "status": "PASSED",
+      "details": "Validation failed: A detailed review rationale (at least 5 characters) is required."
+    },
+    {
+      "id": "TC-09",
+      "workstream": "Workstream D",
+      "name": "An unauthorized role cannot confirm a link",
+      "status": "PASSED",
+      "details": "Access Denied: Role 'VIEWER' lacks authority to confirm, reject, or revoke entity links."
+    },
+    {
+      "id": "TC-10",
+      "workstream": "Workstream D",
+      "name": "A rejected candidate retains its review history",
+      "status": "PASSED",
+      "details": "reviews=1"
+    },
+    {
+      "id": "TC-11",
+      "workstream": "Workstream D",
+      "name": "A revoked relationship remains historically traceable",
+      "status": "PASSED",
+      "details": "historyCount=4"
+    },
+    {
+      "id": "TC-12",
+      "workstream": "Workstream E",
+      "name": "A source evidence ID alone does not authorize evidence access",
+      "status": "PASSED",
+      "details": "Cross-department access denied without an approved grant"
+    },
+    {
+      "id": "TC-13",
+      "workstream": "Workstream E",
+      "name": "An unauthorized investigator cannot enumerate another department's cases",
+      "status": "PASSED",
+      "details": "Cross-department access denied without an approved grant"
+    },
+    {
+      "id": "TC-14",
+      "workstream": "Workstream C/E",
+      "name": "Graph traversal excludes inaccessible nodes and edges",
+      "status": "PASSED",
+      "details": "mumbaiLeaked=false"
+    },
+    {
+      "id": "TC-15",
+      "workstream": "Workstream C",
+      "name": "Multi-hop traversal obeys its maximum depth",
+      "status": "PASSED",
+      "details": "clamped=3"
+    },
+    {
+      "id": "TC-16",
+      "workstream": "Workstream C",
+      "name": "Query result limits are enforced",
+      "status": "PASSED",
+      "details": "nodesCount=2"
+    },
+    {
+      "id": "TC-17",
+      "workstream": "Workstream E",
+      "name": "Expired grants prevent relevant cross-department access",
+      "status": "PASSED",
+      "details": "hasGrant=false"
+    },
+    {
+      "id": "TC-18",
+      "workstream": "Workstream E",
+      "name": "Revoked grants prevent relevant cross-department access",
+      "status": "PASSED",
+      "details": "hasGrant=false"
+    },
+    {
+      "id": "TC-19",
+      "workstream": "Workstream E",
+      "name": "Suspended officers are denied",
+      "status": "PASSED",
+      "details": "Trapped suspension error"
+    },
+    {
+      "id": "TC-20",
+      "workstream": "Workstream E",
+      "name": "Forged tenant context does not bypass RLS",
+      "status": "PASSED",
+      "details": "rowsReturned=0"
+    },
+    {
+      "id": "TC-21",
+      "workstream": "Workstream E",
+      "name": "Missing verified-session context fails closed",
+      "status": "PASSED",
+      "details": "rowsReturned=0"
+    },
+    {
+      "id": "TC-22",
+      "workstream": "Workstream C",
+      "name": "A graph response does not disclose hidden-case counts or metadata",
+      "status": "PASSED",
+      "details": "Zero leakage verified"
+    },
+    {
+      "id": "TC-23",
+      "workstream": "Workstream E",
+      "name": "Source provenance is accessible only under the appropriate permissions",
+      "status": "PASSED",
+      "details": "Cross-dept provenance protected"
+    },
+    {
+      "id": "TC-24",
+      "workstream": "Workstream D",
+      "name": "Invalid review-state transitions are rejected",
+      "status": "PASSED",
+      "details": "t1=Invalid state transition: Cannot transition from 'REJECTED' to 'CONFIRMED'."
+    },
+    {
+      "id": "TC-25",
+      "workstream": "Workstream D",
+      "name": "Concurrent review updates do not silently overwrite each other",
+      "status": "PASSED",
+      "details": "409 Conflict returned"
+    },
+    {
+      "id": "TC-26",
+      "workstream": "Workstream B/C",
+      "name": "Concurrent candidate creation does not generate conflicting duplicates",
+      "status": "PASSED",
+      "details": "Unique index enforced"
+    },
+    {
+      "id": "TC-27",
+      "workstream": "Workstream B/D",
+      "name": "Changed normalization versions do not silently reinterpret historical links",
+      "status": "PASSED",
+      "details": "ver=v1"
+    },
+    {
+      "id": "TC-28",
+      "workstream": "Workstream D",
+      "name": "A corrected source record triggers documented invalidation behavior",
+      "status": "PASSED",
+      "details": "status=UNDER_REVIEW"
+    },
+    {
+      "id": "TC-29",
+      "workstream": "Workstream D",
+      "name": "An evidence-integrity incident is reflected in dependent links",
+      "status": "PASSED",
+      "details": "INTEGRITY ALERT: Associated evidenc"
+    },
+    {
+      "id": "TC-30",
+      "workstream": "Workstream D",
+      "name": "Reviewer identity is resolved from trusted server-side state",
+      "status": "PASSED",
+      "details": "reviewer=ACP Vikram Malhotra"
+    },
+    {
+      "id": "TC-31",
+      "workstream": "Workstream F",
+      "name": "Unauthorized attempts are audited appropriately",
+      "status": "PASSED",
+      "details": "auditId=1909ced0-5513-46b2-a482-79930bd48765"
+    },
+    {
+      "id": "TC-32",
+      "workstream": "Workstream E/F",
+      "name": "Audit and relationship-review history resist unauthorized mutation",
+      "status": "PASSED",
+      "details": "REVOKE DELETE verified"
+    },
+    {
+      "id": "TC-33",
+      "workstream": "Workstream B/F",
+      "name": "Graph APIs validate malformed filters and identifiers",
+      "status": "PASSED",
+      "details": "Type-specific validations trapped"
+    },
+    {
+      "id": "TC-34",
+      "workstream": "Workstream C",
+      "name": "Large or cyclic graphs cannot cause unbounded traversal",
+      "status": "PASSED",
+      "details": "nodesTraversed=5"
+    },
+    {
+      "id": "TC-35",
+      "workstream": "Safety Invariant",
+      "name": "Existing regressions & safety invariants remain passing",
+      "status": "PASSED",
+      "details": "560 binaries intact, dev.db hash unchanged"
+    }
+  ]
+}

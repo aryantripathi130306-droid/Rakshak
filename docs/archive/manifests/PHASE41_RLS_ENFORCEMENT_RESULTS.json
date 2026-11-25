@@ -1,0 +1,136 @@
+{
+  "suite": "PHASE_41_DIRECT_RLS_ENFORCEMENT",
+  "database": "rakshak_phase46_test",
+  "timestamp": "2026-10-27T16:30:16.880Z",
+  "total": 18,
+  "passed": 18,
+  "failed": 0,
+  "results": [
+    {
+      "id": "RLS-01",
+      "workstream": "Workstream C",
+      "name": "Authorized investigator reads case within permitted department",
+      "status": "PASSED",
+      "details": "Visible: p41-case-del-1"
+    },
+    {
+      "id": "RLS-02",
+      "workstream": "Workstream C",
+      "name": "Foreign department case is strictly invisible (returns 0 rows)",
+      "status": "PASSED",
+      "details": "Foreign cases returned: 0"
+    },
+    {
+      "id": "RLS-03",
+      "workstream": "Workstream C",
+      "name": "Cross-department case insertion rejected by RLS WITH CHECK",
+      "status": "PASSED",
+      "details": "RLS WITH CHECK violation trapped"
+    },
+    {
+      "id": "RLS-04",
+      "workstream": "Workstream C",
+      "name": "Evidence exhibits strictly filtered by parent case department",
+      "status": "PASSED",
+      "details": "Visible: p41-evi-del-1"
+    },
+    {
+      "id": "RLS-05",
+      "workstream": "Workstream C",
+      "name": "Custody events strictly filtered by parent case department",
+      "status": "PASSED",
+      "details": "Visible: p41-cust-del-1"
+    },
+    {
+      "id": "RLS-06",
+      "workstream": "Workstream C",
+      "name": "Extracted candidate facts strictly filtered by case department",
+      "status": "PASSED",
+      "details": "Visible: p41-fact-del-1"
+    },
+    {
+      "id": "RLS-07",
+      "workstream": "Workstream C",
+      "name": "Case entities strictly filtered by case department",
+      "status": "PASSED",
+      "details": "Visible: p41-cent-del-1"
+    },
+    {
+      "id": "RLS-08",
+      "workstream": "Workstream C",
+      "name": "Investigative dossiers strictly filtered by case department",
+      "status": "PASSED",
+      "details": "Visible: p41-doss-del-1"
+    },
+    {
+      "id": "RLS-09",
+      "workstream": "Workstream C",
+      "name": "Direct SQL UPDATE on AuditLog denied to runtime role",
+      "status": "PASSED",
+      "details": "Permission denied as expected"
+    },
+    {
+      "id": "RLS-10",
+      "workstream": "Workstream C",
+      "name": "Direct SQL DELETE on AuditLog denied to runtime role",
+      "status": "PASSED",
+      "details": "Permission denied as expected"
+    },
+    {
+      "id": "RLS-11",
+      "workstream": "Workstream C",
+      "name": "Direct SQL UPDATE on CaseStatusHistory denied to runtime role",
+      "status": "PASSED",
+      "details": "Permission denied as expected"
+    },
+    {
+      "id": "RLS-12",
+      "workstream": "Workstream C",
+      "name": "Direct SQL DELETE on CaseAssignmentHistory denied to runtime role",
+      "status": "PASSED",
+      "details": "Permission denied as expected"
+    },
+    {
+      "id": "RLS-13",
+      "workstream": "Workstream C",
+      "name": "Unverified client set_config('app.current_department_id') fails closed (0 rows)",
+      "status": "PASSED",
+      "details": "Count returned: 0"
+    },
+    {
+      "id": "RLS-14",
+      "workstream": "Workstream C",
+      "name": "Unverified client set_config('app.is_platform_admin') fails closed (0 rows)",
+      "status": "PASSED",
+      "details": "Count returned: 0"
+    },
+    {
+      "id": "RLS-15",
+      "workstream": "Workstream C",
+      "name": "Missing tenant authorization context fails closed (0 rows visible)",
+      "status": "PASSED",
+      "details": "Count returned: 0"
+    },
+    {
+      "id": "RLS-16",
+      "workstream": "Workstream C",
+      "name": "Suspended officer context fails closed (exception or 0 rows)",
+      "status": "PASSED",
+      "details": "ERROR:  Access Denied: Officer account is inactive or suspended\r\nCONTEXT:  PL/pgSQL function set_authenticated_tenant_context(text,text,text) line 23 at RAISE"
+    },
+    {
+      "id": "RLS-17",
+      "workstream": "Workstream C",
+      "name": "clear_tenant_context() cleanses session authorization variables across pooled connections",
+      "status": "PASSED",
+      "details": "Post-clear count: 0"
+    },
+    {
+      "id": "RLS-18",
+      "workstream": "Workstream C",
+      "name": "Runtime role verified unprivileged: rolsuper=f, rolbypassrls=f",
+      "status": "PASSED",
+      "details": "rakshak_app_user|f|f"
+    }
+  ]
+}

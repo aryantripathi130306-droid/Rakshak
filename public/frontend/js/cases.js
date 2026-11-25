@@ -15,6 +15,11 @@ import {
   getCaseEvidence,
   setActiveCaseId,
   ACTIVE_CASE_ID,
+  transitionCaseStatus,
+  assignCaseOfficer,
+  revokeCaseAssignment,
+  getCaseAssignments,
+  getOfficers,
 } from './api.js';
 import {
   escapeHtml,
@@ -593,6 +598,9 @@ function populateCaseDetails(kase) {
   if (editBtn) {
     editBtn.onclick = () => openEditCaseModal(kase);
   }
+
+  // Phase 35: Render Lifecycle Workflow and Team Assignments
+  renderLifecycleAndTeam(kase);
 }
 
 async function loadRecentCaseActivity(caseId) {
@@ -866,6 +874,9 @@ function bindModalEvents() {
       }
     });
   }
+
+  // Phase 35: Bind lifecycle, assignment and history modals
+  bindPhase35ModalEvents();
 }
 
 function openCreateCaseModal() {
@@ -899,4 +910,384 @@ function openEditCaseModal(kase) {
   if (efDesc) efDesc.value = kase.description || '';
 
   modal.style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PHASE 35: LIFECYCLE, TEAM ASSIGNMENTS & AUDIT MODAL CONTROLLERS
+// ═══════════════════════════════════════════════════════════════════
+
+function renderLifecycleAndTeam(kase) {
+  // 1. Current State
+  const currStatusEl = document.getElementById('lifecycle-current-status');
+  if (currStatusEl) {
+    const statusInfo = getStatusPill(kase.status);
+    currStatusEl.className = `neu-status-pill ${statusInfo.className}`;
+    currStatusEl.textContent = kase.status;
+  }
+
+  // 2. Permitted Transitions
+  const actionContainer = document.getElementById('lifecycle-action-buttons');
+  const approvalNotice = document.getElementById('lifecycle-approval-notice');
+  if (actionContainer) {
+    const permitted = kase.permittedTransitions || [];
+    let requiresSupervisor = false;
+
+    if (permitted.length === 0) {
+      actionContainer.innerHTML = '<span style="font-size:11px;color:var(--neu-secondary);">No further state transitions permitted.</span>';
+    } else {
+      actionContainer.innerHTML = permitted.map(toStatus => {
+        let label = `Move to ${toStatus.replace(/_/g, ' ')}`;
+        let isPrimary = false;
+        if (toStatus === 'UNDER_INQUIRY') {
+          label = kase.status === 'CLOSED' ? '🔓 Reopen Case' : '▶️ Begin Inquiry';
+          isPrimary = true;
+          if (kase.status === 'CLOSED') requiresSupervisor = true;
+        } else if (toStatus === 'CHARGESHEETED') {
+          label = '⚖️ File Chargesheet';
+          requiresSupervisor = true;
+        } else if (toStatus === 'CLOSED') {
+          label = '🔒 Close Investigation';
+          requiresSupervisor = true;
+        }
+        return `
+          <button type="button" class="neu-action-btn-sm ${isPrimary ? 'neu-action-btn-primary' : ''}" data-target-status="${toStatus}">
+            <span>${label}</span>
+          </button>
+        `;
+      }).join('');
+
+      actionContainer.querySelectorAll('button[data-target-status]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetStatus = btn.getAttribute('data-target-status');
+          openTransitionModal(kase, targetStatus);
+        });
+      });
+    }
+
+    if (approvalNotice) {
+      approvalNotice.style.display = requiresSupervisor ? 'block' : 'none';
+    }
+  }
+
+  // 3. Primary Investigating Officer
+  const primaryNameEl = document.getElementById('team-primary-name');
+  const primaryMetaEl = document.getElementById('team-primary-meta');
+  const primaryAssn = kase.currentAssignment?.primary;
+  if (primaryNameEl && primaryMetaEl) {
+    if (primaryAssn) {
+      primaryNameEl.textContent = primaryAssn.officerName || 'Investigating Officer';
+      primaryMetaEl.textContent = `Badge: ${primaryAssn.officerBadge || 'N/A'} | Dept: ${primaryAssn.departmentId || 'HQ'}`;
+    } else if (kase.officerName || kase.investigatingOfficer) {
+      primaryNameEl.textContent = kase.officerName || kase.investigatingOfficer;
+      primaryMetaEl.textContent = `Assigned on case filing | Dept: ${kase.departmentId || 'HQ'}`;
+    } else {
+      primaryNameEl.textContent = 'Not Assigned';
+      primaryMetaEl.textContent = 'No active primary investigator assigned.';
+    }
+  }
+
+  // 4. Collaborating Investigators
+  const collabList = document.getElementById('team-collaborators-list');
+  const collabCount = document.getElementById('collaborators-count');
+  const collabs = kase.currentAssignment?.collaborators || [];
+  if (collabCount) collabCount.textContent = `${collabs.length} Active`;
+  if (collabList) {
+    if (collabs.length === 0) {
+      collabList.innerHTML = '<div style="font-size:11.5px;color:var(--neu-secondary);padding:4px 0;">No collaborating officers assigned.</div>';
+    } else {
+      collabList.innerHTML = collabs.map(c => `
+        <div class="neu-team-member-row">
+          <div class="neu-team-member-info">
+            <span class="neu-team-member-name">${escapeHtml(c.officerName)}</span>
+            <span class="neu-team-member-sub">Badge: ${escapeHtml(c.officerBadge || 'N/A')} | Dept: ${escapeHtml(c.departmentId || 'HQ')}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="neu-badge-role neu-badge-collaborator">COLLABORATOR</span>
+            <button type="button" class="neu-action-btn-sm btn-revoke-collab" data-assignment-id="${c.id}" title="Remove collaborator" style="padding:2px 8px;font-size:10px;">
+              ✕
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      collabList.querySelectorAll('.btn-revoke-collab').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const aId = btn.getAttribute('data-assignment-id');
+          if (!aId) return;
+          try {
+            await revokeCaseAssignment(state.selectedCaseId, aId, { reason: 'Collaborator access revoked by case investigator/supervisor' });
+            showToast('Collaborator assignment removed.', 'success');
+            await selectCase(state.selectedCaseId);
+          } catch (err) {
+            showToast(err.message || 'Failed to remove collaborator.', 'error');
+          }
+        });
+      });
+    }
+  }
+}
+
+let pendingTargetStatus = null;
+
+function openTransitionModal(kase, targetStatus) {
+  const modal = document.getElementById('transition-case-modal');
+  if (!modal) return;
+  pendingTargetStatus = targetStatus;
+
+  const fromEl = document.getElementById('tr-from-status');
+  const toEl = document.getElementById('tr-to-status');
+  const supSection = document.getElementById('tr-supervisor-section');
+  const reasonEl = document.getElementById('tr-reason');
+  const errBox = document.getElementById('transition-error-msg');
+
+  if (fromEl) fromEl.value = kase.status;
+  if (toEl) toEl.value = targetStatus;
+  if (reasonEl) reasonEl.value = '';
+  if (errBox) errBox.style.display = 'none';
+
+  const isSupervisorReq = (targetStatus === 'CHARGESHEETED' || targetStatus === 'CLOSED' || (kase.status === 'CLOSED' && targetStatus === 'UNDER_INQUIRY'));
+  if (supSection) supSection.style.display = isSupervisorReq ? 'block' : 'none';
+
+  modal.style.display = 'flex';
+}
+
+let pendingAssignmentType = 'PRIMARY';
+
+async function openAssignmentModal(assignmentType) {
+  const modal = document.getElementById('assignment-case-modal');
+  if (!modal) return;
+  pendingAssignmentType = assignmentType;
+
+  const typeEl = document.getElementById('as-type');
+  const selectEl = document.getElementById('as-officer-select');
+  const reasonEl = document.getElementById('as-reason');
+  const errBox = document.getElementById('assignment-error-msg');
+
+  if (typeEl) typeEl.value = assignmentType;
+  if (reasonEl) reasonEl.value = '';
+  if (errBox) errBox.style.display = 'none';
+
+  modal.style.display = 'flex';
+
+  // Fetch eligible active officers
+  if (selectEl) {
+    selectEl.innerHTML = '<option value="">Loading eligible officers…</option>';
+    try {
+      const res = await getOfficers();
+      const officers = res.officers || [];
+      const eligible = officers.filter(o => o.status === 'ACTIVE' && (o.role === 'INVESTIGATOR' || o.role === 'SUPERVISOR'));
+      if (eligible.length === 0) {
+        selectEl.innerHTML = '<option value="">No eligible active investigators found</option>';
+      } else {
+        selectEl.innerHTML = '<option value="">Select an active investigator…</option>' +
+          eligible.map(o => `<option value="${escapeHtml(o.id)}">${escapeHtml(o.name)} (${escapeHtml(o.badgeNumber || 'N/A')}) — ${escapeHtml(o.jurisdiction || o.departmentId || 'HQ')}</option>`).join('');
+      }
+    } catch (err) {
+      selectEl.innerHTML = '<option value="">Failed to load officers</option>';
+    }
+  }
+}
+
+function openHistoryModal(initialTab = 'status') {
+  const modal = document.getElementById('history-case-modal');
+  if (!modal) return;
+
+  const kase = state.selectedCaseData;
+  if (!kase) return;
+
+  renderHistoryViews(kase);
+  switchHistoryTab(initialTab);
+  modal.style.display = 'flex';
+}
+
+function switchHistoryTab(tab) {
+  const btnStatus = document.getElementById('btn-tab-status-history');
+  const btnAssn = document.getElementById('btn-tab-assignment-history');
+  const viewStatus = document.getElementById('view-status-history');
+  const viewAssn = document.getElementById('view-assignment-history');
+
+  if (tab === 'status') {
+    if (btnStatus) btnStatus.className = 'neu-action-btn-sm neu-action-btn-primary';
+    if (btnAssn) btnAssn.className = 'neu-action-btn-sm';
+    if (viewStatus) viewStatus.style.display = 'flex';
+    if (viewAssn) viewAssn.style.display = 'none';
+  } else {
+    if (btnStatus) btnStatus.className = 'neu-action-btn-sm';
+    if (btnAssn) btnAssn.className = 'neu-action-btn-sm neu-action-btn-primary';
+    if (viewStatus) viewStatus.style.display = 'none';
+    if (viewAssn) viewAssn.style.display = 'flex';
+  }
+}
+
+function renderHistoryViews(kase) {
+  const viewStatus = document.getElementById('view-status-history');
+  const viewAssn = document.getElementById('view-assignment-history');
+
+  // Status History
+  if (viewStatus) {
+    const statusHist = kase.statusHistory || [];
+    if (statusHist.length === 0) {
+      viewStatus.innerHTML = '<div style="font-size:12px;color:var(--neu-secondary);padding:10px 0;">No status transitions recorded yet for this case.</div>';
+    } else {
+      viewStatus.innerHTML = statusHist.map(h => `
+        <div class="neu-history-item">
+          <div class="neu-history-meta">
+            <span>${h.fromStatus ? escapeHtml(h.fromStatus) + ' ➔ ' : ''}<strong>${escapeHtml(h.toStatus)}</strong></span>
+            <span style="font-size:9.5px;color:var(--neu-muted);font-weight:normal;">${h.changedAt ? new Date(h.changedAt).toLocaleString('en-IN') : '—'}</span>
+          </div>
+          <div class="neu-history-desc">${escapeHtml(h.reason || 'No transition rationale registered.')}</div>
+          <div class="neu-history-actor">Actor: ${escapeHtml(h.changedByName || 'Officer')} (${escapeHtml(h.changedByBadge || 'N/A')})${h.approvedBy ? ' | Approved by: ' + escapeHtml(h.approvedBy) : ''}</div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Assignment History
+  if (viewAssn) {
+    const assnHist = kase.assignmentHistory || [];
+    if (assnHist.length === 0) {
+      viewAssn.innerHTML = '<div style="font-size:12px;color:var(--neu-secondary);padding:10px 0;">No officer assignment changes recorded yet.</div>';
+    } else {
+      viewAssn.innerHTML = assnHist.map(h => `
+        <div class="neu-history-item">
+          <div class="neu-history-meta">
+            <span class="neu-badge-role ${h.assignmentType === 'PRIMARY' ? 'neu-badge-primary' : 'neu-badge-collaborator'}">${escapeHtml(h.assignmentType)}</span>
+            <span><strong>${escapeHtml(h.officerName)}</strong> (${escapeHtml(h.officerBadge || 'N/A')})</span>
+            <span style="font-size:9.5px;color:${h.status === 'ACTIVE' ? 'var(--neu-success)' : 'var(--neu-muted)'};font-weight:bold;">[${escapeHtml(h.status)}]</span>
+          </div>
+          <div class="neu-history-desc">${escapeHtml(h.reason || 'Case assignment assigned or modified.')}</div>
+          <div class="neu-history-actor">Assigned by: ${escapeHtml(h.assignedByName || 'Supervisor')} | Date: ${h.assignedAt ? new Date(h.assignedAt).toLocaleString('en-IN') : '—'}${h.endedAt ? ' | Ended: ' + new Date(h.endedAt).toLocaleString('en-IN') : ''}</div>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+function bindPhase35ModalEvents() {
+  // 1. History modal open triggers
+  const btnStatusHist = document.getElementById('btn-view-status-history');
+  const btnAssnHist = document.getElementById('btn-view-assignment-history');
+  if (btnStatusHist) btnStatusHist.addEventListener('click', () => openHistoryModal('status'));
+  if (btnAssnHist) btnAssnHist.addEventListener('click', () => openHistoryModal('assignment'));
+
+  // History modal controls
+  const historyModal = document.getElementById('history-case-modal');
+  const historyClose = document.getElementById('history-modal-close');
+  const historyDismiss = document.getElementById('history-modal-dismiss');
+  const closeHist = () => { if (historyModal) historyModal.style.display = 'none'; };
+  if (historyClose) historyClose.addEventListener('click', closeHist);
+  if (historyDismiss) historyDismiss.addEventListener('click', closeHist);
+
+  const btnTabStatus = document.getElementById('btn-tab-status-history');
+  const btnTabAssn = document.getElementById('btn-tab-assignment-history');
+  if (btnTabStatus) btnTabStatus.addEventListener('click', () => switchHistoryTab('status'));
+  if (btnTabAssn) btnTabAssn.addEventListener('click', () => switchHistoryTab('assignment'));
+
+  // 2. Assignment modal open triggers
+  const btnReassignPrimary = document.getElementById('btn-reassign-primary');
+  const btnAddCollab = document.getElementById('btn-add-collaborator');
+  if (btnReassignPrimary) btnReassignPrimary.addEventListener('click', () => openAssignmentModal('PRIMARY'));
+  if (btnAddCollab) btnAddCollab.addEventListener('click', () => openAssignmentModal('COLLABORATOR'));
+
+  // Assignment modal controls
+  const assnModal = document.getElementById('assignment-case-modal');
+  const assnClose = document.getElementById('assignment-modal-close');
+  const assnCancel = document.getElementById('assignment-modal-cancel');
+  const assnForm = document.getElementById('assignment-case-form');
+  const closeAssn = () => { if (assnModal) assnModal.style.display = 'none'; };
+  if (assnClose) assnClose.addEventListener('click', closeAssn);
+  if (assnCancel) assnCancel.addEventListener('click', closeAssn);
+
+  if (assnForm) {
+    assnForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = document.getElementById('assignment-error-msg');
+      if (errBox) errBox.style.display = 'none';
+
+      const officerId = document.getElementById('as-officer-select')?.value;
+      const assignmentType = document.getElementById('as-type')?.value || pendingAssignmentType;
+      const reason = document.getElementById('as-reason')?.value.trim();
+
+      if (!officerId) {
+        if (errBox) {
+          errBox.textContent = 'Please select a target officer to assign.';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      const submitBtn = document.getElementById('assignment-submit-btn');
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        await assignCaseOfficer(state.selectedCaseId, {
+          officerId,
+          assignmentType,
+          reason: reason || undefined,
+        });
+
+        closeAssn();
+        showToast(`Officer successfully assigned as ${assignmentType.toLowerCase()}.`, 'success');
+        await selectCase(state.selectedCaseId);
+        await fetchAndRenderCases();
+      } catch (err) {
+        console.error('[Cases] Assignment error:', err);
+        if (errBox) {
+          errBox.textContent = err.message || 'Failed to assign officer.';
+          errBox.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
+  // 3. Transition modal controls
+  const trModal = document.getElementById('transition-case-modal');
+  const trClose = document.getElementById('transition-modal-close');
+  const trCancel = document.getElementById('transition-modal-cancel');
+  const trForm = document.getElementById('transition-case-form');
+  const closeTr = () => { if (trModal) trModal.style.display = 'none'; };
+  if (trClose) trClose.addEventListener('click', closeTr);
+  if (trCancel) trCancel.addEventListener('click', closeTr);
+
+  if (trForm) {
+    trForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = document.getElementById('transition-error-msg');
+      if (errBox) errBox.style.display = 'none';
+
+      const reason = document.getElementById('tr-reason')?.value.trim();
+      if (!reason) {
+        if (errBox) {
+          errBox.textContent = 'A justification reason is required for lifecycle transitions.';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      const submitBtn = document.getElementById('transition-submit-btn');
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        await transitionCaseStatus(state.selectedCaseId, {
+          toStatus: pendingTargetStatus,
+          reason,
+        });
+
+        closeTr();
+        showToast(`Case transition to ${pendingTargetStatus} completed.`, 'success');
+        await selectCase(state.selectedCaseId);
+        await fetchAndRenderCases();
+      } catch (err) {
+        console.error('[Cases] Transition error:', err);
+        if (errBox) {
+          errBox.textContent = err.message || 'State transition failed.';
+          errBox.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
 }

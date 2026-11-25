@@ -5,14 +5,50 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import { authenticateOfficer } from "@/services/authService";
+import { canAccessCaseAsync, hasPermission } from "@/lib/accessControl";
 import { autoDetectClusters } from "@/services/clusterService";
 
 export const runtime = "nodejs";
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
+    const authResult = await authenticateOfficer(request);
+    if (!authResult) {
+      return Response.json({ error: "Unauthorized: Active session required." }, { status: 401 });
+    }
+    const { officer } = authResult;
+    if (!hasPermission(officer.role, "syndicate:view") && !hasPermission(officer.role, "syndicate:read")) {
+      return Response.json({ error: "Forbidden: Officer lacks syndicate viewing authority." }, { status: 403 });
+    }
+
     const clusters = await autoDetectClusters(prisma);
-    return Response.json({ clusters }, { status: 200 });
+    const allCaseIds = Array.from(
+      new Set(clusters.flatMap((cl) => (cl.cases || []).map((c) => c.id)))
+    );
+    const dbCases =
+      allCaseIds.length > 0
+        ? await (prisma as any).case.findMany({
+            where: { id: { in: allCaseIds } },
+            select: { id: true, departmentId: true, officerBadge: true },
+          })
+        : [];
+    const caseLookup = new Map<string, any>(dbCases.map((c: any) => [c.id, c]));
+
+    const scopedClusters = [];
+    for (const cl of clusters) {
+      const allowedCases = [];
+      for (const c of cl.cases || []) {
+        const fullCase = caseLookup.get(c.id) || { id: c.id, departmentId: null };
+        const auth = await canAccessCaseAsync(officer, fullCase, "read:metadata");
+        if (auth.allowed) allowedCases.push(c);
+      }
+      if (allowedCases.length > 0) {
+        scopedClusters.push({ ...cl, cases: allowedCases });
+      }
+    }
+
+    return Response.json({ clusters: scopedClusters }, { status: 200 });
   } catch (err) {
     console.error("[GET /api/clusters] Error:", err);
     return Response.json(

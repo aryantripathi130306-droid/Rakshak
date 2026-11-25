@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { authenticateOfficer, hasPermission, canAccessDepartment, logAuditEvent } from "@/services/authService";
+import { authenticateOfficer, hasPermission, canAccessDepartment, canAccessDepartmentAsync, logAuditEvent } from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -33,12 +33,12 @@ export async function GET(
       return Response.json({ error: "Report not found" }, { status: 404 });
     }
 
-    // Phase 22: Enforce department scope on report downloads
+    // Phase 22/34.1: Enforce department scope on report downloads via authoritative DB check
     if (report.caseId) {
       const associatedCase = await p.case.findFirst({
         where: { id: report.caseId },
       });
-      if (associatedCase && !canAccessDepartment(auth.officer, associatedCase.jurisdiction, associatedCase.departmentId)) {
+      if (associatedCase && !(await canAccessDepartmentAsync(auth.officer, associatedCase.jurisdiction, associatedCase.departmentId))) {
         return Response.json(
           { error: "Access denied: Report is associated with a case in another departmental jurisdiction." },
           { status: 403 }

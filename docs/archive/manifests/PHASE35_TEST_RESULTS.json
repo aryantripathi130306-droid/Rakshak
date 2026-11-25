@@ -1,0 +1,221 @@
+{
+  "phase": "PHASE 35",
+  "title": "Case Lifecycle, Officer Assignment & Investigation Workflow",
+  "timestamp": "2026-10-25T11:40:06.005Z",
+  "overallStatus": "PASSED",
+  "serverRuntime": {
+    "engine": "PostgreSQL 16.15 & SQLite Hybrid",
+    "database": "rakshak_phase43_test",
+    "host": "127.0.0.1:5432",
+    "runtimeRole": "rakshak_app_user (NOBYPASSRLS)",
+    "adminRole": "rakshak_admin_user (IN rakshak_admin_role)"
+  },
+  "metrics": {
+    "total": 25,
+    "passed": 25,
+    "failed": 0,
+    "blocked": 0
+  },
+  "testCases": [
+    {
+      "id": "TC-01",
+      "scenarioNumber": 1,
+      "name": "Valid case creation",
+      "status": "PASSED",
+      "details": "Case CASE/DEL/2026/001 registered with initial history",
+      "timestamp": "2026-10-25T11:40:06.363Z"
+    },
+    {
+      "id": "TC-02",
+      "scenarioNumber": 2,
+      "name": "Unauthenticated case creation denied",
+      "status": "PASSED",
+      "details": "401 rejected",
+      "timestamp": "2026-10-25T11:40:06.366Z"
+    },
+    {
+      "id": "TC-03",
+      "scenarioNumber": 3,
+      "name": "Suspended officer denied",
+      "status": "PASSED",
+      "details": "Fails closed on account suspension",
+      "timestamp": "2026-10-25T11:40:06.366Z"
+    },
+    {
+      "id": "TC-04",
+      "scenarioNumber": 4,
+      "name": "Duplicate or invalid case identifiers handled safely",
+      "status": "PASSED",
+      "details": "Unique constraint enforced safely",
+      "timestamp": "2026-10-25T11:40:06.374Z"
+    },
+    {
+      "id": "TC-05",
+      "scenarioNumber": 5,
+      "name": "Missing required fields rejected",
+      "status": "PASSED",
+      "details": "Validation rejected empty complainant",
+      "timestamp": "2026-10-25T11:40:06.374Z"
+    },
+    {
+      "id": "TC-06",
+      "scenarioNumber": 6,
+      "name": "Investigator cannot view an unauthorized case",
+      "status": "PASSED",
+      "details": "Cross-department case access blocked",
+      "timestamp": "2026-10-25T11:40:06.381Z"
+    },
+    {
+      "id": "TC-07",
+      "scenarioNumber": 7,
+      "name": "Cross-department access denied without a valid grant",
+      "status": "PASSED",
+      "details": "hasActiveGrantAsync returned false",
+      "timestamp": "2026-10-25T11:40:06.384Z"
+    },
+    {
+      "id": "TC-08",
+      "scenarioNumber": 8,
+      "name": "Valid grant permits only its approved scope",
+      "status": "PASSED",
+      "details": "Granted case readable; other cases remain inaccessible",
+      "timestamp": "2026-10-25T11:40:06.397Z"
+    },
+    {
+      "id": "TC-09",
+      "scenarioNumber": 9,
+      "name": "Expired grant is rejected",
+      "status": "PASSED",
+      "details": "Access revoked upon timestamp expiry",
+      "timestamp": "2026-10-25T11:40:06.408Z"
+    },
+    {
+      "id": "TC-10",
+      "scenarioNumber": 10,
+      "name": "Revoked grant is rejected",
+      "status": "PASSED",
+      "details": "Revoked grant denied immediately",
+      "timestamp": "2026-10-25T11:40:06.423Z"
+    },
+    {
+      "id": "TC-11",
+      "scenarioNumber": 11,
+      "name": "Invalid case-state transition rejected",
+      "status": "PASSED",
+      "details": "OPEN -> CLOSED rejected: Invalid case-state transition from OPEN to CLOSED. Allowed transitions from OPEN are: UNDER_INQUIRY.",
+      "timestamp": "2026-10-25T11:40:06.424Z"
+    },
+    {
+      "id": "TC-12",
+      "scenarioNumber": 12,
+      "name": "Authorized transition succeeds",
+      "status": "PASSED",
+      "details": "Case advanced from OPEN to UNDER_INQUIRY",
+      "timestamp": "2026-10-25T11:40:06.439Z"
+    },
+    {
+      "id": "TC-13",
+      "scenarioNumber": 13,
+      "name": "Unauthorized closure rejected",
+      "status": "PASSED",
+      "details": "Closure requires supervisor authority",
+      "timestamp": "2026-10-25T11:40:06.440Z"
+    },
+    {
+      "id": "TC-14",
+      "scenarioNumber": 14,
+      "name": "Unauthorized reopening rejected",
+      "status": "PASSED",
+      "details": "Reopening requires supervisor approval",
+      "timestamp": "2026-10-25T11:40:06.463Z"
+    },
+    {
+      "id": "TC-15",
+      "scenarioNumber": 15,
+      "name": "Required supervisor approval enforced",
+      "status": "PASSED",
+      "details": "Reopened with supervisor badge: DEL-SUP-01",
+      "timestamp": "2026-10-25T11:40:06.480Z"
+    },
+    {
+      "id": "TC-16",
+      "scenarioNumber": 16,
+      "name": "Unauthorized officer assignment rejected",
+      "status": "PASSED",
+      "details": "AUDITOR role denied case:assign",
+      "timestamp": "2026-10-25T11:40:06.480Z"
+    },
+    {
+      "id": "TC-17",
+      "scenarioNumber": 17,
+      "name": "Eligible officer assignment succeeds",
+      "status": "PASSED",
+      "details": "Collaborator Sub-Inspector Priya Sharma assigned",
+      "timestamp": "2026-10-25T11:40:06.507Z"
+    },
+    {
+      "id": "TC-18",
+      "scenarioNumber": 18,
+      "name": "Inactive or suspended target officer rejected",
+      "status": "PASSED",
+      "details": "Suspended target officer rejected",
+      "timestamp": "2026-10-25T11:40:06.514Z"
+    },
+    {
+      "id": "TC-19",
+      "scenarioNumber": 19,
+      "name": "Prohibited cross-department assignment rejected",
+      "status": "PASSED",
+      "details": "Cross-department assignment denied without active grant",
+      "timestamp": "2026-10-25T11:40:06.544Z"
+    },
+    {
+      "id": "TC-20",
+      "scenarioNumber": 20,
+      "name": "Authorized reassignment succeeds and preserves history",
+      "status": "PASSED",
+      "details": "Replaced assignment archived; new assignment active",
+      "timestamp": "2026-10-25T11:40:06.582Z"
+    },
+    {
+      "id": "TC-21",
+      "scenarioNumber": 21,
+      "name": "Department reassignment does not leak prior case access",
+      "status": "PASSED",
+      "details": "Old department cases strictly inaccessible",
+      "timestamp": "2026-10-25T11:40:06.594Z"
+    },
+    {
+      "id": "TC-22",
+      "scenarioNumber": 22,
+      "name": "Concurrent transitions do not silently overwrite each other",
+      "status": "PASSED",
+      "details": "Concurrency check executed safely",
+      "timestamp": "2026-10-25T11:40:06.637Z"
+    },
+    {
+      "id": "TC-23",
+      "scenarioNumber": 23,
+      "name": "Concurrent assignment updates preserve consistent ownership and history",
+      "status": "PASSED",
+      "details": "Exactly 1 active primary: Inspector Rajesh Kumar",
+      "timestamp": "2026-10-25T11:40:06.711Z"
+    },
+    {
+      "id": "TC-24",
+      "scenarioNumber": 24,
+      "name": "Audit events created and append-only in application architecture",
+      "status": "PASSED",
+      "details": "Audit ID audit-1792928406712 recorded with complete actor attribution",
+      "timestamp": "2026-10-25T11:40:06.720Z"
+    },
+    {
+      "id": "TC-25",
+      "scenarioNumber": 25,
+      "name": "PostgreSQL RLS and verified tenant context independently restrict unauthorized case and assignment access",
+      "status": "PASSED",
+      "details": "Unverified context denied (0 rows); Verified CHD tenant sees strictly CHD case & assignments while DEL records remain completely invisible",
+      "timestamp": "2026-10-25T11:40:07.639Z"
+    }
+  ]
+}

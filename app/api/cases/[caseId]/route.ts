@@ -1,6 +1,23 @@
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { authenticateOfficer, hasPermission, canAccessDepartment, logAuditEvent } from "@/services/authService";
+import {
+  authenticateOfficer,
+  canAccessCaseAsync,
+  hasPermission,
+  logAuditEvent,
+} from "@/services/authService";
+import {
+  normalizeCaseStatus,
+  validateCaseTransition,
+  executeCaseTransition,
+  getPermittedTransitions,
+  CaseStatus,
+} from "@/lib/caseLifecycle";
+import {
+  validateCaseAssignment,
+  executeCaseAssignment,
+  getCaseAssignments,
+} from "@/lib/caseAssignment";
 
 export const runtime = "nodejs";
 
@@ -16,15 +33,6 @@ async function resolveCase(caseId: string) {
       },
     },
   });
-}
-
-function normalizeStatus(s?: string): "OPEN" | "UNDER_INQUIRY" | "CHARGESHEETED" | "CLOSED" | undefined {
-  if (!s) return undefined;
-  const upper = s.toUpperCase().trim();
-  if (upper === "UNDER_INVESTIGATION" || upper === "UNDER_INQUIRY" || upper === "IN_PROGRESS") return "UNDER_INQUIRY";
-  if (upper === "CHARGESHEET_FILED" || upper === "CHARGESHEETED") return "CHARGESHEETED";
-  if (upper === "CLOSED") return "CLOSED";
-  return "OPEN";
 }
 
 function normalizeType(t?: string): "Task_Scam" | "Digital_Arrest" | "Investment_Fraud" | "KYC_Freeze" | "Romance_Scam" | undefined {
@@ -52,25 +60,42 @@ export async function GET(
         { status: 401 }
       );
     }
-    if (!hasPermission(auth.officer.role, "case:view")) {
-      return Response.json(
-        { error: "Access denied: requires case:view permission." },
-        { status: 403 }
-      );
-    }
 
     const kase = await resolveCase(caseId);
     if (!kase) {
       return Response.json({ error: "Case not found." }, { status: 404 });
     }
 
-    // Enforce department / jurisdiction scope
-    if (!canAccessDepartment(auth.officer, kase.jurisdiction, (kase as any).departmentId)) {
+    // Granular resource-aware case authorization with fresh DB grant validation
+    const accessCheck = await canAccessCaseAsync(auth.officer, kase, "read:content");
+    if (!accessCheck.allowed) {
       return Response.json(
-        { error: "Access denied: Case belongs to another departmental jurisdiction." },
+        { error: accessCheck.reason || "Access denied: Unauthorized case inspection." },
         { status: 403 }
       );
     }
+
+    // Fetch assignment and status history
+    const p = prisma as any;
+    let assignmentHistory: any[] = [];
+    let statusHistory: any[] = [];
+    let assignmentsSummary = { primary: null as any, collaborators: [] as any[] };
+
+    try {
+      if (p.caseAssignmentHistory) {
+        const assignData = await getCaseAssignments(kase.id);
+        assignmentsSummary = { primary: assignData.primary, collaborators: assignData.collaborators };
+        assignmentHistory = assignData.history;
+      }
+      if (p.caseStatusHistory) {
+        statusHistory = await p.caseStatusHistory.findMany({
+          where: { caseId: kase.id },
+          orderBy: { changedAt: "desc" },
+        });
+      }
+    } catch (_) {}
+
+    const permittedTransitions = getPermittedTransitions(kase.status, auth.officer.role);
 
     // Attach alias fields for UI compatibility
     const enriched = {
@@ -78,6 +103,10 @@ export async function GET(
       totalLossINR: kase.amountDefrauded ?? 0,
       fraudAmountINR: kase.amountDefrauded ?? 0,
       investigatingOfficer: kase.officerName ?? "Unassigned",
+      currentAssignment: assignmentsSummary,
+      assignmentHistory,
+      statusHistory,
+      permittedTransitions,
     };
 
     return Response.json({ case: enriched }, { status: 200 });
@@ -102,9 +131,10 @@ export async function PATCH(
         { status: 401 }
       );
     }
-    if (!hasPermission(auth.officer.role, "case:edit")) {
+
+    if (auth.officer.status !== "ACTIVE") {
       return Response.json(
-        { error: "Access denied: requires case:edit permission." },
+        { error: `Account status is ${auth.officer.status}. Suspended officers cannot modify cases.` },
         { status: 403 }
       );
     }
@@ -114,17 +144,139 @@ export async function PATCH(
       return Response.json({ error: "Case not found." }, { status: 404 });
     }
 
-    // Enforce department / jurisdiction scope
-    if (!canAccessDepartment(auth.officer, existing.jurisdiction, (existing as any).departmentId)) {
+    const body = await request.json().catch(() => ({}));
+
+    // 1. Handle Status Transition if requested
+    if (body.status !== undefined) {
+      const validation = await validateCaseTransition(
+        auth.officer,
+        existing,
+        body.status,
+        body.reason
+      );
+
+      if (!validation.valid) {
+        return Response.json(
+          { error: validation.error },
+          { status: validation.statusCode }
+        );
+      }
+
+      const targetStatus = normalizeCaseStatus(body.status) as CaseStatus;
+      const transitionResult = await executeCaseTransition(
+        auth.officer,
+        existing.id,
+        normalizeCaseStatus(existing.status) as CaseStatus,
+        targetStatus,
+        body.reason,
+        body.approvedBy
+      );
+
+      if (!transitionResult.success) {
+        return Response.json(
+          { error: transitionResult.error || "Failed to execute case transition." },
+          { status: transitionResult.error?.includes("conflict") ? 409 : 500 }
+        );
+      }
+
+      const ipAddress = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "103.45.67.89";
+      await logAuditEvent({
+        officerId: auth.officer.id,
+        officerName: auth.officer.name,
+        officerBadge: auth.officer.badgeNumber,
+        action: "TRANSITION_CASE_STATUS",
+        module: "Cases",
+        targetType: "Case",
+        targetId: existing.id,
+        details: `Transitioned case ${existing.caseNumber} from ${existing.status} to ${targetStatus}. Reason: ${body.reason || "Standard operational transition"}`,
+        result: "SUCCESS",
+        ipAddress,
+      });
+
+      // If only status was being updated, return updated case
+      if (Object.keys(body).filter((k) => k !== "status" && k !== "reason" && k !== "approvedBy").length === 0) {
+        const enriched = {
+          ...transitionResult.caseRecord,
+          totalLossINR: transitionResult.caseRecord.amountDefrauded ?? 0,
+          fraudAmountINR: transitionResult.caseRecord.amountDefrauded ?? 0,
+          investigatingOfficer: transitionResult.caseRecord.officerName ?? "Unassigned",
+          statusHistoryEntry: transitionResult.historyRecord,
+        };
+        return Response.json({ case: enriched }, { status: 200 });
+      }
+    }
+
+    // 2. Handle Officer Assignment if requested
+    if (body.targetOfficerId || body.officerId) {
+      const targetId = body.targetOfficerId || body.officerId;
+      const assignType = body.assignmentType || "PRIMARY";
+
+      const assignValidation = await validateCaseAssignment(
+        auth.officer,
+        existing,
+        targetId,
+        assignType,
+        body.reason
+      );
+
+      if (!assignValidation.valid) {
+        return Response.json(
+          { error: assignValidation.error },
+          { status: assignValidation.statusCode }
+        );
+      }
+
+      const assignResult = await executeCaseAssignment(
+        auth.officer,
+        existing.id,
+        assignValidation.targetOfficer,
+        assignType,
+        body.reason
+      );
+
+      if (!assignResult.success) {
+        return Response.json(
+          { error: assignResult.error || "Failed to assign officer to case." },
+          { status: 500 }
+        );
+      }
+
+      const ipAddress = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "103.45.67.89";
+      await logAuditEvent({
+        officerId: auth.officer.id,
+        officerName: auth.officer.name,
+        officerBadge: auth.officer.badgeNumber,
+        action: "ASSIGN_CASE_OFFICER",
+        module: "Cases",
+        targetType: "Case",
+        targetId: existing.id,
+        details: `Assigned officer ${assignValidation.targetOfficer.name} (${assignValidation.targetOfficer.badgeNumber}) as ${assignType} on case ${existing.caseNumber}`,
+        result: "SUCCESS",
+        ipAddress,
+      });
+
+      if (Object.keys(body).filter((k) => k !== "targetOfficerId" && k !== "officerId" && k !== "assignmentType" && k !== "reason").length === 0) {
+        const enriched = {
+          ...assignResult.caseRecord,
+          totalLossINR: assignResult.caseRecord.amountDefrauded ?? 0,
+          fraudAmountINR: assignResult.caseRecord.amountDefrauded ?? 0,
+          investigatingOfficer: assignResult.caseRecord.officerName ?? "Unassigned",
+          assignmentEntry: assignResult.assignmentRecord,
+        };
+        return Response.json({ case: enriched }, { status: 200 });
+      }
+    }
+
+    // 3. Handle General Field Updates
+    const accessCheck = await canAccessCaseAsync(auth.officer, existing, "write");
+    if (!accessCheck.allowed) {
       return Response.json(
-        { error: "Access denied: Case belongs to another departmental jurisdiction." },
+        { error: accessCheck.reason || "Access denied: Unauthorized case modification." },
         { status: 403 }
       );
     }
 
-    const body = await request.json();
     const updateData: any = {};
-
     if (body.incidentType !== undefined) {
       updateData.incidentType = normalizeType(body.incidentType);
     }
@@ -138,29 +290,34 @@ export async function PATCH(
       const amt = body.amountDefrauded ?? body.totalLossINR ?? body.fraudAmountINR;
       updateData.amountDefrauded = typeof amt === 'number' ? Math.round(amt) : null;
     }
-    if (body.status !== undefined) {
-      updateData.status = normalizeStatus(body.status);
-    }
     if (body.description !== undefined) {
       updateData.description = body.description;
     }
     if (body.firNumber !== undefined) {
       updateData.firNumber = body.firNumber;
     }
-    if (body.officerName !== undefined || body.investigatingOfficer !== undefined) {
-      updateData.officerName = body.officerName ?? body.investigatingOfficer;
-    }
-    if (body.officerBadge !== undefined) {
-      updateData.officerBadge = body.officerBadge;
-    }
 
     if (Object.keys(updateData).length === 0) {
-      return Response.json({ error: "No fields to update." }, { status: 400 });
+      return Response.json({ error: "No valid fields to update." }, { status: 400 });
     }
 
     const updated = await prisma.case.update({
       where: { id: existing.id },
       data: updateData,
+    });
+
+    const ipAddress = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "103.45.67.89";
+    await logAuditEvent({
+      officerId: auth.officer.id,
+      officerName: auth.officer.name,
+      officerBadge: auth.officer.badgeNumber,
+      action: "UPDATE_CASE",
+      module: "Cases",
+      targetType: "Case",
+      targetId: existing.id,
+      details: `Updated case fields on ${existing.caseNumber}`,
+      result: "SUCCESS",
+      ipAddress,
     });
 
     const enriched = {

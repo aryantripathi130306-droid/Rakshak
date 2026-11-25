@@ -1,0 +1,173 @@
+{
+  "phase": "PHASE 34.1",
+  "title": "Grant Source-of-Truth Reconciliation & PostgreSQL RLS Adversarial Verification",
+  "timestamp": "2026-10-25T11:40:00.781Z",
+  "overallStatus": "PASSED",
+  "serverRuntime": {
+    "engine": "PostgreSQL 16.15",
+    "database": "rakshak_phase43_test",
+    "host": "127.0.0.1:5432",
+    "runtimeRole": "rakshak_app_user (NOBYPASSRLS)",
+    "adminRole": "rakshak_admin_user (IN rakshak_admin_role)"
+  },
+  "metrics": {
+    "total": 19,
+    "passed": 19,
+    "failed": 0,
+    "blocked": 0
+  },
+  "testCases": [
+    {
+      "id": "TC-A01",
+      "workstream": "Workstream A",
+      "name": "Database grant revocation observed immediately across independent clients",
+      "status": "PASSED",
+      "details": "Client A revoked in DB -> Client B immediately denied",
+      "timestamp": "2026-10-25T11:40:01.279Z"
+    },
+    {
+      "id": "TC-A02",
+      "workstream": "Workstream A",
+      "name": "Database grant expiring between requests denied immediately",
+      "status": "PASSED",
+      "details": "Active at t=0ms -> Denied at t=150ms",
+      "timestamp": "2026-10-25T11:40:01.495Z"
+    },
+    {
+      "id": "TC-A03",
+      "workstream": "Workstream A",
+      "name": "Stale JSON cache cannot independently authorize access over database state",
+      "status": "PASSED",
+      "details": "DB REVOKED status strictly took precedence over JSON ACTIVE claim",
+      "timestamp": "2026-10-25T11:40:01.508Z"
+    },
+    {
+      "id": "TC-A04",
+      "workstream": "Workstream A",
+      "name": "Unresolvable grant state fails closed safely",
+      "status": "PASSED",
+      "details": "Returned false (denied)",
+      "timestamp": "2026-10-25T11:40:01.509Z"
+    },
+    {
+      "id": "TC-A05",
+      "workstream": "Workstream A",
+      "name": "Concurrent grant creation and revocation operations atomic and consistent",
+      "status": "PASSED",
+      "details": "5/5 concurrent operations committed and revoked cleanly",
+      "timestamp": "2026-10-25T11:40:01.679Z"
+    },
+    {
+      "id": "TC-B01",
+      "workstream": "Workstream B",
+      "name": "Direct access to private_auth schema strictly denied to app role",
+      "status": "PASSED",
+      "details": "Permission denied as expected",
+      "timestamp": "2026-10-25T11:40:02.048Z"
+    },
+    {
+      "id": "TC-B02",
+      "workstream": "Workstream B",
+      "name": "Client set_config('app.current_department_id') forgery rejected (returns 0 rows)",
+      "status": "PASSED",
+      "details": "count=0 (unverified client setting ignored by RLS policy)",
+      "timestamp": "2026-10-25T11:40:02.242Z"
+    },
+    {
+      "id": "TC-B03",
+      "workstream": "Workstream B",
+      "name": "Client set_config('app.is_platform_admin') forgery rejected (returns 0 rows)",
+      "status": "PASSED",
+      "details": "count=0 (unverified admin setting ignored by RLS policy)",
+      "timestamp": "2026-10-25T11:40:02.473Z"
+    },
+    {
+      "id": "TC-B04",
+      "workstream": "Workstream B",
+      "name": "set_authenticated_tenant_context rejects forged/invalid session tokens",
+      "status": "PASSED",
+      "details": "Exception raised: Invalid session token",
+      "timestamp": "2026-10-25T11:40:02.629Z"
+    },
+    {
+      "id": "TC-B05",
+      "workstream": "Workstream B",
+      "name": "set_authenticated_tenant_context rejects expired session tokens",
+      "status": "PASSED",
+      "details": "Exception raised: Expired session token",
+      "timestamp": "2026-10-25T11:40:02.821Z"
+    },
+    {
+      "id": "TC-B06",
+      "workstream": "Workstream B",
+      "name": "set_authenticated_tenant_context rejects suspended officer accounts",
+      "status": "PASSED",
+      "details": "Exception raised: Suspended account",
+      "timestamp": "2026-10-25T11:40:02.964Z"
+    },
+    {
+      "id": "TC-B07",
+      "workstream": "Workstream B",
+      "name": "set_authenticated_tenant_context rejects department mismatch",
+      "status": "PASSED",
+      "details": "Exception raised: Department mismatch",
+      "timestamp": "2026-10-25T11:40:03.153Z"
+    },
+    {
+      "id": "TC-B08",
+      "workstream": "Workstream B",
+      "name": "Verified credentials authorize legitimate tenant access",
+      "status": "PASSED",
+      "details": "Visible: grant-del-to-chd-active",
+      "timestamp": "2026-10-25T11:40:03.345Z"
+    },
+    {
+      "id": "TC-B09",
+      "workstream": "Workstream B",
+      "name": "Foreign department grants remain strictly invisible under verified context",
+      "status": "PASSED",
+      "details": "MUM internal grant hidden from CHD officer",
+      "timestamp": "2026-10-25T11:40:03.345Z"
+    },
+    {
+      "id": "TC-B10",
+      "workstream": "Workstream B",
+      "name": "clear_tenant_context() purges state across pooled connection reuses",
+      "status": "PASSED",
+      "details": "Count=0 after clear_tenant_context()",
+      "timestamp": "2026-10-25T11:40:03.499Z"
+    },
+    {
+      "id": "TC-B11",
+      "workstream": "Workstream B",
+      "name": "Verified administrator session token enables full platform oversight",
+      "status": "PASSED",
+      "details": "All grants visible to verified SYS_ADMIN",
+      "timestamp": "2026-10-25T11:40:03.665Z"
+    },
+    {
+      "id": "TC-B12",
+      "workstream": "Workstream B",
+      "name": "Runtime role verified with NOBYPASSRLS and non-superuser in pg_roles",
+      "status": "PASSED",
+      "details": "rolsuper=false, rolbypassrls=false",
+      "timestamp": "2026-10-25T11:40:03.815Z"
+    },
+    {
+      "id": "TC-C01",
+      "workstream": "Workstream C/D",
+      "name": "Active development database (prisma/dev.db) strictly unaltered",
+      "status": "PASSED",
+      "details": "SHA-256 match: dd24614b14f1b4cf...",
+      "timestamp": "2026-10-25T11:40:03.827Z"
+    },
+    {
+      "id": "TC-C02",
+      "workstream": "Workstream C/D",
+      "name": "Cold storage evidence binaries (uploads/raw/) 100% unaltered",
+      "status": "PASSED",
+      "details": "560 files, SHA-256 manifest preserved",
+      "timestamp": "2026-10-25T11:40:03.923Z"
+    }
+  ]
+}

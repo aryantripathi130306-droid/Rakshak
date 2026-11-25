@@ -5,7 +5,7 @@
 import { type NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
-import { verifyPassword, createSession, logAuditEvent, ROLE_PERMISSIONS, type Role } from "@/services/authService";
+import { verifyPassword, createSession, logAuditEvent, getEffectivePermissions, ROLE_PERMISSIONS, type Role } from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -136,8 +136,7 @@ export async function POST(request: NextRequest) {
       ipAddress,
     });
 
-    const role = officer.role as Role;
-    const permissions = ROLE_PERMISSIONS[role] || [];
+    const permissions = getEffectivePermissions(officer);
 
     const response = Response.json(
       {
@@ -160,9 +159,14 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
-    // Set secure HTTP-only cookie (only apply Secure flag on HTTPS connections so HTTP local/staging keeps session)
+    // Set secure HTTP-only cookie
+    // - HttpOnly: Prevents client script access
+    // - SameSite=Lax: Mitigates cross-site request forgery
+    // - Secure: Enforced on HTTPS connections or when NODE_ENV=production (unless ALLOW_INSECURE_COOKIES=true)
     const isHttps = request.nextUrl.protocol === "https:" || request.headers.get("x-forwarded-proto") === "https";
-    const secureFlag = isHttps ? "; Secure" : "";
+    const isProduction = process.env.NODE_ENV === "production";
+    const isSecure = isHttps || (isProduction && process.env.ALLOW_INSECURE_COOKIES !== "true");
+    const secureFlag = isSecure ? "; Secure" : "";
     response.headers.set(
       "Set-Cookie",
       `rakshak_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400${secureFlag}`

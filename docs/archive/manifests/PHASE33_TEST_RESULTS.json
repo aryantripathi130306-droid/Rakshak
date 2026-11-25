@@ -1,0 +1,137 @@
+{
+  "suite": "Rakshak v3.0 Phase 33 Secure Account Lifecycle & Access Grants Suite",
+  "timestamp": "2026-10-25T11:39:54.890Z",
+  "totalScenarios": 21,
+  "passed": 21,
+  "failed": 0,
+  "passPercentage": "100.0%",
+  "activeDatabaseUntouched": true,
+  "scenarios": [
+    {
+      "scenarioNum": 1,
+      "name": "Authorized officer provisioning",
+      "passed": true,
+      "details": "Dept Admin successfully provisions investigator in same department"
+    },
+    {
+      "scenarioNum": 2,
+      "name": "Unauthorized account creation rejection",
+      "passed": true,
+      "details": "Account administration requires administrative role"
+    },
+    {
+      "scenarioNum": 3,
+      "name": "Department administrator cannot assign prohibited roles",
+      "passed": true,
+      "details": "SYS_ADMIN and AUDITOR rejected for Dept Admin"
+    },
+    {
+      "scenarioNum": 4,
+      "name": "Duplicate account identifiers are rejected",
+      "passed": true,
+      "details": "Unique constraint caught duplicate badge number"
+    },
+    {
+      "scenarioNum": 5,
+      "name": "Suspended officer login is rejected",
+      "passed": true,
+      "details": "Status SUSPENDED rejected"
+    },
+    {
+      "scenarioNum": 6,
+      "name": "Revoked session reuse is rejected",
+      "passed": true,
+      "details": "Revoked token returned null"
+    },
+    {
+      "scenarioNum": 7,
+      "name": "Role changes invalidate stale sessions",
+      "passed": true,
+      "details": "All officer sessions invalidated"
+    },
+    {
+      "scenarioNum": 8,
+      "name": "Department changes invalidate stale scope",
+      "passed": true,
+      "details": "Delhi access: false; Mumbai access: true"
+    },
+    {
+      "scenarioNum": 9,
+      "name": "Grant creation requires authorized approval",
+      "passed": true,
+      "details": "Investigator approve: false; Supervisor approve: true"
+    },
+    {
+      "scenarioNum": 10,
+      "name": "Grant scope restricts access to approved resources",
+      "passed": true,
+      "details": "CASE_READ granted; unpermitted actions remain blocked"
+    },
+    {
+      "scenarioNum": 11,
+      "name": "Expired grants deny access",
+      "passed": true,
+      "details": "Expired grant evaluated to inactive"
+    },
+    {
+      "scenarioNum": 12,
+      "name": "Revoked grants deny access immediately",
+      "passed": true,
+      "details": "Revoked grant denied immediately"
+    },
+    {
+      "scenarioNum": 13,
+      "name": "Client department or role substitution is rejected",
+      "passed": true,
+      "details": "Session enforced role: INVESTIGATOR"
+    },
+    {
+      "scenarioNum": 14,
+      "name": "Concurrent grant updates do not lose state",
+      "passed": true,
+      "details": "Both grants grant-c731ec2ee6f1 and grant-5a650c542f71 preserved"
+    },
+    {
+      "scenarioNum": 15,
+      "name": "Missing grant persistence fails closed",
+      "passed": true,
+      "details": "Non-existent grant returned false"
+    },
+    {
+      "scenarioNum": 16,
+      "name": "Unauthorized cross-department access is denied",
+      "passed": true,
+      "details": "Blocked without active grant"
+    },
+    {
+      "scenarioNum": 17,
+      "name": "PostgreSQL RLS independently prevents unauthorized access",
+      "passed": true,
+      "details": "PostgreSQL 16 catalogs confirm FORCE RLS and 0 BYPASSRLS for app roles"
+    },
+    {
+      "scenarioNum": 18,
+      "name": "Required audit events recorded for privilege changes",
+      "passed": true,
+      "details": "Recorded audit event ADD_OFFICER (aud-p33-01)"
+    },
+    {
+      "scenarioNum": 19,
+      "name": "Historical audit records cannot be edited or deleted",
+      "passed": true,
+      "details": "canModifyAudit evaluated to false; HTTP 405 enforced on mutations"
+    },
+    {
+      "scenarioNum": 20,
+      "name": "Existing legacy role behavior preserved without expanding privileges",
+      "passed": true,
+      "details": "Zero privilege expansion: Case content bypass blocked, binary download blocked, mutation blocked"
+    },
+    {
+      "scenarioNum": 21,
+      "name": "Database migration retains all relevant existing grant state",
+      "passed": true,
+      "details": "Reconciled grant into database with foreign keys and active status"
+    }
+  ]
+}

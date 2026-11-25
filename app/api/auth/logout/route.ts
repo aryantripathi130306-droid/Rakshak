@@ -30,7 +30,9 @@ export async function POST(request: NextRequest) {
 
     const response = Response.json({ success: true, message: "Logged out successfully" }, { status: 200 });
     const isHttps = request.nextUrl.protocol === "https:" || request.headers.get("x-forwarded-proto") === "https";
-    const secureFlag = isHttps ? "; Secure" : "";
+    const isProduction = process.env.NODE_ENV === "production";
+    const isSecure = isHttps || (isProduction && process.env.ALLOW_INSECURE_COOKIES !== "true");
+    const secureFlag = isSecure ? "; Secure" : "";
     response.headers.set(
       "Set-Cookie",
       `rakshak_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureFlag}`

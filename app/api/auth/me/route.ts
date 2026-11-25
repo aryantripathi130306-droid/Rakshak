@@ -3,7 +3,7 @@
 // GET /api/auth/me — Return current authenticated officer session & permissions
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
-import { authenticateOfficer, ROLE_PERMISSIONS } from "@/services/authService";
+import { authenticateOfficer, getEffectivePermissions } from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     }
 
     const { officer } = authResult;
-    const permissions = ROLE_PERMISSIONS[officer.role] || [];
+    const permissions = getEffectivePermissions(officer);
 
     return Response.json(
       {

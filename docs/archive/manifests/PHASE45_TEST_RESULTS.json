@@ -1,0 +1,795 @@
+{
+  "phase": "PHASE_45",
+  "timestamp": "2026-10-27T15:45:40.148Z",
+  "suiteName": "Rakshak v3.0 End-to-End Investigative Workflow Verification Suite",
+  "databaseTarget": "rakshak_phase45_test",
+  "apiOrigin": "http://127.0.0.1:3005",
+  "summary": {
+    "totalTests": 59,
+    "passed": 59,
+    "failed": 0,
+    "passRate": "100.0%",
+    "exitCode": 0
+  },
+  "safetyInvariants": {
+    "devDbHash": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+    "rawFilesCount": 560,
+    "rawManifestHash": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+    "protectedDatabasesCount": 20
+  },
+  "scenarios": [
+    {
+      "id": "P45-SAFE-01",
+      "category": "Safety",
+      "name": "prisma/dev.db pre-test SHA-256 matches baseline",
+      "command": "sha256(E:\\Rakshak\\prisma\\dev.db)",
+      "expected": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+      "actual": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 12
+    },
+    {
+      "id": "P45-SAFE-02",
+      "category": "Safety",
+      "name": "uploads/raw file count strictly equals 560 files",
+      "command": "countFiles(E:\\Rakshak\\uploads\\raw)",
+      "expected": 560,
+      "actual": 560,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 76
+    },
+    {
+      "id": "P45-SAFE-03",
+      "category": "Safety",
+      "name": "uploads/raw manifest digest matches baseline",
+      "command": "manifestHash(E:\\Rakshak\\uploads\\raw)",
+      "expected": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+      "actual": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 62
+    },
+    {
+      "id": "P45-SAFE-04",
+      "category": "Safety",
+      "name": "PostgreSQL target is confirmed as rakshak_phase45_test",
+      "command": "SELECT current_database();",
+      "expected": "rakshak_phase45_test",
+      "actual": "rakshak_phase45_test",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 62
+    },
+    {
+      "id": "P45-SAFE-05",
+      "category": "Safety",
+      "name": "Historical test databases protected against mutation",
+      "command": "Check historical databases existence in catalog",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 197
+    },
+    {
+      "id": "P45-ENV-01",
+      "category": "Environment",
+      "name": "PostgreSQL catalog contains exactly 31 application tables",
+      "command": "SELECT count(*) FROM pg_tables WHERE schemaname = 'public';",
+      "expected": 31,
+      "actual": 31,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 71
+    },
+    {
+      "id": "P45-ENV-02",
+      "category": "Environment",
+      "name": "PostgreSQL catalog has RLS and FORCE RLS enabled on 20 sensitive tables",
+      "command": "Catalog inspection in pg_class for relrowsecurity and relforcerowsecurity",
+      "expected": {
+        "rls": 20,
+        "forceRls": 20
+      },
+      "actual": {
+        "rls": 20,
+        "forceRls": 20
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 248
+    },
+    {
+      "id": "P45-ENV-03",
+      "category": "Environment",
+      "name": "PostgreSQL catalog has all 21 authoritative RLS policies active",
+      "command": "SELECT count(*) FROM pg_policies WHERE schemaname = 'public';",
+      "expected": 21,
+      "actual": 21,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 67
+    },
+    {
+      "id": "P45-ENV-04",
+      "category": "Environment",
+      "name": "Application server is reachable and reports READY status",
+      "command": "GET http://127.0.0.1:3005/api/health",
+      "expected": "HEALTHY",
+      "actual": "HEALTHY",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 59
+    },
+    {
+      "id": "P45-AUTH-01",
+      "category": "Auth",
+      "name": "POST /api/auth/login with valid officer credentials succeeds",
+      "command": "POST /api/auth/login (DL-INV-45)",
+      "expected": {
+        "success": true,
+        "role": "INVESTIGATOR"
+      },
+      "actual": {
+        "success": true,
+        "role": "INVESTIGATOR"
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 131
+    },
+    {
+      "id": "P45-AUTH-02",
+      "category": "Auth",
+      "name": "POST /api/auth/login sets secure HttpOnly session cookie",
+      "command": "Inspect Set-Cookie header",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 1
+    },
+    {
+      "id": "P45-AUTH-03",
+      "category": "Auth",
+      "name": "POST /api/auth/login with incorrect password fails with 401",
+      "command": "POST /api/auth/login (Wrong Password)",
+      "expected": 401,
+      "actual": 401,
+      "status": "PASSED",
+      "httpStatus": 401,
+      "durationMs": 156
+    },
+    {
+      "id": "P45-AUTH-04",
+      "category": "Auth",
+      "name": "POST /api/auth/login with non-existent officer fails with 401",
+      "command": "POST /api/auth/login (Non-existent)",
+      "expected": 401,
+      "actual": 401,
+      "status": "PASSED",
+      "httpStatus": 401,
+      "durationMs": 17
+    },
+    {
+      "id": "P45-AUTH-05",
+      "category": "Auth",
+      "name": "POST /api/auth/login for suspended officer fails with 403",
+      "command": "POST /api/auth/login (Suspended DL-SUSP-45)",
+      "expected": 403,
+      "actual": 403,
+      "status": "PASSED",
+      "httpStatus": 403,
+      "durationMs": 13
+    },
+    {
+      "id": "P45-AUTH-06",
+      "category": "Auth",
+      "name": "GET /api/auth/me with Bearer token returns officer profile",
+      "command": "GET /api/auth/me (Bearer Token)",
+      "expected": "DL-INV-45",
+      "actual": "DL-INV-45",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 12
+    },
+    {
+      "id": "P45-AUTH-07",
+      "category": "Auth",
+      "name": "GET /api/auth/me with session cookie returns officer profile",
+      "command": "GET /api/auth/me (Cookie)",
+      "expected": "DL-INV-45",
+      "actual": "DL-INV-45",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 12
+    },
+    {
+      "id": "P45-AUTH-08",
+      "category": "Auth",
+      "name": "POST /api/auth/logout revokes session in database",
+      "command": "POST /api/auth/logout and verify subsequent rejection",
+      "expected": {
+        "logoutStatus": 200,
+        "meStatus": 401
+      },
+      "actual": {
+        "logoutStatus": 200,
+        "meStatus": 401
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 160
+    },
+    {
+      "id": "P45-CASE-01",
+      "category": "CaseLifecycle",
+      "name": "POST /api/cases creates synthetic case in OPEN status",
+      "command": "POST /api/cases (Create Case)",
+      "expected": {
+        "status": "OPEN",
+        "departmentId": "p45-dept-del"
+      },
+      "actual": {
+        "status": "OPEN",
+        "departmentId": "p45-dept-del"
+      },
+      "status": "PASSED",
+      "httpStatus": 201,
+      "durationMs": 35
+    },
+    {
+      "id": "P45-CASE-02",
+      "category": "CaseLifecycle",
+      "name": "GET /api/cases and GET /api/cases/[id] retrieve newly created case",
+      "command": "GET /api/cases and GET /api/cases/2836908f-44aa-4b32-9f8f-2c77144bd711",
+      "expected": {
+        "foundInList": true,
+        "caseNumber": "CASE-2026-9008"
+      },
+      "actual": {
+        "foundInList": true,
+        "caseNumber": "CASE-2026-9008"
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 102
+    },
+    {
+      "id": "P45-CASE-03",
+      "category": "CaseLifecycle",
+      "name": "POST /api/cases/[id]/assignment assigns case to investigator",
+      "command": "POST /api/cases/2836908f-44aa-4b32-9f8f-2c77144bd711/assignment",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 69
+    },
+    {
+      "id": "P45-CASE-04",
+      "category": "CaseLifecycle",
+      "name": "POST /api/cases/[id]/transition transitions state OPEN -> UNDER_INQUIRY",
+      "command": "POST /api/cases/2836908f-44aa-4b32-9f8f-2c77144bd711/transition -> UNDER_INQUIRY",
+      "expected": "UNDER_INQUIRY",
+      "actual": "UNDER_INQUIRY",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 58
+    },
+    {
+      "id": "P45-CASE-05",
+      "category": "CaseLifecycle",
+      "name": "Direct illegal transition UNDER_INQUIRY -> CLOSED without chargesheet rejected (403/400)",
+      "command": "POST /api/cases/2836908f-44aa-4b32-9f8f-2c77144bd711/transition (Illegal Transition)",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 403,
+      "durationMs": 18
+    },
+    {
+      "id": "P45-CASE-06",
+      "category": "CaseLifecycle",
+      "name": "Supervisor approval required for CHARGESHEETED transition; supervisor approves",
+      "command": "Supervisor approval authorization gate",
+      "expected": {
+        "invDenied": 403,
+        "supApproved": true
+      },
+      "actual": {
+        "invDenied": 403,
+        "supApproved": true
+      },
+      "status": "PASSED",
+      "httpStatus": 201,
+      "durationMs": 64
+    },
+    {
+      "id": "P45-EVI-01",
+      "category": "Evidence",
+      "name": "POST /api/evidence/upload handles multipart upload with SHA-256 verification",
+      "command": "POST /api/evidence/upload (Multipart with clientHash)",
+      "expected": {
+        "verified": true,
+        "hash": "b75656f7e58028c8a5b68cc4ae2daf7e7ba51f5715f79edf84d7d122ce7e4b87"
+      },
+      "actual": {
+        "verified": true,
+        "hash": "b75656f7e58028c8a5b68cc4ae2daf7e7ba51f5715f79edf84d7d122ce7e4b87"
+      },
+      "status": "PASSED",
+      "httpStatus": 201,
+      "durationMs": 58
+    },
+    {
+      "id": "P45-EVI-02",
+      "category": "Evidence",
+      "name": "Original upload stored in isolated directory without modifying uploads/raw",
+      "command": "Verify cold storage destination",
+      "expected": {
+        "synthExists": true,
+        "rawCount": 560
+      },
+      "actual": {
+        "synthExists": true,
+        "rawCount": 560
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 87
+    },
+    {
+      "id": "P45-EVI-03",
+      "category": "Evidence",
+      "name": "Upload with mismatched clientHash is strictly rejected (400/422)",
+      "command": "POST /api/evidence/upload (Hash Mismatch)",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 422,
+      "durationMs": 20
+    },
+    {
+      "id": "P45-EVI-04",
+      "category": "Evidence",
+      "name": "POST /api/evidence/[id]/custody appends custody transfer event with hash chaining",
+      "command": "POST /api/evidence/8f0b24a5-f30c-4191-8f80-0251ac06c2c0/custody",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 201,
+      "durationMs": 39
+    },
+    {
+      "id": "P45-EVI-05",
+      "category": "Evidence",
+      "name": "Database unique index rejects duplicate sequence numbers in CustodyEvent",
+      "command": "Direct SQL insert of duplicate sequence number",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 99
+    },
+    {
+      "id": "P45-EVI-06",
+      "category": "Evidence",
+      "name": "POST /api/evidence/[id]/verify performs full cryptographic chain verification",
+      "command": "POST /api/evidence/8f0b24a5-f30c-4191-8f80-0251ac06c2c0/verify",
+      "expected": {
+        "verified": true,
+        "hashMatch": true
+      },
+      "actual": {
+        "verified": true,
+        "hashMatch": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 41
+    },
+    {
+      "id": "P45-FACT-01",
+      "category": "FactReview",
+      "name": "GET /api/evidence/[id]/text retrieves text content from synthetic cold storage",
+      "command": "GET /api/evidence/8f0b24a5-f30c-4191-8f80-0251ac06c2c0/text",
+      "expected": {
+        "available": true,
+        "text": "SYNTHETIC_FORENSIC_EXHIBIT_BANK_STATEMENT_OCT_2026_DELHI"
+      },
+      "actual": {
+        "available": true,
+        "text": "SYNTHETIC_FORENSIC_EXHIBIT_BANK_STATEMENT_OCT_2026_DELHI"
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 29
+    },
+    {
+      "id": "P45-FACT-02",
+      "category": "FactReview",
+      "name": "Extracted facts start in PENDING_REVIEW state (never auto-promoted)",
+      "command": "Inspect initial reviewStatus in database",
+      "expected": "PENDING_REVIEW",
+      "actual": "PENDING_REVIEW",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 101
+    },
+    {
+      "id": "P45-FACT-03",
+      "category": "FactReview",
+      "name": "POST /api/facts/[id]/review with decision CORRECT records correction & history",
+      "command": "POST /api/facts/p45-fact-del-01/review (CORRECT)",
+      "expected": {
+        "status": "CORRECTED",
+        "previousValue": "+919876543210"
+      },
+      "actual": {
+        "status": "CORRECTED",
+        "previousValue": "+919876543210"
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 43
+    },
+    {
+      "id": "P45-FACT-04",
+      "category": "FactReview",
+      "name": "POST /api/facts/[id]/review with decision ACCEPT verifies fact",
+      "command": "POST /api/facts/p45-fact-del-01/review (ACCEPT)",
+      "expected": "ACCEPTED",
+      "actual": "ACCEPTED",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 29
+    },
+    {
+      "id": "P45-FACT-05",
+      "category": "FactReview",
+      "name": "Fact review history is auditable and immutable",
+      "command": "SELECT count(*) FROM FactReviewHistory WHERE factId = 'p45-fact-del-01'",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 91
+    },
+    {
+      "id": "P45-ENT-01",
+      "category": "EntityIntelligence",
+      "name": "POST /api/entities/resolve evaluates shared entities into candidate links",
+      "command": "POST /api/entities/resolve (caseId: 2836908f-44aa-4b32-9f8f-2c77144bd711)",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 53
+    },
+    {
+      "id": "P45-ENT-02",
+      "category": "EntityIntelligence",
+      "name": "GET /api/entities/matches lists candidate links with CANDIDATE status",
+      "command": "GET /api/entities/matches?entityType=PHONE",
+      "expected": {
+        "found": true,
+        "status": "CANDIDATE"
+      },
+      "actual": {
+        "found": true,
+        "status": "CANDIDATE"
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 29
+    },
+    {
+      "id": "P45-ENT-03",
+      "category": "EntityIntelligence",
+      "name": "POST /api/entities/links/[id]/review human review confirms candidate link",
+      "command": "POST /api/entities/links/42a0a231-2ff6-4b97-8b8b-5d5c2b4d2f38/review (CONFIRMED)",
+      "expected": "CONFIRMED",
+      "actual": "CONFIRMED",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 43
+    },
+    {
+      "id": "P45-ENT-04",
+      "category": "EntityIntelligence",
+      "name": "GET /api/graph returns bounded cross-case graph nodes and edges",
+      "command": "GET /api/graph?caseId=2836908f-44aa-4b32-9f8f-2c77144bd711",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 37
+    },
+    {
+      "id": "P45-DOSS-01",
+      "category": "Dossier",
+      "name": "POST /api/cases/[id]/dossier/generate creates versioned evidence-backed dossier",
+      "command": "POST /api/cases/2836908f-44aa-4b32-9f8f-2c77144bd711/dossier/generate",
+      "expected": {
+        "status": "GENERATED",
+        "hasHash": true
+      },
+      "actual": {
+        "status": "GENERATED",
+        "hasHash": true
+      },
+      "status": "PASSED",
+      "httpStatus": 201,
+      "durationMs": 85
+    },
+    {
+      "id": "P45-DOSS-02",
+      "category": "Dossier",
+      "name": "POST /api/dossiers/[id]/review records supervisor approval decision",
+      "command": "POST /api/dossiers/4dbc5fea-40e0-4526-a875-467556c4156f/review (UNDER_REVIEW -> APPROVED)",
+      "expected": {
+        "rev1Success": true,
+        "rev2Success": true,
+        "finalStatus": "APPROVED"
+      },
+      "actual": {
+        "rev1Success": true,
+        "rev2Success": true,
+        "finalStatus": "APPROVED"
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 122
+    },
+    {
+      "id": "P45-DOSS-03",
+      "category": "Dossier",
+      "name": "GET /api/dossiers/[id]/export?format=JSON exports verified dossier artifact",
+      "command": "GET /api/dossiers/4dbc5fea-40e0-4526-a875-467556c4156f/export?format=JSON",
+      "expected": {
+        "status": 200,
+        "hasDisposition": true,
+        "hasHash": true
+      },
+      "actual": {
+        "status": 200,
+        "hasDisposition": true,
+        "hasHash": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 41
+    },
+    {
+      "id": "P45-DOSS-04",
+      "category": "Dossier",
+      "name": "Exported JSON payload bytes match X-Artifact-Hash digest",
+      "command": "sha256(exportedPayload) == X-Artifact-Hash",
+      "expected": "5dabc96fd8959ef72536c58acc78562249fc3741232d41d43d3d297bfe24cd6c",
+      "actual": "5dabc96fd8959ef72536c58acc78562249fc3741232d41d43d3d297bfe24cd6c",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 1
+    },
+    {
+      "id": "P45-DOSS-05",
+      "category": "Dossier",
+      "name": "GET /api/audit records formal audit entries for investigative actions",
+      "command": "GET /api/audit",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 36
+    },
+    {
+      "id": "P45-FE-01",
+      "category": "FrontendIntegration",
+      "name": "GET /frontend/pages/login.html serves UI matching /api/auth/login",
+      "command": "GET /frontend/pages/login.html",
+      "expected": {
+        "status": 200,
+        "hasFields": true
+      },
+      "actual": {
+        "status": 200,
+        "hasFields": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 16
+    },
+    {
+      "id": "P45-FE-02",
+      "category": "FrontendIntegration",
+      "name": "GET /frontend/pages/cases.html serves UI matching /api/cases",
+      "command": "GET /frontend/pages/cases.html",
+      "expected": {
+        "status": 200,
+        "hasCasesUi": true
+      },
+      "actual": {
+        "status": 200,
+        "hasCasesUi": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 7
+    },
+    {
+      "id": "P45-FE-03",
+      "category": "FrontendIntegration",
+      "name": "GET /frontend/pages/evidence-viewer.html serves UI matching /api/evidence",
+      "command": "GET /frontend/pages/evidence-viewer.html",
+      "expected": {
+        "status": 200,
+        "hasEvidenceUi": true
+      },
+      "actual": {
+        "status": 200,
+        "hasEvidenceUi": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 5
+    },
+    {
+      "id": "P45-FE-04",
+      "category": "FrontendIntegration",
+      "name": "GET /frontend/pages/reports.html serves UI matching /api/dossiers",
+      "command": "GET /frontend/pages/reports.html",
+      "expected": {
+        "status": 200,
+        "hasReportsUi": true
+      },
+      "actual": {
+        "status": 200,
+        "hasReportsUi": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 7
+    },
+    {
+      "id": "P45-FE-05",
+      "category": "FrontendIntegration",
+      "name": "GET /frontend/js/api.js provides authenticated client-side fetch wrapper",
+      "command": "GET /frontend/js/api.js",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 6
+    },
+    {
+      "id": "P45-TEN-01",
+      "category": "TenantIsolation",
+      "name": "Foreign officer (Mumbai) cannot view Delhi case without active grant (403/404)",
+      "command": "GET /api/cases/2836908f-44aa-4b32-9f8f-2c77144bd711 as Mumbai Officer",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 403,
+      "durationMs": 45
+    },
+    {
+      "id": "P45-TEN-02",
+      "category": "TenantIsolation",
+      "name": "Foreign officer (Mumbai) cannot upload evidence to Delhi case (403)",
+      "command": "POST /api/evidence/upload as foreign department",
+      "expected": 403,
+      "actual": 403,
+      "status": "PASSED",
+      "httpStatus": 403,
+      "durationMs": 39
+    },
+    {
+      "id": "P45-TEN-03",
+      "category": "TenantIsolation",
+      "name": "POST /api/access-grants issues cross-department access grant",
+      "command": "POST /api/access-grants (Issue grant to Mumbai officer)",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 201,
+      "durationMs": 31
+    },
+    {
+      "id": "P45-TEN-04",
+      "category": "TenantIsolation",
+      "name": "Mumbai officer can read Delhi case with active approved grant (200)",
+      "command": "GET /api/cases/2836908f-44aa-4b32-9f8f-2c77144bd711 as Mumbai Officer with Active Grant",
+      "expected": "CASE-2026-9008",
+      "actual": "CASE-2026-9008",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 60
+    },
+    {
+      "id": "P45-TEN-05",
+      "category": "TenantIsolation",
+      "name": "POST /api/access-grants/[id]/revoke revokes grant; subsequent access rejected (403)",
+      "command": "Revoke grant and verify immediate access termination",
+      "expected": {
+        "revokeStatus": 200,
+        "postRevokeDenied": true
+      },
+      "actual": {
+        "revokeStatus": 200,
+        "postRevokeDenied": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 76
+    },
+    {
+      "id": "P45-REG-01",
+      "category": "Regression",
+      "name": "Phase 41 Direct PostgreSQL RLS Enforcement Suite (18/18 PASS)",
+      "command": "node scripts/test_phase41_direct_rls_enforcement.mjs (rakshak_phase45_test)",
+      "expected": "18 / 18 (100.0%)",
+      "actual": "18 / 18 (100.0%)",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 3165
+    },
+    {
+      "id": "P45-REG-02",
+      "category": "Regression",
+      "name": "Phase 36.2 Multi-Process Custody Concurrency Suite (27/27 PASS)",
+      "command": "node scripts/test_phase36_2_distributed_custody.mjs (rakshak_phase45_test)",
+      "expected": "27 / 27 PASSED",
+      "actual": "27 / 27 PASSED",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 9244
+    },
+    {
+      "id": "P45-REG-03",
+      "category": "Regression",
+      "name": "TypeScript Type-Checking Gate (tsc --noEmit) passes cleanly",
+      "command": "tsc --noEmit",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 7876
+    },
+    {
+      "id": "P45-POST-01",
+      "category": "Safety",
+      "name": "prisma/dev.db post-test hash matches baseline",
+      "command": "sha256(E:\\Rakshak\\prisma\\dev.db)",
+      "expected": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+      "actual": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 13
+    },
+    {
+      "id": "P45-POST-02",
+      "category": "Safety",
+      "name": "uploads/raw/ post-test count matches baseline 560 files",
+      "command": "countFiles(E:\\Rakshak\\uploads\\raw)",
+      "expected": 560,
+      "actual": 560,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 133
+    },
+    {
+      "id": "P45-POST-03",
+      "category": "Safety",
+      "name": "uploads/raw/ post-test manifest matches baseline digest",
+      "command": "manifestHash(E:\\Rakshak\\uploads\\raw)",
+      "expected": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+      "actual": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 137
+    }
+  ]
+}

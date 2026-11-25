@@ -1,0 +1,144 @@
+{
+  "phase": "42",
+  "phaseTitle": "Migration Completeness, Security Baseline Automation & Fail-Closed Test Setup",
+  "timestamp": "2026-10-25T13:50:00+05:30",
+  "overallStatus": "READY FOR CONTROLLED SYNTHETIC-DATA TESTING — MIGRATION AND SECURITY BASELINE VALIDATION VERIFIED",
+  "environment": {
+    "nodeVersion": "v20.x",
+    "postgresqlVersion": "PostgreSQL 16.4",
+    "operatingSystem": "Windows_NT",
+    "activeTestDatabase": "rakshak_phase42_test",
+    "activeRuntimeRole": "rakshak_app_user",
+    "developmentDatabase": "prisma/dev.db",
+    "coldStorageDirectory": "uploads/raw/"
+  },
+  "integrityInvariants": {
+    "devDbSha256": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+    "devDbStatus": "VERIFIED_UNTOUCHED",
+    "coldStorageFileCount": 560,
+    "coldStorageManifestHash": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+    "coldStorageStatus": "VERIFIED_UNTOUCHED"
+  },
+  "historicalDatabases": [
+    { "name": "rakshak_phase36_test", "tables": 31, "rlsTables": 13, "policies": 14, "historicalIntegrityStatus": "UNVERIFIED" },
+    { "name": "rakshak_phase37_test", "tables": 31, "rlsTables": 15, "policies": 16, "historicalIntegrityStatus": "UNVERIFIED" },
+    { "name": "rakshak_phase38_test", "tables": 31, "rlsTables": 18, "policies": 19, "historicalIntegrityStatus": "UNVERIFIED" },
+    { "name": "rakshak_phase39_test", "tables": 31, "rlsTables": 20, "policies": 21, "historicalIntegrityStatus": "UNVERIFIED" },
+    { "name": "rakshak_phase40_test", "tables": 31, "rlsTables": 14, "policies": 13, "historicalIntegrityStatus": "PRESERVED_INCOMPLETE_BASELINE" },
+    { "name": "rakshak_phase41_test", "tables": 31, "rlsTables": 20, "policies": 21, "historicalIntegrityStatus": "VERIFIED_PHASE41_BASELINE" },
+    { "name": "rakshak_phase42_test", "tables": 31, "rlsTables": 20, "policies": 21, "historicalIntegrityStatus": "VERIFIED_PHASE42_BASELINE" }
+  ],
+  "authoritativeMigrationManifest": [
+    { "sequence": 1, "file": "20261011_rls_tenant_isolation.sql", "sha256": "9759095bac54b086d0431b4c36f74b5f8f85f146145cda14d9f50c548ce92068", "status": "VERIFIED_APPLIED" },
+    { "sequence": 2, "file": "20261024_access_grants.sql", "sha256": "027402f639ec2113b346c03b44470d800eb536b2d85c681846b7d906cd67da55", "status": "VERIFIED_APPLIED" },
+    { "sequence": 3, "file": "20261024_adversarial_rls_hardening.sql", "sha256": "4e370399248c4db50e058db965b00c56322ab6df281b561db0e1af36d35c82c5", "status": "VERIFIED_APPLIED" },
+    { "sequence": 4, "file": "20261024_case_lifecycle.sql", "sha256": "7e36e92a464e2c35525cc4acff73b85328c4b24601453d0763b77274f6707725", "status": "VERIFIED_APPLIED" },
+    { "sequence": 5, "file": "20261024_phase35_1_hardening.sql", "sha256": "355e1e9de024b5cfeacf9230b564321de7464e90135bfaa9288056e75110bf15", "status": "VERIFIED_APPLIED" },
+    { "sequence": 6, "file": "20261024_phase36_evidence_custody.sql", "sha256": "2f7d427ffe68abfc7b78c6df3ba5cc84ebbd9bc3d4a04f3c996162c94e783e81", "status": "VERIFIED_APPLIED" },
+    { "sequence": 7, "file": "20261024_phase36_1_custody_concurrency.sql", "sha256": "55fc11412a2fcd80fd55ba9674427c6cf0cfb0e3abd76437600e445622f7b4ed", "status": "VERIFIED_APPLIED" },
+    { "sequence": 8, "file": "20261024_phase36_2_custody_integrity.sql", "sha256": "dc522fdae35ecd7b945e404a3a0897b8218d66a909987b28b7d30fe1e0c84322", "status": "VERIFIED_APPLIED" },
+    { "sequence": 9, "file": "20261024_phase37_cross_case_intelligence.sql", "sha256": "2c174afc60cbe3b9a98d03dcffe0e54a4c2f8a1077d4c34e946ce823d4ce2526", "status": "VERIFIED_APPLIED" },
+    { "sequence": 10, "file": "20261025_phase38_dossier_reporting.sql", "sha256": "5f8989a1c80aa436a43805c1a02a9bfc2c62b7cbdf7d767e0c081b8440a13cb9", "status": "VERIFIED_APPLIED" },
+    { "sequence": 11, "file": "20261025_phase39_ocr_fact_extraction.sql", "sha256": "80439644430ea214a1d8962b7776892ec4905826bae1189bfeff49b5dec1a43f", "status": "VERIFIED_APPLIED" }
+  ],
+  "securityBaselineCatalogValidation": {
+    "targetDatabase": "rakshak_phase42_test",
+    "passed": true,
+    "totalTablesCount": 31,
+    "rlsTablesCount": 20,
+    "forceRlsTablesCount": 20,
+    "policiesCount": 21,
+    "appUserRole": {
+      "rolname": "rakshak_app_user",
+      "rolsuper": "f",
+      "rolcreaterole": "f",
+      "rolcreatedb": "f",
+      "rolbypassrls": "f"
+    },
+    "auditLogImmutability": "VERIFIED_ENFORCED",
+    "securityContextFunctions": [
+      "set_authenticated_tenant_context",
+      "clear_tenant_context",
+      "set_platform_admin_context",
+      "is_verified_platform_admin",
+      "get_verified_department_id",
+      "get_verified_officer_id"
+    ]
+  },
+  "directRlsEnforcementSuite": {
+    "suite": "scripts/test_phase42_direct_rls_coverage.mjs",
+    "database": "rakshak_phase42_test",
+    "role": "rakshak_app_user",
+    "totalScenarios": 26,
+    "passedScenarios": 26,
+    "failedScenarios": 0,
+    "passRate": "100.0%",
+    "coveredTablesCount": 20,
+    "coveredTables": [
+      "AccessGrant",
+      "AuditLog",
+      "Case",
+      "CaseAssignmentHistory",
+      "CaseEntity",
+      "CaseLegalMapping",
+      "CaseStatusHistory",
+      "CustodyEvent",
+      "DossierClaim",
+      "DossierExportAudit",
+      "DossierReview",
+      "EntityLink",
+      "EntityLinkReview",
+      "Evidence",
+      "ExtractedFact",
+      "ExtractedTextArtifact",
+      "FactReviewHistory",
+      "GeneratedReport",
+      "InvestigativeDossier",
+      "TimelineEvent"
+    ]
+  },
+  "provisioningFailureModesSuite": {
+    "suite": "scripts/test_phase42_provisioning_failure_modes.mjs",
+    "totalScenarios": 10,
+    "passedScenarios": 10,
+    "failedScenarios": 0,
+    "passRate": "100.0%",
+    "scenarios": [
+      { "id": "FAIL-01", "name": "Missing migration directory/file fails closed", "status": "PASSED" },
+      { "id": "FAIL-02", "name": "SQL syntax/runtime error halts migration immediately via ON_ERROR_STOP=1", "status": "PASSED" },
+      { "id": "FAIL-03", "name": "Missing RLS policy detected by catalog baseline validator", "status": "PASSED" },
+      { "id": "FAIL-04", "name": "Table with RLS but missing FORCE ROW LEVEL SECURITY rejected", "status": "PASSED" },
+      { "id": "FAIL-05", "name": "Application role privilege audit detects superuser or bypassrls flags", "status": "PASSED" },
+      { "id": "FAIL-06", "name": "Unauthorized UPDATE/DELETE grant on AuditLog detected and rejected", "status": "PASSED" },
+      { "id": "FAIL-07", "name": "Unlisted rogue migration file in directory halts provisioning", "status": "PASSED" },
+      { "id": "FAIL-08", "name": "Targeting protected historical database blocked unconditionally", "status": "PASSED" },
+      { "id": "FAIL-09", "name": "Attempting to provision a database name that already exists is blocked", "status": "PASSED" },
+      { "id": "FAIL-10", "name": "Incomplete/unreachable catalog inspection fails closed with nonzero error", "status": "PASSED" }
+    ]
+  },
+  "regressionIdentifierNormalizationSuite": {
+    "suite": "scripts/test_phase40_identifier_normalization.mjs",
+    "targetDatabase": "rakshak_phase40_test",
+    "totalScenarios": 30,
+    "passedScenarios": 30,
+    "failedScenarios": 0,
+    "passRate": "100.0%"
+  },
+  "buildAndStaticAnalysisChecks": [
+    { "name": "TypeScript Type Validation", "command": "npx.cmd tsc --noEmit", "exitCode": 0, "status": "PASSED" },
+    { "name": "Frontend Imports Validation", "command": "node scripts/check_frontend_imports.mjs", "exitCode": 0, "status": "PASSED" },
+    { "name": "Frontend Page Integrity Audit", "command": "node scripts/check_frontend_integrity.mjs", "exitCode": 0, "status": "PASSED", "pagesChecked": 18 },
+    { "name": "NPM Vulnerability Audit", "command": "npm.cmd audit", "exitCode": 0, "status": "PASSED", "vulnerabilities": 0 },
+    { "name": "Next.js Production Build", "command": "npm.cmd run build", "exitCode": 0, "status": "PASSED", "routesCompiled": 33 }
+  ],
+  "derivedTotals": {
+    "totalMigrationFilesVerified": 11,
+    "directRlsScenarios": 26,
+    "provisioningFailureScenarios": 10,
+    "identifierNormalizationScenarios": 30,
+    "totalExecutedPhase42Scenarios": 66,
+    "totalExecutedScenariosPassed": 66,
+    "totalExecutedScenariosFailed": 0,
+    "overallExecutionPassRate": "100.0%"
+  }
+}

@@ -525,6 +525,68 @@
               </div>
             </div>
 
+            <!-- Case Lifecycle & Status Controls (Phase 35) -->
+            <div class="neu-lifecycle-card" id="card-case-lifecycle">
+              <div class="neu-card-header-flex">
+                <h2 class="neu-section-heading" style="margin:0">Lifecycle Stage &amp; Workflow</h2>
+                <button type="button" class="neu-action-btn-sm" id="btn-view-status-history" title="View complete lifecycle status transitions audit log">
+                  <span>📜 State Audit Trail</span>
+                </button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:12px;font-weight:600;color:var(--neu-secondary)">Current State:</span>
+                  <span class="neu-status-pill active" id="lifecycle-current-status">OPEN</span>
+                </div>
+                <div id="lifecycle-approval-notice" style="font-size:11px;color:var(--cat-orange);font-weight:600;display:none;">
+                  🛡️ Requires Supervisor Review
+                </div>
+              </div>
+              <div class="neu-transition-actions" id="lifecycle-action-buttons">
+                <!-- Dynamically populated permitted transitions -->
+                <span style="font-size:11px;color:var(--neu-muted)">Loading permitted transitions…</span>
+              </div>
+            </div>
+
+            <!-- Investigation Team & Assignments (Phase 35) -->
+            <div class="neu-team-card" id="card-case-team">
+              <div class="neu-card-header-flex">
+                <h2 class="neu-section-heading" style="margin:0">Investigation Team</h2>
+                <button type="button" class="neu-action-btn-sm" id="btn-view-assignment-history" title="View officer assignment and reassignment history">
+                  <span>👥 History</span>
+                </button>
+              </div>
+              
+              <!-- Primary Officer Card -->
+              <div style="font-size:11px;font-weight:700;color:var(--neu-secondary);text-transform:uppercase;letter-spacing:0.5px;">Primary Investigator</div>
+              <div class="neu-team-member-row" id="team-primary-row">
+                <div class="neu-team-member-info">
+                  <span class="neu-team-member-name" id="team-primary-name">Not Assigned</span>
+                  <span class="neu-team-member-sub" id="team-primary-meta">No primary investigator assigned to this case.</span>
+                </div>
+                <span class="neu-badge-role neu-badge-primary">PRIMARY</span>
+              </div>
+
+              <!-- Collaborating Investigators -->
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+                <span style="font-size:11px;font-weight:700;color:var(--neu-secondary);text-transform:uppercase;letter-spacing:0.5px;">Collaborators</span>
+                <span id="collaborators-count" style="font-size:10.5px;color:var(--neu-muted)">0 Active</span>
+              </div>
+              <div id="team-collaborators-list">
+                <div style="font-size:11.5px;color:var(--neu-secondary);padding:4px 0;">No collaborating officers assigned.</div>
+              </div>
+
+              <!-- Team Action Controls -->
+              <div style="display:flex;gap:8px;margin-top:6px;">
+                <button type="button" class="neu-action-btn-sm neu-action-btn-primary" id="btn-reassign-primary">
+                  <span>🔄 Reassign Primary</span>
+                </button>
+                <button type="button" class="neu-action-btn-sm" id="btn-add-collaborator">
+                  <span>➕ Add Collaborator</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Case Summary -->
             <div class="neu-summary-card">
               <h2 class="neu-section-heading">Case Summary</h2>
@@ -706,6 +768,131 @@
     </div>
   </div>
 
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL: CASE LIFECYCLE TRANSITION (Phase 35)
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="transition-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="transition-modal-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h2 class="neu-modal-title" id="transition-modal-title">Transition Case State</h2>
+        <button class="neu-modal-close-btn" id="transition-modal-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="transition-case-form" novalidate>
+        <div class="neu-form-grid">
+          <div class="neu-form-group">
+            <label class="neu-form-label">Current State</label>
+            <input type="text" id="tr-from-status" class="neu-form-input" readonly disabled />
+          </div>
+          <div class="neu-form-group">
+            <label class="neu-form-label">Requested Target State</label>
+            <input type="text" id="tr-to-status" class="neu-form-input" readonly disabled />
+          </div>
+        </div>
+
+        <div id="tr-supervisor-section" style="margin-top:14px;padding:12px;background:#FFF6EB;border:1px solid #FCD34D;border-radius:12px;display:none;">
+          <div style="font-size:12px;font-weight:700;color:#B45309;">⚠️ Supervisor Review &amp; Approval Required</div>
+          <div style="font-size:11px;color:#92400E;margin-top:2px;">This state transition requires verified supervisor review authority (`case:workflow:approve`).</div>
+        </div>
+
+        <div class="neu-form-group" style="margin-top:16px">
+          <label class="neu-form-label" for="tr-reason">Justification / Operational Ground <span class="required">*</span></label>
+          <textarea id="tr-reason" class="neu-form-textarea" rows="3" placeholder="State the investigative rationale, evidence findings, or legal order for this transition…" required></textarea>
+        </div>
+
+        <div id="transition-error-msg" style="color:var(--neu-error);font-size:12px;margin-top:10px;display:none"></div>
+
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn-secondary" id="transition-modal-cancel">Cancel</button>
+          <button type="submit" class="neu-btn-primary-action" id="transition-submit-btn">
+            <span>Execute Transition</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL: OFFICER ASSIGNMENT / REASSIGNMENT (Phase 35)
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="assignment-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="assignment-modal-title">
+    <div class="neu-modal-card">
+      <div class="neu-modal-header">
+        <h2 class="neu-modal-title" id="assignment-modal-title">Assign Investigating Officer</h2>
+        <button class="neu-modal-close-btn" id="assignment-modal-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="assignment-case-form" novalidate>
+        <div class="neu-form-grid">
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="as-type">Assignment Type</label>
+            <select id="as-type" class="neu-form-select">
+              <option value="PRIMARY">Primary Investigating Officer</option>
+              <option value="COLLABORATOR">Collaborating Officer</option>
+            </select>
+          </div>
+
+          <div class="neu-form-group">
+            <label class="neu-form-label" for="as-officer-select">Select Target Officer</label>
+            <select id="as-officer-select" class="neu-form-select" required>
+              <option value="">Loading eligible officers…</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="neu-form-group" style="margin-top:16px">
+          <label class="neu-form-label" for="as-reason">Assignment Justification / Transfer Order</label>
+          <textarea id="as-reason" class="neu-form-textarea" rows="2" placeholder="Specify order number, department transfer note, or assignment rationale…"></textarea>
+        </div>
+
+        <div id="assignment-error-msg" style="color:var(--neu-error);font-size:12px;margin-top:10px;display:none"></div>
+
+        <div class="neu-modal-footer">
+          <button type="button" class="neu-btn-secondary" id="assignment-modal-cancel">Cancel</button>
+          <button type="submit" class="neu-btn-primary-action" id="assignment-submit-btn">
+            <span>Save Assignment</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL: CASE AUDIT & ASSIGNMENT HISTORY (Phase 35)
+       ══════════════════════════════════════════════════════════ -->
+  <div class="neu-modal-backdrop" id="history-case-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="history-modal-title">
+    <div class="neu-modal-card" style="max-width:760px;">
+      <div class="neu-modal-header">
+        <h2 class="neu-modal-title" id="history-modal-title">Investigation Audit Trail &amp; History</h2>
+        <button class="neu-modal-close-btn" id="history-modal-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <!-- History Tabs -->
+      <div style="display:flex;gap:10px;border-bottom:1px solid var(--neu-border);padding-bottom:10px;margin-bottom:14px;">
+        <button type="button" class="neu-action-btn-sm neu-action-btn-primary" id="btn-tab-status-history">
+          <span>📜 Status Transitions</span>
+        </button>
+        <button type="button" class="neu-action-btn-sm" id="btn-tab-assignment-history">
+          <span>👥 Officer Assignments</span>
+        </button>
+      </div>
+
+      <!-- Content Views -->
+      <div id="view-status-history" class="neu-history-list">
+        <div style="font-size:12px;color:var(--neu-secondary);">No status history records available.</div>
+      </div>
+
+      <div id="view-assignment-history" class="neu-history-list" style="display:none;">
+        <div style="font-size:12px;color:var(--neu-secondary);">No assignment history records available.</div>
+      </div>
+
+      <div class="neu-modal-footer" style="margin-top:16px;">
+        <button type="button" class="neu-btn-secondary" id="history-modal-dismiss">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="../js/cases.js"></script>
 </body>
 </html>
+

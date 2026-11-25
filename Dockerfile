@@ -1,3 +1,4 @@
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Dockerfile — Rakshak v3.0 Production Container Build
 # Multi-stage, minimal attack surface, non-root user execution
@@ -36,7 +37,7 @@ ENV HOSTNAME="0.0.0.0"
 
 # Create non-root system user and group
 RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+  adduser --system --uid 1001 nextjs
 
 # Copy built artifacts and necessary public assets
 COPY --from=builder /app/public ./public
@@ -50,7 +51,7 @@ COPY --from=builder /app/eng.traineddata ./eng.traineddata
 
 # Create cold storage and backup mount points with correct ownership
 RUN mkdir -p /app/uploads/raw /app/backups && \
-    chown -R nextjs:nodejs /app/uploads /app/backups
+  chown -R nextjs:nodejs /app/uploads /app/backups
 
 USER nextjs
 

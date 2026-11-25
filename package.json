@@ -14,6 +14,8 @@
     "db:clean-init": "node scripts/create_clean_deployment.mjs",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset --force",
+    "db:provision:phase43": "node scripts/setup_phase43_test_db.mjs",
+    "validate:release": "node scripts/run_release_validation_pipeline.mjs",
     "postinstall": "npm run prisma:generate"
   },
   "allowScripts": {
@@ -23,27 +25,21 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
-    "@radix-ui/react-dialog": "^1.1.23",
-    "@radix-ui/react-tabs": "^1.1.21",
-    "@radix-ui/react-tooltip": "^1.2.16",
     "@types/bcryptjs": "^2.4.6",
     "@types/jszip": "^3.4.0",
     "@types/pdf-parse": "^1.1.5",
     "@xyflow/react": "^12.11.6",
     "bcryptjs": "^3.0.3",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "jszip": "^3.10.2",
     "lucide-react": "^1.46.0",
-    "next": "^16.4.0",
+    "next": "16.4.3",
     "pdf-parse": "^2.4.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "tailwind-merge": "^3.7.0",
     "tesseract.js": "^7.0.0",
-    "zod": "^4.6.5"
+    "zod": "4.6.7"
   },
   "prisma": {
     "seed": "ts-node --compiler-options \"{\"module\":\"CommonJS\"}\" prisma/seed.ts"

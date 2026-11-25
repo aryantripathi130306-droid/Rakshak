@@ -1,0 +1,199 @@
+{
+  "phase": "PHASE_40",
+  "title": "Identifier Normalization, Match Quality & Reproducible Test Baselines",
+  "timestamp": "2026-10-25T11:40:56.631Z",
+  "testDatabase": "rakshak_phase43_test",
+  "summary": {
+    "total": 30,
+    "passed": 30,
+    "failed": 0,
+    "successRate": "100.0%"
+  },
+  "invariants": {
+    "activeDatabaseUntouched": true,
+    "coldStorageUntouched": true,
+    "coldStorageCount": 560
+  },
+  "results": [
+    {
+      "id": "TC-01",
+      "name": "Valid Indian domestic phone number normalizes to +91 E.164",
+      "status": "PASSED",
+      "details": "+919876543210"
+    },
+    {
+      "id": "TC-02",
+      "name": "Correctly formatted Indian international forms normalize consistently",
+      "status": "PASSED",
+      "details": "All 4 variations resolved to +919876543210"
+    },
+    {
+      "id": "TC-03",
+      "name": "Invalid domestic number rejected or flagged with ambiguity",
+      "status": "PASSED",
+      "details": "1234567890 valid=false, 0000000000 generic=true"
+    },
+    {
+      "id": "TC-04",
+      "name": "International number preserves authentic country calling code",
+      "status": "PASSED",
+      "details": "US: +14155552671, UK: +447911123456, UAE: +971501234567"
+    },
+    {
+      "id": "TC-05",
+      "name": "Differently prefixed international numbers sharing last 10 digits do not collide",
+      "status": "PASSED",
+      "details": "isMatch=false (Normalized values do not match: '+19876543210' != '+919876543210')"
+    },
+    {
+      "id": "TC-06",
+      "name": "Arbitrary digit sequence not mistakenly converted to +91 phone",
+      "status": "PASSED",
+      "details": "Account: 1234567890, UTR: 123456789012"
+    },
+    {
+      "id": "TC-07",
+      "name": "Extensions isolated from canonical E.164 number into metadata",
+      "status": "PASSED",
+      "details": "E.164: +919820123456, Ext: 402"
+    },
+    {
+      "id": "TC-08",
+      "name": "Leading international dialing prefix (00) converted consistently to +",
+      "status": "PASSED",
+      "details": "001: +14155552671, 0091: +919876543210"
+    },
+    {
+      "id": "TC-09",
+      "name": "Empty, null, and non-numeric malformed inputs fail safely",
+      "status": "PASSED",
+      "details": "All 4 malformed inputs returned isValid=false"
+    },
+    {
+      "id": "TC-10",
+      "name": "Original input preserved alongside normalized value",
+      "status": "PASSED",
+      "details": "Raw retained, Normalized: +919876543210"
+    },
+    {
+      "id": "TC-11",
+      "name": "Deterministic normalization across 50 repeated executions",
+      "status": "PASSED",
+      "details": "Digest: 6549c3f26e7e0c6f..."
+    },
+    {
+      "id": "TC-12",
+      "name": "Active and historical normalization versions explicitly versioned",
+      "status": "PASSED",
+      "details": "Active: v2, Legacy: v1"
+    },
+    {
+      "id": "TC-13",
+      "name": "Normalization version change strictly preserves confirmed historical links",
+      "status": "PASSED",
+      "details": "Confirmed status: CONFIRMED, Preserved count: 1"
+    },
+    {
+      "id": "TC-14",
+      "name": "Generic email addresses marked non-unique with limitation tags",
+      "status": "PASSED",
+      "details": "support isGeneric=true, personal isGeneric=false"
+    },
+    {
+      "id": "TC-15",
+      "name": "Emergency and cyber helplines prevented from becoming exact identity matches",
+      "status": "PASSED",
+      "details": "1930 linkType: POTENTIAL_MATCH, category: POTENTIAL_MATCH"
+    },
+    {
+      "id": "TC-16",
+      "name": "Private and Carrier-Grade NAT (CGNAT) IPs flagged as non-attributable",
+      "status": "PASSED",
+      "details": "192.168.1.1 generic=true, CGNAT generic=true, Public generic=false"
+    },
+    {
+      "id": "TC-17",
+      "name": "URL path canonicalization preserves distinct endpoint identities",
+      "status": "PASSED",
+      "details": "Distinct URLs do not match: isMatch=false"
+    },
+    {
+      "id": "TC-18",
+      "name": "UPI VPA handles normalized distinctly from email addresses",
+      "status": "PASSED",
+      "details": "UPI: merchant.pay@okhdfcbank, Email: merchant.pay@gmail.com"
+    },
+    {
+      "id": "TC-19",
+      "name": "12-digit financial UTR reference never prefixed as +91 phone",
+      "status": "PASSED",
+      "details": "UTR: 919876543210"
+    },
+    {
+      "id": "TC-20",
+      "name": "Cryptographic digests and MAC addresses strictly validated for hex format",
+      "status": "PASSED",
+      "details": "SHA-256 valid=true, MAC valid=true, non-hex valid=false"
+    },
+    {
+      "id": "TC-21",
+      "name": "Candidate evaluation preserves complete multi-case provenance anchors",
+      "status": "PASSED",
+      "details": "Rule: RULE_EXACT_NORM_PHONE_V2, Version: v2"
+    },
+    {
+      "id": "TC-22",
+      "name": "Ambiguous or generic values gated from exact confirmed matching",
+      "status": "PASSED",
+      "details": "LinkType: POTENTIAL_MATCH, Category: POTENTIAL_MATCH"
+    },
+    {
+      "id": "TC-23",
+      "name": "Reviewed relationship preserved when normalized value is unchanged under V2",
+      "status": "PASSED",
+      "details": "Unaffected count: 1, Limitations: none"
+    },
+    {
+      "id": "TC-24",
+      "name": "Affected candidate link flagged for re-evaluation upon normalization divergence",
+      "status": "PASSED",
+      "details": "Affected count: 1, Updated limitations: [FLAGGED_FOR_REEVALUATION_V2]"
+    },
+    {
+      "id": "TC-25",
+      "name": "Phase 37 cross-case entity resolution compatibility maintained",
+      "status": "PASSED",
+      "details": "Rule: RULE_EXACT_NORM_EMAIL_V2"
+    },
+    {
+      "id": "TC-26",
+      "name": "Distinct financial bank accounts do not produce false collisions",
+      "status": "PASSED",
+      "details": "isMatch=false"
+    },
+    {
+      "id": "TC-27",
+      "name": "IFSC code normalized as facility identifier",
+      "status": "PASSED",
+      "details": "IFSC: SBIN0001234"
+    },
+    {
+      "id": "TC-28",
+      "name": "Keyed HMAC digest calculation is one-way and deterministic",
+      "status": "PASSED",
+      "details": "Digest length: 64"
+    },
+    {
+      "id": "TC-29",
+      "name": "Active development database (prisma/dev.db) remains 100% untouched",
+      "status": "PASSED",
+      "details": "Initial: dd24614b14f1b4cf..., Final: dd24614b14f1b4cf..."
+    },
+    {
+      "id": "TC-30",
+      "name": "Cold storage evidence exhibits (uploads/raw/) remain 100% unaltered",
+      "status": "PASSED",
+      "details": "Count: 560, Manifest: bdc91bb78c603d21..."
+    }
+  ]
+}

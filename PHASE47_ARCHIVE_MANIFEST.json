@@ -1,0 +1,1154 @@
+{
+  "phase": "PHASE 47",
+  "timestamp": "2026-11-25T15:49:29.969Z",
+  "movedReports": [
+    {
+      "originalPath": "PHASE31_BASELINE_STABILIZATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE31_BASELINE_STABILIZATION_REPORT.md",
+      "sizeBytes": 15760,
+      "sha256": "7a36f33a74cd52ed1ef4b1ca3592f958257318fd3f4a092e42321b7860fb4982",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE32_IDENTITY_AND_AUTHORIZATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE32_IDENTITY_AND_AUTHORIZATION_REPORT.md",
+      "sizeBytes": 15618,
+      "sha256": "048b2f153ca54ce304a1fdf21417be94c255a6bff5dff9eac96917f34f5e2ff6",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE32_ROLE_PERMISSION_MATRIX.md",
+      "finalPath": "docs/archive/phases/PHASE32_ROLE_PERMISSION_MATRIX.md",
+      "sizeBytes": 14745,
+      "sha256": "c6d6085cabb1a3302acd38d841d5e6dcafdd5696447decdd4a6a41d8ce48f887",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE33_ACCESS_GRANT_MIGRATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE33_ACCESS_GRANT_MIGRATION_REPORT.md",
+      "sizeBytes": 7043,
+      "sha256": "4b770f3c1b1561a353ab65a58da672b8b684f7021317af5c04322cf65522975a",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE33_ACCOUNT_LIFECYCLE_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE33_ACCOUNT_LIFECYCLE_REPORT.md",
+      "sizeBytes": 8296,
+      "sha256": "36f6fd174b875912efc71f3222d95e05a05a6e15588ac57bbc56eb980817c412",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE33_ROLE_AND_SESSION_REGRESSION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE33_ROLE_AND_SESSION_REGRESSION_REPORT.md",
+      "sizeBytes": 6713,
+      "sha256": "6c3270023cf607293f61b99b19afbc9101de47c1f57c93bd01fce291c09079e4",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE34_1_AUTHORIZATION_CALLSITE_AUDIT.md",
+      "finalPath": "docs/archive/phases/PHASE34_1_AUTHORIZATION_CALLSITE_AUDIT.md",
+      "sizeBytes": 6561,
+      "sha256": "5dba94b5a4b3312d02801a5762da4602008989f2eca63e914a20145c2fc3833c",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE34_1_GRANT_SOURCE_OF_TRUTH_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE34_1_GRANT_SOURCE_OF_TRUTH_REPORT.md",
+      "sizeBytes": 9708,
+      "sha256": "cb9d1d2de559b92907acf4a3657ab21bb7254aa40cbd3bb92bf52cf8a378964f",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE34_1_RLS_ADVERSARIAL_TEST_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE34_1_RLS_ADVERSARIAL_TEST_REPORT.md",
+      "sizeBytes": 8539,
+      "sha256": "def93551e2ef7f3f998950187b8448ddb3ee10e532eeaddecf4d67941efd95f2",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE34_ACCESS_GRANT_CONSISTENCY_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE34_ACCESS_GRANT_CONSISTENCY_REPORT.md",
+      "sizeBytes": 5817,
+      "sha256": "10e78a5de432342e5416d656c9c054ce16237d8c6060dd0e6ad8af95fbcbf06c",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE34_POSTGRES_RLS_VERIFICATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE34_POSTGRES_RLS_VERIFICATION_REPORT.md",
+      "sizeBytes": 5502,
+      "sha256": "870dc392a12675f5a1ebb6e71743dbc593b451c5783169b9dca9f9643be8774e",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE34_SECURITY_PATCH_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE34_SECURITY_PATCH_REPORT.md",
+      "sizeBytes": 3519,
+      "sha256": "a07cbb1b69bff36c239ebd9b4ef4f29cfaaf30c203a18628e670527ef1c985cb",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE35_1_HISTORY_AND_AUDIT_RLS_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE35_1_HISTORY_AND_AUDIT_RLS_REPORT.md",
+      "sizeBytes": 7564,
+      "sha256": "dcdfa752a69d6bb9b19d153ddaee619fd57e36732348259154f12908cb645e54",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE35_1_MIGRATION_PARITY_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE35_1_MIGRATION_PARITY_REPORT.md",
+      "sizeBytes": 6389,
+      "sha256": "56d938cd627d23e020ec6714d7b551ee0aaed53d54860ed25c886727a4aa0be1",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE35_1_SUPERVISOR_APPROVAL_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE35_1_SUPERVISOR_APPROVAL_REPORT.md",
+      "sizeBytes": 6529,
+      "sha256": "de264ee3785ccc478660a64be69af82fb8b0f80c49a503f6c157983b2f2cabb7",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE35_AUTHORIZATION_AND_AUDIT_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE35_AUTHORIZATION_AND_AUDIT_REPORT.md",
+      "sizeBytes": 7600,
+      "sha256": "a1a2103d090614f69162359545d2e55e627a26a0e7f520c88d96e7933537a260",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE35_CASE_LIFECYCLE_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE35_CASE_LIFECYCLE_REPORT.md",
+      "sizeBytes": 8754,
+      "sha256": "48545120d52eda1a3fe1c5f7d32c8225d3e8f63f3b075ea55156a4cad3cde061",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE35_OFFICER_ASSIGNMENT_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE35_OFFICER_ASSIGNMENT_REPORT.md",
+      "sizeBytes": 7709,
+      "sha256": "bf950df263dd5eeed0763e387c6a01e8cdacf7b578b6f23438e837bb77f2da82",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_1_CHAIN_INTEGRITY_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE36_1_CHAIN_INTEGRITY_REPORT.md",
+      "sizeBytes": 9326,
+      "sha256": "a38b1ecde3d8785420d8d9d393a081c6cc15e7c0a1162011299dabf95eb3f285",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_1_CONCURRENCY_AND_MUTATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE36_1_CONCURRENCY_AND_MUTATION_REPORT.md",
+      "sizeBytes": 6047,
+      "sha256": "f668e4b1b097d4c8b1c3b0a776aac04a357154ef27db682832d2926ef17a444a",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_1_TRUST_ANCHOR_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE36_1_TRUST_ANCHOR_REPORT.md",
+      "sizeBytes": 6178,
+      "sha256": "cc6407bd2098ccf97e8e0b47ae93ef7ae7bd6bdf93b26698371645563b3995a8",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_2_DISTRIBUTED_CONCURRENCY_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE36_2_DISTRIBUTED_CONCURRENCY_REPORT.md",
+      "sizeBytes": 8879,
+      "sha256": "f682a2568a163c8ba78c5df67de9f1ee0ba83617b8e07853da0fa3e203160dba",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_2_HASH_AND_SEQUENCE_INTEGRITY_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE36_2_HASH_AND_SEQUENCE_INTEGRITY_REPORT.md",
+      "sizeBytes": 9041,
+      "sha256": "1b7470a396279ee4e47c0a3a9cd81f9678df2d9607bfb7552dffeb279acd06ef",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_2_TRUST_ANCHOR_READINESS_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE36_2_TRUST_ANCHOR_READINESS_REPORT.md",
+      "sizeBytes": 8646,
+      "sha256": "b28247fec38b2e2913d38de5121d62330d6422a51097972a2eb95bdea07851fd",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_CHAIN_OF_CUSTODY_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE36_CHAIN_OF_CUSTODY_REPORT.md",
+      "sizeBytes": 7459,
+      "sha256": "ca6943ba4f18b6510e3c2ea1c6ad6059eaca96446501b7ccff332dc110d205bb",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_EVIDENCE_INTAKE_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE36_EVIDENCE_INTAKE_REPORT.md",
+      "sizeBytes": 8300,
+      "sha256": "0645bdf03e770645b607dcfe93c45a60041dc33a6c25d323e9eaf2919f463dc2",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_FORENSIC_EXAMINATION_AND_RLS_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE36_FORENSIC_EXAMINATION_AND_RLS_REPORT.md",
+      "sizeBytes": 9224,
+      "sha256": "e58e493c000954f8680c69a23e0487ce461f44eed010467ebce76fd23070036b",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE37_AUTHORIZATION_AND_RLS_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE37_AUTHORIZATION_AND_RLS_REPORT.md",
+      "sizeBytes": 10948,
+      "sha256": "3560d4f6521d34cdd60743d7160be64c6d4415fa53ad3bb7b412d924e294ddf2",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE37_CROSS_CASE_INTELLIGENCE_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE37_CROSS_CASE_INTELLIGENCE_REPORT.md",
+      "sizeBytes": 7718,
+      "sha256": "b5c1ab40af0d26248d4d0197a7e95bee5f1ecb9c8cf81d5e58d41b2f6df4837a",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE37_ENTITY_RESOLUTION_AND_PROVENANCE_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE37_ENTITY_RESOLUTION_AND_PROVENANCE_REPORT.md",
+      "sizeBytes": 14105,
+      "sha256": "29050b6486cce60fb337b816afdc4f5a3fe4572f979fd74cf9a1e4bac37e2fe7",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE38_CLAIM_PROVENANCE_AND_VERSIONING_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE38_CLAIM_PROVENANCE_AND_VERSIONING_REPORT.md",
+      "sizeBytes": 7090,
+      "sha256": "21ff2b91e6363c46af4a044204397f90f6e5f65433e6ac12a40df167b02f0bb9",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE38_DOSSIER_GENERATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE38_DOSSIER_GENERATION_REPORT.md",
+      "sizeBytes": 7025,
+      "sha256": "63e729779a2c2b59b31e11cad46a81f14b5074fb20a5f5effd794853af6a79aa",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE38_EXPORT_AUTHORIZATION_AND_RLS_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE38_EXPORT_AUTHORIZATION_AND_RLS_REPORT.md",
+      "sizeBytes": 9266,
+      "sha256": "886fb5452f83434aaa6380b7f772933b128500c13f2e7dd0e61347575944dcbe",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_1_DATABASE_SAFETY_AUDIT_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE39_1_DATABASE_SAFETY_AUDIT_REPORT.md",
+      "sizeBytes": 10058,
+      "sha256": "3324f8d511070593d9612156b8194404b2e31f2dac7b431d8b5bff7f5040596e",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_1_OCR_RELEASE_VERIFICATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE39_1_OCR_RELEASE_VERIFICATION_REPORT.md",
+      "sizeBytes": 7803,
+      "sha256": "c576f834051f9e77febca53dc3c90f82c46222da17b55882c2e678407247c716",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_1_REGRESSION_TEST_INTEGRITY_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE39_1_REGRESSION_TEST_INTEGRITY_REPORT.md",
+      "sizeBytes": 10495,
+      "sha256": "be86f2c5bdfc8ba2c73ab9e6ef667dc60140136a0bb53c5f2f0c2a1409d4527c",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_2_DATABASE_RECONCILIATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE39_2_DATABASE_RECONCILIATION_REPORT.md",
+      "sizeBytes": 15304,
+      "sha256": "543fdaa93ae257936edd945e75a272deb6aa6a16107d89faefea0430bea86388",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_2_REGRESSION_ACCOUNTING_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE39_2_REGRESSION_ACCOUNTING_REPORT.md",
+      "sizeBytes": 12153,
+      "sha256": "71639f6085b7c81bbab275508a58371d31c00de8eb6d5b2c4dc58b2124dbb676",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_2_RELEASE_GATE_MATRIX.md",
+      "finalPath": "docs/archive/phases/PHASE39_2_RELEASE_GATE_MATRIX.md",
+      "sizeBytes": 6003,
+      "sha256": "90de6fe5c52ba71be785115c7fc9600f36a586eeb58f2e47648a0199c6816c4e",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_AUTHORIZATION_AND_PROVENANCE_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE39_AUTHORIZATION_AND_PROVENANCE_REPORT.md",
+      "sizeBytes": 17551,
+      "sha256": "365a61c699bd6d50ca887668e9c1530bb3e05fb32a00bae6c27f0443d74090e0",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_FACT_EXTRACTION_AND_REVIEW_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE39_FACT_EXTRACTION_AND_REVIEW_REPORT.md",
+      "sizeBytes": 10039,
+      "sha256": "a836ab7985155ee89855b69ede61b7f3f61cc7e1efd9df548e032ebb3c0c2efc",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_OCR_PROCESSING_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE39_OCR_PROCESSING_REPORT.md",
+      "sizeBytes": 10675,
+      "sha256": "d72632b7999ab1ccffa5ef221cbeff507654e238e2d8bbfb08d8edfe96e37a8a",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE40_ENTITY_MATCH_QUALITY_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE40_ENTITY_MATCH_QUALITY_REPORT.md",
+      "sizeBytes": 9930,
+      "sha256": "65b091859f50f88f01dd3c2a3ca50dc76272c633057c1edc60583f5430b612d8",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE40_IDENTIFIER_NORMALIZATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE40_IDENTIFIER_NORMALIZATION_REPORT.md",
+      "sizeBytes": 11235,
+      "sha256": "e30b7cf4daf04916887f0326cbe7188e396d61d9a6054aca0486b7373ed1be72",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE40_TEST_ENVIRONMENT_AND_BASELINE_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE40_TEST_ENVIRONMENT_AND_BASELINE_REPORT.md",
+      "sizeBytes": 11420,
+      "sha256": "f137d2de10ffd147b48b6d34e50dd350a8f94ed3fd03970adb042f4883b2e1dd",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE41_HISTORICAL_DATABASE_STATUS_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE41_HISTORICAL_DATABASE_STATUS_REPORT.md",
+      "sizeBytes": 7128,
+      "sha256": "a02be00979b66cc101008e5dd3d78585305c32ab9f56b3e545b2e8d2385c0b34",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE41_REGRESSION_ACCOUNTING_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE41_REGRESSION_ACCOUNTING_REPORT.md",
+      "sizeBytes": 8104,
+      "sha256": "abba9a6948b29e3e630eae4a7f434aee225299acf12861826267b815a450be28",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE41_RELEASE_GATE_MATRIX.md",
+      "finalPath": "docs/archive/phases/PHASE41_RELEASE_GATE_MATRIX.md",
+      "sizeBytes": 4642,
+      "sha256": "89fbf5d03768124dab2134034ed7d4a30ed1cf8369cc1359f8f33a006074f889",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE41_SECURITY_BASELINE_RECONCILIATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE41_SECURITY_BASELINE_RECONCILIATION_REPORT.md",
+      "sizeBytes": 12907,
+      "sha256": "f752de9ceda3fa1df0bc5ad305955a2f4e0bddd4468214fe193b51a6b023e1ec",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE42_MIGRATION_INVENTORY_AND_COVERAGE_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE42_MIGRATION_INVENTORY_AND_COVERAGE_REPORT.md",
+      "sizeBytes": 10090,
+      "sha256": "f30aa469693c33a9e891b052f197f4ae989de8ac70b33e76cb2abfa5ca2af013",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE42_PROVISIONING_FAILURE_TEST_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE42_PROVISIONING_FAILURE_TEST_REPORT.md",
+      "sizeBytes": 6975,
+      "sha256": "ea21d0b6e66cedbf7e352a1a5f5b4b270369fbdcd59e8834522fac1b0f5a46d1",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE42_RELEASE_GATE_MATRIX.md",
+      "finalPath": "docs/archive/phases/PHASE42_RELEASE_GATE_MATRIX.md",
+      "sizeBytes": 5691,
+      "sha256": "ba854b5f600bd1ff3b19812181425d7e3b08f24c69d885958eb4ef71997a2b93",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE42_SECURITY_BASELINE_VALIDATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE42_SECURITY_BASELINE_VALIDATION_REPORT.md",
+      "sizeBytes": 12860,
+      "sha256": "e90142094212050856d864bf867536fd9c4c15660dc0f531a2212ad8847661cd",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE43_FULL_REGRESSION_EXECUTION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE43_FULL_REGRESSION_EXECUTION_REPORT.md",
+      "sizeBytes": 12830,
+      "sha256": "97a627a48623f74481f598852b339efd917a0f3c1ca2b87f3ea02d7fd39f8666",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE43_LEGACY_PROVISIONING_AUDIT_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE43_LEGACY_PROVISIONING_AUDIT_REPORT.md",
+      "sizeBytes": 9314,
+      "sha256": "c197385e726f1275932954464d0e194b6aeca5733fe6682dc5cd4d918ef45782",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE43_MIGRATION_AND_SECURITY_VALIDATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE43_MIGRATION_AND_SECURITY_VALIDATION_REPORT.md",
+      "sizeBytes": 12838,
+      "sha256": "78223a054f9caf2472e00c001573ed288190dccae6d13afb208e49b16f4e999d",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE43_RELEASE_GATE_MATRIX.md",
+      "finalPath": "docs/archive/phases/PHASE43_RELEASE_GATE_MATRIX.md",
+      "sizeBytes": 9198,
+      "sha256": "0f9ae679a8dc60ba76e79fe3891f76cc64432282839239dde631f29ad873a1b6",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE43_RELEASE_VALIDATION_GUIDE.md",
+      "finalPath": "docs/archive/phases/PHASE43_RELEASE_VALIDATION_GUIDE.md",
+      "sizeBytes": 9233,
+      "sha256": "c5a3e1bfd58a281a29b9756df3a44c86861ce12b8f08e899d7680a4e2795157e",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE44_DATABASE_BACKUP_AND_RESTORE_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE44_DATABASE_BACKUP_AND_RESTORE_REPORT.md",
+      "sizeBytes": 9319,
+      "sha256": "f2344e3e0023e97fab1de3d459e61db97340a2764943e2dc3fc9fce5d6fabb0c",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE44_FAILURE_INJECTION_AND_HEALTH_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE44_FAILURE_INJECTION_AND_HEALTH_REPORT.md",
+      "sizeBytes": 9836,
+      "sha256": "0013480ef5ca2fa803b64660e782d48b6c971a07c0ab19e2856965b349ad6ae9",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE44_OPERATIONAL_ARCHITECTURE_AND_DEPENDENCIES.md",
+      "finalPath": "docs/archive/phases/PHASE44_OPERATIONAL_ARCHITECTURE_AND_DEPENDENCIES.md",
+      "sizeBytes": 10144,
+      "sha256": "d54524660b78bbc387ab1b38a2a259d366bfe60c98fa951e456c3f9553abacdb",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE44_OPERATIONAL_RUNBOOK.md",
+      "finalPath": "docs/archive/phases/PHASE44_OPERATIONAL_RUNBOOK.md",
+      "sizeBytes": 6289,
+      "sha256": "238303f69eb269ef2268ec03b48db87294c223aa76a6888b5a98a7c10294556c",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE44_RELEASE_GATE_MATRIX.md",
+      "finalPath": "docs/archive/phases/PHASE44_RELEASE_GATE_MATRIX.md",
+      "sizeBytes": 10066,
+      "sha256": "17ad823d8a72c0159deb60f4e7e18d7e172c52f1112699af9d381aabf4d6a378",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE45_APPLICATION_WORKFLOW_INVENTORY.md",
+      "finalPath": "docs/archive/phases/PHASE45_APPLICATION_WORKFLOW_INVENTORY.md",
+      "sizeBytes": 16051,
+      "sha256": "2a35e56267726782cbe31fa0be67963b44387a00b01b0ed7232d929b28277dfb",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE45_END_TO_END_WORKFLOW_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE45_END_TO_END_WORKFLOW_REPORT.md",
+      "sizeBytes": 13704,
+      "sha256": "e12ba548bd51a7d0b76f2b33819372df26347da1635dd068f8af7ff6c2cb0c15",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE45_FRONTEND_API_INTEGRATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE45_FRONTEND_API_INTEGRATION_REPORT.md",
+      "sizeBytes": 7433,
+      "sha256": "b992398bc0302dc26d927fc6c134929de60a2fcfb6debaf0e211491bc8f5e0b4",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE45_RELEASE_GATE_MATRIX.md",
+      "finalPath": "docs/archive/phases/PHASE45_RELEASE_GATE_MATRIX.md",
+      "sizeBytes": 8417,
+      "sha256": "cacb5cc5f5268f88e6e871abb64cc8870783214b59b4a5885598d034c38b6502",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE45_SECURITY_AND_TENANT_ISOLATION_REPORT.md",
+      "finalPath": "docs/archive/phases/PHASE45_SECURITY_AND_TENANT_ISOLATION_REPORT.md",
+      "sizeBytes": 7482,
+      "sha256": "c1c037af8eea9a5355a286e3644747375bd0f02d84f452a3608380765af04da6",
+      "reason": "Historical phase report archived from repository root",
+      "verified": true
+    }
+  ],
+  "movedManifests": [
+    {
+      "originalPath": "PHASE29_DEPLOYMENT_PREFLIGHT.json",
+      "finalPath": "docs/archive/manifests/PHASE29_DEPLOYMENT_PREFLIGHT.json",
+      "sizeBytes": 7548,
+      "sha256": "aca2e03d5c53ca997a6f3e5a889eead4600d6504ec6dc204f2a8bcee1d65c049",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE31_CI_VERIFICATION.json",
+      "finalPath": "docs/archive/manifests/PHASE31_CI_VERIFICATION.json",
+      "sizeBytes": 1937,
+      "sha256": "a89166cf25f6bc8ac89a82e8699fb2fba13f8c35d7275c72f06dd370794f4596",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE32_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE32_TEST_RESULTS.json",
+      "sizeBytes": 4132,
+      "sha256": "0efe84d37a42d9c3bef3e63966fda992211e67808c5b25ecb0f46d3e27475891",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE33_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE33_TEST_RESULTS.json",
+      "sizeBytes": 4261,
+      "sha256": "49e91b9f3d096979049582d4ad87a87a3b00454de5e4363be190f07cc0001311",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE34_1_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE34_1_TEST_RESULTS.json",
+      "sizeBytes": 6045,
+      "sha256": "2a885acf3d705ffd23d350e7909f4cc3f9329faeb567e12dc3bf353da223f6de",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE34_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE34_TEST_RESULTS.json",
+      "sizeBytes": 6424,
+      "sha256": "4569fcc50c892280d3e6f71f24c1fd736b7b52a4a5cb7c7299ed79604c913c61",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE35_1_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE35_1_TEST_RESULTS.json",
+      "sizeBytes": 8013,
+      "sha256": "8f7b4520e3cf5bfccc6d44d4f9bcd0c89daf9d9ec2de02f4cf65d288c984e05f",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE35_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE35_TEST_RESULTS.json",
+      "sizeBytes": 7144,
+      "sha256": "d5aa29b3a4cc5e6761de52325808268507bc4a3f67656ec6e63d351eb22ec4c1",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_1_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE36_1_TEST_RESULTS.json",
+      "sizeBytes": 11171,
+      "sha256": "cccbd8b4019de01e9fefea5e18b87327a658e3d6d9974de3b9c0226a3db8b39f",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_2_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE36_2_TEST_RESULTS.json",
+      "sizeBytes": 7760,
+      "sha256": "2040076111273e5923fbb309ee1cdf1446bc3e828da2f31b4a087a6cfff3bfee",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE36_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE36_TEST_RESULTS.json",
+      "sizeBytes": 10032,
+      "sha256": "98a0f922d67f8e73a2e3b7ed7aedf7c1724af513d403b4ea4d8ea613caed8bee",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE37_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE37_TEST_RESULTS.json",
+      "sizeBytes": 8295,
+      "sha256": "7e64319b789129da785890f640c7936622b121c6e4dbe57079d5ab46340e58a1",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE38_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE38_TEST_RESULTS.json",
+      "sizeBytes": 8499,
+      "sha256": "ed0e32fbad85c697d8bfd8433adeed07a690b426a10b8fc9e30b0b59b7c97f42",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_1_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE39_1_TEST_RESULTS.json",
+      "sizeBytes": 3934,
+      "sha256": "9682a59ba6f6f6968281b7fcb18f5edb391059641f40ead5a5ed9ca8463b4fe8",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_2_DB_AUDIT_DATA.json",
+      "finalPath": "docs/archive/manifests/PHASE39_2_DB_AUDIT_DATA.json",
+      "sizeBytes": 34834,
+      "sha256": "5bfe91b027ead0e93b82580aa88a340820bc9ec18db8dcac97a3a9380ad0aac8",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_2_REGRESSION_MANIFEST.json",
+      "finalPath": "docs/archive/manifests/PHASE39_2_REGRESSION_MANIFEST.json",
+      "sizeBytes": 18286,
+      "sha256": "e60d26f834c2fb04a44f5f9ea817577520a92a4099acf1367f16144219d69529",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_2_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE39_2_TEST_RESULTS.json",
+      "sizeBytes": 11662,
+      "sha256": "7d89ac22dfd69d4e7e3fd90aa53ec41d8f14b9e40a859b8cfb6535d6a4357007",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE39_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE39_TEST_RESULTS.json",
+      "sizeBytes": 8906,
+      "sha256": "d7f31906567eb0eef21309a3563a742f9a997ea2c1b52d2f050772f88f6027d9",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE40_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE40_TEST_RESULTS.json",
+      "sizeBytes": 6548,
+      "sha256": "bea2904d8ce9b93b223234b6fe8d6f49a4a5f059acfb9659884be3cd604d33ba",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE41_RLS_ENFORCEMENT_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE41_RLS_ENFORCEMENT_RESULTS.json",
+      "sizeBytes": 4317,
+      "sha256": "17ff25030c5f0945d6fda6e2783d0d1861fcbd5352039a912996022d1ecfd112",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE41_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE41_TEST_RESULTS.json",
+      "sizeBytes": 10975,
+      "sha256": "6d9763439a1b1a04b9cdee61d4e267bb2ed6e99707c1f2c31462a6f0c52c395f",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE42_PROVISIONING_FAILURE_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE42_PROVISIONING_FAILURE_RESULTS.json",
+      "sizeBytes": 5232,
+      "sha256": "c7a7a096f07ffb2672a5d292145d403b0cc83f3c24994dd5c51386aa4181b49f",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE42_RLS_ENFORCEMENT_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE42_RLS_ENFORCEMENT_RESULTS.json",
+      "sizeBytes": 7054,
+      "sha256": "09dbf90070706bc2077ec5cb0913cebbfcc85d38c255c5d6b7171318f4de7284",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE42_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE42_TEST_RESULTS.json",
+      "sizeBytes": 8225,
+      "sha256": "39b0fd21d1c87e26633ef739851a23623430cb3fbb3fac5c24abf03f87480df5",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE43_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE43_TEST_RESULTS.json",
+      "sizeBytes": 11377,
+      "sha256": "03692aa1d937607473ca7befff2d713cb6904676f4dc636f402e79c616bfc2bf",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE44_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE44_TEST_RESULTS.json",
+      "sizeBytes": 9377,
+      "sha256": "fd824d7e96f3c5e7c9f16c964546d7925301f4b35d2609bcbd744bdf40942819",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE45_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE45_TEST_RESULTS.json",
+      "sizeBytes": 24522,
+      "sha256": "813d212278d850b9dbe75f344d000ec13fb9dfa13457f4c3665f986c2c423b43",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE46_DB_AUDIT_DATA.json",
+      "finalPath": "docs/archive/manifests/PHASE46_DB_AUDIT_DATA.json",
+      "sizeBytes": 3968,
+      "sha256": "034067b3929db975a8ec7aec72e0af36e63374dadef13fc3d9205a162008e7e6",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    },
+    {
+      "originalPath": "PHASE46_TEST_RESULTS.json",
+      "finalPath": "docs/archive/manifests/PHASE46_TEST_RESULTS.json",
+      "sizeBytes": 20396,
+      "sha256": "ed6e2dc37ee4d803d7034d3ee6d4113fd6c1451ab6c8a302a1f176e281e5125f",
+      "reason": "Historical phase machine-readable manifest archived from repository root",
+      "verified": true
+    }
+  ],
+  "movedScripts": [
+    {
+      "originalPath": "scripts/seed_page05_reports.mjs",
+      "finalPath": "scripts/archive/seed_page05_reports.mjs",
+      "sizeBytes": 28931,
+      "sha256": "c245b5fb00aa9fc7616839977f36bbeb85008d268b750f143790cefa661bcd9d",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/seed_page06_intelligence.js",
+      "finalPath": "scripts/archive/seed_page06_intelligence.js",
+      "sizeBytes": 13470,
+      "sha256": "98b3fbc09b3b7ba206e8edb799026f6cbc058e2c718ef3cb0829687d669d2614",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/seed_page07_entities.js",
+      "finalPath": "scripts/archive/seed_page07_entities.js",
+      "sizeBytes": 13209,
+      "sha256": "082e72e7f5d9f2ae5e2179a3bc006e4884f1fa35afd0ba7c9d7a8c2070ae24b3",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/seed_page08_timeline.js",
+      "finalPath": "scripts/archive/seed_page08_timeline.js",
+      "sizeBytes": 8684,
+      "sha256": "44228611989ecefb8cf936bfb9879f64194cc1b7716cb35510d9c75371f72770",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/seed_page09_cross_dept.js",
+      "finalPath": "scripts/archive/seed_page09_cross_dept.js",
+      "sizeBytes": 4677,
+      "sha256": "a6d822abec94a5b4657f019c4a66754f417637aa6001ae0963ee7521c082ed0c",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/seed_page10_admin.js",
+      "finalPath": "scripts/archive/seed_page10_admin.js",
+      "sizeBytes": 7158,
+      "sha256": "31e59b9f7167c93839285ace21893ac3622df917f6e06f4c4e80194ed79797c6",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/seed_page11_audit.js",
+      "finalPath": "scripts/archive/seed_page11_audit.js",
+      "sizeBytes": 8540,
+      "sha256": "68c4b89d5cfa559db24529b74f2cc96120825dfe250ca349e0d492a6396a2814",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_page05_verification.mjs",
+      "finalPath": "scripts/archive/test_page05_verification.mjs",
+      "sizeBytes": 4238,
+      "sha256": "ba04fb07720c056c5e23f3ce152f043f5059704d27707c70742854ed95df4780",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_page06_verification.mjs",
+      "finalPath": "scripts/archive/test_page06_verification.mjs",
+      "sizeBytes": 4894,
+      "sha256": "d073e8adf5cde601ed7492d992ceddc4a7cbef6d943c7d5633336604c12ffbef",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_page07_verification.mjs",
+      "finalPath": "scripts/archive/test_page07_verification.mjs",
+      "sizeBytes": 5149,
+      "sha256": "435e58a8cef65d285f336668389b55c145bd8f92814427e8c4fb9b57015992a7",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_page08_verification.mjs",
+      "finalPath": "scripts/archive/test_page08_verification.mjs",
+      "sizeBytes": 8067,
+      "sha256": "f9d3a196ac1a3b855e943e718a08be274ea9a963026a52914c3896a1d0d4fe42",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_page09_verification.mjs",
+      "finalPath": "scripts/archive/test_page09_verification.mjs",
+      "sizeBytes": 7744,
+      "sha256": "424071cbd833f4f8e904e2e5cd95ca1b960e1f7ec0c8d0b3f815e90397708e27",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_page10_verification.mjs",
+      "finalPath": "scripts/archive/test_page10_verification.mjs",
+      "sizeBytes": 7592,
+      "sha256": "729d6de1a7777bca6d5f15f9f9092605f7ece910fd938c26a49c13f309b2595d",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_page11_verification.mjs",
+      "finalPath": "scripts/archive/test_page11_verification.mjs",
+      "sizeBytes": 7472,
+      "sha256": "6388aff7ebc077153ac67c335f1440fb2b489d9e8dc7c95f84684232d941b102",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/unify_sidebars.mjs",
+      "finalPath": "scripts/archive/unify_sidebars.mjs",
+      "sizeBytes": 7136,
+      "sha256": "8156687780dcc2769fe9116c7fd29a758ea55d9f621341abb0befb31890ca5f6",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/enrich_phase5_seed.js",
+      "finalPath": "scripts/archive/enrich_phase5_seed.js",
+      "sizeBytes": 11472,
+      "sha256": "761f3a44443175ba47b98f4a62f8a18fb440ff947b85ac3b5ec8e0f2d964d71d",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase6_graph.mjs",
+      "finalPath": "scripts/archive/test_phase6_graph.mjs",
+      "sizeBytes": 5245,
+      "sha256": "2649847368b5d0910a828bce26ca6977e1287c26fec83fb379af42b445cc7921",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase7_legal.mjs",
+      "finalPath": "scripts/archive/test_phase7_legal.mjs",
+      "sizeBytes": 8076,
+      "sha256": "a0dd578bdf22124e00974b7a9722b08330b581922e3efda4003bcea686f5db0e",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase8_reports_rbac.mjs",
+      "finalPath": "scripts/archive/test_phase8_reports_rbac.mjs",
+      "sizeBytes": 7705,
+      "sha256": "663d4e716a2bd5c68e0d23f80601f54a831f0806c0fdc01d84dfc2740b8fd1ac",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase9_e2e_ocr.mjs",
+      "finalPath": "scripts/archive/test_phase9_e2e_ocr.mjs",
+      "sizeBytes": 29991,
+      "sha256": "5a6688bb0dd12ae11e558f19b1af5cf41344c1785b378a890753ae2a9a58c7f8",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase10_release_validation.mjs",
+      "finalPath": "scripts/archive/test_phase10_release_validation.mjs",
+      "sizeBytes": 25596,
+      "sha256": "f039ba8249ed6d6f6cfd387c11eed1025c9a3f89723f528eaf5e6fa552c5cf73",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase11_staging_smoke.mjs",
+      "finalPath": "scripts/archive/test_phase11_staging_smoke.mjs",
+      "sizeBytes": 11670,
+      "sha256": "e68560b33c89f36b0276588f93c22dc57458933a1e5f60a9dda5dc768aed622f",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase12_pilot_acceptance.mjs",
+      "finalPath": "scripts/archive/test_phase12_pilot_acceptance.mjs",
+      "sizeBytes": 24811,
+      "sha256": "fd7994de8cf3e7399931ecc2f7f0c73430c2b2439f81749946374f31c4cc201b",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase13_pilot_operations.mjs",
+      "finalPath": "scripts/archive/test_phase13_pilot_operations.mjs",
+      "sizeBytes": 26188,
+      "sha256": "c712457ae5405aaa07eaa0220c9dfebf691e5d2111d1c9e558f9da5a0ae329e5",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase14_security_assessment.mjs",
+      "finalPath": "scripts/archive/test_phase14_security_assessment.mjs",
+      "sizeBytes": 23276,
+      "sha256": "561f3de42571329e8a74b084b7106d6f7e70b8ecf63642914343000f0a6e17d6",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase15_synthetic_pilot.mjs",
+      "finalPath": "scripts/archive/test_phase15_synthetic_pilot.mjs",
+      "sizeBytes": 41876,
+      "sha256": "39d7174ba134ce8e17828650010f5f86a23f672abdea6637cfd4aeeabfc9ca16",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase16_5_full_audit.mjs",
+      "finalPath": "scripts/archive/test_phase16_5_full_audit.mjs",
+      "sizeBytes": 39284,
+      "sha256": "938a77fba2584ab4a09ca1ff86d573d09180e4ad3dfe21aa9064d11a071c2262",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/verify_phase16_audit.mjs",
+      "finalPath": "scripts/archive/verify_phase16_audit.mjs",
+      "sizeBytes": 25557,
+      "sha256": "ee5db6fbc29646a7950a0d1c4c6f74c39d9d4d0362994ae9abd35d3b7769cee1",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/validate_release_pipeline_phase18.mjs",
+      "finalPath": "scripts/archive/validate_release_pipeline_phase18.mjs",
+      "sizeBytes": 8800,
+      "sha256": "9e251ee3e3e83e61bb3092ee66208fae664b825dfe3b750cbd9511b900e7f75c",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase19_runtime_validation.mjs",
+      "finalPath": "scripts/archive/test_phase19_runtime_validation.mjs",
+      "sizeBytes": 18943,
+      "sha256": "2a630ff582e58688174ced2e84f5d31b84f46df35d48c4db30dcb45c516ac010",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase21_auth_validation.mjs",
+      "finalPath": "scripts/archive/test_phase21_auth_validation.mjs",
+      "sizeBytes": 27703,
+      "sha256": "6a02c3d65e9baf5d07a73b8838a7cc6b80d79726a0ec45d5e9c70652b00352b6",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase22_tenancy_validation.mjs",
+      "finalPath": "scripts/archive/test_phase22_tenancy_validation.mjs",
+      "sizeBytes": 25657,
+      "sha256": "4c1467e7e77c3233d4ed3931bb0f250d0a7ff85523a7e6670d29fd4b0adac177",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase23_postgres_rls.mjs",
+      "finalPath": "scripts/archive/test_phase23_postgres_rls.mjs",
+      "sizeBytes": 14944,
+      "sha256": "9e2dab71648047bc8cd380f55071ad03f5525ade345e6f2b36e8f3e731ff32f3",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase24_postgres_security.mjs",
+      "finalPath": "scripts/archive/test_phase24_postgres_security.mjs",
+      "sizeBytes": 18290,
+      "sha256": "a09b44c7a775f1f2682f65dd9e6464dcdda253fb49ee36b2cd4edb593a741d03",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase25_postgres_runtime.mjs",
+      "finalPath": "scripts/archive/test_phase25_postgres_runtime.mjs",
+      "sizeBytes": 19294,
+      "sha256": "4215192aa42ab27979924197761eb3c626dff9ae63f0b77fb54be7cf44cb68ad",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase26_postgres_rls.mjs",
+      "finalPath": "scripts/archive/test_phase26_postgres_rls.mjs",
+      "sizeBytes": 26064,
+      "sha256": "939ee364ba10c6ac8af561b84ef23055140fcb6df0098c46dc0b5e132176b965",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/test_phase27_postgres_app.mjs",
+      "finalPath": "scripts/archive/test_phase27_postgres_app.mjs",
+      "sizeBytes": 34873,
+      "sha256": "6a0da9b4562c4344eb00f3ed4d786a26e73d43de10189c72627e21a34c299f30",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/verify_phase28_release_gates.mjs",
+      "finalPath": "scripts/archive/verify_phase28_release_gates.mjs",
+      "sizeBytes": 22024,
+      "sha256": "1e441aa4d3a4ba93089bc0257be97152afde401ad70bfe3a7587188997d9f9b1",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/verify_phase29_preflight.mjs",
+      "finalPath": "scripts/archive/verify_phase29_preflight.mjs",
+      "sizeBytes": 26093,
+      "sha256": "289788d305ef266da9eef2eef0603e2e47b657b87e59f49524781fb2ad532400",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/apply_dev_department_schema.mjs",
+      "finalPath": "scripts/archive/apply_dev_department_schema.mjs",
+      "sizeBytes": 4354,
+      "sha256": "3d5e538b5cad357b0e808015e87e29e896de6af4629ce3eb8ea8e41a201cc3db",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/apply_phase33_migration.mjs",
+      "finalPath": "scripts/archive/apply_phase33_migration.mjs",
+      "sizeBytes": 6432,
+      "sha256": "e2726006cb92ea60f9c4980c3f7c639541c4e152a156647ce99cd6166048055a",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/apply_phase35_migration.mjs",
+      "finalPath": "scripts/archive/apply_phase35_migration.mjs",
+      "sizeBytes": 6341,
+      "sha256": "7d118148f9d3310edd901fa6a33e1fe6cdc8642e49aa4d430527d3b618f553d9",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/apply_phase36_migration.mjs",
+      "finalPath": "scripts/archive/apply_phase36_migration.mjs",
+      "sizeBytes": 4600,
+      "sha256": "db3212828a8c902daf409e97f41b7114ac8b49e8fee70614df22a4085eb87c7b",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/setup_postgres_phase26.mjs",
+      "finalPath": "scripts/archive/setup_postgres_phase26.mjs",
+      "sizeBytes": 1429,
+      "sha256": "23fd9423dac36ce8b996a78476b2efeacb1cee925024fc1698f4c6a3909b663c",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/rehearse_department_migration.mjs",
+      "finalPath": "scripts/archive/rehearse_department_migration.mjs",
+      "sizeBytes": 7969,
+      "sha256": "0294a624e5cd301ac67140a205e845ab63f9ea1fc74ae6a5e71255e38550cd6e",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    },
+    {
+      "originalPath": "scripts/revert_pg_hba.mjs",
+      "finalPath": "scripts/archive/revert_pg_hba.mjs",
+      "sizeBytes": 937,
+      "sha256": "5099bda16f28343f494a0b908f89f90eee6cc643931a68a55c3650205fe2715d",
+      "reason": "Confirmed obsolete/superseded legacy script not referenced by CI or release pipelines",
+      "verified": true
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // app/api/audit/route.ts
 // GET /api/audit — Centralized audit log query with filters & pagination
+// Prohibits POST, PUT, DELETE to guarantee append-only audit trail immutability
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
@@ -11,9 +12,9 @@ export const runtime = "nodejs";
 export async function GET(request: NextRequest) {
   try {
     const auth = await authenticateOfficer(request);
-    if (!auth || !hasPermission(auth.officer.role, "audit:view")) {
+    if (!auth || (!hasPermission(auth.officer.role, "audit:view") && !hasPermission(auth.officer.role, "audit:read"))) {
       return Response.json(
-        { error: "Access denied: requires audit:view permission" },
+        { error: "Access denied: requires audit:view or audit:read permission" },
         { status: 403 }
       );
     }
@@ -96,4 +97,34 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// ─── Immutability Enforcements ───────────────────────────────────────────────
+
+export async function POST() {
+  return Response.json(
+    { error: "Audit records are immutable and cannot be created manually via API." },
+    { status: 405 }
+  );
+}
+
+export async function PUT() {
+  return Response.json(
+    { error: "Audit records are immutable and cannot be modified." },
+    { status: 405 }
+  );
+}
+
+export async function PATCH() {
+  return Response.json(
+    { error: "Audit records are immutable and cannot be modified." },
+    { status: 405 }
+  );
+}
+
+export async function DELETE() {
+  return Response.json(
+    { error: "Audit records are immutable and cannot be deleted." },
+    { status: 405 }
+  );
 }

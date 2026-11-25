@@ -11,7 +11,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import fs from "fs/promises";
 import path from "path";
-import { sha256OfBuffer, isValidSha256, HashMismatchError } from "@/lib/crypto";
+import { sha256OfBuffer, isValidSha256, HashMismatchError } from "../lib/crypto.ts";
 
 export type WormMode = "NONE" | "COMPLIANCE" | "GOVERNANCE";
 

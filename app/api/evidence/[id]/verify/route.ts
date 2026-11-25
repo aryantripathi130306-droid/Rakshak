@@ -47,76 +47,28 @@ export async function POST(
     }
 
     const storagePath = path.join(process.cwd(), "uploads", "raw", `${evidence.sha256Hash}.bin`);
-    let fileExists = false;
-    let computedDiskHash = "";
-    let diskFileSize = 0;
-    let verificationStatus: "VERIFIED" | "TAMPERED" | "MISSING_STORAGE" = "VERIFIED";
-
-    try {
-      const fileBuffer = await fs.readFile(storagePath);
-      fileExists = true;
-      diskFileSize = fileBuffer.length;
-      computedDiskHash = sha256OfBuffer(fileBuffer);
-
-      const dbMatch = computedDiskHash.toLowerCase() === evidence.sha256Hash.toLowerCase();
-      const clientMatch = evidence.clientHash.toLowerCase() === evidence.sha256Hash.toLowerCase();
-
-      if (dbMatch && clientMatch) {
-        verificationStatus = "VERIFIED";
-      } else {
-        verificationStatus = "TAMPERED";
-      }
-    } catch {
-      fileExists = false;
-      verificationStatus = "MISSING_STORAGE";
-    }
-
-    const verificationTimestamp = new Date();
+    const { verifyEvidenceIntegrityAsync } = await import("@/lib/evidenceOperations");
     const auditor = body.auditor || "Forensic Workstation Integrity Daemon";
-    const auditAction = verificationStatus === "VERIFIED"
-      ? `Cryptographic dual-hash audit passed. Computed disk digest: ${computedDiskHash}`
-      : verificationStatus === "TAMPERED"
-      ? `CRITICAL INTEGRITY FAILURE: Disk digest (${computedDiskHash}) differs from recorded canonical hash (${evidence.sha256Hash})`
-      : `CRITICAL STORAGE FAILURE: Physical evidence file missing from storage path ${evidence.storagePath}`;
 
-    // Append to Custody Log
-    const custodyRecord = await (prisma as any).custodyEvent.create({
-      data: {
-        evidenceId: evidence.id,
-        eventType: "INTEGRITY_AUDIT",
-        actor: auditor,
-        action: auditAction,
-        result: verificationStatus === "VERIFIED" ? "VERIFIED" : "FAILED",
-        details: JSON.stringify({
-          algorithm: "SHA-256",
-          clientHash: evidence.clientHash,
-          databaseHash: evidence.sha256Hash,
-          computedDiskHash: computedDiskHash || null,
-          diskFileSize,
-          expectedFileSize: evidence.fileSize,
-          storagePath: evidence.storagePath,
-          timestamp: verificationTimestamp.toISOString(),
-        }),
-      },
-    });
+    const verifyResult = await verifyEvidenceIntegrityAsync(evidence.id, auditor);
 
     return Response.json(
       {
-        verified: verificationStatus === "VERIFIED",
-        status: verificationStatus,
+        verified: verifyResult.verified,
+        status: verifyResult.verified ? "VERIFIED" : "TAMPERED",
         evidenceId: evidence.id,
         fileName: evidence.fileName,
-        caseNumber: evidence.case.caseNumber,
+        caseNumber: evidence.case?.caseNumber,
         algorithm: "SHA-256",
         clientHash: evidence.clientHash,
         databaseHash: evidence.sha256Hash,
-        computedDiskHash: computedDiskHash || null,
-        hashMatch: verificationStatus === "VERIFIED",
-        fileExists,
+        computedDiskHash: verifyResult.diskHash,
+        hashMatch: verifyResult.verified,
+        fileExists: verifyResult.diskHash !== null,
+        quarantined: verifyResult.quarantined,
         storagePath: evidence.storagePath,
-        fileSizeBytes: diskFileSize || evidence.fileSize,
-        verifiedAt: verificationTimestamp.toISOString(),
-        custodyEventId: custodyRecord.id,
+        fileSizeBytes: evidence.fileSize,
+        verifiedAt: new Date().toISOString(),
       },
       { status: 200 }
     );

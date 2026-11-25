@@ -1,0 +1,202 @@
+[
+  {
+    "db": "rakshak_phase26_test",
+    "exists": true,
+    "tableCount": 21,
+    "rlsCount": 10,
+    "forceRlsCount": 10,
+    "policyCount": 11,
+    "caseCount": 3,
+    "evidenceCount": 2
+  },
+  {
+    "db": "rakshak_phase34_test",
+    "exists": true,
+    "tableCount": 22,
+    "rlsCount": 11,
+    "forceRlsCount": 11,
+    "policyCount": 12,
+    "caseCount": 2,
+    "evidenceCount": 0
+  },
+  {
+    "db": "rakshak_phase34_1_test",
+    "exists": true,
+    "tableCount": 22,
+    "rlsCount": 11,
+    "forceRlsCount": 11,
+    "policyCount": 12,
+    "caseCount": 2,
+    "evidenceCount": 0
+  },
+  {
+    "db": "rakshak_phase35_test",
+    "exists": true,
+    "tableCount": 24,
+    "rlsCount": 13,
+    "forceRlsCount": 13,
+    "policyCount": 14,
+    "caseCount": 2,
+    "evidenceCount": 0
+  },
+  {
+    "db": "rakshak_phase35_1_test",
+    "exists": true,
+    "tableCount": 24,
+    "rlsCount": 13,
+    "forceRlsCount": 13,
+    "policyCount": 14,
+    "caseCount": 2,
+    "evidenceCount": 0
+  },
+  {
+    "db": "rakshak_phase36_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 13,
+    "forceRlsCount": 13,
+    "policyCount": 14,
+    "caseCount": 2,
+    "evidenceCount": 2
+  },
+  {
+    "db": "rakshak_phase36_1_test",
+    "exists": true,
+    "tableCount": 24,
+    "rlsCount": 13,
+    "forceRlsCount": 13,
+    "policyCount": 14,
+    "caseCount": 2,
+    "evidenceCount": 2
+  },
+  {
+    "db": "rakshak_phase36_2_test",
+    "exists": true,
+    "tableCount": 24,
+    "rlsCount": 13,
+    "forceRlsCount": 13,
+    "policyCount": 14,
+    "caseCount": 1,
+    "evidenceCount": 130
+  },
+  {
+    "db": "rakshak_phase37_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 15,
+    "forceRlsCount": 15,
+    "policyCount": 16,
+    "caseCount": 3,
+    "evidenceCount": 5
+  },
+  {
+    "db": "rakshak_phase38_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 18,
+    "forceRlsCount": 18,
+    "policyCount": 19,
+    "caseCount": 3,
+    "evidenceCount": 3
+  },
+  {
+    "db": "rakshak_phase39_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 20,
+    "forceRlsCount": 20,
+    "policyCount": 21,
+    "caseCount": 2,
+    "evidenceCount": 5
+  },
+  {
+    "db": "rakshak_phase39_1_audit_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 2,
+    "forceRlsCount": 2,
+    "policyCount": 2,
+    "caseCount": 0,
+    "evidenceCount": 0
+  },
+  {
+    "db": "rakshak_phase40_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 14,
+    "forceRlsCount": 14,
+    "policyCount": 13,
+    "caseCount": 6,
+    "evidenceCount": 0
+  },
+  {
+    "db": "rakshak_phase41_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 20,
+    "forceRlsCount": 20,
+    "policyCount": 21,
+    "caseCount": 2,
+    "evidenceCount": 2
+  },
+  {
+    "db": "rakshak_phase42_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 20,
+    "forceRlsCount": 20,
+    "policyCount": 21,
+    "caseCount": 3,
+    "evidenceCount": 3
+  },
+  {
+    "db": "rakshak_phase43_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 20,
+    "forceRlsCount": 20,
+    "policyCount": 21,
+    "caseCount": 3,
+    "evidenceCount": 3
+  },
+  {
+    "db": "rakshak_phase43_rehearsal_audit_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 2,
+    "forceRlsCount": 2,
+    "policyCount": 2,
+    "caseCount": 0,
+    "evidenceCount": 0
+  },
+  {
+    "db": "rakshak_phase44_backup_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 20,
+    "forceRlsCount": 20,
+    "policyCount": 21,
+    "caseCount": 3,
+    "evidenceCount": 3
+  },
+  {
+    "db": "rakshak_phase44_restore_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 20,
+    "forceRlsCount": 20,
+    "policyCount": 21,
+    "caseCount": 6,
+    "evidenceCount": 17
+  },
+  {
+    "db": "rakshak_phase45_test",
+    "exists": true,
+    "tableCount": 31,
+    "rlsCount": 20,
+    "forceRlsCount": 20,
+    "policyCount": 21,
+    "caseCount": 11,
+    "evidenceCount": 56
+  }
+]

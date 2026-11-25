@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { authenticateOfficer, hasPermission, canAccessDepartment, logAuditEvent } from "@/services/authService";
+import { authenticateOfficer, hasPermission, canAccessDepartment, canAccessDepartmentAsync, logAuditEvent } from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -60,8 +60,8 @@ export async function GET(
         },
       });
 
-      // Department isolation check
-      if (associatedCase && !canAccessDepartment(auth.officer, associatedCase.jurisdiction, associatedCase.departmentId)) {
+      // Department isolation check via authoritative DB grant check
+      if (associatedCase && !(await canAccessDepartmentAsync(auth.officer, associatedCase.jurisdiction, associatedCase.departmentId))) {
         return Response.json(
           { error: "Access denied: Report is associated with a case in another departmental jurisdiction." },
           { status: 403 }
@@ -214,7 +214,7 @@ export async function PATCH(
     // Check department access if linked to case
     if (existing.caseId) {
       const associatedCase = await p.case.findFirst({ where: { id: existing.caseId } });
-      if (associatedCase && !canAccessDepartment(auth.officer, associatedCase.jurisdiction, associatedCase.departmentId)) {
+      if (associatedCase && !(await canAccessDepartmentAsync(auth.officer, associatedCase.jurisdiction, associatedCase.departmentId))) {
         return Response.json({ error: "Access denied across departmental boundary" }, { status: 403 });
       }
     }

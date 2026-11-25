@@ -34,7 +34,7 @@ export const maxDuration = 30;
 
 // Ensure uploads directory exists at startup (idempotent)
 const UPLOAD_DIR = path.join(process.cwd(), "uploads", "raw");
-const MAX_UPLOAD_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB hard limit
+const MAX_UPLOAD_SIZE_BYTES = parseInt(process.env.MAX_UPLOAD_SIZE_BYTES || "104857600", 10); // 100 MB default hard limit
 
 /**
  * Infer evidence category from file name and MIME type when not explicitly supplied.
@@ -100,12 +100,47 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    if (file.size <= 0) {
+      return Response.json(
+        { error: "Invalid upload: file cannot be empty (0 bytes)." },
+        { status: 400 }
+      );
+    }
     if (file.size > MAX_UPLOAD_SIZE_BYTES) {
       return Response.json(
         { error: `File exceeds maximum upload limit of 100 MB (${(file.size / (1024 * 1024)).toFixed(1)} MB supplied).` },
         { status: 413 }
       );
     }
+
+    // Security: Strict path traversal and filename sanitization
+    const rawFileName = file.name || "unnamed.bin";
+    if (
+      rawFileName.includes("..") ||
+      rawFileName.includes("/") ||
+      rawFileName.includes("\\") ||
+      rawFileName.includes("\0") ||
+      /[\x00-\x1f\x7f]/.test(rawFileName)
+    ) {
+      return Response.json(
+        { error: "Malicious or invalid filename detected: path traversal patterns and control characters are strictly rejected." },
+        { status: 400 }
+      );
+    }
+
+    const safeBaseName = path.basename(rawFileName);
+    const fileExt = safeBaseName.split(".").pop()?.toUpperCase() ?? "BIN";
+    const ALLOWED_EXTENSIONS = [
+      "PNG", "JPG", "JPEG", "PDF", "TXT", "EML", "CSV", "JSON",
+      "WAV", "MP3", "MP4", "BIN", "DOCX", "XLSX"
+    ];
+    if (!ALLOWED_EXTENSIONS.includes(fileExt)) {
+      return Response.json(
+        { error: `File type .${fileExt} is not permitted for digital evidence intake.` },
+        { status: 400 }
+      );
+    }
+
     if (!caseId || typeof caseId !== "string") {
       return Response.json(
         { error: "Missing required field: caseId" },
@@ -122,16 +157,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── 2. Verify case exists ──────────────────────────────────────────────
+    // ── 2. Verify case exists and officer has case access ──────────────────
     const caseRecord = await prisma.case.findFirst({
       where: {
         OR: [{ id: caseId }, { caseNumber: caseId }],
+      },
+      select: {
+        id: true,
+        caseNumber: true,
+        departmentId: true,
+        officerBadge: true,
       },
     });
     if (!caseRecord) {
       return Response.json(
         { error: `Case not found: ${caseId}` },
         { status: 404 }
+      );
+    }
+
+    // Verify case access via fresh database checks
+    const { canAccessCaseAsync } = await import("@/lib/accessControl");
+    const caseAccess = await canAccessCaseAsync(auth.officer, caseRecord, "read:content");
+    if (!caseAccess.allowed) {
+      return Response.json(
+        { error: caseAccess.reason || "Access denied: unauthorized case exhibit intake." },
+        { status: 403 }
       );
     }
 
@@ -149,13 +200,12 @@ export async function POST(request: NextRequest) {
 
     // ── 6. Determine Category & Persist Evidence row ────────────────────────
     const mimeType = file.type || "application/octet-stream";
-    const fileExt = file.name.split(".").pop()?.toUpperCase() ?? "BIN";
-    const category = requestedCategory || inferEvidenceCategory(file.name, mimeType);
+    const category = requestedCategory || inferEvidenceCategory(safeBaseName, mimeType);
 
     const evidence = await prisma.evidence.create({
       data: {
         caseId: caseRecord.id,
-        fileName: file.name,
+        fileName: safeBaseName,
         fileType: fileExt,
         mimeType,
         fileSize: fileBuffer.length,
@@ -163,40 +213,55 @@ export async function POST(request: NextRequest) {
         clientHash,
         storagePath: relativeStoragePath,
         evidenceCategory: category,
-      },
+        status: "ACCEPTED",
+        currentCustodianId: auth.officer.id,
+        version: 1,
+      } as any,
     });
 
-    // ── 7. Record initial custody audit events ─────────────────────────────
-    await (prisma as any).custodyEvent.createMany({
-      data: [
-        {
-          evidenceId: evidence.id,
-          eventType: "INTAKE_UPLOAD",
-          actor: `${auth.officer.name} (${auth.officer.badgeNumber})`,
-          action: `Raw evidence ingested: ${file.name} (${fileBuffer.length} bytes)`,
-          result: "SUCCESS",
-          details: JSON.stringify({
-            fileName: file.name,
-            mimeType,
-            clientHash,
-            caseNumber: caseRecord.caseNumber,
-          }),
-        },
-        {
-          evidenceId: evidence.id,
-          eventType: "HASH_VERIFIED",
-          actor: "Cryptographic Verification Subsystem",
-          action: `Dual SHA-256 integrity match confirmed. Server digest: ${serverHash}`,
-          result: "VERIFIED",
-          details: JSON.stringify({
-            algorithm: "SHA-256",
-            serverHash,
-            clientHash,
-            storagePath: relativeStoragePath,
-          }),
-        },
-      ],
-    }).catch((e: unknown) => console.error("[Upload] Error logging intake custody events:", e));
+    // ── 7. Record initial chained custody events ───────────────────────────
+    const { appendCustodyEventAsync } = await import("@/lib/custodyChain");
+    await appendCustodyEventAsync({
+      evidenceId: evidence.id,
+      eventType: "INTAKE_UPLOAD",
+      actor: `${auth.officer.name} (${auth.officer.badgeNumber})`,
+      action: `Raw evidence ingested: ${safeBaseName} (${fileBuffer.length} bytes)`,
+      result: "SUCCESS",
+      details: {
+        fileName: safeBaseName,
+        mimeType,
+        clientHash,
+        caseNumber: caseRecord.caseNumber,
+      },
+    }).catch((e: unknown) => console.error("[Upload] Error logging intake event:", e));
+
+    await appendCustodyEventAsync({
+      evidenceId: evidence.id,
+      eventType: "HASH_VERIFIED",
+      actor: "Cryptographic Verification Subsystem",
+      action: `Dual SHA-256 integrity match confirmed. Server digest: ${serverHash}`,
+      result: "VERIFIED",
+      details: {
+        algorithm: "SHA-256",
+        serverHash,
+        clientHash,
+        storagePath: relativeStoragePath,
+      },
+    }).catch((e: unknown) => console.error("[Upload] Error logging hash verification event:", e));
+
+    await appendCustodyEventAsync({
+      evidenceId: evidence.id,
+      eventType: "EVIDENCE_ACCEPTED",
+      actor: `${auth.officer.name} (${auth.officer.badgeNumber})`,
+      action: `Evidence accepted into case ${caseRecord.caseNumber}. Initial custodian assigned.`,
+      result: "SUCCESS",
+      details: {
+        custodianId: auth.officer.id,
+        custodianBadge: auth.officer.badgeNumber,
+        departmentId: auth.officer.departmentId,
+        status: "ACCEPTED",
+      },
+    }).catch((e: unknown) => console.error("[Upload] Error logging acceptance event:", e));
 
     // Also register in centralized audit trail
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
@@ -208,23 +273,25 @@ export async function POST(request: NextRequest) {
       module: "Evidence",
       targetType: "Evidence",
       targetId: evidence.id,
-      details: `Ingested ${file.name} (${fileBuffer.length} bytes) with verified SHA-256 for case ${caseRecord.caseNumber}`,
+      details: `Ingested ${safeBaseName} (${fileBuffer.length} bytes) with verified SHA-256 for case ${caseRecord.caseNumber}`,
       result: "SUCCESS",
       ipAddress: ip,
     });
 
     // ── 8. Async extraction worker (fire-and-forget, non-blocking) ─────────
-    runExtractionWorker(fileBuffer, mimeType, file.name, category, evidence.id, caseRecord.id, serverHash).catch(
+    runExtractionWorker(fileBuffer, mimeType, safeBaseName, category, evidence.id, caseRecord.id, serverHash).catch(
       (err) => console.error("[ExtractionWorker] Failed:", err)
     );
 
-    // ── 8. Return success payload ──────────────────────────────────────────
+    // ── 9. Return success payload ──────────────────────────────────────────
     const responsePayload = {
       evidenceId: evidence.id,
       sha256Hash: serverHash,
       verified: true as const,
       storagePath: relativeStoragePath,
       evidenceCategory: category,
+      status: "ACCEPTED",
+      currentCustodianId: auth.officer.id,
       uploadedAt: evidence.uploadedAt.toISOString(),
       fileName: evidence.fileName,
       fileSize: evidence.fileSize,

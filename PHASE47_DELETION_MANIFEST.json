@@ -1,0 +1,97 @@
+{
+  "phase": "PHASE 47",
+  "timestamp": "2026-11-25T15:50:59.237Z",
+  "deletedFiles": [
+    {
+      "path": "CLAUDE.md",
+      "sizeBytes": 11,
+      "sha256": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49",
+      "reason": "0-byte empty placeholder at root (adapters/CLAUDE.md preserved)",
+      "verifiedRemoved": true
+    },
+    {
+      "path": "progress.txt",
+      "sizeBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "0-byte empty scratch file with zero references",
+      "verifiedRemoved": true
+    },
+    {
+      "path": "VERSION",
+      "sizeBytes": 7,
+      "sha256": "fcd2cf9842eb54382a407192ae52622f38549dc24b9aec014019af36e868a31e",
+      "reason": "0-byte empty placeholder with zero references",
+      "verifiedRemoved": true
+    },
+    {
+      "path": "prisma/test.db",
+      "sizeBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "0-byte empty SQLite test artifact (prisma/dev.db untouched)",
+      "verifiedRemoved": true
+    },
+    {
+      "path": "backups/migration_staging/phase36_1_sandbox_1792860826191.db",
+      "sizeBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "0-byte leftover Phase 36.1 sandbox DB",
+      "verifiedRemoved": true
+    },
+    {
+      "path": "backups/migration_staging/phase36_1_sandbox_1792860945110.db",
+      "sizeBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "0-byte leftover Phase 36.1 sandbox DB",
+      "verifiedRemoved": true
+    },
+    {
+      "path": "temp_p341_fixtures/isolated_p341_sandbox.db",
+      "sizeBytes": 28672,
+      "sha256": "f2bf0ee3ef3d4cb320a4d0a88bb3709d6b0470d8feac63b28cbdce8e170aba5a",
+      "reason": "Ephemeral Phase 34.1 test sandbox DB (gitignored; recreated by test_phase34_1_adversarial_rls.mjs)",
+      "verifiedRemoved": true
+    },
+    {
+      "path": "tsconfig.tsbuildinfo",
+      "sizeBytes": 169517,
+      "sha256": "5f6823596fe45aa68c52a301d37968cd13942719d43e28f8194ec67fc3fdbf5a",
+      "reason": "Regeneratable TypeScript incremental build cache (gitignored)",
+      "verifiedRemoved": true
+    }
+  ],
+  "deletedDirs": [
+    {
+      "path": "scratch/ocr_temp",
+      "reason": "Empty scratch directory",
+      "verifiedRemoved": true
+    },
+    {
+      "path": "scratch",
+      "reason": "Empty scratch parent directory after ocr_temp removal",
+      "verifiedRemoved": true
+    },
+    {
+      "path": "temp_p341_fixtures",
+      "reason": "Empty ephemeral test fixture directory after sandbox DB removal",
+      "verifiedRemoved": true
+    }
+  ],
+  "preservedForInvestigation": [
+    {
+      "path": "public/frontend/js/vault.js",
+      "reason": "Unreferenced in HTML pages, but has uncommitted git working-tree modifications; preserved per Stage A safety rule."
+    },
+    {
+      "path": "uploads/synthetic_test_p45",
+      "reason": "Preserved per Stage D rule until reproduction/retention requirements are verified."
+    },
+    {
+      "path": "uploads/synthetic_test_p46",
+      "reason": "Preserved per Stage D rule until reproduction/retention requirements are verified."
+    },
+    {
+      "path": "backups/migration_staging/isolated_rehearsal_sandbox.db",
+      "reason": "Preserved per Stage D rule; used by CI workflow step 5."
+    }
+  ]
+}

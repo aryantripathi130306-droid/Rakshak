@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { type NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { authenticateOfficer, hasPermission, canAccessDepartment } from "@/services/authService";
+import { authenticateOfficer, hasPermission, canAccessDepartment, canAccessDepartmentAsync } from "@/services/authService";
 
 export const runtime = "nodejs";
 
@@ -36,9 +36,13 @@ export async function GET(request: NextRequest) {
       const allCases = await p.case.findMany({
         select: { id: true, jurisdiction: true, departmentId: true },
       });
-      permittedCaseIds = allCases
-        .filter((c: any) => canAccessDepartment(auth.officer, c.jurisdiction, c.departmentId))
-        .map((c: any) => c.id);
+      const checks = await Promise.all(
+        allCases.map(async (c: any) => ({
+          id: c.id,
+          allowed: await canAccessDepartmentAsync(auth.officer, c.jurisdiction, c.departmentId),
+        }))
+      );
+      permittedCaseIds = checks.filter((x: any) => x.allowed).map((x: any) => x.id);
     }
 
     // Build base filter for summary counts

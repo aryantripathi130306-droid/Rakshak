@@ -1,0 +1,105 @@
+{
+  "phase": "PHASE_39_1",
+  "title": "Database Safety Audit, Regression-Test Integrity & OCR Release Verification",
+  "timestamp": "2026-10-25T11:40:53.639Z",
+  "auditDatabase": "rakshak_phase43_rehearsal_audit_test",
+  "summary": {
+    "total": 13,
+    "passed": 13,
+    "failed": 0,
+    "successRate": "100.0%"
+  },
+  "results": [
+    {
+      "id": "TC-A01",
+      "workstream": "Workstream A",
+      "name": "Catalog audit confirms pre-existing phase test databases and identifies target audit DB status",
+      "status": "PASSED",
+      "details": "P36-P39 exist: true; rakshak_phase43_rehearsal_audit_test present: true"
+    },
+    {
+      "id": "TC-A02",
+      "workstream": "Workstream A",
+      "name": "Database rakshak_phase36_test retains valid test fixtures and table structures",
+      "status": "PASSED",
+      "details": "Case rows: 2; Table definitions intact"
+    },
+    {
+      "id": "TC-A03",
+      "workstream": "Workstream A",
+      "name": "Database rakshak_phase37_test retains valid test fixtures and entity link records",
+      "status": "PASSED",
+      "details": "EntityLink rows: 6; Candidate and confirmed records intact"
+    },
+    {
+      "id": "TC-A04",
+      "workstream": "Workstream A",
+      "name": "Database rakshak_phase38_test retains valid test fixtures and dossier records",
+      "status": "PASSED",
+      "details": "InvestigativeDossier rows: 3; Claims and reviews intact"
+    },
+    {
+      "id": "TC-B01",
+      "workstream": "Workstream B",
+      "name": "Clean provisioning of rakshak_phase39_1_audit_test succeeds with 31 models and zero data loss flags",
+      "status": "PASSED",
+      "details": "Provisioned rakshak_phase43_rehearsal_audit_test with 31 models and applied 20261025_phase39_ocr_fact_extraction.sql"
+    },
+    {
+      "id": "TC-B02",
+      "workstream": "Workstream B",
+      "name": "Freshly provisioned database enforces ROW LEVEL SECURITY and FORCE ROW LEVEL SECURITY",
+      "status": "PASSED",
+      "details": "ExtractedTextArtifact|t|t, FactReviewHistory|t|t"
+    },
+    {
+      "id": "TC-C01",
+      "workstream": "Workstream C",
+      "name": "Prisma SQLite and PostgreSQL schemas maintain exact 100% model parity (31 models)",
+      "status": "PASSED",
+      "details": "SQLite: 31, PG: 31, Discrepancies: 0"
+    },
+    {
+      "id": "TC-C02",
+      "workstream": "Workstream C",
+      "name": "Historical Phase 18 migration payload baseline remains strictly frozen and uncorrupted",
+      "status": "PASSED",
+      "details": "21 models, source hash 6bfe1f9a718bd878..."
+    },
+    {
+      "id": "TC-C03",
+      "workstream": "Workstream C",
+      "name": "Updated normalisePhone handles diverse input formats deterministically to standard E.164",
+      "status": "PASSED",
+      "details": "Resolved to: +919876543210"
+    },
+    {
+      "id": "TC-D01",
+      "workstream": "Workstream D",
+      "name": "Engine router maps forensic MIME types to genuine local engines without external network routing",
+      "status": "PASSED",
+      "details": "TXT: TEXT, PDF: PDF, IMG: IMAGE, ZIP: UNSUPPORTED"
+    },
+    {
+      "id": "TC-D02",
+      "workstream": "Workstream D",
+      "name": "Epistemic gating strictly prohibits unreviewed or rejected candidate facts from feeding confirmed intelligence",
+      "status": "PASSED",
+      "details": "PENDING: allowed=false, REJECTED: allowed=false, ACCEPTED: allowed=true"
+    },
+    {
+      "id": "TC-E01",
+      "workstream": "Workstream E",
+      "name": "Cold storage evidence exhibits in uploads/raw/ remain 100% unaltered (560 files)",
+      "status": "PASSED",
+      "details": "Count: 560, Hash: bdc91bb78c603d21..."
+    },
+    {
+      "id": "TC-E02",
+      "workstream": "Workstream E",
+      "name": "Active SQLite development database (prisma/dev.db) remains 100% untouched",
+      "status": "PASSED",
+      "details": "Initial Hash: dd24614b14f1b4cf..., Final Hash: dd24614b14f1b4cf..."
+    }
+  ]
+}

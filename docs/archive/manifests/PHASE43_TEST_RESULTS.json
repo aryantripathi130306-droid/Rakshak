@@ -1,0 +1,382 @@
+{
+  "releasePhase": "PHASE 43",
+  "pipeline": "RAKSHAK RELEASE VALIDATION GATE",
+  "targetDatabase": "rakshak_phase43_test",
+  "timestampStart": "2026-10-25T11:39:40.950Z",
+  "timestampEnd": "2026-10-25T11:42:04.869Z",
+  "overallStatus": "PASSED",
+  "operationalStatus": "READY FOR CONTROLLED SYNTHETIC-DATA TESTING — PROVISIONING AND REGRESSION GATES REVALIDATED",
+  "metrics": {
+    "totalGates": 12,
+    "passedGates": 12,
+    "failedGates": 0,
+    "totalRegressionSuites": 20,
+    "passedRegressionSuites": 20,
+    "totalRegressionAssertions": 466,
+    "coldEvidenceBinaries": 560,
+    "devDbHash": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9"
+  },
+  "gates": [
+    {
+      "name": "1. Baseline Safety Invariants Pre-Flight Audit",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 0,
+      "error": null,
+      "result": {
+        "devDbHash": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+        "coldFilesCount": 560,
+        "manifestHash": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8"
+      }
+    },
+    {
+      "name": "2. Authoritative Migration Manifest & Cryptographic Digest Verification",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 3,
+      "error": null,
+      "result": {
+        "totalMigrations": 11,
+        "status": "ALL_VERIFIED"
+      }
+    },
+    {
+      "name": "3. Isolated PostgreSQL Security Baseline Catalog Audit",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 539,
+      "error": null,
+      "result": {
+        "tableCount": 31,
+        "rlsTableCount": 20,
+        "forceRlsTableCount": 20,
+        "policyCount": 21,
+        "appUserRole": {
+          "rolname": "rakshak_app_user",
+          "rolsuper": "f",
+          "rolcreaterole": "f",
+          "rolcreatedb": "f",
+          "rolbypassrls": "f"
+        }
+      }
+    },
+    {
+      "name": "4. Runner Integrity & Negative Target Selection Tests",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 102,
+      "error": null,
+      "result": {
+        "exitCode": 0,
+        "durationMs": 102
+      }
+    },
+    {
+      "name": "5. Fail-Closed Provisioning & Security Failure Modes Suite",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 2714,
+      "error": null,
+      "result": {
+        "exitCode": 0,
+        "durationMs": 2714
+      }
+    },
+    {
+      "name": "6. Full Historical Regression Matrix (20 Suites)",
+      "status": "PASSED",
+      "exitCode": 0,
+      "details": "20/20 suites passed (466 assertions)",
+      "suites": [
+        {
+          "id": "REG-01",
+          "name": "Phase 17 Verifier",
+          "script": "scripts/test_phase17_verifier.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 15,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 172,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-02",
+          "name": "Migration Payload Schema",
+          "script": "scripts/validate_migration_payload.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 4,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 76,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-03",
+          "name": "Phase 18 Migration Rehearsal",
+          "script": "scripts/test_phase18_migration_rehearsal.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 7,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 400,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-04",
+          "name": "Phase 32 Authorization & Tenancy",
+          "script": "scripts/test_phase32_authorization.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 20,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 720,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-05",
+          "name": "Phase 33 Account Lifecycle & Grants",
+          "script": "scripts/test_phase33_account_lifecycle.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 21,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 3841,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-06",
+          "name": "Phase 34 Security & PostgreSQL RLS",
+          "script": "scripts/test_phase34_security_and_rls.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 22,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 2595,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-07",
+          "name": "Phase 34.1 RLS Adversarial Suite",
+          "script": "scripts/test_phase34_1_adversarial_rls.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 19,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 3714,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-08",
+          "name": "Phase 35 Case Lifecycle & Workflow",
+          "script": "scripts/test_phase35_case_lifecycle.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 25,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 2571,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-09",
+          "name": "Phase 35.1 Supervisor Approval & RLS",
+          "script": "scripts/test_phase35_1_supervisor_and_rls.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 26,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 3916,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-10",
+          "name": "Phase 36 Evidence Custody & Workflow",
+          "script": "scripts/test_phase36_evidence_custody.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 38,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 3792,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-11",
+          "name": "Phase 36.1 Custody Adversarial & Concurrency",
+          "script": "scripts/test_phase36_1_custody_adversarial.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 40,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 3033,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-12",
+          "name": "Phase 36.2 Multi-Process Distributed Custody",
+          "script": "scripts/test_phase36_2_distributed_custody.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 27,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 6566,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-13",
+          "name": "Phase 37 Cross-Case Intelligence",
+          "script": "scripts/test_phase37_cross_case_intelligence.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 35,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 2501,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-14",
+          "name": "Phase 38 Dossier Reporting & Export",
+          "script": "scripts/test_phase38_dossier_reporting.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 35,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 2798,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-15",
+          "name": "Phase 39 OCR Processing & Extraction",
+          "script": "scripts/test_phase39_ocr_fact_extraction.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 35,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 3893,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-16",
+          "name": "Phase 39.1 Release Integrity & Safety",
+          "script": "scripts/test_phase39_1_release_integrity.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 13,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 9595,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-17",
+          "name": "Phase 40 Identifier Normalization",
+          "script": "scripts/test_phase40_identifier_normalization.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 30,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 1764,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-18",
+          "name": "Phase 41 Direct RLS Enforcement",
+          "script": "scripts/test_phase41_direct_rls_enforcement.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 18,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 3326,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-19",
+          "name": "Phase 42 Provisioning Failure Modes",
+          "script": "scripts/test_phase42_provisioning_failure_modes.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 10,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 13306,
+          "stderrSnippet": null
+        },
+        {
+          "id": "REG-20",
+          "name": "Phase 42 Direct RLS Coverage Matrix",
+          "script": "scripts/test_phase42_direct_rls_coverage.mjs",
+          "targetDb": "rakshak_phase43_test",
+          "assertions": 26,
+          "passed": true,
+          "exitCode": 0,
+          "durationMs": 4919,
+          "stderrSnippet": null
+        }
+      ]
+    },
+    {
+      "name": "7. Frontend Import Resolution & Integrity",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 439,
+      "error": null,
+      "result": {
+        "exitCode": 0,
+        "durationMs": 439
+      }
+    },
+    {
+      "name": "8. Frontend Static Syntax & Asset Verification",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 4793,
+      "error": null,
+      "result": {
+        "exitCode": 0,
+        "durationMs": 4793
+      }
+    },
+    {
+      "name": "9. TypeScript Static Compilation (tsc --noEmit)",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 10089,
+      "error": null,
+      "result": {
+        "exitCode": 0,
+        "durationMs": 10089
+      }
+    },
+    {
+      "name": "10. Dependency Vulnerability Security Audit (npm audit)",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 3216,
+      "error": null,
+      "result": {
+        "exitCode": 0,
+        "durationMs": 3216,
+        "output": "found 0 vulnerabilities"
+      }
+    },
+    {
+      "name": "11. Production Build Compilation (npm run build)",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 23938,
+      "error": null,
+      "result": {
+        "exitCode": 0,
+        "durationMs": 23938
+      }
+    },
+    {
+      "name": "12. Post-Execution Safety Invariants Audit",
+      "status": "PASSED",
+      "exitCode": 0,
+      "durationMs": 1,
+      "error": null,
+      "result": {
+        "devDbUnchanged": true,
+        "coldFilesCount": 560,
+        "manifestHash": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8"
+      }
+    }
+  ]
+}

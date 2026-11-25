@@ -1,0 +1,1527 @@
+{
+  "rakshak_phase36_test": {
+    "tableCount": 31,
+    "tables": [
+      "AccessGrant",
+      "AuditLog",
+      "Case",
+      "CaseAssignmentHistory",
+      "CaseCluster",
+      "CaseEntity",
+      "CaseLegalMapping",
+      "CaseStatusHistory",
+      "ChatTranslation",
+      "ClusterMembership",
+      "CustodyEvent",
+      "Department",
+      "DossierClaim",
+      "DossierExportAudit",
+      "DossierReview",
+      "EntityLink",
+      "EntityLinkReview",
+      "Evidence",
+      "EvidenceLegalMapping",
+      "ExtractedFact",
+      "ExtractedTextArtifact",
+      "FactReviewHistory",
+      "GeneratedReport",
+      "InvestigativeDossier",
+      "LegalProvision",
+      "Officer",
+      "OfficerSession",
+      "PilotFeedback",
+      "ScheduledReport",
+      "TimelineEvent",
+      "Transcription"
+    ],
+    "rowCounts": {
+      "AccessGrant": 1,
+      "AuditLog": 0,
+      "Case": 2,
+      "CaseAssignmentHistory": 0,
+      "CaseCluster": 0,
+      "CaseEntity": 0,
+      "CaseLegalMapping": 0,
+      "CaseStatusHistory": 0,
+      "ChatTranslation": 0,
+      "ClusterMembership": 0,
+      "CustodyEvent": 2,
+      "Department": 2,
+      "DossierClaim": 0,
+      "DossierExportAudit": 0,
+      "DossierReview": 0,
+      "EntityLink": 0,
+      "EntityLinkReview": 0,
+      "Evidence": 2,
+      "EvidenceLegalMapping": 0,
+      "ExtractedFact": 0,
+      "ExtractedTextArtifact": 0,
+      "FactReviewHistory": 0,
+      "GeneratedReport": 0,
+      "InvestigativeDossier": 0,
+      "LegalProvision": 0,
+      "Officer": 2,
+      "OfficerSession": 2,
+      "PilotFeedback": 0,
+      "ScheduledReport": 0,
+      "TimelineEvent": 0,
+      "Transcription": 0
+    },
+    "rlsCount": 13,
+    "forcedRlsCount": 0,
+    "policyCount": 14,
+    "policies": [
+      {
+        "tablename": "AccessGrant",
+        "policyname": "access_grant_department_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "AuditLog",
+        "policyname": "p_auditlog_insert",
+        "cmd": "INSERT\r"
+      },
+      {
+        "tablename": "AuditLog",
+        "policyname": "p_auditlog_select",
+        "cmd": "SELECT\r"
+      },
+      {
+        "tablename": "Case",
+        "policyname": "p_case_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseAssignmentHistory",
+        "policyname": "case_assignment_history_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseEntity",
+        "policyname": "p_caseentity_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseLegalMapping",
+        "policyname": "p_legal_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseStatusHistory",
+        "policyname": "case_status_history_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CustodyEvent",
+        "policyname": "p_custody_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "DossierExportAudit",
+        "policyname": "p_dossier_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "Evidence",
+        "policyname": "p_evidence_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "ExtractedFact",
+        "policyname": "p_fact_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "GeneratedReport",
+        "policyname": "p_report_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "TimelineEvent",
+        "policyname": "p_timeline_tenant_isolation",
+        "cmd": "ALL"
+      }
+    ],
+    "extractedFactColumnsCount": 26,
+    "extractedFactCols": [
+      {
+        "col": "id",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "evidenceId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "caseId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "factAssertion",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "entityType",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "rawValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "normalizedValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "confidence",
+        "type": "double precision",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "sourceHash",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "verificationStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'UNVERIFIED'::text\r"
+      },
+      {
+        "col": "verifiedBy",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "boundingBox",
+        "type": "text",
+        "nullable": true,
+        "def": "'{}'::text\r"
+      },
+      {
+        "col": "extractedAt",
+        "type": "timestamp without time zone",
+        "nullable": false,
+        "def": "CURRENT_TIMESTAMP\r"
+      },
+      {
+        "col": "acceptedValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "artifactId",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "charOffset",
+        "type": "integer",
+        "nullable": true,
+        "def": "0\r"
+      },
+      {
+        "col": "extractionRule",
+        "type": "text",
+        "nullable": true,
+        "def": "'REGEX_V1'::text\r"
+      },
+      {
+        "col": "limitations",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "originalValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "pageNumber",
+        "type": "integer",
+        "nullable": true,
+        "def": "1\r"
+      },
+      {
+        "col": "reviewRationale",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'PENDING_REVIEW'::text\r"
+      },
+      {
+        "col": "reviewedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewedById",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "ruleVersion",
+        "type": "text",
+        "nullable": true,
+        "def": "'1.0.0'::text\r"
+      },
+      {
+        "col": "updatedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": ""
+      }
+    ]
+  },
+  "rakshak_phase37_test": {
+    "tableCount": 31,
+    "tables": [
+      "AccessGrant",
+      "AuditLog",
+      "Case",
+      "CaseAssignmentHistory",
+      "CaseCluster",
+      "CaseEntity",
+      "CaseLegalMapping",
+      "CaseStatusHistory",
+      "ChatTranslation",
+      "ClusterMembership",
+      "CustodyEvent",
+      "Department",
+      "DossierClaim",
+      "DossierExportAudit",
+      "DossierReview",
+      "EntityLink",
+      "EntityLinkReview",
+      "Evidence",
+      "EvidenceLegalMapping",
+      "ExtractedFact",
+      "ExtractedTextArtifact",
+      "FactReviewHistory",
+      "GeneratedReport",
+      "InvestigativeDossier",
+      "LegalProvision",
+      "Officer",
+      "OfficerSession",
+      "PilotFeedback",
+      "ScheduledReport",
+      "TimelineEvent",
+      "Transcription"
+    ],
+    "rowCounts": {
+      "AccessGrant": 2,
+      "AuditLog": 5,
+      "Case": 3,
+      "CaseAssignmentHistory": 0,
+      "CaseCluster": 0,
+      "CaseEntity": 6,
+      "CaseLegalMapping": 0,
+      "CaseStatusHistory": 0,
+      "ChatTranslation": 0,
+      "ClusterMembership": 0,
+      "CustodyEvent": 0,
+      "Department": 2,
+      "DossierClaim": 0,
+      "DossierExportAudit": 0,
+      "DossierReview": 0,
+      "EntityLink": 6,
+      "EntityLinkReview": 7,
+      "Evidence": 5,
+      "EvidenceLegalMapping": 0,
+      "ExtractedFact": 1,
+      "ExtractedTextArtifact": 0,
+      "FactReviewHistory": 0,
+      "GeneratedReport": 0,
+      "InvestigativeDossier": 0,
+      "LegalProvision": 0,
+      "Officer": 5,
+      "OfficerSession": 2,
+      "PilotFeedback": 0,
+      "ScheduledReport": 0,
+      "TimelineEvent": 0,
+      "Transcription": 0
+    },
+    "rlsCount": 15,
+    "forcedRlsCount": 0,
+    "policyCount": 16,
+    "policies": [
+      {
+        "tablename": "AccessGrant",
+        "policyname": "access_grant_department_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "AuditLog",
+        "policyname": "p_auditlog_insert",
+        "cmd": "INSERT\r"
+      },
+      {
+        "tablename": "AuditLog",
+        "policyname": "p_auditlog_select",
+        "cmd": "SELECT\r"
+      },
+      {
+        "tablename": "Case",
+        "policyname": "p_case_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseAssignmentHistory",
+        "policyname": "case_assignment_history_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseEntity",
+        "policyname": "p_caseentity_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseLegalMapping",
+        "policyname": "p_legal_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseStatusHistory",
+        "policyname": "case_status_history_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CustodyEvent",
+        "policyname": "p_custody_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "DossierExportAudit",
+        "policyname": "p_dossier_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "EntityLink",
+        "policyname": "entity_link_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "EntityLinkReview",
+        "policyname": "entity_link_review_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "Evidence",
+        "policyname": "p_evidence_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "ExtractedFact",
+        "policyname": "p_fact_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "GeneratedReport",
+        "policyname": "p_report_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "TimelineEvent",
+        "policyname": "p_timeline_tenant_isolation",
+        "cmd": "ALL"
+      }
+    ],
+    "extractedFactColumnsCount": 26,
+    "extractedFactCols": [
+      {
+        "col": "id",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "evidenceId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "caseId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "factAssertion",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "entityType",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "rawValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "normalizedValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "confidence",
+        "type": "double precision",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "sourceHash",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "verificationStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'UNVERIFIED'::text\r"
+      },
+      {
+        "col": "verifiedBy",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "boundingBox",
+        "type": "text",
+        "nullable": true,
+        "def": "'{}'::text\r"
+      },
+      {
+        "col": "extractedAt",
+        "type": "timestamp without time zone",
+        "nullable": false,
+        "def": "CURRENT_TIMESTAMP\r"
+      },
+      {
+        "col": "acceptedValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "artifactId",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "charOffset",
+        "type": "integer",
+        "nullable": true,
+        "def": "0\r"
+      },
+      {
+        "col": "extractionRule",
+        "type": "text",
+        "nullable": true,
+        "def": "'REGEX_V1'::text\r"
+      },
+      {
+        "col": "limitations",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "originalValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "pageNumber",
+        "type": "integer",
+        "nullable": true,
+        "def": "1\r"
+      },
+      {
+        "col": "reviewRationale",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'PENDING_REVIEW'::text\r"
+      },
+      {
+        "col": "reviewedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewedById",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "ruleVersion",
+        "type": "text",
+        "nullable": true,
+        "def": "'1.0.0'::text\r"
+      },
+      {
+        "col": "updatedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": ""
+      }
+    ]
+  },
+  "rakshak_phase38_test": {
+    "tableCount": 31,
+    "tables": [
+      "AccessGrant",
+      "AuditLog",
+      "Case",
+      "CaseAssignmentHistory",
+      "CaseCluster",
+      "CaseEntity",
+      "CaseLegalMapping",
+      "CaseStatusHistory",
+      "ChatTranslation",
+      "ClusterMembership",
+      "CustodyEvent",
+      "Department",
+      "DossierClaim",
+      "DossierExportAudit",
+      "DossierReview",
+      "EntityLink",
+      "EntityLinkReview",
+      "Evidence",
+      "EvidenceLegalMapping",
+      "ExtractedFact",
+      "ExtractedTextArtifact",
+      "FactReviewHistory",
+      "GeneratedReport",
+      "InvestigativeDossier",
+      "LegalProvision",
+      "Officer",
+      "OfficerSession",
+      "PilotFeedback",
+      "ScheduledReport",
+      "TimelineEvent",
+      "Transcription"
+    ],
+    "rowCounts": {
+      "AccessGrant": 1,
+      "AuditLog": 0,
+      "Case": 3,
+      "CaseAssignmentHistory": 0,
+      "CaseCluster": 0,
+      "CaseEntity": 0,
+      "CaseLegalMapping": 0,
+      "CaseStatusHistory": 0,
+      "ChatTranslation": 0,
+      "ClusterMembership": 0,
+      "CustodyEvent": 2,
+      "Department": 2,
+      "DossierClaim": 23,
+      "DossierExportAudit": 2,
+      "DossierReview": 4,
+      "EntityLink": 3,
+      "EntityLinkReview": 0,
+      "Evidence": 3,
+      "EvidenceLegalMapping": 0,
+      "ExtractedFact": 2,
+      "ExtractedTextArtifact": 0,
+      "FactReviewHistory": 0,
+      "GeneratedReport": 0,
+      "InvestigativeDossier": 3,
+      "LegalProvision": 0,
+      "Officer": 5,
+      "OfficerSession": 2,
+      "PilotFeedback": 0,
+      "ScheduledReport": 0,
+      "TimelineEvent": 2,
+      "Transcription": 0
+    },
+    "rlsCount": 18,
+    "forcedRlsCount": 0,
+    "policyCount": 19,
+    "policies": [
+      {
+        "tablename": "AccessGrant",
+        "policyname": "access_grant_department_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "AuditLog",
+        "policyname": "p_auditlog_insert",
+        "cmd": "INSERT\r"
+      },
+      {
+        "tablename": "AuditLog",
+        "policyname": "p_auditlog_select",
+        "cmd": "SELECT\r"
+      },
+      {
+        "tablename": "Case",
+        "policyname": "p_case_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseAssignmentHistory",
+        "policyname": "case_assignment_history_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseEntity",
+        "policyname": "p_caseentity_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseLegalMapping",
+        "policyname": "p_legal_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseStatusHistory",
+        "policyname": "case_status_history_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CustodyEvent",
+        "policyname": "p_custody_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "DossierClaim",
+        "policyname": "dossier_claim_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "DossierExportAudit",
+        "policyname": "p_dossier_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "DossierReview",
+        "policyname": "dossier_review_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "EntityLink",
+        "policyname": "entity_link_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "EntityLinkReview",
+        "policyname": "entity_link_review_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "Evidence",
+        "policyname": "p_evidence_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "ExtractedFact",
+        "policyname": "p_fact_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "GeneratedReport",
+        "policyname": "p_report_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "InvestigativeDossier",
+        "policyname": "investigative_dossier_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "TimelineEvent",
+        "policyname": "p_timeline_tenant_isolation",
+        "cmd": "ALL"
+      }
+    ],
+    "extractedFactColumnsCount": 26,
+    "extractedFactCols": [
+      {
+        "col": "id",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "evidenceId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "caseId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "factAssertion",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "entityType",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "rawValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "normalizedValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "confidence",
+        "type": "double precision",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "sourceHash",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "verificationStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'UNVERIFIED'::text\r"
+      },
+      {
+        "col": "verifiedBy",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "boundingBox",
+        "type": "text",
+        "nullable": true,
+        "def": "'{}'::text\r"
+      },
+      {
+        "col": "extractedAt",
+        "type": "timestamp without time zone",
+        "nullable": false,
+        "def": "CURRENT_TIMESTAMP\r"
+      },
+      {
+        "col": "acceptedValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "artifactId",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "charOffset",
+        "type": "integer",
+        "nullable": true,
+        "def": "0\r"
+      },
+      {
+        "col": "extractionRule",
+        "type": "text",
+        "nullable": true,
+        "def": "'REGEX_V1'::text\r"
+      },
+      {
+        "col": "limitations",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "originalValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "pageNumber",
+        "type": "integer",
+        "nullable": true,
+        "def": "1\r"
+      },
+      {
+        "col": "reviewRationale",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'PENDING_REVIEW'::text\r"
+      },
+      {
+        "col": "reviewedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewedById",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "ruleVersion",
+        "type": "text",
+        "nullable": true,
+        "def": "'1.0.0'::text\r"
+      },
+      {
+        "col": "updatedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": ""
+      }
+    ]
+  },
+  "rakshak_phase39_test": {
+    "tableCount": 31,
+    "tables": [
+      "AccessGrant",
+      "AuditLog",
+      "Case",
+      "CaseAssignmentHistory",
+      "CaseCluster",
+      "CaseEntity",
+      "CaseLegalMapping",
+      "CaseStatusHistory",
+      "ChatTranslation",
+      "ClusterMembership",
+      "CustodyEvent",
+      "Department",
+      "DossierClaim",
+      "DossierExportAudit",
+      "DossierReview",
+      "EntityLink",
+      "EntityLinkReview",
+      "Evidence",
+      "EvidenceLegalMapping",
+      "ExtractedFact",
+      "ExtractedTextArtifact",
+      "FactReviewHistory",
+      "GeneratedReport",
+      "InvestigativeDossier",
+      "LegalProvision",
+      "Officer",
+      "OfficerSession",
+      "PilotFeedback",
+      "ScheduledReport",
+      "TimelineEvent",
+      "Transcription"
+    ],
+    "rowCounts": {
+      "AccessGrant": 1,
+      "AuditLog": 0,
+      "Case": 2,
+      "CaseAssignmentHistory": 0,
+      "CaseCluster": 0,
+      "CaseEntity": 0,
+      "CaseLegalMapping": 0,
+      "CaseStatusHistory": 0,
+      "ChatTranslation": 0,
+      "ClusterMembership": 0,
+      "CustodyEvent": 2,
+      "Department": 2,
+      "DossierClaim": 0,
+      "DossierExportAudit": 0,
+      "DossierReview": 0,
+      "EntityLink": 0,
+      "EntityLinkReview": 0,
+      "Evidence": 5,
+      "EvidenceLegalMapping": 0,
+      "ExtractedFact": 18,
+      "ExtractedTextArtifact": 5,
+      "FactReviewHistory": 4,
+      "GeneratedReport": 0,
+      "InvestigativeDossier": 0,
+      "LegalProvision": 0,
+      "Officer": 5,
+      "OfficerSession": 0,
+      "PilotFeedback": 0,
+      "ScheduledReport": 0,
+      "TimelineEvent": 0,
+      "Transcription": 0
+    },
+    "rlsCount": 20,
+    "forcedRlsCount": 0,
+    "policyCount": 21,
+    "policies": [
+      {
+        "tablename": "AccessGrant",
+        "policyname": "access_grant_department_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "AuditLog",
+        "policyname": "p_auditlog_insert",
+        "cmd": "INSERT\r"
+      },
+      {
+        "tablename": "AuditLog",
+        "policyname": "p_auditlog_select",
+        "cmd": "SELECT\r"
+      },
+      {
+        "tablename": "Case",
+        "policyname": "p_case_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseAssignmentHistory",
+        "policyname": "case_assignment_history_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseEntity",
+        "policyname": "p_caseentity_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseLegalMapping",
+        "policyname": "p_legal_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CaseStatusHistory",
+        "policyname": "case_status_history_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "CustodyEvent",
+        "policyname": "p_custody_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "DossierClaim",
+        "policyname": "dossier_claim_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "DossierExportAudit",
+        "policyname": "p_dossier_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "DossierReview",
+        "policyname": "dossier_review_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "EntityLink",
+        "policyname": "entity_link_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "EntityLinkReview",
+        "policyname": "entity_link_review_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "Evidence",
+        "policyname": "p_evidence_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "ExtractedFact",
+        "policyname": "p_fact_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "ExtractedTextArtifact",
+        "policyname": "ExtractedTextArtifact_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "FactReviewHistory",
+        "policyname": "FactReviewHistory_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "GeneratedReport",
+        "policyname": "p_report_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "InvestigativeDossier",
+        "policyname": "investigative_dossier_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "TimelineEvent",
+        "policyname": "p_timeline_tenant_isolation",
+        "cmd": "ALL"
+      }
+    ],
+    "extractedFactColumnsCount": 26,
+    "extractedFactCols": [
+      {
+        "col": "id",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "evidenceId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "caseId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "factAssertion",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "entityType",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "rawValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "normalizedValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "confidence",
+        "type": "double precision",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "sourceHash",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "verificationStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'UNVERIFIED'::text\r"
+      },
+      {
+        "col": "verifiedBy",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "boundingBox",
+        "type": "text",
+        "nullable": true,
+        "def": "'{}'::text\r"
+      },
+      {
+        "col": "extractedAt",
+        "type": "timestamp without time zone",
+        "nullable": false,
+        "def": "CURRENT_TIMESTAMP\r"
+      },
+      {
+        "col": "artifactId",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "pageNumber",
+        "type": "integer",
+        "nullable": true,
+        "def": "1\r"
+      },
+      {
+        "col": "charOffset",
+        "type": "integer",
+        "nullable": true,
+        "def": "0\r"
+      },
+      {
+        "col": "extractionRule",
+        "type": "text",
+        "nullable": true,
+        "def": "'REGEX_V1'::text\r"
+      },
+      {
+        "col": "ruleVersion",
+        "type": "text",
+        "nullable": true,
+        "def": "'1.0.0'::text\r"
+      },
+      {
+        "col": "reviewStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'PENDING_REVIEW'::text\r"
+      },
+      {
+        "col": "acceptedValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "originalValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "limitations",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewedById",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewRationale",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "updatedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": ""
+      }
+    ]
+  },
+  "rakshak_phase39_1_audit_test": {
+    "tableCount": 31,
+    "tables": [
+      "AccessGrant",
+      "AuditLog",
+      "Case",
+      "CaseAssignmentHistory",
+      "CaseCluster",
+      "CaseEntity",
+      "CaseLegalMapping",
+      "CaseStatusHistory",
+      "ChatTranslation",
+      "ClusterMembership",
+      "CustodyEvent",
+      "Department",
+      "DossierClaim",
+      "DossierExportAudit",
+      "DossierReview",
+      "EntityLink",
+      "EntityLinkReview",
+      "Evidence",
+      "EvidenceLegalMapping",
+      "ExtractedFact",
+      "ExtractedTextArtifact",
+      "FactReviewHistory",
+      "GeneratedReport",
+      "InvestigativeDossier",
+      "LegalProvision",
+      "Officer",
+      "OfficerSession",
+      "PilotFeedback",
+      "ScheduledReport",
+      "TimelineEvent",
+      "Transcription"
+    ],
+    "rowCounts": {
+      "AccessGrant": 0,
+      "AuditLog": 0,
+      "Case": 0,
+      "CaseAssignmentHistory": 0,
+      "CaseCluster": 0,
+      "CaseEntity": 0,
+      "CaseLegalMapping": 0,
+      "CaseStatusHistory": 0,
+      "ChatTranslation": 0,
+      "ClusterMembership": 0,
+      "CustodyEvent": 0,
+      "Department": 0,
+      "DossierClaim": 0,
+      "DossierExportAudit": 0,
+      "DossierReview": 0,
+      "EntityLink": 0,
+      "EntityLinkReview": 0,
+      "Evidence": 0,
+      "EvidenceLegalMapping": 0,
+      "ExtractedFact": 0,
+      "ExtractedTextArtifact": 0,
+      "FactReviewHistory": 0,
+      "GeneratedReport": 0,
+      "InvestigativeDossier": 0,
+      "LegalProvision": 0,
+      "Officer": 0,
+      "OfficerSession": 0,
+      "PilotFeedback": 0,
+      "ScheduledReport": 0,
+      "TimelineEvent": 0,
+      "Transcription": 0
+    },
+    "rlsCount": 2,
+    "forcedRlsCount": 0,
+    "policyCount": 2,
+    "policies": [
+      {
+        "tablename": "ExtractedTextArtifact",
+        "policyname": "ExtractedTextArtifact_tenant_isolation",
+        "cmd": "ALL\r"
+      },
+      {
+        "tablename": "FactReviewHistory",
+        "policyname": "FactReviewHistory_tenant_isolation",
+        "cmd": "ALL"
+      }
+    ],
+    "extractedFactColumnsCount": 26,
+    "extractedFactCols": [
+      {
+        "col": "id",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "evidenceId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "caseId",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "factAssertion",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "entityType",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "rawValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "normalizedValue",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "confidence",
+        "type": "double precision",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "sourceHash",
+        "type": "text",
+        "nullable": false,
+        "def": "\r"
+      },
+      {
+        "col": "verificationStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'UNVERIFIED'::text\r"
+      },
+      {
+        "col": "verifiedBy",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "boundingBox",
+        "type": "text",
+        "nullable": true,
+        "def": "'{}'::text\r"
+      },
+      {
+        "col": "extractedAt",
+        "type": "timestamp without time zone",
+        "nullable": false,
+        "def": "CURRENT_TIMESTAMP\r"
+      },
+      {
+        "col": "artifactId",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "pageNumber",
+        "type": "integer",
+        "nullable": true,
+        "def": "1\r"
+      },
+      {
+        "col": "charOffset",
+        "type": "integer",
+        "nullable": true,
+        "def": "0\r"
+      },
+      {
+        "col": "extractionRule",
+        "type": "text",
+        "nullable": true,
+        "def": "'REGEX_V1'::text\r"
+      },
+      {
+        "col": "ruleVersion",
+        "type": "text",
+        "nullable": true,
+        "def": "'1.0.0'::text\r"
+      },
+      {
+        "col": "reviewStatus",
+        "type": "text",
+        "nullable": false,
+        "def": "'PENDING_REVIEW'::text\r"
+      },
+      {
+        "col": "acceptedValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "originalValue",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "limitations",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewedById",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "reviewRationale",
+        "type": "text",
+        "nullable": true,
+        "def": "\r"
+      },
+      {
+        "col": "updatedAt",
+        "type": "timestamp without time zone",
+        "nullable": true,
+        "def": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "suite": "PHASE42_DIRECT_RLS_ENFORCEMENT",
+  "database": "rakshak_phase43_test",
+  "role": "rakshak_app_user",
+  "timestamp": "2026-10-25T11:41:22.211Z",
+  "totalScenarios": 26,
+  "passedCount": 26,
+  "allPassed": true,
+  "coveredTablesCount": 20,
+  "coveredTables": [
+    "AccessGrant",
+    "AuditLog",
+    "Case",
+    "CaseAssignmentHistory",
+    "CaseEntity",
+    "CaseLegalMapping",
+    "CaseStatusHistory",
+    "CustodyEvent",
+    "DossierClaim",
+    "DossierExportAudit",
+    "DossierReview",
+    "EntityLink",
+    "EntityLinkReview",
+    "Evidence",
+    "ExtractedFact",
+    "ExtractedTextArtifact",
+    "FactReviewHistory",
+    "GeneratedReport",
+    "InvestigativeDossier",
+    "TimelineEvent"
+  ],
+  "scenarios": [
+    {
+      "id": "RLS-T01",
+      "table": "Case",
+      "name": "Home case & delegated case visible, foreign Kolkata case strictly invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-case-del-1, p42-case-mum-1], Kolkata invisible: true"
+    },
+    {
+      "id": "RLS-T02",
+      "table": "Evidence",
+      "name": "Evidence exhibits scoped by case department; foreign Kolkata exhibits invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-evi-del-1, p42-evi-mum-1]"
+    },
+    {
+      "id": "RLS-T03",
+      "table": "CustodyEvent",
+      "name": "Custody events scoped by parent evidence case department; Kolkata invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-cust-del-1, p42-cust-mum-1]"
+    },
+    {
+      "id": "RLS-T04",
+      "table": "ExtractedFact",
+      "name": "Candidate extracted facts filtered by case department; Kolkata facts invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-fact-del-1]"
+    },
+    {
+      "id": "RLS-T05",
+      "table": "CaseEntity",
+      "name": "Case entities strictly filtered by case department; Kolkata entities invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-cent-del-1]"
+    },
+    {
+      "id": "RLS-T06",
+      "table": "InvestigativeDossier",
+      "name": "Investigative dossiers filtered by case department; Kolkata dossiers invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-doss-del-1, p42-doss-mum-1]"
+    },
+    {
+      "id": "RLS-T07",
+      "table": "DossierClaim",
+      "name": "Dossier claims scoped by case department; foreign Kolkata claims invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-clm-del-1, p42-clm-mum-1]"
+    },
+    {
+      "id": "RLS-T08",
+      "table": "DossierReview",
+      "name": "Dossier reviews scoped by case department; foreign Kolkata reviews invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-drev-del-1, p42-drev-mum-1]"
+    },
+    {
+      "id": "RLS-T09",
+      "table": "DossierExportAudit",
+      "name": "Dossier export audits scoped by case department; Kolkata audits invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-dexp-del-1]"
+    },
+    {
+      "id": "RLS-T10",
+      "table": "AuditLog",
+      "name": "AuditLog append-only: SELECT returns 0 for non-admin, UPDATE/DELETE strictly denied",
+      "status": "PASSED",
+      "details": "Read denied (0 rows), Update/Delete blocked with permission denied"
+    },
+    {
+      "id": "RLS-T11",
+      "table": "CaseAssignmentHistory",
+      "name": "Case assignment history scoped by department; Kolkata history invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-cah-del-1]"
+    },
+    {
+      "id": "RLS-T12",
+      "table": "CaseStatusHistory",
+      "name": "Case status transition history scoped by department; Kolkata history invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-csh-del-1]"
+    },
+    {
+      "id": "RLS-T13",
+      "table": "AccessGrant",
+      "name": "Access grants visible only to involved departments; foreign inter-agency grants invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-ag-del-1], Foreign grant invisible: true"
+    },
+    {
+      "id": "RLS-T14",
+      "table": "CaseLegalMapping",
+      "name": "Statutory legal mappings scoped by case department; Kolkata mappings invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-clm-map-del-1]"
+    },
+    {
+      "id": "RLS-T15",
+      "table": "EntityLink",
+      "name": "Entity links scoped by case department; unrelated foreign links invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-elink-del-1]"
+    },
+    {
+      "id": "RLS-T16",
+      "table": "EntityLinkReview",
+      "name": "Entity link reviews scoped by case department; foreign reviews invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-elr-del-1]"
+    },
+    {
+      "id": "RLS-T17",
+      "table": "ExtractedTextArtifact",
+      "name": "Extracted OCR text artifacts scoped by case department; Kolkata artifacts invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-eta-del-1]"
+    },
+    {
+      "id": "RLS-T18",
+      "table": "FactReviewHistory",
+      "name": "Fact review audit history scoped by case department; Kolkata history invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-frh-del-1]"
+    },
+    {
+      "id": "RLS-T19",
+      "table": "GeneratedReport",
+      "name": "Generated investigative reports scoped by case department; Kolkata reports invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-grep-del-1]"
+    },
+    {
+      "id": "RLS-T20",
+      "table": "TimelineEvent",
+      "name": "Investigative timeline events scoped by case department; Kolkata timeline invisible",
+      "status": "PASSED",
+      "details": "Visible: [p42-tle-del-1]"
+    },
+    {
+      "id": "RLS-T21",
+      "table": "Case",
+      "name": "Cross-department INSERT rejected by RLS WITH CHECK policy",
+      "status": "PASSED",
+      "details": "RLS WITH CHECK violation trapped"
+    },
+    {
+      "id": "RLS-T22",
+      "table": "SecurityContext",
+      "name": "Missing session tenant context fails closed (0 rows returned)",
+      "status": "PASSED",
+      "details": "Returned count: 0"
+    },
+    {
+      "id": "RLS-T23",
+      "table": "SecurityContext",
+      "name": "Unverified client set_config('app.current_department_id') fails closed",
+      "status": "PASSED",
+      "details": "Returned count: 0"
+    },
+    {
+      "id": "RLS-T24",
+      "table": "SecurityContext",
+      "name": "Suspended officer session token fails closed",
+      "status": "PASSED",
+      "details": "ERROR:  Access Denied: Officer account is inactive or suspended\r\nCONTEXT:  PL/pgSQL function set_authenticated_tenant_context(text,text,text) line 23 at RAISE"
+    },
+    {
+      "id": "RLS-T25",
+      "table": "SecurityContext",
+      "name": "clear_tenant_context() resets all tenant variables in connection pool",
+      "status": "PASSED",
+      "details": "Returned count: 0"
+    },
+    {
+      "id": "RLS-T26",
+      "table": "RoleInvariants",
+      "name": "rakshak_app_user verified unprivileged (rolsuper=f, rolbypassrls=f)",
+      "status": "PASSED",
+      "details": "rakshak_app_user|f|f"
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "phase": "PHASE 35.1",
+  "title": "Supervisor Approval Verification, Migration Parity & Historical Record Protection",
+  "timestamp": "2026-10-25T11:40:09.100Z",
+  "overallStatus": "PASSED",
+  "serverRuntime": {
+    "engine": "PostgreSQL 16.15 & SQLite Hybrid",
+    "database": "rakshak_phase43_test",
+    "host": "127.0.0.1:5432",
+    "runtimeRole": "rakshak_app_user (NOBYPASSRLS)",
+    "adminRole": "rakshak_admin_user (IN rakshak_admin_role)"
+  },
+  "metrics": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "blocked": 0
+  },
+  "testCases": [
+    {
+      "id": "TC-A01",
+      "workstream": "Workstream A",
+      "name": "Valid independently authenticated supervisor approval authorizes closure",
+      "status": "PASSED",
+      "details": "Approved by DCP Sunita Rao (DEL-SUP-02)",
+      "timestamp": "2026-10-25T11:40:09.348Z"
+    },
+    {
+      "id": "TC-A02",
+      "workstream": "Workstream A",
+      "name": "Investigator submitting another officer's badge string is strictly rejected",
+      "status": "PASSED",
+      "details": "Untrusted client badge strings ignored",
+      "timestamp": "2026-10-25T11:40:09.351Z"
+    },
+    {
+      "id": "TC-A03",
+      "workstream": "Workstream A",
+      "name": "Suspended supervisor approval attempt rejected",
+      "status": "PASSED",
+      "details": "Denied on account suspension",
+      "timestamp": "2026-10-25T11:40:09.352Z"
+    },
+    {
+      "id": "TC-A04",
+      "workstream": "Workstream A",
+      "name": "Unauthorized cross-department supervisor approval rejected",
+      "status": "PASSED",
+      "details": "Cross-department supervisor blocked without grant",
+      "timestamp": "2026-10-25T11:40:09.356Z"
+    },
+    {
+      "id": "TC-A05",
+      "workstream": "Workstream A",
+      "name": "Lead investigator self-approval rejected under separation of duties",
+      "status": "PASSED",
+      "details": "Lead investigator blocked from self-approving closure",
+      "timestamp": "2026-10-25T11:40:09.361Z"
+    },
+    {
+      "id": "TC-A06",
+      "workstream": "Workstream A",
+      "name": "Approval issued for one case cannot be replayed on another case",
+      "status": "PASSED",
+      "details": "Exact case-binding enforced",
+      "timestamp": "2026-10-25T11:40:09.378Z"
+    },
+    {
+      "id": "TC-A07",
+      "workstream": "Workstream A",
+      "name": "Approval issued for one transition cannot be replayed on another transition",
+      "status": "PASSED",
+      "details": "Exact transition scope binding enforced",
+      "timestamp": "2026-10-25T11:40:09.383Z"
+    },
+    {
+      "id": "TC-A08",
+      "workstream": "Workstream A",
+      "name": "Concurrent approval consumption preserves one-time usage guarantee",
+      "status": "PASSED",
+      "details": "Exactly 1 request consumed approval; parallel request rejected",
+      "timestamp": "2026-10-25T11:40:09.421Z"
+    },
+    {
+      "id": "TC-A09",
+      "workstream": "Workstream A",
+      "name": "Approver permissions revoked before commit actively blocks transition",
+      "status": "PASSED",
+      "details": "Fresh DB check caught demoted approver",
+      "timestamp": "2026-10-25T11:40:09.474Z"
+    },
+    {
+      "id": "TC-A10",
+      "workstream": "Workstream A",
+      "name": "Missing approval and invalid approval both fail closed",
+      "status": "PASSED",
+      "details": "Fail-closed semantics verified",
+      "timestamp": "2026-10-25T11:40:09.488Z"
+    },
+    {
+      "id": "TC-B01",
+      "workstream": "Workstream B",
+      "name": "Both SQLite and PostgreSQL schemas maintain exact model parity",
+      "status": "PASSED",
+      "details": "All 31 models match 100% across SQLite and PostgreSQL schemas",
+      "timestamp": "2026-10-25T11:40:09.519Z"
+    },
+    {
+      "id": "TC-B02",
+      "workstream": "Workstream B",
+      "name": "Release migration payload encapsulates full 24-model schema coverage",
+      "status": "PASSED",
+      "details": "Release payload contains all 24 models with 497 records",
+      "timestamp": "2026-10-25T11:40:09.523Z"
+    },
+    {
+      "id": "TC-C01",
+      "workstream": "Workstream C",
+      "name": "Authorized investigator reads assignment history for accessible case",
+      "status": "PASSED",
+      "details": "cah-chd-1 visible to CHD tenant",
+      "timestamp": "2026-10-25T11:40:09.997Z"
+    },
+    {
+      "id": "TC-C02",
+      "workstream": "Workstream C",
+      "name": "Foreign department assignment history strictly invisible",
+      "status": "PASSED",
+      "details": "Delhi assignment hidden from Chandigarh tenant",
+      "timestamp": "2026-10-25T11:40:10.231Z"
+    },
+    {
+      "id": "TC-C03",
+      "workstream": "Workstream C",
+      "name": "Fabricated cross-department assignment insertion rejected by RLS WITH CHECK",
+      "status": "PASSED",
+      "details": "RLS check violation raised",
+      "timestamp": "2026-10-25T11:40:10.414Z"
+    },
+    {
+      "id": "TC-C04",
+      "workstream": "Workstream C",
+      "name": "DELETE on CaseAssignmentHistory denied to application role",
+      "status": "PASSED",
+      "details": "Permission denied for table CaseAssignmentHistory",
+      "timestamp": "2026-10-25T11:40:10.605Z"
+    },
+    {
+      "id": "TC-C05",
+      "workstream": "Workstream C",
+      "name": "Authorized status transition creates corresponding status-history record",
+      "status": "PASSED",
+      "details": "csh-chd-2 committed successfully",
+      "timestamp": "2026-10-25T11:40:10.805Z"
+    },
+    {
+      "id": "TC-C06",
+      "workstream": "Workstream C",
+      "name": "Fabricated cross-department status history insertion rejected by RLS WITH CHECK",
+      "status": "PASSED",
+      "details": "RLS check violation raised",
+      "timestamp": "2026-10-25T11:40:10.982Z"
+    },
+    {
+      "id": "TC-C07",
+      "workstream": "Workstream C",
+      "name": "UPDATE and DELETE on CaseStatusHistory denied to application role",
+      "status": "PASSED",
+      "details": "Permission denied for both UPDATE and DELETE",
+      "timestamp": "2026-10-25T11:40:11.302Z"
+    },
+    {
+      "id": "TC-C08",
+      "workstream": "Workstream C",
+      "name": "Missing tenant context returns 0 rows (fails closed)",
+      "status": "PASSED",
+      "details": "0 rows returned when unauthenticated",
+      "timestamp": "2026-10-25T11:40:11.445Z"
+    },
+    {
+      "id": "TC-C09",
+      "workstream": "Workstream C",
+      "name": "Forged client-settable context cannot bypass RLS",
+      "status": "PASSED",
+      "details": "0 rows returned for forged tenant/admin claims",
+      "timestamp": "2026-10-25T11:40:11.649Z"
+    },
+    {
+      "id": "TC-C10",
+      "workstream": "Workstream C",
+      "name": "Verified session reads strictly records within authorized scope",
+      "status": "PASSED",
+      "details": "DEL visible; CHD invisible to Delhi supervisor",
+      "timestamp": "2026-10-25T11:40:11.819Z"
+    },
+    {
+      "id": "TC-C11",
+      "workstream": "Workstream C",
+      "name": "clear_tenant_context() clears state across pooled connection reuse",
+      "status": "PASSED",
+      "details": "Count=0 after clear_tenant_context()",
+      "timestamp": "2026-10-25T11:40:11.976Z"
+    },
+    {
+      "id": "TC-C12",
+      "workstream": "Workstream C",
+      "name": "Expired/revoked access grants fail closed against unauthorized scope expansion",
+      "status": "PASSED",
+      "details": "Expired status enforced",
+      "timestamp": "2026-10-25T11:40:12.253Z"
+    },
+    {
+      "id": "TC-D01",
+      "workstream": "Workstream D",
+      "name": "Direct SQL UPDATE on AuditLog denied to runtime application role",
+      "status": "PASSED",
+      "details": "Permission denied for table AuditLog",
+      "timestamp": "2026-10-25T11:40:12.377Z"
+    },
+    {
+      "id": "TC-D02",
+      "workstream": "Workstream D",
+      "name": "Direct SQL DELETE on AuditLog denied to runtime application role",
+      "status": "PASSED",
+      "details": "Permission denied for table AuditLog",
+      "timestamp": "2026-10-25T11:40:12.510Z"
+    }
+  ]
+}

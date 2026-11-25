@@ -1,0 +1,256 @@
+{
+  "suite": "Rakshak v3.0 Phase 38 Evidence-Backed Dossiers & Controlled Export",
+  "timestamp": "2026-10-25T11:40:37.659Z",
+  "database": "rakshak_phase43_test",
+  "totalScenarios": 35,
+  "passed": 35,
+  "failed": 0,
+  "passRate": "100.0%",
+  "results": [
+    {
+      "id": "TC-01",
+      "workstream": "Workstream A",
+      "name": "Authorized dossier generation succeeds",
+      "status": "PASSED",
+      "details": "Dossier #DOS-2026-FIR-DEL-2026-101-43622064"
+    },
+    {
+      "id": "TC-02",
+      "workstream": "Workstream G",
+      "name": "Unauthenticated generation is denied",
+      "status": "PASSED",
+      "details": "Status: 403"
+    },
+    {
+      "id": "TC-03",
+      "workstream": "Workstream G",
+      "name": "Suspended officers are denied",
+      "status": "PASSED",
+      "details": "Access denied: Officer account is SUSPENDED. Active account required."
+    },
+    {
+      "id": "TC-04",
+      "workstream": "Workstream G",
+      "name": "Case scope is enforced",
+      "status": "PASSED",
+      "details": "Access denied: Target case belongs to another departmental jurisdiction without an active access grant."
+    },
+    {
+      "id": "TC-05",
+      "workstream": "Workstream G",
+      "name": "Evidence-level permissions are enforced",
+      "status": "PASSED",
+      "details": "Evidence count: 2"
+    },
+    {
+      "id": "TC-06",
+      "workstream": "Workstream G",
+      "name": "Hidden cross-department cases are omitted without leaking metadata",
+      "status": "PASSED",
+      "details": "Foreign FIR number masked/omitted"
+    },
+    {
+      "id": "TC-07",
+      "workstream": "Workstream B",
+      "name": "Every material factual claim resolves to an actual source record",
+      "status": "PASSED",
+      "details": "Verified 10 claim references"
+    },
+    {
+      "id": "TC-08",
+      "workstream": "Workstream B",
+      "name": "Fabricated source IDs are rejected",
+      "status": "PASSED",
+      "details": "Zero fabricated citations generated"
+    },
+    {
+      "id": "TC-09",
+      "workstream": "Workstream B",
+      "name": "Unsupported claims are omitted or marked unverified",
+      "status": "PASSED",
+      "details": "Category: SOURCE_DERIVED, Verified: false"
+    },
+    {
+      "id": "TC-10",
+      "workstream": "Workstream B",
+      "name": "Candidate entity links remain explicitly labeled as candidates",
+      "status": "PASSED",
+      "details": "Status: PENDING_REVIEW"
+    },
+    {
+      "id": "TC-11",
+      "workstream": "Workstream B",
+      "name": "Rejected or revoked links are represented with their correct current status",
+      "status": "PASSED",
+      "details": "Previously Disputed Cross-Case Link: EMAIL (s***n@gmail.com)"
+    },
+    {
+      "id": "TC-12",
+      "workstream": "Workstream B",
+      "name": "Conflicting source records are surfaced appropriately",
+      "status": "PASSED",
+      "details": "Evidence Exhibit Integrity Mismatch: tampered_receipt.pdf"
+    },
+    {
+      "id": "TC-13",
+      "workstream": "Workstream B",
+      "name": "Evidence hash references match recorded source metadata",
+      "status": "PASSED",
+      "details": "a1b2c3d4e5f60000"
+    },
+    {
+      "id": "TC-14",
+      "workstream": "Workstream B",
+      "name": "Custody summaries link to actual custody events",
+      "status": "PASSED",
+      "details": "Custody events linked: 2"
+    },
+    {
+      "id": "TC-15",
+      "workstream": "Workstream D",
+      "name": "Source-record corrections mark affected dossiers stale",
+      "status": "PASSED",
+      "details": "Target case details were updated after dossier generation."
+    },
+    {
+      "id": "TC-16",
+      "workstream": "Workstream D",
+      "name": "Changed source data does not silently alter an existing version",
+      "status": "PASSED",
+      "details": "Preserved hash: 2bafd149519c..."
+    },
+    {
+      "id": "TC-17",
+      "workstream": "Workstream D",
+      "name": "Regeneration produces a new version",
+      "status": "PASSED",
+      "details": "New version v2"
+    },
+    {
+      "id": "TC-18",
+      "workstream": "Workstream D",
+      "name": "Concurrent generation avoids conflicting version numbers",
+      "status": "PASSED",
+      "details": "Database unique constraint on (caseId, version)"
+    },
+    {
+      "id": "TC-19",
+      "workstream": "Workstream E",
+      "name": "Required supervisor approval is enforced",
+      "status": "PASSED",
+      "details": "Approval denied: Officer role INVESTIGATOR lacks supervisor approval authority. Only SUPERVISOR or ADMIN can approve dossiers."
+    },
+    {
+      "id": "TC-20",
+      "workstream": "Workstream E",
+      "name": "Approval is bound to the dossier content hash",
+      "status": "PASSED",
+      "details": "Bound hash: bf425c255f85..."
+    },
+    {
+      "id": "TC-21",
+      "workstream": "Workstream E",
+      "name": "Edited content invalidates prior approval",
+      "status": "PASSED",
+      "details": "Approval invalidated: approvalBoundHash (bf425c255f85...) differs from contentHash (tampered_fak...)."
+    },
+    {
+      "id": "TC-22",
+      "workstream": "Workstream E",
+      "name": "Unauthorized self-approval is rejected where separation of duties applies",
+      "status": "PASSED",
+      "details": "Approval denied: Separation of duties violation. An investigator cannot approve their own generated dossier."
+    },
+    {
+      "id": "TC-23",
+      "workstream": "Workstream E",
+      "name": "Suspended or demoted approvers cannot approve",
+      "status": "PASSED",
+      "details": "Approval denied: Officer role VIEWER lacks supervisor approval authority. Only SUPERVISOR or ADMIN can approve dossiers."
+    },
+    {
+      "id": "TC-24",
+      "workstream": "Workstream E",
+      "name": "Finalized versions cannot be silently overwritten",
+      "status": "PASSED",
+      "details": "Modification rejected: Finalized dossiers cannot be edited or transitioned except to SUPERSEDED by newer versions."
+    },
+    {
+      "id": "TC-25",
+      "workstream": "Workstream F",
+      "name": "Export authorization is checked independently",
+      "status": "PASSED",
+      "details": "Export denied: Target dossier belongs to another departmental jurisdiction without an active access grant."
+    },
+    {
+      "id": "TC-26",
+      "workstream": "Workstream F",
+      "name": "Export excludes inaccessible source records",
+      "status": "PASSED",
+      "details": "Zero unauthorized exhibits present in export"
+    },
+    {
+      "id": "TC-27",
+      "workstream": "Workstream F",
+      "name": "Unsafe filenames and malicious document content are handled safely",
+      "status": "PASSED",
+      "details": "Sanitized to: passwd_malicious_script_.pdf"
+    },
+    {
+      "id": "TC-28",
+      "workstream": "Workstream F",
+      "name": "Export hashes and recorded artifact metadata are consistent",
+      "status": "PASSED",
+      "details": "Hash: 96a1318c1904a47a..."
+    },
+    {
+      "id": "TC-29",
+      "workstream": "Workstream H",
+      "name": "Report review history resists unauthorized mutation",
+      "status": "PASSED",
+      "details": "Audit ledger records: 3"
+    },
+    {
+      "id": "TC-30",
+      "workstream": "Workstream H",
+      "name": "Unauthorized direct SQL modifications are denied where database immutability is required",
+      "status": "PASSED",
+      "details": "ERROR:  permission denied for table DossierReview"
+    },
+    {
+      "id": "TC-31",
+      "workstream": "Workstream G",
+      "name": "PostgreSQL RLS prevents unauthorized report and claim access",
+      "status": "PASSED",
+      "details": "Rows visible: 0"
+    },
+    {
+      "id": "TC-32",
+      "workstream": "Workstream G",
+      "name": "Forged tenant context cannot bypass RLS",
+      "status": "PASSED",
+      "details": "Rows visible: 0"
+    },
+    {
+      "id": "TC-33",
+      "workstream": "Workstream G",
+      "name": "Expired or revoked grants block relevant report access",
+      "status": "PASSED",
+      "details": "Rows visible: 0"
+    },
+    {
+      "id": "TC-34",
+      "workstream": "Workstream E",
+      "name": "Concurrent review and finalization operations preserve consistent state",
+      "status": "PASSED",
+      "details": "State: FINALIZED"
+    },
+    {
+      "id": "TC-35",
+      "workstream": "Safety Invariants",
+      "name": "Existing case, evidence, custody-chain, entity-resolution, and build regressions still pass",
+      "status": "PASSED",
+      "details": "Binaries untouched: true, dev.db untouched: true"
+    }
+  ]
+}

@@ -1,96 +1,66 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // services/authService.ts
 // Secure Officer Authentication, Session Management & RBAC Permissions Engine
+// Re-exports and integrates with Phase 32 Centralized Access Control Engine
 // ─────────────────────────────────────────────────────────────────────────────
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { type NextRequest } from "next/server";
+import {
+  type Role,
+  type TargetRole,
+  type LegacyRole,
+  type OfficerProfile,
+  type AccessGrant,
+  ROLE_PERMISSIONS,
+  TARGET_ROLES,
+  LEGACY_ROLES,
+  ALL_ROLES,
+  DEPT_ADMIN_PERMITTED_ROLES,
+  hasPermission,
+  getEffectivePermissions,
+  canAccessDepartment,
+  canAccessDepartmentAsync,
+  canAccessCase,
+  canAccessCaseAsync,
+  canAccessEvidence,
+  canAccessEvidenceAsync,
+  canManageOfficer,
+  canModifyAudit,
+  getDepartmentScopeFilter,
+  createAccessGrant,
+  revokeAccessGrant,
+  loadAccessGrants,
+  saveAccessGrants,
+  hasActiveGrantSync,
+  hasActiveGrantAsync,
+} from "@/lib/accessControl";
 
-export type Role = "ADMIN" | "INVESTIGATOR" | "ANALYST" | "VIEWER";
-
-export interface OfficerProfile {
-  id: string;
-  badgeNumber: string;
-  name: string;
-  email: string;
-  designation: string;
-  role: Role;
-  jurisdiction: string;
-  unit: string | null;
-  status: string;
-  departmentId?: string | null;
-}
-
-// ─── Canonical Permission Definitions ─────────────────────────────────────────
-
-export const ROLE_PERMISSIONS: Record<Role, string[]> = {
-  ADMIN: [
-    "case:view",
-    "case:create",
-    "case:edit",
-    "case:delete",
-    "evidence:view",
-    "evidence:upload",
-    "evidence:download",
-    "evidence:verify",
-    "entities:view",
-    "timeline:view",
-    "syndicate:view",
-    "legal:view",
-    "legal:edit",
-    "reports:view",
-    "reports:generate",
-    "reports:download",
-    "audit:view",
-    "audit:export",
-    "officer:view",
-    "officer:create",
-    "officer:edit",
-    "officer:deactivate",
-    "system:settings",
-  ],
-  INVESTIGATOR: [
-    "case:view",
-    "case:create",
-    "case:edit",
-    "evidence:view",
-    "evidence:upload",
-    "evidence:download",
-    "evidence:verify",
-    "entities:view",
-    "timeline:view",
-    "syndicate:view",
-    "legal:view",
-    "legal:edit",
-    "reports:view",
-    "reports:generate",
-    "reports:download",
-    "audit:view",
-    "officer:view",
-  ],
-  ANALYST: [
-    "case:view",
-    "evidence:view",
-    "entities:view",
-    "timeline:view",
-    "syndicate:view",
-    "legal:view",
-    "reports:view",
-    "reports:generate",
-    "reports:download",
-    "audit:view",
-    "officer:view",
-  ],
-  VIEWER: [
-    "case:view",
-    "evidence:view",
-    "entities:view",
-    "timeline:view",
-    "legal:view",
-    "reports:view",
-    "officer:view",
-  ],
+export type { Role, TargetRole, LegacyRole, OfficerProfile, AccessGrant };
+export {
+  ROLE_PERMISSIONS,
+  TARGET_ROLES,
+  LEGACY_ROLES,
+  ALL_ROLES,
+  DEPT_ADMIN_PERMITTED_ROLES,
+  hasPermission,
+  getEffectivePermissions,
+  canAccessDepartment,
+  canAccessDepartmentAsync,
+  canAccessCase,
+  canAccessCaseAsync,
+  canAccessEvidence,
+  canAccessEvidenceAsync,
+  canManageOfficer,
+  canModifyAudit,
+  getDepartmentScopeFilter,
+  createAccessGrant,
+  revokeAccessGrant,
+  loadAccessGrants,
+  saveAccessGrants,
+  hasActiveGrantSync,
+  hasActiveGrantAsync,
 };
 
 // ─── Password Hashing & Verification ──────────────────────────────────────────
@@ -131,10 +101,11 @@ export async function createSession(
     // Update last activity timestamp on officer record
     await p.officer.update({
       where: { id: officerId },
-      data: { updatedAt: new Date() },
+      data: { updatedAt: new Date(), lastLogin: new Date() },
     }).catch(() => {});
   } catch (sessionErr) {
-    console.warn("[authService] Warning: Could not persist session record to database:", sessionErr);
+    console.error("[authService] Fatal: Could not persist session record to database:", sessionErr);
+    throw new Error(`Failed to persist authenticated session: ${sessionErr instanceof Error ? sessionErr.message : String(sessionErr)}`);
   }
 
   return { token, expiresAt };
@@ -144,6 +115,18 @@ export async function revokeSession(token: string): Promise<void> {
   const p = prisma as any;
   await p.officerSession.updateMany({
     where: { token },
+    data: { revoked: true },
+  });
+}
+
+/**
+ * Revokes all active sessions for an officer upon account suspension,
+ * deactivation, or role/department change.
+ */
+export async function revokeAllOfficerSessions(officerId: string): Promise<void> {
+  const p = prisma as any;
+  await p.officerSession.updateMany({
+    where: { officerId },
     data: { revoked: true },
   });
 }
@@ -162,17 +145,43 @@ export async function authenticateOfficer(
     token = authHeader.substring(7).trim();
   }
 
-  // 2. Fallback to session cookie
+  // 2. Fallback to session cookie with CSRF mitigation for state-changing methods
+  let isCookieAuth = false;
   if (!token) {
     const cookie = request.cookies.get("rakshak_session");
     if (cookie) {
       token = cookie.value;
+      isCookieAuth = true;
     }
   }
 
   // 3. Reject unauthenticated requests when no token provided
   if (!token) {
     return null;
+  }
+
+  // 4. CSRF Defense for ambient cookie authentication on state-changing requests
+  if (isCookieAuth && ["POST", "PUT", "PATCH", "DELETE"].includes(request.method)) {
+    const secFetchSite = request.headers.get("sec-fetch-site");
+    if (secFetchSite && secFetchSite === "cross-site") {
+      console.warn("[CSRF Protection] Rejected cross-site state-changing request relying on session cookie.");
+      return null;
+    }
+
+    const origin = request.headers.get("origin");
+    if (origin) {
+      try {
+        const originUrl = new URL(origin);
+        const hostHeader = request.headers.get("host") || request.nextUrl.host;
+        const requestHost = hostHeader.split(":")[0];
+        if (originUrl.hostname !== requestHost && originUrl.hostname !== "localhost" && originUrl.hostname !== "127.0.0.1") {
+          console.warn(`[CSRF Protection] Origin mismatch: ${originUrl.hostname} vs ${requestHost}`);
+          return null;
+        }
+      } catch {
+        return null;
+      }
+    }
   }
 
   // Verify session in database
@@ -206,73 +215,6 @@ export async function authenticateOfficer(
       departmentId: (off as any).departmentId ?? null,
     },
     token,
-  };
-}
-
-export function hasPermission(role: Role, permission: string): boolean {
-  const perms = ROLE_PERMISSIONS[role] || [];
-  return perms.includes(permission);
-}
-
-// ─── Department Access & Multi-Tenant Scoping (Phase 21) ──────────────────────
-
-/**
- * Validates whether an authenticated officer has permission to access
- * data within the target jurisdiction/department.
- *
- * Rules:
- * - ADMIN role has supervisory cross-department access for audit and platform oversight.
- * - Non-ADMIN officers are restricted to cases matching their assigned department/jurisdiction.
- * - Unmapped legacy records (null jurisdiction and null departmentId) fail closed for ordinary officers.
- */
-export function canAccessDepartment(
-  officer: OfficerProfile,
-  targetJurisdiction?: string | null,
-  targetDepartmentId?: string | null
-): boolean {
-  if (officer.role === "ADMIN") return true;
-
-  // Fails closed if neither jurisdiction nor departmentId is specified
-  if (!targetJurisdiction && !targetDepartmentId) return false;
-
-  // Direct department ID comparison
-  if (targetDepartmentId && officer.departmentId) {
-    return targetDepartmentId === officer.departmentId;
-  }
-
-  // Jurisdiction comparison
-  if (targetJurisdiction && officer.jurisdiction) {
-    const offNorm = (officer.jurisdiction || "").trim().toLowerCase();
-    const targetNorm = targetJurisdiction.trim().toLowerCase();
-    if (!offNorm) return false;
-
-    return (
-      offNorm === targetNorm ||
-      targetNorm.includes(offNorm) ||
-      offNorm.includes(targetNorm)
-    );
-  }
-
-  return false;
-}
-
-/**
- * Returns Prisma filter criteria for department-level data isolation.
- */
-export function getDepartmentScopeFilter(officer: OfficerProfile): Record<string, any> {
-  if (officer.role === "ADMIN") {
-    return {}; // Unrestricted platform administrator
-  }
-  if (officer.departmentId) {
-    return {
-      OR: [
-        { departmentId: officer.departmentId },
-        { jurisdiction: { contains: officer.jurisdiction } },
-      ],
-    };
-  }
-  return {
-    jurisdiction: { contains: officer.jurisdiction },
   };
 }
 

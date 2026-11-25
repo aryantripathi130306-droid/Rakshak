@@ -1,0 +1,37 @@
+{
+  "phase": "PHASE 47",
+  "timestamp": "2026-11-25T21:27:18+05:30",
+  "overallStatus": "PASSED",
+  "invariants": {
+    "coldStorageFilesCount": 560,
+    "coldStorageManifestHashBefore": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+    "coldStorageManifestHashAfter": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+    "coldStorageUntouched": true,
+    "devDbHashBefore": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+    "devDbHashAfter": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+    "devDbUntouched": true
+  },
+  "checks": [
+    { "id": "G-03", "name": "Prisma Schema Validate (SQLite)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-04", "name": "Prisma Schema Validate (PostgreSQL)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-05", "name": "TypeScript Compilation (tsc --noEmit)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-06", "name": "Frontend ES Module Imports Check", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-07", "name": "Frontend HTML/JS Integrity Check (18 pages)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-08", "name": "Migration Inventory Verification (11 migrations)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-09", "name": "Security Baseline Validation (rakshak_demo: 31 tables, 20 RLS, 20 FORCE RLS, 21 policies)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-10", "name": "Phase 17 Evidence Verifier Self-Test", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-11", "name": "Phase 18 Migration Rehearsal Suite (7/7)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-12", "name": "Phase 43 Runner Integrity Suite (6/6)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-13", "name": "npm audit --audit-level=high (0 high/critical; 1 moderate on next@16.4.3)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-14", "name": "Next.js Production Build (next build --webpack: 33 static, 69 API routes)", "exitCode": 0, "status": "PASSED" },
+    { "id": "G-15", "name": "Live Presentation Dashboard & Auth (/api/health, /api/auth/login, /api/cases, /api/reports/analytics)", "exitCode": 0, "status": "PASSED" }
+  ],
+  "cleanupSummary": {
+    "archivedReports": 68,
+    "archivedManifests": 29,
+    "archivedScripts": 46,
+    "deletedFiles": 8,
+    "deletedEmptyDirs": 3,
+    "removedNpmPackages": 6
+  }
+}

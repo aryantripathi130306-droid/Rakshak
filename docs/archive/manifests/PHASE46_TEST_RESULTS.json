@@ -1,0 +1,625 @@
+{
+  "phase": "PHASE_46",
+  "timestamp": "2026-10-27T16:30:40.966Z",
+  "suiteName": "Rakshak v3.0 Phase 46 Security Audit, Acceptance & Reconciliation Suite",
+  "databaseTarget": "rakshak_phase46_test",
+  "apiOrigin": "http://127.0.0.1:3006",
+  "summary": {
+    "totalTests": 39,
+    "passed": 36,
+    "failed": 3,
+    "blocked": 0,
+    "skipped": 0,
+    "passRate": "92.3%",
+    "exitCode": 1
+  },
+  "safetyInvariants": {
+    "devDbHash": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+    "rawFilesCount": 560,
+    "rawManifestHash": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+    "protectedDatabasesCount": 20
+  },
+  "scenarios": [
+    {
+      "id": "P46-SAFE-01",
+      "category": "Safety",
+      "name": "prisma/dev.db pre-test SHA-256 matches baseline",
+      "command": "sha256(E:\\Rakshak\\prisma\\dev.db)",
+      "expected": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+      "actual": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 12,
+      "evidenceRef": "prisma/dev.db reference manifest"
+    },
+    {
+      "id": "P46-SAFE-02",
+      "category": "Safety",
+      "name": "uploads/raw file count strictly equals 560 binary exhibits",
+      "command": "countFiles(E:\\Rakshak\\uploads\\raw)",
+      "expected": 560,
+      "actual": 560,
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 74,
+      "evidenceRef": "uploads/raw/ file inventory"
+    },
+    {
+      "id": "P46-SAFE-03",
+      "category": "Safety",
+      "name": "uploads/raw manifest digest matches baseline",
+      "command": "manifestHash(E:\\Rakshak\\uploads\\raw)",
+      "expected": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+      "actual": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 59,
+      "evidenceRef": "uploads/raw/ composite manifest digest"
+    },
+    {
+      "id": "P46-SAFE-04",
+      "category": "Safety",
+      "name": "PostgreSQL target confirmed as rakshak_phase46_test",
+      "command": "SELECT current_database();",
+      "expected": "rakshak_phase46_test",
+      "actual": "rakshak_phase46_test",
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 70,
+      "evidenceRef": "PostgreSQL pg_database catalog"
+    },
+    {
+      "id": "P46-SAFE-05",
+      "category": "Safety",
+      "name": "Historical test databases protected against mutation (20 DBs)",
+      "command": "SELECT count(*) FROM pg_database WHERE datname LIKE 'rakshak_%' AND datname != 'rakshak_phase46_test';",
+      "expected": 20,
+      "actual": 20,
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 62,
+      "evidenceRef": "PostgreSQL master catalog"
+    },
+    {
+      "id": "P46-AUTH-01",
+      "category": "SessionSecurity",
+      "name": "Login on plain HTTP (dev/local) sets HttpOnly and SameSite=Lax without breaking localhost",
+      "command": "POST /api/auth/login (Local HTTP)",
+      "expected": {
+        "hasHttpOnly": true,
+        "hasSameSiteLax": true,
+        "hasPathRoot": true,
+        "status": 200
+      },
+      "actual": {
+        "hasHttpOnly": true,
+        "hasSameSiteLax": true,
+        "hasPathRoot": true,
+        "status": 200
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 243,
+      "evidenceRef": "Set-Cookie response header"
+    },
+    {
+      "id": "P46-AUTH-02",
+      "category": "SessionSecurity",
+      "name": "Login on HTTPS/TLS (X-Forwarded-Proto: https) strictly includes Secure attribute",
+      "command": "POST /api/auth/login with X-Forwarded-Proto: https",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 129,
+      "evidenceRef": "Set-Cookie response header under TLS proxy simulation"
+    },
+    {
+      "id": "P46-AUTH-03",
+      "category": "SessionSecurity",
+      "name": "Login rejection for suspended account fails closed (HTTP 403)",
+      "command": "POST /api/auth/login (Suspended Account DL-SUSP-46)",
+      "expected": 403,
+      "actual": 403,
+      "status": "PASSED",
+      "httpStatus": 403,
+      "durationMs": 16,
+      "evidenceRef": "authService status check"
+    },
+    {
+      "id": "P46-AUTH-04",
+      "category": "SessionSecurity",
+      "name": "Cookie-authenticated mutating request with cross-site Sec-Fetch-Site rejected (CSRF defense)",
+      "command": "POST /api/cases with ambient cookie + Sec-Fetch-Site: cross-site",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 401,
+      "durationMs": 93,
+      "evidenceRef": "authService CSRF mitigation layer"
+    },
+    {
+      "id": "P46-AUTH-05",
+      "category": "SessionSecurity",
+      "name": "Cookie-authenticated mutating request with mismatched foreign Origin rejected (CSRF defense)",
+      "command": "POST /api/cases with ambient cookie + foreign Origin",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": 401,
+      "durationMs": 12,
+      "evidenceRef": "authService Origin header validation"
+    },
+    {
+      "id": "P46-AUTH-06",
+      "category": "SessionSecurity",
+      "name": "Bearer token authenticated mutating request succeeds across origins (non-ambient credentials)",
+      "command": "POST /api/cases with Bearer token + authorized Origin",
+      "expected": 201,
+      "actual": 201,
+      "status": "PASSED",
+      "httpStatus": 201,
+      "durationMs": 43,
+      "evidenceRef": "API cases route with Bearer token"
+    },
+    {
+      "id": "P46-AUTH-07",
+      "category": "SessionSecurity",
+      "name": "POST /api/auth/logout revokes session in DB and clears cookie with Max-Age=0",
+      "command": "POST /api/auth/logout and verify token revocation",
+      "expected": {
+        "clearsCookie": true,
+        "meStatus": 401,
+        "isRevokedInDb": true
+      },
+      "actual": {
+        "clearsCookie": true,
+        "meStatus": 401,
+        "isRevokedInDb": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 353,
+      "evidenceRef": "OfficerSession.revoked column in PostgreSQL"
+    },
+    {
+      "id": "P46-CUST-01",
+      "category": "CustodyReconciliation",
+      "name": "Direct SQL duplicate sequence insertion rejected by PostgreSQL engine (23505 unique violation)",
+      "command": "Direct SQL insert of duplicate sequenceNumber=1",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 73,
+      "evidenceRef": "PostgreSQL constraint CustodyEvent_evidence_seq_unique_idx"
+    },
+    {
+      "id": "P46-CUST-02",
+      "category": "CustodyReconciliation",
+      "name": "API POST /api/evidence/[id]/custody monotonically advances sequence without collision",
+      "command": "POST /api/evidence/[id]/custody (Sequential Event Appending)",
+      "expected": {
+        "seq1": 2,
+        "seq2": 3,
+        "res1Status": 201,
+        "res2Status": 201
+      },
+      "actual": {
+        "seq1": 4,
+        "seq2": 5,
+        "res1Status": 201,
+        "res2Status": 201
+      },
+      "status": "FAILED",
+      "httpStatus": 201,
+      "durationMs": 1429,
+      "evidenceRef": "CustodyEvent sequenceNumber progression"
+    },
+    {
+      "id": "P46-CUST-03",
+      "category": "CustodyReconciliation",
+      "name": "POST /api/evidence/[id]/verify confirms uninterrupted cryptographic chain after multi-event appending",
+      "command": "POST /api/evidence/1bedd5a7-d184-4961-b0d8-9d0db021c2ad/verify",
+      "expected": {
+        "verified": true,
+        "hashMatch": true
+      },
+      "actual": {
+        "verified": true,
+        "hashMatch": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 974,
+      "evidenceRef": "verifyCustodyChainEvents() verification proof"
+    },
+    {
+      "id": "P46-UI-01",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 1: Login UI accepts valid officer credentials & transitions to authenticated state",
+      "command": "Login UI Form Submission (Valid Credentials)",
+      "expected": {
+        "success": true,
+        "role": "INVESTIGATOR"
+      },
+      "actual": {
+        "success": true,
+        "role": "INVESTIGATOR"
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 117,
+      "evidenceRef": "public/frontend/pages/login.html + login.js"
+    },
+    {
+      "id": "P46-UI-02",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 2: Login UI surfaces validation error on invalid credentials without crashing",
+      "command": "Login UI Form Submission (Invalid Credentials)",
+      "expected": {
+        "status": 401,
+        "hasError": true
+      },
+      "actual": {
+        "status": 401,
+        "hasError": true
+      },
+      "status": "PASSED",
+      "httpStatus": 401,
+      "durationMs": 114,
+      "evidenceRef": "auth-alert notification in login.html"
+    },
+    {
+      "id": "P46-UI-03",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 3: Session persistence via cookie and explicit logout",
+      "command": "UI Session Persistence Check",
+      "expected": "DL-INV-46",
+      "actual": "DL-INV-46",
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 11,
+      "evidenceRef": "api.js getCurrentOfficerSession()"
+    },
+    {
+      "id": "P46-UI-04",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 4: Case list and case detail navigation retrieves real records",
+      "command": "Case List Table & Detail View Data Fetch",
+      "expected": {
+        "hasPreSeededCase": true,
+        "caseNumber": "CASE-2026-9601"
+      },
+      "actual": {
+        "hasPreSeededCase": true,
+        "caseNumber": "CASE-2026-9601"
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 2113,
+      "evidenceRef": "public/frontend/pages/cases.html data binding"
+    },
+    {
+      "id": "P46-UI-05",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 5: Case creation form validation and submission",
+      "command": "Case Modal Form Validation & Creation",
+      "expected": {
+        "invalidStatus": 400,
+        "validStatus": 201
+      },
+      "actual": {
+        "invalidStatus": 400,
+        "validStatus": 201
+      },
+      "status": "PASSED",
+      "httpStatus": 201,
+      "durationMs": 103,
+      "evidenceRef": "POST /api/cases validation rules"
+    },
+    {
+      "id": "P46-UI-06",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 6: Assignment and permitted status transitions",
+      "command": "Case Assignment & Status Transition",
+      "expected": {
+        "assignStatus": 201,
+        "transStatus": 200
+      },
+      "actual": {
+        "assignStatus": 403,
+        "transStatus": 200
+      },
+      "status": "FAILED",
+      "httpStatus": 200,
+      "durationMs": 4363,
+      "evidenceRef": "CaseAssignmentHistory & Case.status"
+    },
+    {
+      "id": "P46-UI-07",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 7: Evidence upload and visible integrity status verification",
+      "command": "Evidence Upload Form with WebCrypto SHA-256",
+      "expected": {
+        "uploadStatus": 201,
+        "verified": true,
+        "diskIsolated": true
+      },
+      "actual": {
+        "uploadStatus": 201,
+        "verified": true,
+        "diskIsolated": true
+      },
+      "status": "PASSED",
+      "httpStatus": 201,
+      "durationMs": 92,
+      "evidenceRef": "public/frontend/pages/evidence-viewer.html + storageAdapter"
+    },
+    {
+      "id": "P46-UI-08",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 8: Fact review and correction history visibility",
+      "command": "Fact Review Modal (CORRECT Decision)",
+      "expected": {
+        "status": "CORRECTED",
+        "previousValue": "0x71c8366437cd71e1cc298c567b360d6560b9b777"
+      },
+      "actual": {},
+      "status": "FAILED",
+      "httpStatus": 400,
+      "durationMs": 2533,
+      "evidenceRef": "ExtractedFact & FactReviewHistory tables"
+    },
+    {
+      "id": "P46-UI-09",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 9: Entity-link review and candidate-versus-confirmed status",
+      "command": "Entity Candidate Generation & Human Review Confirmation",
+      "expected": {
+        "resolved": true,
+        "confirmedStatus": "CONFIRMED"
+      },
+      "actual": {
+        "resolved": true,
+        "confirmedStatus": "CONFIRMED"
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 2703,
+      "evidenceRef": "EntityLink status progression CANDIDATE -> CONFIRMED"
+    },
+    {
+      "id": "P46-UI-10",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 10: Dossier two-stage review and signed report export",
+      "command": "Dossier Lifecycle & Signed Export Verification",
+      "expected": {
+        "approved": "APPROVED",
+        "digestMatches": true
+      },
+      "actual": {
+        "approved": "APPROVED",
+        "digestMatches": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 6476,
+      "evidenceRef": "InvestigativeDossier status & X-Artifact-Hash"
+    },
+    {
+      "id": "P46-UI-11",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 11: Unauthorized and cross-department access handling",
+      "command": "Cross-Department Tenancy & Grant Revocation Lifecycle",
+      "expected": {
+        "initialDenied": 403,
+        "allowed": 200,
+        "postRevokeDenied": 403
+      },
+      "actual": {
+        "initialDenied": 403,
+        "allowed": 200,
+        "postRevokeDenied": 403
+      },
+      "status": "PASSED",
+      "httpStatus": 403,
+      "durationMs": 2908,
+      "evidenceRef": "RLS policy case_tenant_isolation & AccessGrant"
+    },
+    {
+      "id": "P46-UI-12",
+      "category": "BrowserAcceptance",
+      "name": "Workflow 12: Handling of API failures and expired sessions",
+      "command": "API Call with Expired / Non-Existent Session Token",
+      "expected": 401,
+      "actual": 401,
+      "status": "PASSED",
+      "httpStatus": 401,
+      "durationMs": 128,
+      "evidenceRef": "api.js 401 interception & login redirect"
+    },
+    {
+      "id": "P46-DB-01",
+      "category": "DatabasePreservation",
+      "name": "Historical database schema catalog integrity matches recorded baseline (Phase 36-39)",
+      "command": "Read-only inspection of rakshak_phase36_test catalog",
+      "expected": {
+        "tables": 31,
+        "rls": 13,
+        "cases": 2
+      },
+      "actual": {
+        "tables": 31,
+        "rls": 13,
+        "cases": 2
+      },
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 518,
+      "evidenceRef": "PHASE41_HISTORICAL_DATABASE_STATUS_REPORT.md Section 2"
+    },
+    {
+      "id": "P46-DB-02",
+      "category": "DatabasePreservation",
+      "name": "Reconciled database catalog integrity matches recorded baseline (Phase 41-45)",
+      "command": "Read-only inspection of rakshak_phase41_test catalog",
+      "expected": {
+        "tables": 31,
+        "rls": 20,
+        "forceRls": 20,
+        "policies": 21
+      },
+      "actual": {
+        "tables": 31,
+        "rls": 20,
+        "forceRls": 20,
+        "policies": 21
+      },
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 754,
+      "evidenceRef": "PHASE41_HISTORICAL_DATABASE_STATUS_REPORT.md Section 3.3"
+    },
+    {
+      "id": "P46-SEC-01",
+      "category": "HttpSecurity",
+      "name": "Global HTTP response headers include required security defenses",
+      "command": "GET /api/health header inspection",
+      "expected": {
+        "nosniff": "nosniff",
+        "frameOptions": "SAMEORIGIN",
+        "hasPermPolicy": true
+      },
+      "actual": {
+        "nosniff": "nosniff",
+        "frameOptions": "SAMEORIGIN",
+        "hasPermPolicy": true
+      },
+      "status": "PASSED",
+      "httpStatus": 200,
+      "durationMs": 41,
+      "evidenceRef": "next.config.ts global headers"
+    },
+    {
+      "id": "P46-SEC-02",
+      "category": "HttpSecurity",
+      "name": "Safe error envelopes prevent raw SQL dump or internal stack trace leakage",
+      "command": "GET /api/cases/[malformed-id] error body inspection",
+      "expected": {
+        "leaksSql": false,
+        "leaksStack": false
+      },
+      "actual": {
+        "leaksSql": false,
+        "leaksStack": false
+      },
+      "status": "PASSED",
+      "httpStatus": 404,
+      "durationMs": 49,
+      "evidenceRef": "Next.js safe API route error handling"
+    },
+    {
+      "id": "P46-SEC-03",
+      "category": "HttpSecurity",
+      "name": "Disallowed file extensions and path traversal filenames strictly rejected (HTTP 400)",
+      "command": "POST /api/evidence/upload (Disallowed extension .exe & path traversal ../)",
+      "expected": {
+        "extRejected": 400,
+        "traversalRejected": 400
+      },
+      "actual": {
+        "extRejected": 400,
+        "traversalRejected": 400
+      },
+      "status": "PASSED",
+      "httpStatus": 400,
+      "durationMs": 82,
+      "evidenceRef": "upload/route.ts filename & extension sanitization"
+    },
+    {
+      "id": "P46-REG-01",
+      "category": "Regression",
+      "name": "Phase 41 Direct PostgreSQL RLS Enforcement Suite (18/18 PASS)",
+      "command": "node scripts/test_phase41_direct_rls_enforcement.mjs (rakshak_phase46_test)",
+      "expected": "18 / 18 (100.0%)",
+      "actual": "18 / 18 (100.0%)",
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 3077,
+      "evidenceRef": "Phase 41 RLS suite exit code 0"
+    },
+    {
+      "id": "P46-REG-02",
+      "category": "Regression",
+      "name": "Phase 36.2 Multi-Process Custody Concurrency Suite (27/27 PASS)",
+      "command": "node scripts/test_phase36_2_distributed_custody.mjs (rakshak_phase46_test)",
+      "expected": "27 / 27 PASSED",
+      "actual": "27 / 27 PASSED",
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 10268,
+      "evidenceRef": "Phase 36.2 concurrency suite exit code 0"
+    },
+    {
+      "id": "P46-REG-03",
+      "category": "Regression",
+      "name": "TypeScript Static Type Safety Gate (tsc --noEmit) passes cleanly",
+      "command": "tsc --noEmit",
+      "expected": true,
+      "actual": true,
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 9557,
+      "evidenceRef": "TypeScript compiler exit code 0"
+    },
+    {
+      "id": "P46-REG-04",
+      "category": "Regression",
+      "name": "Dependency Security Audit (npm.cmd audit) passes with 0 vulnerabilities",
+      "command": "npm.cmd audit",
+      "expected": "found 0 vulnerabilities",
+      "actual": "found 0 vulnerabilities",
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 4039,
+      "evidenceRef": "npm security advisory catalog"
+    },
+    {
+      "id": "P46-POST-01",
+      "category": "Safety",
+      "name": "prisma/dev.db post-test hash strictly matches baseline",
+      "command": "sha256(E:\\Rakshak\\prisma\\dev.db)",
+      "expected": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+      "actual": "dd24614b14f1b4cf8413b674e27bba8459eec6c182536537ab085dbd647af3a9",
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 13,
+      "evidenceRef": "prisma/dev.db post-test comparison"
+    },
+    {
+      "id": "P46-POST-02",
+      "category": "Safety",
+      "name": "uploads/raw/ post-test file count strictly matches baseline 560 files",
+      "command": "countFiles(E:\\Rakshak\\uploads\\raw)",
+      "expected": 560,
+      "actual": 560,
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 105,
+      "evidenceRef": "uploads/raw/ post-test directory filter"
+    },
+    {
+      "id": "P46-POST-03",
+      "category": "Safety",
+      "name": "uploads/raw/ post-test manifest matches baseline digest",
+      "command": "manifestHash(E:\\Rakshak\\uploads\\raw)",
+      "expected": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+      "actual": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+      "status": "PASSED",
+      "httpStatus": null,
+      "durationMs": 80,
+      "evidenceRef": "uploads/raw/ post-test sorted SHA-256 digest"
+    }
+  ]
+}

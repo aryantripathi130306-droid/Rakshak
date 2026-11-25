@@ -1,0 +1,300 @@
+{
+  "phase": "36.1",
+  "name": "Cryptographic Custody-Chain Coverage, Concurrency & Adversarial Integrity Verification",
+  "executedAt": "2026-10-25T11:40:21.998Z",
+  "database": "rakshak_phase43_test",
+  "stats": {
+    "total": 40,
+    "passed": 40,
+    "failed": 0,
+    "passRate": "100.0%"
+  },
+  "coldStorage": {
+    "expectedCount": 560,
+    "actualCount": 560,
+    "manifestHash": "bdc91bb78c603d212d992ac552d8ff85e6e4096bb0533c836ed8936b20ad61b8",
+    "integrityConfirmed": true
+  },
+  "tests": [
+    {
+      "id": "TC-01",
+      "workstream": "Workstream A/B",
+      "name": "Valid untouched V2 custody chain passes verification with 100% integrity",
+      "status": "PASSED",
+      "details": "Verified 3 events"
+    },
+    {
+      "id": "TC-02",
+      "workstream": "Workstream A/B",
+      "name": "Backward compatibility: Valid untouched V1 custody chain passes verification",
+      "status": "PASSED",
+      "details": "Verified legacy V1 event"
+    },
+    {
+      "id": "TC-03",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering actor display name invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-04",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering action text invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-05",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering result outcome invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-06",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering timestamp invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-07",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering sequenceNumber invalidates chain",
+      "status": "PASSED",
+      "details": "Sequence discontinuity or reordering detected at index 1: expected #2, got #99"
+    },
+    {
+      "id": "TC-08",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Replacing prevEventHash invalidates chain",
+      "status": "PASSED",
+      "details": "Broken hash chain at event #2: prevEventHash mismatch"
+    },
+    {
+      "id": "TC-09",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering structured reason in metadata invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-10",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering verified actorId in metadata invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-11",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering verified departmentId in metadata invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-12",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering evidenceHash in metadata invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-13",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering derived-artifact sourceHash invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #4: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-14",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering custody transfer details invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #3: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-15",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Altering lifecycle status values invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #3: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-16",
+      "workstream": "Workstream B",
+      "name": "Adversarial tampering: Injecting unhashed keys into structured metadata invalidates chain",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-17",
+      "workstream": "Workstream B",
+      "name": "Structural tampering: Deleting middle event is detected as sequence discontinuity",
+      "status": "PASSED",
+      "details": "Sequence discontinuity or reordering detected at index 1: expected #2, got #3"
+    },
+    {
+      "id": "TC-18",
+      "workstream": "Workstream B",
+      "name": "Structural tampering: Reordering events is detected immediately",
+      "status": "PASSED",
+      "details": "Sequence discontinuity or reordering detected at index 0: expected #1, got #2"
+    },
+    {
+      "id": "TC-19",
+      "workstream": "Workstream B",
+      "name": "Structural tampering: Skipping sequence numbers is detected immediately",
+      "status": "PASSED",
+      "details": "Sequence discontinuity or reordering detected at index 1: expected #2, got #3"
+    },
+    {
+      "id": "TC-20",
+      "workstream": "Workstream B",
+      "name": "Structural tampering: Appending event with invalid previous hash is rejected",
+      "status": "PASSED",
+      "details": "Broken hash chain at event #4: prevEventHash mismatch"
+    },
+    {
+      "id": "TC-21",
+      "workstream": "Workstream B",
+      "name": "Defensive fail-safe: Unsupported canonicalization version fails closed safely",
+      "status": "PASSED",
+      "details": "Unsupported or malformed canonicalization version at event #2: v99_unsupported_version"
+    },
+    {
+      "id": "TC-22",
+      "workstream": "Workstream B",
+      "name": "Error reporting hygiene: Diagnostic reports event sequence without disclosing secrets",
+      "status": "PASSED",
+      "details": "Tampering detected at event #2: digest recalculation failed (V2)"
+    },
+    {
+      "id": "TC-23",
+      "workstream": "Workstream C",
+      "name": "Multiple concurrent appends to SAME evidence exhibit serialize without collision",
+      "status": "PASSED",
+      "details": "Sequenced 1..10 cleanly"
+    },
+    {
+      "id": "TC-24",
+      "workstream": "Workstream C",
+      "name": "Concurrent appends to DIFFERENT evidence exhibits execute without cross-blocking",
+      "status": "PASSED",
+      "details": "Completed parallel ops in 40ms"
+    },
+    {
+      "id": "TC-25",
+      "workstream": "Workstream C",
+      "name": "Duplicate sequence-number attempt rejected by database uniqueness or sequencing gate",
+      "status": "PASSED",
+      "details": "Sequencing gate active"
+    },
+    {
+      "id": "TC-26",
+      "workstream": "Workstream C",
+      "name": "Concurrent transfer requests serialize cleanly with exactly 1 winning transition",
+      "status": "PASSED",
+      "details": "T1: true, T2: false"
+    },
+    {
+      "id": "TC-27",
+      "workstream": "Workstream C",
+      "name": "Transaction failure rolls back evidence status and custody record atomically",
+      "status": "PASSED",
+      "details": "Status remained TRANSFERRED"
+    },
+    {
+      "id": "TC-28",
+      "workstream": "Workstream D",
+      "name": "Genesis trust anchor: Event #1 with non-zero prevEventHash rejected as forged genesis",
+      "status": "PASSED",
+      "details": "Broken hash chain at event #1: prevEventHash mismatch"
+    },
+    {
+      "id": "TC-29",
+      "workstream": "Workstream D",
+      "name": "Independent trust anchor: Certified checkpoint cryptographically binds sequence and digest",
+      "status": "PASSED",
+      "details": "Signature: 89cfed3495221851..."
+    },
+    {
+      "id": "TC-30",
+      "workstream": "Workstream D",
+      "name": "Untampered chain validates successfully against external certified trust anchor",
+      "status": "PASSED",
+      "details": "Verified 3 events against checkpoint"
+    },
+    {
+      "id": "TC-31",
+      "workstream": "Workstream D",
+      "name": "Full-chain rewrite detection: Checkpoint trust anchor catches recalculated full-chain forgery",
+      "status": "PASSED",
+      "details": "Trust anchor mismatch at event #3: database chain digest (4eaf0f7c2790a103...) does not match certified checkpoint digest (efca8af83afcae8d...). Detected complete-chain rewrite."
+    },
+    {
+      "id": "TC-32",
+      "workstream": "Workstream D",
+      "name": "Forged checkpoint signature: Invalid signature rejected immediately without trust",
+      "status": "PASSED",
+      "details": "Trust anchor verification failed: Checkpoint cryptographic signature invalid (signature mismatch)"
+    },
+    {
+      "id": "TC-33",
+      "workstream": "Workstream E",
+      "name": "Direct SQL UPDATE on CustodyEvent denied to runtime application role",
+      "status": "PASSED",
+      "details": "ERROR:  permission denied for table CustodyEvent"
+    },
+    {
+      "id": "TC-34",
+      "workstream": "Workstream E",
+      "name": "Direct SQL DELETE on CustodyEvent denied to runtime application role",
+      "status": "PASSED",
+      "details": "ERROR:  permission denied for table CustodyEvent"
+    },
+    {
+      "id": "TC-35",
+      "workstream": "Workstream E",
+      "name": "Direct SQL TRUNCATE on CustodyEvent denied to runtime application role",
+      "status": "PASSED",
+      "details": "ERROR:  permission denied for table CustodyEvent"
+    },
+    {
+      "id": "TC-36",
+      "workstream": "Workstream E",
+      "name": "Fabricated cross-department custody event insertion rejected by RLS WITH CHECK",
+      "status": "PASSED",
+      "details": "ERROR:  new row violates row-level security policy for table \"CustodyEvent\""
+    },
+    {
+      "id": "TC-37",
+      "workstream": "Workstream E",
+      "name": "Forged client context (SET app.current_department_id) fails closed (returns 0 rows)",
+      "status": "PASSED",
+      "details": "Count: 0"
+    },
+    {
+      "id": "TC-38",
+      "workstream": "Workstream E",
+      "name": "Pooled connection teardown (clear + DISCARD ALL) leaks 0 records",
+      "status": "PASSED",
+      "details": "Pre: 1, Post: 0"
+    },
+    {
+      "id": "TC-39",
+      "workstream": "Workstream C/E",
+      "name": "PostgreSQL partial unique index prevents duplicate sequence numbers per exhibit",
+      "status": "PASSED",
+      "details": "ERROR:  duplicate key value violates unique constraint \"CustodyEvent_evidence_seq_unique_idx\""
+    },
+    {
+      "id": "TC-40",
+      "workstream": "Safety Constraints",
+      "name": "Cold storage preservation: all 560 binaries in uploads/raw/ remain 100% unaltered",
+      "status": "PASSED",
+      "details": "Count: 560, Hash: bdc91bb78c603d21..."
+    }
+  ]
+}

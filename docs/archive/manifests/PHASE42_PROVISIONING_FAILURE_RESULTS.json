@@ -1,0 +1,89 @@
+{
+  "suite": "PHASE42_PROVISIONING_FAILURE_MODES",
+  "timestamp": "2026-10-25T11:41:16.033Z",
+  "totalScenarios": 10,
+  "passedCount": 10,
+  "allPassed": true,
+  "scenarios": [
+    {
+      "id": "FAIL-01",
+      "name": "Missing migration directory/file fails closed",
+      "expectedOutcome": "Throws error on missing migration source path",
+      "actualOutcome": "Trapped error: Migration directory not found: E:\\Rakshak\\prisma\\non_existen...",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "id": "FAIL-02",
+      "name": "SQL syntax/runtime error halts migration immediately via ON_ERROR_STOP=1",
+      "expectedOutcome": "Execution terminates with nonzero exit code and error logged",
+      "actualOutcome": "Execution halted with nonzero exit code",
+      "passed": true,
+      "details": "ERROR:  relation \"non_existent_table_syntax_error\" does not exist LINE 1: CREAT"
+    },
+    {
+      "id": "FAIL-03",
+      "name": "Missing RLS policy detected by catalog baseline validator",
+      "expectedOutcome": "validateSecurityBaseline returns passed=false and lists missing policies",
+      "actualOutcome": "Detected 6 baseline discrepancies",
+      "passed": true,
+      "details": "Missing required RLS policies: AccessGrant|access_grant_department_isolation, AuditLog|p_auditlog_insert, AuditLog|p_auditlog_select, Case|p_case_tenant_isolation, CaseAssignmentHistory|case_assignment_history_tenant_isolation, CaseEntity|p_caseentity_tenant_isolation, CaseLegalMapping|p_legal_tenant_isolation, CaseStatusHistory|case_status_history_tenant_isolation, CustodyEvent|p_custody_tenant_isolation, DossierClaim|dossier_claim_tenant_isolation, DossierExportAudit|p_dossier_tenant_isolation, DossierReview|dossier_review_tenant_isolation, EntityLink|entity_link_tenant_isolation, EntityLinkReview|entity_link_review_tenant_isolation, Evidence|p_evidence_tenant_isolation, ExtractedFact|p_fact_tenant_isolation, ExtractedTextArtifact|ExtractedTextArtifact_tenant_isolation, FactReviewHistory|FactReviewHistory_tenant_isolation, GeneratedReport|p_report_tenant_isolation, InvestigativeDossier|investigative_dossier_tenant_isolation, TimelineEvent|p_timeline_tenant_isolation"
+    },
+    {
+      "id": "FAIL-04",
+      "name": "Table with RLS but missing FORCE ROW LEVEL SECURITY rejected",
+      "expectedOutcome": "Validator flags missing FORCE ROW LEVEL SECURITY",
+      "actualOutcome": "Rejected unforced RLS configuration",
+      "passed": true,
+      "details": "Tables missing FORCE ROW LEVEL SECURITY (relforcerowsecurity=true): AccessGrant, AuditLog, CaseAssignmentHistory, CaseEntity, CaseLegalMapping, CaseStatusHistory, CustodyEvent, DossierClaim, DossierExportAudit, DossierReview, EntityLink, EntityLinkReview, Evidence, ExtractedFact, ExtractedTextArtifact, FactReviewHistory, GeneratedReport, InvestigativeDossier, TimelineEvent"
+    },
+    {
+      "id": "FAIL-05",
+      "name": "Application role privilege audit detects superuser or bypassrls flags",
+      "expectedOutcome": "rolsuper=t or rolbypassrls=t triggers critical violation",
+      "actualOutcome": "Validator flags rolsuper=t and rolbypassrls=t as critical violations",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "id": "FAIL-06",
+      "name": "Unauthorized UPDATE/DELETE grant on AuditLog detected and rejected",
+      "expectedOutcome": "Validator flags unauthorized permissions on AuditLog",
+      "actualOutcome": "Flagged unauthorized UPDATE grant on AuditLog",
+      "passed": true,
+      "details": "SECURITY VIOLATION: 'rakshak_app_user' has unauthorized permissions on AuditLog: UPDATE"
+    },
+    {
+      "id": "FAIL-07",
+      "name": "Unlisted rogue migration file in directory halts provisioning",
+      "expectedOutcome": "verifyMigrationInventory fails closed when unknown SQL file is present",
+      "actualOutcome": "Trapped unapproved migration file",
+      "passed": true,
+      "details": "SECURITY INVARIANT VIOLATION: Unapproved migration files detected in E:\\Rakshak\\"
+    },
+    {
+      "id": "FAIL-08",
+      "name": "Targeting protected historical database blocked unconditionally",
+      "expectedOutcome": "provisionAuthoritativeDatabase throws fatal safety violation",
+      "actualOutcome": "Blocked targeting protected database",
+      "passed": true,
+      "details": "FATAL SAFETY VIOLATION: Attempted to target protected historical database: 'rakshak_phase4"
+    },
+    {
+      "id": "FAIL-09",
+      "name": "Attempting to provision a database name that already exists is blocked",
+      "expectedOutcome": "Refuses to overwrite or reuse an existing database",
+      "actualOutcome": "Blocked reuse of existing database",
+      "passed": true,
+      "details": "FATAL SAFETY VIOLATION: Database 'rakshak_phase42_sandbox_fail_test' already exi"
+    },
+    {
+      "id": "FAIL-10",
+      "name": "Incomplete/unreachable catalog inspection fails closed with nonzero error",
+      "expectedOutcome": "validateSecurityBaseline returns passed=false on unreachable database",
+      "actualOutcome": "Returned passed=false with connection/query error",
+      "passed": true,
+      "details": "Database inspection query failed: Command failed: C:\\Program Files\\PostgreSQL\\16"
+    }
+  ]
+}

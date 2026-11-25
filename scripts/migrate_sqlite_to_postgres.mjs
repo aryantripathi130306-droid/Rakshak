@@ -129,7 +129,7 @@ export async function runMigrationExport(options = {}) {
       sqlitePrisma.officerSession.findMany(),
       sqlitePrisma.case.findMany(),
       sqlitePrisma.evidence.findMany(),
-      sqlitePrisma.extractedFact.findMany(),
+      sqlitePrisma.extractedFact.findMany().catch(() => sqlitePrisma.$queryRawUnsafe('SELECT * FROM "ExtractedFact"')),
       sqlitePrisma.timelineEvent.findMany(),
       sqlitePrisma.caseEntity.findMany(),
       sqlitePrisma.caseCluster.findMany(),
